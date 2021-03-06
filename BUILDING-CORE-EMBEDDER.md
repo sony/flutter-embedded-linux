@@ -48,7 +48,7 @@ solutions = [
   },
 ]
 ```
-Note: Replace FLUTTER_ENGINE with the commid  it of the Flutter engine you want to use.
+Note: Replace `FLUTTER_ENGINE` with the commid  it of the Flutter engine you want to use.
 
 ## 3. Get source files
 

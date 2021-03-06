@@ -85,7 +85,7 @@ Or you download a specific Flutter Engine by the following steps, but it's limit
 - [beta channel](https://raw.githubusercontent.com/flutter/flutter/beta/bin/internal/engine.version)
 - [stable channel](https://raw.githubusercontent.com/flutter/flutter/stable/bin/internal/engine.version)
 
-[Step2] Download Flutter Engine embedder library. Replace FLUTTER_ENGINE with the SHA of the Flutter engine you want to use.
+[Step2] Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
 ```Shell
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
 ```
