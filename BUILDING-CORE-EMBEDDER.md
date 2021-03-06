@@ -97,7 +97,7 @@ $ ./flutter/tools/gn --runtime-mode profile --no-lto --embedder-for-target
 $ ninja -C out/host_profile
 ```
 
-#### for x64 targets with release mode
+### for x64 targets with release mode
 
 ```Shell
 $ ./flutter/tools/gn --runtime-mode release --embedder-for-target
