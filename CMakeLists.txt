@@ -26,6 +26,3 @@ include(cmake/rapidjson.cmake)
 
 # Build for target.
 include(cmake/build.cmake)
-
-# Install packages.
-include(cmake/install.cmake)
