@@ -1,11 +1,10 @@
 # Overview
 
-This is the External Texture Plugin sample.  
-Source files are implemented based on [this reference](https://github.com/jnschulze/flutter-playground/tree/master/windows_texture_test).
+This is the example of External Texture Plugin. Source files are implemented based on [this reference](https://github.com/jnschulze/flutter-playground/tree/master/windows_texture_test).
 
 ## Building (Wayland backend stand-alone application)
 
-```
+```Shell
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-external-texture-plugin ..
@@ -14,7 +13,7 @@ $ make
 
 ## Dart sample code for Flutter app
 
-```
+```Dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
