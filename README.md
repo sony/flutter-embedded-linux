@@ -75,7 +75,7 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 
 #### Install Flutter core embedder library
 
-This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-CORE-EMBEDDER.md)
+This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
 Or you can download a specific Flutter Engine by the following steps, but it's limited to debug mode and x64 targets.
 
@@ -139,7 +139,7 @@ Please edit `cmake/user_config.cmake` file.
 
 ### Install Flutter SDK
 
-Please note that you must use the same version that you built Flutter embedder for. See also: [Building Flutter Engine embedder](./BUILDING-CORE-EMBEDDER.md)
+Please note that you must use the same version that you built Flutter embedder for. See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
 ```Shell
 $ git clone https://github.com/flutter/flutter
