@@ -10,8 +10,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - Suitable for use in embedded systems
   - A few dependent libraries
   - Lightweight than Flutter desktop for Linux (Not using X11 and GTK)
-  - The main target of this embedder is Arm64 devices
-    - But you can also be used in Arm 32bit (ARMv7, armhf) devices
+  - The main target of this embedder is Arm64 devices. We haven't confirmed in Arm 32bit (ARMv7, armhf) devices
 - [Wayland](https://wayland.freedesktop.org/) backend support
 - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
   - [x] Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
@@ -25,9 +24,9 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux which supports either Wayland backend or DRM backend.
 
 ## Contributing
-**Now, we cannot accept your Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready!
+**Now, we cannot accept your Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
 
-We are always welcome to report bugs and request new features by creating issues. With the assumption, our final goal of this software release openly is to be merged this embedder into [Flutter Engine](https://github.com/flutter/engine) after getting feedbacks. And [Google CLA](https://cla.developers.google.com/about/google-corporate) will be required when we do that in the future. Therefore, we cannot easily accept an external PR. However, you can free to create issues for reporting bugs and requesting new features.
+With the assumption, our final goal of this software openly is to be merged this embedder into [Flutter Engine](https://github.com/flutter/engine) after getting feedbacks. And [Google CLA](https://cla.developers.google.com/about/google-corporate) will be required when we do that in the future. Therefore, we cannot easily accept an external PR. However, you can free to create issues for reporting bugs and requesting new features.
 
 See also: [Contributing to the Flutter engine](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
 
