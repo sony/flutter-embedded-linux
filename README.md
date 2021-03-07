@@ -1,8 +1,8 @@
 # Flutter embedder for embedded Linux systems
-This [Flutter](https://flutter.dev/) embedder is focusing on embedded Linux system use cases. It is implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
+This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
 ## Objective & Goal
-Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add embedded Linux support into the Flutter officially for all embedded developers.
+Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add embedded systems support into Flutter officially for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
 
 We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover specifications of general-purpose embedded systems.
 
@@ -25,7 +25,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux which supports either Wayland backend or DRM backend.
 
 ## Contributing
-Now, we cannot accept your Pull Request (PR). Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready!
+**Now, we cannot accept your Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready!
 
 We are always welcome to report bugs and request new features by creating issues. With the assumption, our final goal of this software release openly is to be merged this embedder into [Flutter Engine](https://github.com/flutter/engine) after getting feedbacks. And [Google CLA](https://cla.developers.google.com/about/google-corporate) will be required when we do that in the future. Therefore, we cannot easily accept an external PR. However, you can free to create issues for reporting bugs and requesting new features.
 
@@ -40,12 +40,13 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 - clang (for building)
 - cmake (for building)
 - build-essential (for building)
+- pkg-config (for building)
 - EGL
 - xkbcommon
 - OpenGL ES (>=2.0)
 
 ```Shell
-$ sudo apt install clang build-essential libegl-dev libxkbcommon-dev libgles2-mesa-dev
+$ sudo apt install clang build-essential pkg-config libegl-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
 #### Only when you use Wayland backend
@@ -77,7 +78,7 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-CORE-EMBEDDER.md)
 
-Or you download a specific Flutter Engine by the following steps, but it's limited to debug mode and x64 targets.
+Or you can download a specific Flutter Engine by the following steps, but it's limited to debug mode and x64 targets.
 
 [Step1] Check the version (SHA) of the channel you want to use.
 - [master channel](https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version)
