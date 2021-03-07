@@ -1,0 +1,4 @@
+# Based on https://github.com/flutter/engine/blob/master/.clang-format
+BasedOnStyle: Chromium
+Standard: Cpp11
+SortIncludes: true
