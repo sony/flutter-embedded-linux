@@ -47,7 +47,7 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 - OpenGL ES (>=2.0)
 
 ```Shell
-$ sudo apt install clang build-essential pkg-config libegl-dev libxkbcommon-dev libgles2-mesa-dev
+$ sudo apt install clang build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
 #### Only when you use Wayland backend
