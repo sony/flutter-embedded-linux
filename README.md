@@ -1,4 +1,4 @@
-# Flutter embedder for embedded Linux systems
+# Embedded Linux embedding for Flutter
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
 ## Objective & Goal
@@ -177,19 +177,19 @@ You need to run this program by a user who has the permission to access the inpu
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
 
-Sample file can be found [examples/config/weston.ini](./examples/config/weston.ini). See also `man weston.ini`.
+Sets the following parameters when this embedder works as a desktop-shell on weston. Sample file can be found [examples/config/weston.ini](./examples/config/weston.ini). See also `man weston.ini`.
 
 ### shell section
 
-Sets the following when this embedder works as a desktop-shell on weston.
+Specifies the path to the binary file to start as the shell when weston starts.
 
 | Field | Description |
 | ------------- | ------------- |
 | client | ${path to the binary}/flutter-desktop-shell |
 
-### extended section section
+### extended section
 
-An extended section for this embedder. This section is valid only for desktop-shell. The entries that can appear in this section are:
+An extended section for this embedder. The entries that can appear in this section are:
 
 | Field | Description |
 | ------------- | ------------- |
