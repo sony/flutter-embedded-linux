@@ -15,6 +15,8 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
   - [x] Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
   - [ ] [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices (coming soon)
+- Always single window fullscreen
+  - you can choose always-fullscreen or flexible-screen (any size) only when you use Wayland backend
 - Keyboard, mouse and touch inputs support
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
