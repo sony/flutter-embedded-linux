@@ -16,7 +16,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
   - [x] Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
   - [ ] [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices (coming soon)
 - Always single window fullscreen
-  - you can choose always-fullscreen or flexible-screen (any size) only when you use Wayland backend
+  - You can choose always-fullscreen or flexible-screen (any size) only when you use Wayland backend
 - Keyboard, mouse and touch inputs support
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
@@ -26,7 +26,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux which supports either Wayland backend or DRM backend.
 
 ## Contributing
-**Now, we cannot accept your Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
+**Now, we cannot accept any Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
 
 With the assumption, our final goal of this software openly is to be merged this embedder into [Flutter Engine](https://github.com/flutter/engine) after getting feedbacks. And [Google CLA](https://cla.developers.google.com/about/google-corporate) will be required when we do that in the future. Therefore, we cannot easily accept an external PR. However, you can free to create issues for reporting bugs and requesting new features.
 
@@ -97,7 +97,7 @@ There are sample projects in [`examples`](./examples) directory. You can also co
 
 ## 3. Building
 
-### Build for Wayland backend (Stand-alone application)
+### Build for Wayland backend (Stand-alone Wayland app)
 
 ```Shell
 $ mkdir build
@@ -117,14 +117,14 @@ $ make
 
 ### Build for Wayland backend (weston desktop-shell)
 
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#4-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
+
 ```Shell
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
 $ make
 ```
-
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#4-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
 
 ### User configuration parameters (CMAKE options)
 
@@ -167,6 +167,8 @@ $ cd ..
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
 ### Run Fluter app
+
+Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
