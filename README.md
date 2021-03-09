@@ -117,7 +117,7 @@ $ make
 
 ### Build for Wayland backend (weston desktop-shell)
 
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#4-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
 
 ```Shell
 $ mkdir build
