@@ -21,7 +21,8 @@ jobs:
         echo `curl https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version` > embedder.version
         export FLUTTER_ENGINE=`cat embedder.version`
         curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
-        unzip linux-x64-embedder.zip
+        ls
+        unzip linux-x64-embedder.zip.zip
         mv libflutter_engine.so /usr/lib/
 
     - name: Create Build Environment
