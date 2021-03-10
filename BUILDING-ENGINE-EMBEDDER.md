@@ -11,7 +11,18 @@ $ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 $ export PATH=$PATH:$(pwd)/depot_tools
 ```
 
-## 2. Create .gclinet file
+### Python 2
+
+Python 2 is required to build. If you default installation is Python 3 you could workaround this by using virtualenv:
+
+```Shell
+$ virtualenv .env -p python2
+$ source .env/bin/activate
+```
+
+See also: https://github.com/dart-lang/sdk/wiki/Building#python-2
+
+## 2. Create .gclient file
 
 ### When using the latest version
 
