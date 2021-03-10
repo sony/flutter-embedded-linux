@@ -98,7 +98,7 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
-Or you can download a specific Flutter Engine by the following steps, but it's limited to debug mode and x64 targets.
+Or you can download a specific pre-built Flutter Engine from Google's infra by the following steps, but it's limited to **debug mode** and **x64** targets.
 
 [Step1] Check the version (SHA) of the channel you want to use.
 - [master channel](https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version)
@@ -109,6 +109,12 @@ Or you can download a specific Flutter Engine by the following steps, but it's l
 [Step2] Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
 ```Shell
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
+```
+
+[Step3] Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets.
+```Shell
+$ unzip ./linux-x64-embedder
+$ sudo cp ./libflutter_engine.so /usr/lib
 ```
 
 ## 2. Examples
