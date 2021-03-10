@@ -23,7 +23,7 @@ jobs:
         curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
         ls
         unzip linux-x64-embedder
-        mv libflutter_engine.so /usr/lib/
+        sudo mv libflutter_engine.so /usr/lib/
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
