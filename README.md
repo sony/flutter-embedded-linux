@@ -108,8 +108,6 @@ $ make
 
 ### Build for DRM backend
 
-This binary will run by setting the DRM device file name(/dev/dri/card xx) to the environment variable `DRM_DEVICE_FILENAME`.
-
 ```Shell
 $ mkdir build
 $ cd build
@@ -171,6 +169,8 @@ Comming soon. We are contributing to support this now. See: https://github.com/f
 ### Run Fluter app
 
 Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
+
+The DRM device file name must be set to the environment variable `FLUTTER_DRM_DEVICE` when you use the DRM backend. For example, run `export FLUTTER_DRM_DEVICE="/dev/dri/card1"`. If it is not set, `/dev/dri/card0` is used.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
