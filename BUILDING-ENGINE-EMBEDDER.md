@@ -11,7 +11,7 @@ $ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 $ export PATH=$PATH:$(pwd)/depot_tools
 ```
 
-## 2. Create .gclinet file
+## 2. Create .gclient file
 
 ### When using the latest version
 
