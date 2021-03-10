@@ -111,6 +111,12 @@ Or you can download a specific Flutter Engine by the following steps, but it's l
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
 ```
 
+[Step3] Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets.
+```Shell
+$ unzip ./linux-x64-embedder
+$ sudo cp ./libflutter_engine.so /usr/lib
+```
+
 ## 2. Examples
 There are sample projects in [`examples`](./examples) directory. You can also comunicate with Dart code by using the plugin APIs with the same specifications as with Flutter desktops for Windows.
 
