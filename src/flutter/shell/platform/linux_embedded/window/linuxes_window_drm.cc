@@ -13,8 +13,6 @@
 
 namespace flutter {
 
-static constexpr char kDrmDeviceFilename[] = "/dev/dri/card0";
-
 const libinput_interface LinuxesWindowDrm::kLibinputInterface = {
     .open_restricted = [](const char* path, int flags, void* user_data) -> int {
       auto ret = open(path, flags | O_CLOEXEC);
@@ -97,7 +95,12 @@ bool LinuxesWindowDrm::DispatchEvent() {
 }
 
 bool LinuxesWindowDrm::CreateRenderSurface(int32_t width, int32_t height) {
-  native_window_ = std::make_unique<NativeWindowDrm>(kDrmDeviceFilename);
+  auto device_filename = getenv("DRM_DEVICE_FILENAME");
+  if ((!device_filename) || (device_filename[0] == '\0')) {
+    LINUXES_LOG(ERROR) << "DRM_DEVICE_FILENAME is not set.";
+    return false;
+  }
+  native_window_ = std::make_unique<NativeWindowDrm>(device_filename);
   if (!native_window_->IsValid()) {
     LINUXES_LOG(ERROR) << "Failed to create the native window";
     return false;

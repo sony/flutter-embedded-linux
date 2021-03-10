@@ -108,6 +108,8 @@ $ make
 
 ### Build for DRM backend
 
+This binary will run by setting the DRM device file name(/dev/dri/card xx) to the environment variable `DRM_DEVICE_FILENAME`.
+
 ```Shell
 $ mkdir build
 $ cd build
