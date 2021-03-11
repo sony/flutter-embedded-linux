@@ -199,13 +199,26 @@ Comming soon. We are contributing to support this now. See: https://github.com/f
 
 ### Run Flutter app
 
-Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
+#### Run with Wayland backend
+
+Wayland compositor (weston) must be running before running the program.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Note
+#### Run with DRM backend
+
+You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
+
+```Shell
+$ Ctrl + Alt + F3 # Switching to CUI
+$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+```
+
+If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
+
+##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
