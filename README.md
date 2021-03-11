@@ -164,19 +164,23 @@ Please edit `cmake/user_config.cmake` file.
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
-## 4. Running your Flutter app
+## 4. Running Flutter app
 
 ### Install Flutter SDK
-
-Please note that you must use the same version that you built Flutter embedder for. See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
+See also: [Desktop support for Flutter](https://flutter.dev/desktop)
 
 ```Shell
 $ git clone https://github.com/flutter/flutter
 $ sudo mv flutter /opt/
 $ export PATH=$PATH:/opt/flutter/bin
+$ flutter config --enable-linux-desktop
+$ flutter doctor
 ```
 
-### Build your Flutter app
+Please note that you must use the same version (channel) that you built Flutter embedder for. I recommend that you use the latest version of the master channel for both the SDK and Flutter Engine.
+See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
+
+### Build Flutter app
 
 Here introduce how to build the flutter sample app.
 
@@ -193,7 +197,7 @@ $ cd ..
 
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
-### Run Fluter app
+### Run Flutter app
 
 Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
 
