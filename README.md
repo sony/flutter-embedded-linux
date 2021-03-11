@@ -181,8 +181,13 @@ $ ./flutter-client ./sample/build/linux/x64/release/bundle
 You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
 ```Shell
-$ Shift + Alt + F3 # Switching to CUI
+$ Ctrl + Alt + F3 # Switching to CUI
 $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+```
+
+To switch back to GUI:
+```
+$ Ctrl + Alt + F2
 ```
 
 ##### Note
