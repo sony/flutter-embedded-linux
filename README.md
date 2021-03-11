@@ -170,10 +170,14 @@ Please edit `cmake/user_config.cmake` file.
 
 Please note that you must use the same version that you built Flutter embedder for. See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
+In tearms of Flutter SDK, see also: [Desktop support for Flutter](https://flutter.dev/desktop)
+
 ```Shell
 $ git clone https://github.com/flutter/flutter
 $ sudo mv flutter /opt/
 $ export PATH=$PATH:/opt/flutter/bin
+$ flutter config --enable-linux-desktop
+$ flutter doctor
 ```
 
 ### Build your Flutter app
