@@ -170,14 +170,17 @@ Comming soon. We are contributing to support this now. See: https://github.com/f
 
 Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
 
-The DRM device file name must be set to the environment variable `FLUTTER_DRM_DEVICE` when you use the DRM backend. For example, run `export FLUTTER_DRM_DEVICE="/dev/dri/card1"`. If it is not set, `/dev/dri/card0` is used.
-
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
 #### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
+
+Note that `FLUTTER_DRM_DEVICE` must be set properly when you use the DRM backend. The default value is `/dev/dri/card0`.
+```
+$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+```
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
 
