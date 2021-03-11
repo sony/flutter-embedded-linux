@@ -51,7 +51,7 @@ class SurfaceGlWayland final : public Surface<wl_egl_window, wl_surface>,
     offscreen_surface_ =
         context_->CreateOffscreenSurface(native_window_resource_.get());
     if (!offscreen_surface_->IsValid()) {
-      LINUXES_LOG(ERROR) << "Off-Screen surface is invalid.";
+      LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
       offscreen_surface_ = nullptr;
       return false;
     }

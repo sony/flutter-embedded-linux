@@ -92,8 +92,8 @@ class ContextEgl {
     EGLSurface surface = eglCreateWindowSurface(
         environment_->Display(), config_, window_resource->Window(), attribs);
     if (surface == EGL_NO_SURFACE) {
-      LINUXES_LOG(ERROR) << "Failed to create EGL off-screen surface."
-                         << "(" << get_egl_error_cause() << ")";
+      LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
+                           << "(" << get_egl_error_cause() << ")";
     }
     return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
                                                resource_context_);
