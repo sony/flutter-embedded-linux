@@ -47,7 +47,7 @@ class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
   bool SetNativeWindowResource(NativeWindow<gbm_surface, gbm_surface>* window) {
     offscreen_surface_ = context_->CreateOffscreenSurface(window);
     if (!offscreen_surface_->IsValid()) {
-      LINUXES_LOG(ERROR) << "Off-Screen surface is invalid.";
+      LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
       offscreen_surface_ = nullptr;
       return false;
     }
