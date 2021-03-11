@@ -168,7 +168,7 @@ Comming soon. We are contributing to support this now. See: https://github.com/f
 
 ### Run Fluter app
 
-#### for Wayland backend
+#### Run with Wayland backend
 
 Wayland compositor (weston) must be running before running the program.
 
@@ -176,13 +176,12 @@ Wayland compositor (weston) must be running before running the program.
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### for DRM backend
+#### Run with DRM backend
 
-You should use an environment where x11 is not running. To turn off x11, switch to the CUI environment by pressing such as Shift+Alt+F3.
-
-`FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
+You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
 ```Shell
+$ Shift + Alt + F3 # Switching to CUI
 $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
