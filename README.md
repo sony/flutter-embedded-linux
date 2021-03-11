@@ -185,10 +185,7 @@ $ Ctrl + Alt + F3 # Switching to CUI
 $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
-If you want to switch back from CUI to GUI, run the following command.
-```
-$ Ctrl + Alt + F2
-```
+If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.

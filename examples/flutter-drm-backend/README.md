@@ -22,7 +22,4 @@ $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend FLUTTER_BUNDLE_PATH
 
 Note that replace `FLUTTER_BUNDLE_PATH` with the flutter bundle path you want to use like ./sample/build/linux/x64/release/bundle.
 
-If you want to switch back from CUI to GUI, run the following command.
-```
-$ Ctrl + Alt + F2
-```
+If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
