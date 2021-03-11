@@ -185,13 +185,13 @@ $ Ctrl + Alt + F3 # Switching to CUI
 $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
-To switch back to GUI:
+You need the following command to switch back from CUI to GUI.
 ```
 $ Ctrl + Alt + F2
 ```
 
 ##### Note
-- You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
+You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
 
