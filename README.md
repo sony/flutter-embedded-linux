@@ -177,9 +177,10 @@ $ ./flutter-client ./sample/build/linux/x64/release/bundle
 #### Note
 - You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 - `FLUTTER_DRM_DEVICE` must be set properly when you use the DRM backend. The default value is `/dev/dri/card0`.
-  ```
+  ```Shell
   $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
   ```
+- To use the DRM backend, you need to switch the environment from running x11 to not running x11 with Ctrl+Alt+F3, etc.
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
 
