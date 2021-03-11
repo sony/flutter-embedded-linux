@@ -1,4 +1,6 @@
 # Embedded Linux embedding for Flutter
+[![build-test](https://github.com/sony/flutter-embedded-linux/actions/workflows/build-test.yml/badge.svg)](https://github.com/sony/flutter-embedded-linux/actions/workflows/build-test.yml)
+
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
 ## Objective & Goal
@@ -25,6 +27,23 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 ## Supported platforms
 This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux which supports either Wayland backend or DRM backend.
 
+### Tested devices
+
+| Board/SoC | Vendor | OS | Display backend | Status |
+| :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
+| Desktop (x64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
+| Desktop (x64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
+| [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
+| [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
+| [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
+| [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | See: [#9](https://github.com/sony/flutter-embedded-linux/issues/9) |
+| [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
+| [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
+| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
+| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
+| Zynq | Xilinx | - | - | Not tested |
+| [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
+
 ## Contributing
 **Now, we cannot accept any Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
 
@@ -35,6 +54,8 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 # Contents
 
 ## 1. Install libraries
+
+You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Ubuntu OS and x64 hosts.
 
 #### Mandatory
 
@@ -79,7 +100,7 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
-Or you can download a specific Flutter Engine by the following steps, but it's limited to debug mode and x64 targets.
+Or you can download a specific pre-built Flutter Engine from Google's infra by the following steps, but it's limited to **debug mode** and **x64** targets.
 
 [Step1] Check the version (SHA) of the channel you want to use.
 - [master channel](https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version)
@@ -90,6 +111,12 @@ Or you can download a specific Flutter Engine by the following steps, but it's l
 [Step2] Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
 ```Shell
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
+```
+
+[Step3] Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets.
+```Shell
+$ unzip ./linux-x64-embedder
+$ sudo cp ./libflutter_engine.so /usr/lib
 ```
 
 ## 2. Examples
@@ -137,19 +164,23 @@ Please edit `cmake/user_config.cmake` file.
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
-## 4. Running your Flutter app
+## 4. Running Flutter app
 
 ### Install Flutter SDK
-
-Please note that you must use the same version that you built Flutter embedder for. See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
+See also: [Desktop support for Flutter](https://flutter.dev/desktop)
 
 ```Shell
 $ git clone https://github.com/flutter/flutter
 $ sudo mv flutter /opt/
 $ export PATH=$PATH:/opt/flutter/bin
+$ flutter config --enable-linux-desktop
+$ flutter doctor
 ```
 
-### Build your Flutter app
+Please note that you must use the same version (channel) that you built Flutter embedder for. I recommend that you use the latest version of the master channel for both the SDK and Flutter Engine.
+See also: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
+
+### Build Flutter app
 
 Here introduce how to build the flutter sample app.
 
@@ -166,15 +197,28 @@ $ cd ..
 
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
-### Run Fluter app
+### Run Flutter app
 
-Wayland compositor (weston) must be running before running the program when you use the Wayland backend.
+#### Run with Wayland backend
+
+Wayland compositor (weston) must be running before running the program.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Note
+#### Run with DRM backend
+
+You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
+
+```Shell
+$ Ctrl + Alt + F3 # Switching to CUI
+$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+```
+
+If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
+
+##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
 ## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
