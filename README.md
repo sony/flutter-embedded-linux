@@ -185,7 +185,7 @@ $ Ctrl + Alt + F3 # Switching to CUI
 $ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
-You need the following command to switch back from CUI to GUI.
+If you want to switch back from CUI to GUI, run the following command.
 ```
 $ Ctrl + Alt + F2
 ```
