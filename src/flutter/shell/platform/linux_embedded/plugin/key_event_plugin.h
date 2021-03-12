@@ -9,6 +9,7 @@
 #include <xkbcommon/xkbcommon.h>
 
 #include <memory>
+#include <unordered_map>
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/basic_message_channel.h"
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/binary_messenger.h"
