@@ -9,6 +9,7 @@
 #include <wayland-cursor.h>
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.h"
