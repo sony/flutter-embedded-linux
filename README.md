@@ -68,7 +68,7 @@ You need to install the following dependent libraries to build and run. Here int
 - OpenGL ES (>=2.0)
 
 ```Shell
-$ sudo apt install clang build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
+$ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
 #### Only when you use Wayland backend
