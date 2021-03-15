@@ -11,6 +11,7 @@ else()
   add_definitions(-DWL_EGL_PLATFORM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
+    src/wayland/protocol/xdg-shell-protocol.c
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_wayland.cc)
 endif()
