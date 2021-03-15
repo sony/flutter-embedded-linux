@@ -73,9 +73,10 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 
 #### Only when you use Wayland backend
 - libwayland
+- wayland-protocols
 
 ```Shell
-$ sudo apt install libwayland-dev
+$ sudo apt install libwayland-dev wayland-protocols
 ```
 
 #### Only when you use weston desktop-shell
