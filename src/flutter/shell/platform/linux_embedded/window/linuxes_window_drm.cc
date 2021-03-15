@@ -13,8 +13,10 @@
 
 namespace flutter {
 
+namespace {
 static constexpr char kFlutterDrmDeviceEnvironmentKey[] = "FLUTTER_DRM_DEVICE";
 static constexpr char kDrmDeviceDefaultFilename[] = "/dev/dri/card0";
+}  // namespace
 
 const libinput_interface LinuxesWindowDrm::kLibinputInterface = {
     .open_restricted = [](const char* path, int flags, void* user_data) -> int {
@@ -30,12 +32,12 @@ const libinput_interface LinuxesWindowDrm::kLibinputInterface = {
 
 LinuxesWindowDrm::LinuxesWindowDrm(FlutterWindowMode window_mode, int32_t width,
                                    int32_t height, bool show_cursor)
-    : display_valid_(false), is_pending_cursor_add_event_(false) {
-  window_mode_ = window_mode;
-  current_width_ = width;
-  current_height_ = height;
-  show_cursor_ = show_cursor;
-
+    : window_mode_(window_mode),
+      current_width_(width),
+      current_height_(height),
+      show_cursor_(show_cursor),
+      display_valid_(false),
+      is_pending_cursor_add_event_(false) {
   auto udev = udev_new();
   if (!udev) {
     LINUXES_LOG(ERROR) << "Failed to create udev instance.";

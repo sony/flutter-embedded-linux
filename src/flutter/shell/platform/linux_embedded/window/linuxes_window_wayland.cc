@@ -15,6 +15,9 @@
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/context_egl_wayland.h"
 
+namespace flutter {
+
+namespace {
 static constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 static constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 
@@ -34,8 +37,7 @@ static constexpr char kWlCursorThemeWatch[] = "watch";
 static constexpr char kCursorNameNone[] = "none";
 
 static constexpr char kClipboardMimeTypeText[] = "text/plain";
-
-namespace flutter {
+}  // namespace
 
 const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
     .global =
@@ -52,15 +54,15 @@ const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
 };
 
 const xdg_wm_base_listener LinuxesWindowWayland::kXdgWmBaseListener = {
-    .ping = [](void *data, xdg_wm_base* xdg_wm_base, uint32_t serial) {
-      xdg_wm_base_pong(xdg_wm_base, serial);
-    },
+    .ping = [](void* data, xdg_wm_base* xdg_wm_base,
+               uint32_t serial) { xdg_wm_base_pong(xdg_wm_base, serial); },
 };
 
 const xdg_surface_listener LinuxesWindowWayland::kXdgSurfaceListener = {
-    .configure = [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
-      xdg_surface_ack_configure(xdg_surface, serial);
-    },
+    .configure =
+        [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
+          xdg_surface_ack_configure(xdg_surface, serial);
+        },
 };
 
 const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
@@ -465,7 +467,11 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
 LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            int32_t width, int32_t height,
                                            bool show_cursor)
-    : cursor_info_({nullptr, 0, ""}),
+    : window_mode_(window_mode),
+      current_width_(width),
+      current_height_(height),
+      show_cursor_(show_cursor),
+      cursor_info_({nullptr, 0, ""}),
       display_valid_(false),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
@@ -479,11 +485,6 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
       wl_data_offer_(nullptr),
       wl_data_source_(nullptr),
       serial_(0) {
-  window_mode_ = window_mode;
-  current_width_ = width;
-  current_height_ = height;
-  show_cursor_ = show_cursor;
-
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
     LINUXES_LOG(ERROR) << "Failed to connect to the Wayland display.";
@@ -678,7 +679,8 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   native_window_ =
       std::make_unique<NativeWindowWayland>(wl_compositor_, width, height);
 
-  xdg_surface_ = xdg_wm_base_get_xdg_surface(xdg_wm_base_, native_window_->Surface());
+  xdg_surface_ =
+      xdg_wm_base_get_xdg_surface(xdg_wm_base_, native_window_->Surface());
   if (!xdg_surface_) {
     LINUXES_LOG(ERROR) << "Failed to get the xdg surface.";
     return false;
@@ -828,7 +830,6 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
                                              uint32_t name,
                                              const char* interface,
                                              uint32_t version) {
-                                               
   if (!strcmp(interface, wl_compositor_interface.name)) {
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
         wl_registry_bind(wl_registry, name, &wl_compositor_interface, 1));
@@ -839,7 +840,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     xdg_wm_base_ = static_cast<decltype(xdg_wm_base_)>(
         wl_registry_bind(wl_registry, name, &xdg_wm_base_interface, 1));
     xdg_wm_base_add_listener(xdg_wm_base_, &kXdgWmBaseListener, this);
-    return ;
+    return;
   }
 
   if (!strcmp(interface, wl_seat_interface.name)) {

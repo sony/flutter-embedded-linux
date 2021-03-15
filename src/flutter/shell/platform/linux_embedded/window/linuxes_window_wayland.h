@@ -18,9 +18,9 @@
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 extern "C" {
-#include "wayland/protocol/xdg-shell-client-protocol.h"
 #include "wayland/protocol/text-input-unstable-v1-client-protocol.h"
 #include "wayland/protocol/weston-desktop-shell-client-protocol.h"
+#include "wayland/protocol/xdg-shell-client-protocol.h"
 }
 
 namespace flutter {
