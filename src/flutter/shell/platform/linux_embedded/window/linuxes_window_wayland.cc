@@ -467,11 +467,7 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
 LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            int32_t width, int32_t height,
                                            bool show_cursor)
-    : window_mode_(window_mode),
-      current_width_(width),
-      current_height_(height),
-      show_cursor_(show_cursor),
-      cursor_info_({nullptr, 0, ""}),
+    : cursor_info_({nullptr, 0, ""}),
       display_valid_(false),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
@@ -485,6 +481,11 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
       wl_data_offer_(nullptr),
       wl_data_source_(nullptr),
       serial_(0) {
+  window_mode_ = window_mode;
+  current_width_ = width;
+  current_height_ = height;
+  show_cursor_ = show_cursor;
+
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
     LINUXES_LOG(ERROR) << "Failed to connect to the Wayland display.";
