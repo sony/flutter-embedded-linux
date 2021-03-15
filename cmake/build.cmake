@@ -8,10 +8,27 @@ if(USE_DRM)
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_drm.cc)
 else()
+  find_program(WaylandScannerExec NAMES wayland-scanner)
+  get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
+  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-client-protocol.h)
+  set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-protocol.c)
+  set_source_files_properties(${_client_header} GENERATED)
+  set_source_files_properties(${_code} GENERATED)
+  add_custom_command(
+    OUTPUT ${_client_header}
+    COMMAND ${WaylandScannerExec} client-header ${_infile} ${_client_header}
+    DEPENDS ${_infile} VERBATIM
+  )
+  add_custom_command(
+    OUTPUT ${_code}
+    COMMAND ${WaylandScannerExec} private-code ${_infile} ${_code}
+    DEPENDS ${_infile} ${_client_header} VERBATIM
+  )
+
   add_definitions(-DWL_EGL_PLATFORM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
-    src/wayland/protocol/xdg-shell-protocol.c
+    ${_code}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_wayland.cc)
 endif()

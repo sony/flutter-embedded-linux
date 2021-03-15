@@ -20,6 +20,7 @@ if(USE_DRM)
   find_package(Threads REQUIRED)
 else()
   # Wayland backend
+  pkg_check_modules(WAYLAND_EGL REQUIRED wayland-protocols)
   pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client>=1.16.0)
   pkg_check_modules(WAYLAND_CURSOR REQUIRED wayland-cursor>=1.16.0)
   pkg_check_modules(WAYLAND_EGL REQUIRED wayland-egl>=1.16.0)
