@@ -842,7 +842,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     return ;
   }
 
-  if (!strcmp(interface, wl_seat_listener.name)) {
+  if (!strcmp(interface, wl_seat_interface.name)) {
     wl_seat_ = static_cast<decltype(wl_seat_)>(
         wl_registry_bind(wl_registry, name, &wl_seat_interface, 1));
     wl_seat_add_listener(wl_seat_, &kWlSeatListener, this);
