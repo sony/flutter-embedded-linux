@@ -30,6 +30,7 @@ else()
   set(DISPLAY_BACKEND_SRC
     ${_code}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_wayland.cc)
 endif()
 
