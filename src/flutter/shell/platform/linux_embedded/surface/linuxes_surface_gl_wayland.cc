@@ -15,12 +15,12 @@ SurfaceGlWayland::SurfaceGlWayland(std::unique_ptr<ContextEglWayland> context)
   context_ = std::move(context);
 }
 
-bool SurfaceGlWayland::IsValid() const override {
+bool SurfaceGlWayland::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
 bool SurfaceGlWayland::SetNativeWindow(
-    NativeWindow<wl_egl_window, wl_surface>* window) override {
+    NativeWindow<wl_egl_window, wl_surface>* window) {
   native_window_ = window;
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
   if (!onscreen_surface_->IsValid()) {
@@ -42,48 +42,39 @@ bool SurfaceGlWayland::SetNativeWindowResource(
   return true;
 }
 
-// |Surface|
-bool SurfaceGlWayland::OnScreenSurfaceResize(
-    const size_t width, const size_t height) const override {
+bool SurfaceGlWayland::OnScreenSurfaceResize(const size_t width,
+                                             const size_t height) const {
   return native_window_->Resize(width, height);
 }
 
-// |Surface|
-void SurfaceGlWayland::DestroyOnScreenContext() override {
+void SurfaceGlWayland::DestroyOnScreenContext() {
   context_->ClearCurrent();
   onscreen_surface_ = nullptr;
 }
 
-// |Surface|
-bool SurfaceGlWayland::ResourceContextMakeCurrent() const override {
+bool SurfaceGlWayland::ResourceContextMakeCurrent() const {
   return offscreen_surface_->MakeCurrent();
 }
 
-// |Surface|
-bool SurfaceGlWayland::ClearCurrentContext() const override {
+bool SurfaceGlWayland::ClearCurrentContext() const {
   return context_->ClearCurrent();
 }
 
-// |SurfaceGlDelegate|
-bool SurfaceGlWayland::GLContextMakeCurrent() const override {
+bool SurfaceGlWayland::GLContextMakeCurrent() const {
   return onscreen_surface_->MakeCurrent();
 }
 
-// |SurfaceGlDelegate|
-bool SurfaceGlWayland::GLContextClearCurrent() const override {
+bool SurfaceGlWayland::GLContextClearCurrent() const {
   return context_->ClearCurrent();
 }
 
-// |SurfaceGlDelegate|
-bool SurfaceGlWayland::GLContextPresent(uint32_t fbo_id) const override {
+bool SurfaceGlWayland::GLContextPresent(uint32_t fbo_id) const {
   return onscreen_surface_->SwapBuffers();
 }
 
-// |SurfaceGlDelegate|
-uint32_t SurfaceGlWayland::GLContextFBO() const override { return 0; }
+uint32_t SurfaceGlWayland::GLContextFBO() const { return 0; }
 
-// |SurfaceGlDelegate|
-void* SurfaceGlWayland::GlProcResolver(const char* name) const override {
+void* SurfaceGlWayland::GlProcResolver(const char* name) const {
   return context_->GlProcResolver(name);
 }
 
