@@ -29,7 +29,9 @@ NativeWindowDrm::NativeWindowDrm(const char* deviceFilename) {
   }
 
   if (!drmIsMaster(drm_device_)) {
-    LINUXES_LOG(ERROR) << "Failed to become a DRM master";
+    LINUXES_LOG(ERROR)
+        << "Couldn't become the DRM master. Please confirm if another display "
+           "backend such as X11 and Wayland is not running.";
     return;
   }
 
