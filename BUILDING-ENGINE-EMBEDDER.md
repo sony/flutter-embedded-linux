@@ -120,3 +120,11 @@ $ ninja -C out/host_release
 ```Shell
 $ sudo cp ./out/linux_{your selected target and mode}/libflutter_engine.so /usr/lib
 ```
+
+### Supplement
+
+You need to install `libflutter_engine.so` in `/usr/lib` to build. But you can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
+
+```Shell
+LD_LIBRARY_PATH=<path_to_engine> ./flutter-client ./sample/build/linux/x64/debug/bundle
+```

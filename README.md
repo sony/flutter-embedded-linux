@@ -36,7 +36,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
-| [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | See: [#9](https://github.com/sony/flutter-embedded-linux/issues/9) |
+| [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | :heavy_check_mark: ([#9](https://github.com/sony/flutter-embedded-linux/issues/9)) |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
 | [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
@@ -68,14 +68,15 @@ You need to install the following dependent libraries to build and run. Here int
 - OpenGL ES (>=2.0)
 
 ```Shell
-$ sudo apt install clang build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
+$ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
 #### Only when you use Wayland backend
 - libwayland
+- wayland-protocols
 
 ```Shell
-$ sudo apt install libwayland-dev
+$ sudo apt install libwayland-dev wayland-protocols
 ```
 
 #### Only when you use weston desktop-shell
@@ -96,24 +97,24 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
-#### Install Flutter core embedder library
+#### Install Flutter Engine library
 
-This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` to `/usr/lib`. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
+This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
 
 Or you can download a specific pre-built Flutter Engine from Google's infra by the following steps, but it's limited to **debug mode** and **x64** targets.
 
-[Step1] Check the version (SHA) of the channel you want to use.
+Step 1) Check the version (SHA) of the channel you want to use.
 - [master channel](https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version)
 - [dev channel](https://raw.githubusercontent.com/flutter/flutter/dev/bin/internal/engine.version)
 - [beta channel](https://raw.githubusercontent.com/flutter/flutter/beta/bin/internal/engine.version)
 - [stable channel](https://raw.githubusercontent.com/flutter/flutter/stable/bin/internal/engine.version)
 
-[Step2] Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
+Step 2) Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
 ```Shell
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
 ```
 
-[Step3] Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets.
+Step 3) Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets. 
 ```Shell
 $ unzip ./linux-x64-embedder
 $ sudo cp ./libflutter_engine.so /usr/lib
@@ -205,6 +206,14 @@ Wayland compositor (weston) must be running before running the program.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
+```
+
+#### Supplement
+
+You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
+
+```Shell
+LD_LIBRARY_PATH=<path_to_engine> ./flutter-client ./sample/build/linux/x64/debug/bundle
 ```
 
 #### Run with DRM backend

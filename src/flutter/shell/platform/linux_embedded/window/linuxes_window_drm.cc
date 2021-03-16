@@ -13,8 +13,10 @@
 
 namespace flutter {
 
+namespace {
 static constexpr char kFlutterDrmDeviceEnvironmentKey[] = "FLUTTER_DRM_DEVICE";
 static constexpr char kDrmDeviceDefaultFilename[] = "/dev/dri/card0";
+}  // namespace
 
 const libinput_interface LinuxesWindowDrm::kLibinputInterface = {
     .open_restricted = [](const char* path, int flags, void* user_data) -> int {

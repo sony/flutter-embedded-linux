@@ -15,14 +15,11 @@
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/context_egl_wayland.h"
 
-static constexpr char kWlCompositor[] = "wl_compositor";
-static constexpr char kWlShell[] = "wl_shell";
-static constexpr char kWlSeat[] = "wl_seat";
-static constexpr char kWlOutput[] = "wl_output";
-static constexpr char kWlShm[] = "wl_shm";
+namespace flutter {
+
+namespace {
 static constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 static constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
-static constexpr char kWlDataDeviceManager[] = "wl_data_device_manager";
 
 static constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
 static constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
@@ -40,8 +37,7 @@ static constexpr char kWlCursorThemeWatch[] = "watch";
 static constexpr char kCursorNameNone[] = "none";
 
 static constexpr char kClipboardMimeTypeText[] = "text/plain";
-
-namespace flutter {
+}  // namespace
 
 const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
     .global =
@@ -57,19 +53,16 @@ const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
         },
 };
 
-const wl_shell_surface_listener LinuxesWindowWayland::kWlShellSurfaceListener =
-    {
-        .ping = [](void* data, struct wl_shell_surface* wl_shell_surface,
-                   uint32_t serial) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
-          wl_shell_surface_pong(self->wl_shell_surface_, serial);
+const xdg_wm_base_listener LinuxesWindowWayland::kXdgWmBaseListener = {
+    .ping = [](void* data, xdg_wm_base* xdg_wm_base,
+               uint32_t serial) { xdg_wm_base_pong(xdg_wm_base, serial); },
+};
+
+const xdg_surface_listener LinuxesWindowWayland::kXdgSurfaceListener = {
+    .configure =
+        [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
+          xdg_surface_ack_configure(xdg_surface, serial);
         },
-        .configure = [](void* data, struct wl_shell_surface* wl_shell_surface,
-                        uint32_t edges, int32_t width, int32_t height) -> void {
-          LINUXES_LOG(ERROR) << "todo: Not supprpoted now.";
-        },
-        .popup_done = [](void* data,
-                         struct wl_shell_surface* wl_shell_surface) -> void {},
 };
 
 const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
@@ -570,14 +563,44 @@ LinuxesWindowWayland::~LinuxesWindowWayland() {
     wl_data_device_manager_ = nullptr;
   }
 
+  if (wl_pointer_) {
+    wl_pointer_destroy(wl_pointer_);
+    wl_pointer_ = nullptr;
+  }
+
+  if (wl_touch_) {
+    wl_touch_destroy(wl_touch_);
+    wl_touch_ = nullptr;
+  }
+
+  if (wl_keyboard_) {
+    wl_keyboard_destroy(wl_keyboard_);
+    wl_keyboard_ = nullptr;
+  }
+
+  if (wl_seat_) {
+    wl_seat_destroy(wl_seat_);
+    wl_seat_ = nullptr;
+  }
+
+  if (wl_output_) {
+    wl_output_destroy(wl_output_);
+    wl_output_ = nullptr;
+  }
+
   if (wl_shm_) {
     wl_shm_destroy(wl_shm_);
     wl_shm_ = nullptr;
   }
 
-  if (wl_shell_) {
-    wl_shell_destroy(wl_shell_);
-    wl_shell_ = nullptr;
+  if (xdg_toplevel_) {
+    xdg_toplevel_destroy(xdg_toplevel_);
+    xdg_toplevel_ = nullptr;
+  }
+
+  if (xdg_wm_base_) {
+    xdg_wm_base_destroy(xdg_wm_base_);
+    xdg_wm_base_ = nullptr;
   }
 
   if (wl_compositor_) {
@@ -623,8 +646,18 @@ bool LinuxesWindowWayland::DispatchEvent() {
 }
 
 bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
-  if (!display_valid_ || !wl_compositor_ || !wl_shell_) {
-    LINUXES_LOG(ERROR) << "Invalid compositor and shell.";
+  if (!display_valid_) {
+    LINUXES_LOG(ERROR) << "Wayland display is invalid.";
+    return false;
+  }
+
+  if (!wl_compositor_) {
+    LINUXES_LOG(ERROR) << "Wl_compositor is invalid";
+    return false;
+  }
+
+  if (!xdg_wm_base_) {
+    LINUXES_LOG(ERROR) << "Xdg-shell is invalid";
     return false;
   }
 
@@ -647,16 +680,16 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   native_window_ =
       std::make_unique<NativeWindowWayland>(wl_compositor_, width, height);
 
-  wl_shell_surface_ =
-      wl_shell_get_shell_surface(wl_shell_, native_window_->Surface());
-  if (!wl_shell_surface_) {
-    LINUXES_LOG(ERROR) << "Failed to get the shell surface.";
+  xdg_surface_ =
+      xdg_wm_base_get_xdg_surface(xdg_wm_base_, native_window_->Surface());
+  if (!xdg_surface_) {
+    LINUXES_LOG(ERROR) << "Failed to get the xdg surface.";
     return false;
   }
-  wl_shell_surface_add_listener(wl_shell_surface_, &kWlShellSurfaceListener,
-                                this);
-  wl_shell_surface_set_title(wl_shell_surface_, "Flutter");
-  wl_shell_surface_set_toplevel(wl_shell_surface_);
+  xdg_surface_add_listener(xdg_surface_, &kXdgSurfaceListener, this);
+  xdg_toplevel_ = xdg_surface_get_toplevel(xdg_surface_);
+  xdg_toplevel_set_title(xdg_toplevel_, "Flutter");
+  wl_surface_commit(native_window_->Surface());
 
   render_surface_ =
       std::make_unique<SurfaceGlWayland>(std::make_unique<ContextEglWayland>(
@@ -678,9 +711,9 @@ void LinuxesWindowWayland::DestroyRenderSurface() {
     native_window_ = nullptr;
   }
 
-  if (wl_shell_surface_) {
-    wl_shell_surface_destroy(wl_shell_surface_);
-    wl_shell_surface_ = nullptr;
+  if (xdg_surface_) {
+    xdg_surface_destroy(xdg_surface_);
+    xdg_surface_ = nullptr;
   }
 
   if (wl_cursor_surface_) {
@@ -798,19 +831,20 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
                                              uint32_t name,
                                              const char* interface,
                                              uint32_t version) {
-  if (!strcmp(interface, kWlCompositor)) {
+  if (!strcmp(interface, wl_compositor_interface.name)) {
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
         wl_registry_bind(wl_registry, name, &wl_compositor_interface, 1));
     return;
   }
 
-  if (!strcmp(interface, kWlShell)) {
-    wl_shell_ = static_cast<decltype(wl_shell_)>(
-        wl_registry_bind(wl_registry, name, &wl_shell_interface, 1));
+  if (!strcmp(interface, xdg_wm_base_interface.name)) {
+    xdg_wm_base_ = static_cast<decltype(xdg_wm_base_)>(
+        wl_registry_bind(wl_registry, name, &xdg_wm_base_interface, 1));
+    xdg_wm_base_add_listener(xdg_wm_base_, &kXdgWmBaseListener, this);
     return;
   }
 
-  if (!strcmp(interface, kWlSeat)) {
+  if (!strcmp(interface, wl_seat_interface.name)) {
     wl_seat_ = static_cast<decltype(wl_seat_)>(
         wl_registry_bind(wl_registry, name, &wl_seat_interface, 1));
     wl_seat_add_listener(wl_seat_, &kWlSeatListener, this);
@@ -828,13 +862,13 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
   weston_desktop_shell_ = nullptr;
 #endif
 
-  if (!strcmp(interface, kWlOutput)) {
+  if (!strcmp(interface, wl_output_interface.name)) {
     wl_output_ = static_cast<decltype(wl_output_)>(
         wl_registry_bind(wl_registry, name, &wl_output_interface, 1));
     wl_output_add_listener(wl_output_, &kWlOutputListener, this);
   }
 
-  if (!strcmp(interface, kWlShm)) {
+  if (!strcmp(interface, wl_shm_interface.name)) {
     if (show_cursor_) {
       wl_shm_ = static_cast<decltype(wl_shm_)>(
           wl_registry_bind(wl_registry, name, &wl_shm_interface, 1));
@@ -865,7 +899,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
   }
 #endif
 
-  if (!strcmp(interface, kWlDataDeviceManager)) {
+  if (!strcmp(interface, wl_data_device_manager_interface.name)) {
     // Save the version of wl_data_device_manager because the release method of
     // wl_data_device differs depending on it. Since wl_data_device_manager has
     // been released up to version 3, set the upper limit to 3.

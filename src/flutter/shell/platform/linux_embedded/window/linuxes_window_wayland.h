@@ -9,6 +9,7 @@
 #include <wayland-cursor.h>
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.h"
@@ -19,6 +20,7 @@
 extern "C" {
 #include "wayland/protocol/text-input-unstable-v1-client-protocol.h"
 #include "wayland/protocol/weston-desktop-shell-client-protocol.h"
+#include "wayland/protocol/xdg-shell-client-protocol.h"
 }
 
 namespace flutter {
@@ -82,7 +84,8 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   wl_cursor* GetWlCursor(const std::string& cursor_name);
 
   static const wl_registry_listener kWlRegistryListener;
-  static const wl_shell_surface_listener kWlShellSurfaceListener;
+  static const xdg_wm_base_listener kXdgWmBaseListener;
+  static const xdg_surface_listener kXdgSurfaceListener;
   static const wl_seat_listener kWlSeatListener;
   static const wl_pointer_listener kWlPointerListener;
   static const wl_touch_listener kWlTouchListener;
@@ -104,21 +107,21 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   wl_display* wl_display_;
   wl_registry* wl_registry_;
   wl_compositor* wl_compositor_;
-  wl_shell* wl_shell_;
+  xdg_wm_base* xdg_wm_base_;
+  xdg_surface* xdg_surface_;
+  xdg_toplevel* xdg_toplevel_;
   wl_seat* wl_seat_;
-  wl_shell_surface* wl_shell_surface_;
   wl_output* wl_output_;
-
+  wl_shm* wl_shm_;
   wl_pointer* wl_pointer_;
   wl_touch* wl_touch_;
   wl_keyboard* wl_keyboard_;
+  wl_surface* wl_cursor_surface_;
+  wl_cursor_theme* wl_cursor_theme_;
   zwp_text_input_manager_v1* zwp_text_input_manager_v1_;
   zwp_text_input_v1* zwp_text_input_v1_;
 
   cursor_info cursor_info_;
-  wl_shm* wl_shm_;
-  wl_surface* wl_cursor_surface_;
-  wl_cursor_theme* wl_cursor_theme_;
 
   // List of cursor name and wl_cursor supported by Wayland.
   std::unordered_map<std::string, wl_cursor*> supported_wl_cursor_list_;
