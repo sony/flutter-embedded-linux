@@ -27,6 +27,12 @@ NativeWindowDrm::NativeWindowDrm(const char* deviceFilename) {
     LINUXES_LOG(ERROR) << "Couldn't open " << deviceFilename;
     return;
   }
+
+  if (!drmIsMaster(drm_device_)) {
+    LINUXES_LOG(ERROR) << "Failed to become a DRM master";
+    return;
+  }
+
   ConfigureDisplay();
 
   gbm_device_ = gbm_create_device(drm_device_);
@@ -308,7 +314,10 @@ const uint32_t* NativeWindowDrm::GetCursorData(const std::string& cursor_name) {
   }
 
   if (!cursor_data) {
-    LINUXES_LOG(ERROR) << "Unsupported cursor: " << cursor_name.c_str();
+    if (!cursor_name.empty()) {
+      LINUXES_LOG(WARNING) << "Unsupported cursor: " << cursor_name.c_str()
+                           << ", use LeftPtr cursor.";
+    }
     cursor_data = kCursorDataLeftPtr;
   }
 
