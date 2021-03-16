@@ -64,7 +64,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   static void RunLibinputEventLoop(void* data);
   static int OnLibinputEvent(sd_event_source* source, int fd, uint32_t revents,
                              void* data);
-  void ProcessLibinputEvent();
   void OnDeviceAdded(libinput_event* event);
   void OnDeviceRemoved(libinput_event* event);
   void OnKeyEvent(libinput_event* event);
