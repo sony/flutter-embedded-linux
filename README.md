@@ -29,18 +29,19 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 
 ### Tested devices
 
-| Board/SoC | Vendor | OS | Display backend | Status |
+| Board/SoC | Vendor | OS/BSP | Backend | Status |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
-| Desktop (x64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
-| Desktop (x64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
+| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) 10.0.2 | Wayland | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | :heavy_check_mark: ([#9](https://github.com/sony/flutter-embedded-linux/issues/9)) |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
-| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
-| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
+| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | Wayland | :heavy_check_mark: |
+| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | DRM | Not tested |
 | Zynq | Xilinx | - | - | Not tested |
 | [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
 
