@@ -32,7 +32,8 @@ class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
   bool SetNativeWindowResource(NativeWindow<gbm_surface, gbm_surface>* window);
 
   // |Surface|
-  bool OnScreenSurfaceResize(const size_t width, const size_t height) const;
+  bool OnScreenSurfaceResize(const size_t width, const size_t height) const override;
+
   // |Surface|
   void DestroyOnScreenContext() override;
 
