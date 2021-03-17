@@ -6,6 +6,7 @@ if(USE_DRM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_drm.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)

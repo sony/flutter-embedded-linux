@@ -28,13 +28,23 @@ jobs:
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
 
-    - name: Configure CMake
+    - name: Configure CMake for wayland client
       shell: bash
       working-directory: ${{github.workspace}}/build
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSER_PROJECT_PATH=examples/flutter-wayland-client ..
 
-    - name: Build
+    - name: Build for wayland client
       working-directory: ${{github.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Configure CMake for drm backend
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
+
+    - name: Build for drm backend
+      working-directory: ${{github.workspace}}/build
+      shell: bash
       run: cmake --build . --config $BUILD_TYPE
