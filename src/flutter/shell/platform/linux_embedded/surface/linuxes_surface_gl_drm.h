@@ -9,7 +9,6 @@
 
 #include <memory>
 
-#include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/context_egl_drm.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
@@ -21,88 +20,43 @@ namespace flutter {
 class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
                            public SurfaceGlDelegate {
  public:
-  SurfaceGlDrm(std::unique_ptr<ContextEglDrm> context)
-      : native_window_(nullptr), onscreen_surface_(nullptr) {
-    context_ = std::move(context);
-  }
-
+  SurfaceGlDrm(std::unique_ptr<ContextEglDrm> context);
   ~SurfaceGlDrm() = default;
 
   // |Surface|
-  bool IsValid() const override {
-    return offscreen_surface_ && context_->IsValid();
-  }
+  bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(
-      NativeWindow<gbm_surface, gbm_surface>* window) override {
-    native_window_ = window;
-    onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
-    if (!onscreen_surface_->IsValid()) {
-      return false;
-    }
-    return true;
-  }
+  bool SetNativeWindow(NativeWindow<gbm_surface, gbm_surface>* window) override;
 
-  bool SetNativeWindowResource(NativeWindow<gbm_surface, gbm_surface>* window) {
-    offscreen_surface_ = context_->CreateOffscreenSurface(window);
-    if (!offscreen_surface_->IsValid()) {
-      LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
-      offscreen_surface_ = nullptr;
-      return false;
-    }
-    return true;
-  }
+  bool SetNativeWindowResource(NativeWindow<gbm_surface, gbm_surface>* window);
 
   // |Surface|
-  bool OnScreenSurfaceResize(const size_t width,
-                             const size_t height) const override {
-    return native_window_->Resize(width, height);
-  }
+  bool OnScreenSurfaceResize(const size_t width, const size_t height) const override;
 
   // |Surface|
-  void DestroyOnScreenContext() override {
-    context_->ClearCurrent();
-    onscreen_surface_ = nullptr;
-  }
+  void DestroyOnScreenContext() override;
 
   // |Surface|
-  bool ResourceContextMakeCurrent() const override {
-    if (!offscreen_surface_) {
-      return false;
-    }
-    return offscreen_surface_->MakeCurrent();
-  }
+  bool ResourceContextMakeCurrent() const override;
 
   // |Surface|
-  bool ClearCurrentContext() const override { return context_->ClearCurrent(); }
+  bool ClearCurrentContext() const override;
 
   // |SurfaceGlDelegate|
-  bool GLContextMakeCurrent() const override {
-    return onscreen_surface_->MakeCurrent();
-  }
+  bool GLContextMakeCurrent() const override;
 
   // |SurfaceGlDelegate|
-  bool GLContextClearCurrent() const override {
-    return context_->ClearCurrent();
-  }
+  bool GLContextClearCurrent() const override;
 
   // |SurfaceGlDelegate|
-  bool GLContextPresent(uint32_t fbo_id) const override {
-    if (!onscreen_surface_->SwapBuffers()) {
-      return false;
-    }
-    static_cast<NativeWindowDrm*>(native_window_)->SwapBuffer();
-    return true;
-  }
+  bool GLContextPresent(uint32_t fbo_id) const override;
 
   // |SurfaceGlDelegate|
-  uint32_t GLContextFBO() const override { return 0; }
+  uint32_t GLContextFBO() const override;
 
   // |SurfaceGlDelegate|
-  void* GlProcResolver(const char* name) const override {
-    return context_->GlProcResolver(name);
-  }
+  void* GlProcResolver(const char* name) const override;
 
  private:
   std::unique_ptr<ContextEglDrm> context_;

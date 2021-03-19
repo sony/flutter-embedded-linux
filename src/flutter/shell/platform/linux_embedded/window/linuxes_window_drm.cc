@@ -195,53 +195,44 @@ int LinuxesWindowDrm::OnLibinputEvent(sd_event_source* source, int fd,
 
   auto previous_pointer_x = self->pointer_x_;
   auto previous_pointer_y = self->pointer_y_;
-  self->ProcessLibinputEvent();
-  if (self->show_cursor_ && ((self->pointer_x_ != previous_pointer_x) ||
-                             (self->pointer_y_ != previous_pointer_y))) {
-    self->native_window_->MoveCursor(self->pointer_x_, self->pointer_y_);
-  }
 
-  return 0;
-}
-
-void LinuxesWindowDrm::ProcessLibinputEvent() {
-  while (libinput_next_event_type(libinput_) != LIBINPUT_EVENT_NONE) {
-    auto event = libinput_get_event(libinput_);
+  while (libinput_next_event_type(self->libinput_) != LIBINPUT_EVENT_NONE) {
+    auto event = libinput_get_event(self->libinput_);
     auto event_type = libinput_event_get_type(event);
 
     switch (event_type) {
       case LIBINPUT_EVENT_DEVICE_ADDED:
-        OnDeviceAdded(event);
+        self->OnDeviceAdded(event);
         break;
       case LIBINPUT_EVENT_DEVICE_REMOVED:
-        OnDeviceRemoved(event);
+        self->OnDeviceRemoved(event);
         break;
       case LIBINPUT_EVENT_KEYBOARD_KEY:
-        OnKeyEvent(event);
+        self->OnKeyEvent(event);
         break;
       case LIBINPUT_EVENT_POINTER_MOTION:
-        OnPointerMotion(event);
+        self->OnPointerMotion(event);
         break;
       case LIBINPUT_EVENT_POINTER_MOTION_ABSOLUTE:
-        OnPointerMotionAbsolute(event);
+        self->OnPointerMotionAbsolute(event);
         break;
       case LIBINPUT_EVENT_POINTER_BUTTON:
-        OnPointerButton(event);
+        self->OnPointerButton(event);
         break;
       case LIBINPUT_EVENT_POINTER_AXIS:
-        OnPointerAxis(event);
+        self->OnPointerAxis(event);
         break;
       case LIBINPUT_EVENT_TOUCH_DOWN:
-        OnTouchDown(event);
+        self->OnTouchDown(event);
         break;
       case LIBINPUT_EVENT_TOUCH_UP:
-        OnTouchUp(event);
+        self->OnTouchUp(event);
         break;
       case LIBINPUT_EVENT_TOUCH_MOTION:
-        OnTouchMotion(event);
+        self->OnTouchMotion(event);
         break;
       case LIBINPUT_EVENT_TOUCH_CANCEL:
-        OnTouchCancel(event);
+        self->OnTouchCancel(event);
         break;
       case LIBINPUT_EVENT_TOUCH_FRAME:
         // do nothing.
@@ -251,6 +242,13 @@ void LinuxesWindowDrm::ProcessLibinputEvent() {
     }
     libinput_event_destroy(event);
   }
+
+  if (self->show_cursor_ && ((self->pointer_x_ != previous_pointer_x) ||
+                             (self->pointer_y_ != previous_pointer_y))) {
+    self->native_window_->MoveCursor(self->pointer_x_, self->pointer_y_);
+  }
+
+  return 0;
 }
 
 void LinuxesWindowDrm::OnDeviceAdded(libinput_event* event) {
