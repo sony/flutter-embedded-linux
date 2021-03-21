@@ -43,15 +43,13 @@ NativeWindowDrm::NativeWindowDrm(const char* deviceFilename) {
     return;
   }
 
-  surface_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
-                                drm_mode_info_.vdisplay, GBM_BO_FORMAT_ARGB8888,
-                                GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
-  if (!surface_) {
-    LINUXES_LOG(ERROR) << "Failed to create the compositor surface.";
+  window_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
+                               drm_mode_info_.vdisplay, GBM_BO_FORMAT_ARGB8888,
+                               GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+  if (!window_) {
+    LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
     return;
   }
-
-  window_ = surface_;
 
   valid_ = true;
 }
@@ -75,9 +73,9 @@ NativeWindowDrm::~NativeWindowDrm() {
 
   if (gbm_previous_bo_) {
     drmModeRmFB(drm_device_, gbm_previous_fb_);
-    gbm_surface_release_buffer(surface_, gbm_previous_bo_);
-    gbm_surface_destroy(surface_);
-    surface_ = nullptr;
+    gbm_surface_release_buffer(window_, gbm_previous_bo_);
+    gbm_surface_destroy(window_);
+    window_ = nullptr;
   }
 
   if (gbm_device_) {
@@ -100,7 +98,7 @@ bool NativeWindowDrm::Resize(const size_t width, const size_t height) const {
 }
 
 void NativeWindowDrm::SwapBuffer() {
-  auto* bo = gbm_surface_lock_front_buffer(surface_);
+  auto* bo = gbm_surface_lock_front_buffer(window_);
   auto width = gbm_bo_get_width(bo);
   auto height = gbm_bo_get_height(bo);
   auto handle = gbm_bo_get_handle(bo).u32;
@@ -119,7 +117,7 @@ void NativeWindowDrm::SwapBuffer() {
 
   if (gbm_previous_bo_) {
     drmModeRmFB(drm_device_, gbm_previous_fb_);
-    gbm_surface_release_buffer(surface_, gbm_previous_bo_);
+    gbm_surface_release_buffer(window_, gbm_previous_bo_);
   }
   gbm_previous_bo_ = bo;
   gbm_previous_fb_ = fb;
