@@ -20,7 +20,9 @@ class NativeWindow {
   virtual bool Resize(const size_t width, const size_t height) const = 0;
 
  protected:
+  // Specifies the native winodw (NativeWindowType)
   W* window_ = nullptr;
+  
   bool valid_ = false;
 };
 
