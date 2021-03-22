@@ -89,7 +89,8 @@ bool LinuxesWindowDrm::IsValid() const {
 }
 
 bool LinuxesWindowDrm::DispatchEvent() {
-  sd_event_run(libinput_event_loop_, -1);
+  constexpr uint64_t kMaxWaitTime = 0;
+  sd_event_run(libinput_event_loop_, kMaxWaitTime);
   return true;
 }
 
