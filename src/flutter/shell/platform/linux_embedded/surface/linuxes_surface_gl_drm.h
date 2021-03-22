@@ -17,7 +17,7 @@
 
 namespace flutter {
 
-class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
+class SurfaceGlDrm final : public Surface<gbm_surface>,
                            public SurfaceGlDelegate {
  public:
   SurfaceGlDrm(std::unique_ptr<ContextEglDrm> context);
@@ -27,12 +27,13 @@ class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
   bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<gbm_surface, gbm_surface>* window) override;
+  bool SetNativeWindow(NativeWindow<gbm_surface>* window) override;
 
-  bool SetNativeWindowResource(NativeWindow<gbm_surface, gbm_surface>* window);
+  bool SetNativeWindowResource(NativeWindow<gbm_surface>* window);
 
   // |Surface|
-  bool OnScreenSurfaceResize(const size_t width, const size_t height) const override;
+  bool OnScreenSurfaceResize(const size_t width,
+                             const size_t height) const override;
 
   // |Surface|
   void DestroyOnScreenContext() override;
@@ -60,7 +61,7 @@ class SurfaceGlDrm final : public Surface<gbm_surface, gbm_surface>,
 
  private:
   std::unique_ptr<ContextEglDrm> context_;
-  NativeWindow<gbm_surface, gbm_surface>* native_window_;
+  NativeWindow<gbm_surface>* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

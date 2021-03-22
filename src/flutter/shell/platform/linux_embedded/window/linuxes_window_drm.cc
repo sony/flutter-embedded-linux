@@ -70,15 +70,10 @@ LinuxesWindowDrm::LinuxesWindowDrm(FlutterWindowMode window_mode, int32_t width,
     libinput_event_loop_ = sd_event_unref(libinput_event_loop_);
     return;
   }
-
-  std::thread thread(RunLibinputEventLoop, this);
-  thread.swap(thread_);
 }
 
 LinuxesWindowDrm::~LinuxesWindowDrm() {
   if (libinput_event_loop_) {
-    sd_event_exit(libinput_event_loop_, 0);
-    thread_.join();
     sd_event_unref(libinput_event_loop_);
   }
   libinput_unref(libinput_);
@@ -94,7 +89,8 @@ bool LinuxesWindowDrm::IsValid() const {
 }
 
 bool LinuxesWindowDrm::DispatchEvent() {
-  // do nothing.
+  constexpr uint64_t kMaxWaitTime = 0;
+  sd_event_run(libinput_event_loop_, kMaxWaitTime);
   return true;
 }
 
@@ -175,12 +171,6 @@ std::string LinuxesWindowDrm::GetClipboardData() { return clipboard_data_; }
 
 void LinuxesWindowDrm::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
-}
-
-// static
-void LinuxesWindowDrm::RunLibinputEventLoop(void* data) {
-  auto self = reinterpret_cast<LinuxesWindowDrm*>(data);
-  sd_event_loop(self->libinput_event_loop_);
 }
 
 // static

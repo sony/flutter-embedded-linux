@@ -11,7 +11,7 @@
 
 namespace flutter {
 
-class NativeWindowWayland : public NativeWindow<wl_egl_window, wl_surface> {
+class NativeWindowWayland : public NativeWindow<wl_egl_window> {
  public:
   NativeWindowWayland(wl_compositor* compositor, const size_t width,
                       const size_t height);
@@ -19,6 +19,11 @@ class NativeWindowWayland : public NativeWindow<wl_egl_window, wl_surface> {
 
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) const override;
+
+  wl_surface* Surface() const { return surface_; }
+
+ private:
+  wl_surface* surface_ = nullptr;
 };
 
 }  // namespace flutter

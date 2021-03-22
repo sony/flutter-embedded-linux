@@ -17,7 +17,7 @@
 
 namespace flutter {
 
-template <typename D, typename W, typename S>
+template <typename D, typename W>
 class ContextEgl {
  public:
   ContextEgl(std::unique_ptr<EnvironmentEgl<D>> environment)
@@ -72,7 +72,7 @@ class ContextEgl {
   ~ContextEgl() = default;
 
   std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
-      NativeWindow<W, S>* window) const {
+      NativeWindow<W>* window) const {
     const EGLint attribs[] = {EGL_NONE};
     EGLSurface surface = eglCreateWindowSurface(
         environment_->Display(), config_, window->Window(), attribs);
@@ -85,7 +85,7 @@ class ContextEgl {
   }
 
   std::unique_ptr<LinuxesEGLSurface> CreateOffscreenSurface(
-      NativeWindow<W, S>* window_resource) const {
+      NativeWindow<W>* window_resource) const {
     // eglCreatePbufferSurface isn't supported on both Wayland and GBM.
     // Therefore, we neet to create a dummy wl_egl_window when we use Wayland.
     const EGLint attribs[] = {EGL_NONE};

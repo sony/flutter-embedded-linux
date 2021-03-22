@@ -17,8 +17,7 @@ bool SurfaceGlDrm::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
-bool SurfaceGlDrm::SetNativeWindow(
-    NativeWindow<gbm_surface, gbm_surface>* window) {
+bool SurfaceGlDrm::SetNativeWindow(NativeWindow<gbm_surface>* window) {
   native_window_ = window;
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
   if (!onscreen_surface_->IsValid()) {
@@ -27,8 +26,7 @@ bool SurfaceGlDrm::SetNativeWindow(
   return true;
 }
 
-bool SurfaceGlDrm::SetNativeWindowResource(
-    NativeWindow<gbm_surface, gbm_surface>* window) {
+bool SurfaceGlDrm::SetNativeWindowResource(NativeWindow<gbm_surface>* window) {
   offscreen_surface_ = context_->CreateOffscreenSurface(window);
   if (!offscreen_surface_->IsValid()) {
     LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";

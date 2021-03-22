@@ -61,7 +61,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   void SetClipboardData(const std::string& data) override;
 
  private:
-  static void RunLibinputEventLoop(void* data);
   static int OnLibinputEvent(sd_event_source* source, int fd, uint32_t revents,
                              void* data);
   void OnDeviceAdded(libinput_event* event);
@@ -92,7 +91,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
   sd_event* libinput_event_loop_;
   libinput* libinput_;
-  std::thread thread_;
 };
 
 }  // namespace flutter
