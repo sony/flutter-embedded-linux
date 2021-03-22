@@ -7,7 +7,7 @@
 
 namespace flutter {
 
-template <typename W, typename S>
+template <typename W>
 class NativeWindow {
  public:
   NativeWindow() = default;
@@ -17,13 +17,12 @@ class NativeWindow {
 
   W* Window() const { return window_; }
 
-  S* Surface() const { return surface_; }
-
   virtual bool Resize(const size_t width, const size_t height) const = 0;
 
  protected:
+  // Specifies the native winodw (NativeWindowType)
   W* window_ = nullptr;
-  S* surface_ = nullptr;
+  
   bool valid_ = false;
 };
 

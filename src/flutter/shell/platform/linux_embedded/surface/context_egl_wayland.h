@@ -11,7 +11,7 @@
 
 namespace flutter {
 
-using ContextEglWayland = ContextEgl<wl_display, wl_egl_window, wl_surface>;
+using ContextEglWayland = ContextEgl<wl_display, wl_egl_window>;
 
 }  // namespace flutter
 

@@ -19,8 +19,7 @@ bool SurfaceGlWayland::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
-bool SurfaceGlWayland::SetNativeWindow(
-    NativeWindow<wl_egl_window, wl_surface>* window) {
+bool SurfaceGlWayland::SetNativeWindow(NativeWindow<wl_egl_window>* window) {
   native_window_ = window;
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
   if (!onscreen_surface_->IsValid()) {
@@ -30,7 +29,7 @@ bool SurfaceGlWayland::SetNativeWindow(
 }
 
 bool SurfaceGlWayland::SetNativeWindowResource(
-    std::unique_ptr<NativeWindow<wl_egl_window, wl_surface>> window) {
+    std::unique_ptr<NativeWindow<wl_egl_window>> window) {
   native_window_resource_ = std::move(window);
   offscreen_surface_ =
       context_->CreateOffscreenSurface(native_window_resource_.get());
