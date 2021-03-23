@@ -46,9 +46,8 @@ NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
   xcb_flush(xcb_connection_);
 
   // Enable message when press close button.
-  auto protocols_cookie =
-      xcb_intern_atom(xcb_connection_, 1, std
-                      : strlen(kXcbWmProtocols), kXcbWmProtocols);
+  auto protocols_cookie = xcb_intern_atom(
+      xcb_connection_, 1, std::strlen(kXcbWmProtocols), kXcbWmProtocols);
   auto* protocol_reply =
       xcb_intern_atom_reply(xcb_connection_, protocols_cookie, 0);
   auto delete_cookie = xcb_intern_atom(
