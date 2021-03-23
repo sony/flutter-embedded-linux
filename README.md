@@ -99,6 +99,14 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
+#### Only when you use x11 backend
+- x11-xcb
+- xcb
+
+```Shell
+$ sudo apt install libx11-xcb-dev
+```
+
 #### Install Flutter Engine library
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
@@ -142,6 +150,17 @@ $ make
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
+$ make
+```
+
+### Build for x11 backend
+
+Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented and incomplete.
+
+```Shell
+$ mkdir build
+$ cd build
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
 $ make
 ```
 
