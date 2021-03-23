@@ -15,7 +15,7 @@
 
 namespace flutter {
 
-class NativeWindowDrm : public NativeWindow<gbm_surface, gbm_surface> {
+class NativeWindowDrm : public NativeWindow<gbm_surface> {
  public:
   NativeWindowDrm(const char* deviceFilename);
   ~NativeWindowDrm();

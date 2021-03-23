@@ -13,7 +13,7 @@
 
 namespace flutter {
 
-using ContextEglDrm = ContextEgl<gbm_device, gbm_surface, gbm_surface>;
+using ContextEglDrm = ContextEgl<gbm_device, gbm_surface>;
 
 }  // namespace flutter
 

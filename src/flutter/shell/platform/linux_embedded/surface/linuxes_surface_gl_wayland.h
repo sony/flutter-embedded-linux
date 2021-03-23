@@ -16,7 +16,7 @@
 
 namespace flutter {
 
-class SurfaceGlWayland final : public Surface<wl_egl_window, wl_surface>,
+class SurfaceGlWayland final : public Surface<wl_egl_window>,
                                public SurfaceGlDelegate {
  public:
   SurfaceGlWayland(std::unique_ptr<ContextEglWayland> context);
@@ -26,11 +26,10 @@ class SurfaceGlWayland final : public Surface<wl_egl_window, wl_surface>,
   bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(
-      NativeWindow<wl_egl_window, wl_surface>* window) override;
+  bool SetNativeWindow(NativeWindow<wl_egl_window>* window) override;
 
   bool SetNativeWindowResource(
-      std::unique_ptr<NativeWindow<wl_egl_window, wl_surface>> window);
+      std::unique_ptr<NativeWindow<wl_egl_window>> window);
 
   // |Surface|
   bool OnScreenSurfaceResize(const size_t width,
@@ -62,9 +61,8 @@ class SurfaceGlWayland final : public Surface<wl_egl_window, wl_surface>,
 
  private:
   std::unique_ptr<ContextEglWayland> context_;
-  NativeWindow<wl_egl_window, wl_surface>* native_window_;
-  std::unique_ptr<NativeWindow<wl_egl_window, wl_surface>>
-      native_window_resource_;
+  NativeWindow<wl_egl_window>* native_window_;
+  std::unique_ptr<NativeWindow<wl_egl_window>> native_window_resource_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

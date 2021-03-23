@@ -33,7 +33,8 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
-| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) 10.0.2 | Wayland | :heavy_check_mark: |
+| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | Wayland | :heavy_check_mark: |
+| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | DRM | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
@@ -74,14 +75,14 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 
 #### Only when you use Wayland backend
 - libwayland
-- wayland-protocols
+- wayland-protocols (for generating xdg-shell source files)
 
 ```Shell
 $ sudo apt install libwayland-dev wayland-protocols
 ```
 
 #### Only when you use weston desktop-shell
-- weston (>=6.0.1)
+- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
 
 ```Shell
 $ sudo apt install weston
