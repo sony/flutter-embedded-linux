@@ -200,7 +200,6 @@ void TextInputPlugin::HandleMethodCall(
   }
   // All error conditions return early, so if nothing has gone wrong indicate
   // success.
-#undef Success
   result->Success();
 }
 

@@ -7,6 +7,8 @@
 #include <X11/Xlib-xcb.h>
 #include <xcb/xcb.h>
 
+#include <cstring>
+
 #include "flutter/shell/platform/linux_embedded/logger.h"
 
 namespace flutter {
@@ -45,11 +47,12 @@ NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
 
   // Enable message when press close button.
   auto protocols_cookie =
-      xcb_intern_atom(xcb_connection_, 1, 12, kXcbWmProtocols);
+      xcb_intern_atom(xcb_connection_, 1, std
+                      : strlen(kXcbWmProtocols), kXcbWmProtocols);
   auto* protocol_reply =
       xcb_intern_atom_reply(xcb_connection_, protocols_cookie, 0);
-  auto delete_cookie =
-      xcb_intern_atom(xcb_connection_, 0, 16, kXcbWmDeleteWindow);
+  auto delete_cookie = xcb_intern_atom(
+      xcb_connection_, 0, std::strlen(kXcbWmDeleteWindow), kXcbWmDeleteWindow);
   reply_delete_ = xcb_intern_atom_reply(xcb_connection_, delete_cookie, 0);
   xcb_change_property(xcb_connection_, XCB_PROP_MODE_REPLACE, window_,
                       (*protocol_reply).atom, 4, 32, 1, &(*reply_delete_).atom);
