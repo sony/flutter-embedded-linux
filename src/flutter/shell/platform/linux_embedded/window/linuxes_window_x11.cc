@@ -32,6 +32,7 @@ LinuxesWindowX11::LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width,
 LinuxesWindowX11::~LinuxesWindowX11() {
   display_valid_ = false;
   if (display_) {
+    XSetCloseDownMode(display_, DestroyAll);
     XCloseDisplay(display_);
   }
 }
@@ -51,6 +52,8 @@ bool LinuxesWindowX11::DispatchEvent() {
   xcb_generic_event_t* event;
   while ((event = xcb_poll_for_event(connection)) != NULL) {
     switch (event->response_type & ~0x80) {
+      case XCB_CONFIGURE_NOTIFY:
+        break;
       case XCB_RESIZE_REQUEST: {
         auto resize = reinterpret_cast<xcb_resize_request_event_t*>(event);
         if (resize->width != current_width_ ||
@@ -64,18 +67,17 @@ bool LinuxesWindowX11::DispatchEvent() {
         }
         break;
       }
-      case XCB_CONFIGURE_NOTIFY:
-        break;
       case XCB_CLIENT_MESSAGE: {
         auto message = (*reinterpret_cast<xcb_client_message_event_t*>(event))
                            .data.data32[0];
-
-        // Quit main loop.
         if (message == (*native_window_->WmDeleteMessage()).atom) {
-          return false;
+          native_window_->Destroy();
         }
         break;
       }
+      case XCB_DESTROY_NOTIFY:
+        // Quit the main loop.
+        return false;
       default:
         break;
     }

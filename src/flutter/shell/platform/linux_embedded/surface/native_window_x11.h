@@ -24,6 +24,8 @@ class NativeWindowX11 : public NativeWindow<xcb_window_t> {
 
   xcb_intern_atom_reply_t* WmDeleteMessage() { return reply_delete_; }
 
+  void Destroy();
+
  private:
   xcb_connection_t* xcb_connection_ = nullptr;
   xcb_intern_atom_reply_t* reply_delete_ = nullptr;
