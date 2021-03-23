@@ -10,6 +10,18 @@
 
 #include "flutter/shell/platform/common/json_method_codec.h"
 
+// Avoids the following build error:
+// ----------------------------------------------------------------
+//  error: expected unqualified-id
+//    result->Success(document);
+//            ^
+// /usr/include/X11/X.h:350:21: note: expanded from macro 'Success'
+// #define Success            0    /* everything's okay */
+// ----------------------------------------------------------------
+#if defined(DISPLAY_BACKEND_TYPE_X11)
+#undef Success
+#endif
+
 namespace flutter {
 
 static constexpr char kChannelName[] = "flutter/textinput";
@@ -188,6 +200,7 @@ void TextInputPlugin::HandleMethodCall(
   }
   // All error conditions return early, so if nothing has gone wrong indicate
   // success.
+#undef Success
   result->Success();
 }
 
