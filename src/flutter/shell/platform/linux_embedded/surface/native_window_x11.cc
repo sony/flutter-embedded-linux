@@ -12,9 +12,9 @@
 namespace flutter {
 
 namespace {
-  static constexpr char kXcbWmProtocols[] = "WM_PROTOCOLS";
-  static constexpr char kXcbWmDeleteWindow[] = "WM_DELETE_WINDOW";
-}
+static constexpr char kXcbWmProtocols[] = "WM_PROTOCOLS";
+static constexpr char kXcbWmDeleteWindow[] = "WM_DELETE_WINDOW";
+}  // namespace
 
 NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
                                  const size_t height) {
