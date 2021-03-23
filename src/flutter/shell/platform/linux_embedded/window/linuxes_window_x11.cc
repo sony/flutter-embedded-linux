@@ -98,23 +98,6 @@ bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
           std::make_unique<EnvironmentEgl<Display>>(display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
-  /* todo!!
-    if (window_mode_ == FlutterWindowMode::kFullscreen) {
-      current_width_ = native_window_->Width();
-      current_height_ = native_window_->Height();
-      LINUXES_LOG(INFO) << "Display output resolution: " << current_width_ <<
-    "x"
-                        << current_height_;
-      if (binding_handler_delegate_) {
-        binding_handler_delegate_->OnWindowSizeChanged(current_width_,
-                                                       current_height_);
-      }
-    } else {
-      // todo: implement here.
-      LINUXES_LOG(ERROR) << "Not supported specific surface size.";
-    }
-  */
-
   return true;
 }
 
