@@ -163,6 +163,7 @@ Please edit `cmake/user_config.cmake` file.
 | Option | Description |
 | ------------- | ------------- |
 | USE_DRM | Use DRM backend instead of Wayland |
+| USE_X11 | Use X11 backend instead of Wayland |
 | DESKTOP_SHELL | Work as weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
