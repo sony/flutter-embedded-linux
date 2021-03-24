@@ -8,6 +8,12 @@ if(USE_DRM)
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
     src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc
     src/flutter/shell/platform/linux_embedded/surface/native_window_drm.cc)
+elseif(USE_X11)
+  add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
+  set(DISPLAY_BACKEND_SRC
+    src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc
+    src/flutter/shell/platform/linux_embedded/surface/native_window_x11.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)
   get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
@@ -112,6 +118,8 @@ target_include_directories(${TARGET}
     ${LIBINPUT_INCLUDE_DIRS}
     ${LIBUDEV_INCLUDE_DIRS}
     ${LIBSYSTEMD_INCLUDE_DIRS}
+    ${XCB_INCLUDE_DIRS}
+    ${X11_XCB_INCLUDE_DIRS}
     ${LIBWESTON_INCLUDE_DIRS}
     ## User libraries
     ${USER_APP_INCLUDE_DIRS}
@@ -131,6 +139,8 @@ target_link_libraries(${TARGET}
     ${LIBINPUT_LIBRARIES}
     ${LIBUDEV_LIBRARIES}
     ${LIBSYSTEMD_LIBRARIES}
+    ${XCB_LIBRARIES}
+    ${X11_XCB_LIBRARIES}
     ${LIBWESTON_LIBRARIES}
     ${FLUTTER_EMBEDDER_LIB}
     ## User libraries

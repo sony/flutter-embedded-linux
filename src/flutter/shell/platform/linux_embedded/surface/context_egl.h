@@ -86,6 +86,15 @@ class ContextEgl {
 
   std::unique_ptr<LinuxesEGLSurface> CreateOffscreenSurface(
       NativeWindow<W>* window_resource) const {
+#if defined(DISPLAY_BACKEND_TYPE_X11)
+    const EGLint attribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
+    EGLSurface surface =
+        eglCreatePbufferSurface(environment_->Display(), config_, attribs);
+    if (surface == EGL_NO_SURFACE) {
+      LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
+                           << "(" << get_egl_error_cause() << ")";
+    }
+#else
     // eglCreatePbufferSurface isn't supported on both Wayland and GBM.
     // Therefore, we neet to create a dummy wl_egl_window when we use Wayland.
     const EGLint attribs[] = {EGL_NONE};
@@ -95,6 +104,7 @@ class ContextEgl {
       LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
                            << "(" << get_egl_error_cause() << ")";
     }
+#endif
     return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
                                                resource_context_);
   }
