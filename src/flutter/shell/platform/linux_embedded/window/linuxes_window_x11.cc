@@ -194,7 +194,8 @@ void LinuxesWindowX11::HandlePointerButtonEvent(xcb_button_t button,
         flutter_button = kFlutterPointerButtonMouseForward;
         break;
       default:
-        break;
+        LINUXES_LOG(ERROR) << "Not expected button input: " << button;
+        return;
     }
     if (button_pressed) {
       binding_handler_delegate_->OnPointerDown(x, y, flutter_button);
