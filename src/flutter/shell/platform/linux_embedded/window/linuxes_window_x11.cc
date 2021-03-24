@@ -13,6 +13,14 @@
 
 namespace flutter {
 
+namespace {
+static constexpr uint8_t kButtonLeft = 1;
+static constexpr uint8_t kButtonMiddle = 2;
+static constexpr uint8_t kButtonRight = 3;
+static constexpr uint8_t kButtonBack = 4;
+static constexpr uint8_t kButtonForward = 5;
+}  // namespace
+
 LinuxesWindowX11::LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width,
                                    int32_t height, bool show_cursor) {
   window_mode_ = window_mode;
@@ -48,10 +56,37 @@ bool LinuxesWindowX11::IsValid() const {
 bool LinuxesWindowX11::DispatchEvent() {
   auto connection = native_window_->XcbConnection();
 
-  // TODO: support events such as button inputs and mouse move.
+  // TODO: support events such as keyboard input.
   xcb_generic_event_t* event;
   while ((event = xcb_poll_for_event(connection)) != NULL) {
     switch (event->response_type & ~0x80) {
+      case XCB_BUTTON_PRESS: {
+        auto* ev = reinterpret_cast<xcb_button_press_event_t*>(event);
+        constexpr bool button_pressed = true;
+        HandlePointerButtonEvent(ev->detail, button_pressed, ev->event_x,
+                                 ev->event_y);
+        break;
+      }
+      case XCB_BUTTON_RELEASE: {
+        auto* ev = reinterpret_cast<xcb_button_release_event_t*>(event);
+        constexpr bool button_pressed = false;
+        HandlePointerButtonEvent(ev->detail, button_pressed, ev->event_x,
+                                 ev->event_y);
+        break;
+      }
+      case XCB_ENTER_NOTIFY: {
+        auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
+        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        break;
+      }
+      case XCB_MOTION_NOTIFY: {
+        auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
+        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        break;
+      }
+      case XCB_LEAVE_NOTIFY:
+        binding_handler_delegate_->OnPointerLeave();
+        break;
       case XCB_CONFIGURE_NOTIFY:
         break;
       case XCB_RESIZE_REQUEST: {
@@ -135,6 +170,39 @@ std::string LinuxesWindowX11::GetClipboardData() { return clipboard_data_; }
 
 void LinuxesWindowX11::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
+}
+
+void LinuxesWindowX11::HandlePointerButtonEvent(xcb_button_t button,
+                                                bool button_pressed, int16_t x,
+                                                int16_t y) {
+  if (binding_handler_delegate_) {
+    FlutterPointerMouseButtons flutter_button;
+    switch (button) {
+      case kButtonLeft:
+        flutter_button = kFlutterPointerButtonMousePrimary;
+        break;
+      case kButtonRight:
+        flutter_button = kFlutterPointerButtonMouseSecondary;
+        break;
+      case kButtonMiddle:
+        flutter_button = kFlutterPointerButtonMouseMiddle;
+        break;
+      case kButtonBack:
+        flutter_button = kFlutterPointerButtonMouseBack;
+        break;
+      case kButtonForward:
+        flutter_button = kFlutterPointerButtonMouseForward;
+        break;
+      default:
+        LINUXES_LOG(ERROR) << "Not expected button input: " << button;
+        return;
+    }
+    if (button_pressed) {
+      binding_handler_delegate_->OnPointerDown(x, y, flutter_button);
+    } else {
+      binding_handler_delegate_->OnPointerUp(x, y, flutter_button);
+    }
+  }
 }
 
 }  // namespace flutter
