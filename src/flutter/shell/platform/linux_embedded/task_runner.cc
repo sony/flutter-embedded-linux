@@ -6,6 +6,7 @@
 
 #include <atomic>
 #include <utility>
+#include <iostream>
 
 namespace flutter {
 
@@ -85,9 +86,10 @@ std::chrono::nanoseconds TaskRunner::ProcessTasks() {
   // Calculate duration to sleep for on next iteration.
   {
     std::lock_guard<std::mutex> lock(task_queue_mutex_);
-    const auto next_wake = task_queue_.empty() ? TaskTimePoint::max()
-                                               : task_queue_.top().fire_time;
-
+    if (task_queue_.empty()) {
+      return TaskTimePoint::max().time_since_epoch();
+    }
+    const auto next_wake = task_queue_.top().fire_time;
     return std::min(next_wake - now, std::chrono::nanoseconds::max());
   }
 }
