@@ -99,6 +99,14 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
+#### Only when you use x11 backend
+- x11-xcb
+- xcb
+
+```Shell
+$ sudo apt install libx11-xcb-dev
+```
+
 #### Install Flutter Engine library
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
@@ -145,6 +153,17 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
 $ make
 ```
 
+### Build for x11 backend
+
+Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented and incomplete.
+
+```Shell
+$ mkdir build
+$ cd build
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
+$ make
+```
+
 ### Build for Wayland backend (weston desktop-shell)
 
 This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
@@ -163,6 +182,7 @@ Please edit `cmake/user_config.cmake` file.
 | Option | Description |
 | ------------- | ------------- |
 | USE_DRM | Use DRM backend instead of Wayland |
+| USE_X11 | Use X11 backend instead of Wayland |
 | DESKTOP_SHELL | Work as weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
