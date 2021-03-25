@@ -17,8 +17,10 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
   - [x] Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
   - [ ] [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices (coming soon)
+- X11 backend supoort
+  - This is for the purpose of developing Flutter apps in Linux desktops. It is not intended for use in embedded systems.
 - Always single window fullscreen
-  - You can choose always-fullscreen or flexible-screen (any size) only when you use Wayland backend
+  - You can choose always-fullscreen or flexible-screen (any size) only when you use Wayland/X11 backend
 - Keyboard, mouse and touch inputs support
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
@@ -33,6 +35,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu18.04 | X11 | :heavy_check_mark: |
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | Wayland | :heavy_check_mark: |
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | DRM | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
@@ -45,6 +48,20 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | DRM | Not tested |
 | Zynq | Xilinx | - | - | Not tested |
 | [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
+
+### Tested Wayland compositors
+| Compositor      | Status          |
+| :-------------: | :-------------: |
+| [Cage](https://www.hjdskes.nl/projects/cage/) | :o: |
+| [GlacierUX](https://wiki.merproject.org/wiki/Nemo/Glacier) | :x: |
+| [Gnome](https://www.gnome.org/) | :o: |
+| [Lomiri](https://lomiri.com/) | :o: |
+| [Phosh](https://source.puri.sm/Librem5/phosh) | :o: |
+| [Plasma Wayland](https://community.kde.org/Plasma/Wayland) | :o: |
+| [Plasma Mobile](https://www.plasma-mobile.org/) | :o: |
+| [Sway](https://swaywm.org/) | :o: |
+| [Wayfire](https://wayfire.org/) | :o: |
+| [Weston](https://gitlab.freedesktop.org/wayland/weston/-/blob/master/README.md) | :o: |
 
 ## Contributing
 **Now, we cannot accept any Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
@@ -99,6 +116,14 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
+#### Only when you use x11 backend
+- x11-xcb
+- xcb
+
+```Shell
+$ sudo apt install libx11-xcb-dev
+```
+
 #### Install Flutter Engine library
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./BUILDING-ENGINE-EMBEDDER.md)
@@ -145,7 +170,18 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
 $ make
 ```
 
-### Build for Wayland backend (weston desktop-shell)
+### Build for x11 backend
+
+Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented now.
+
+```Shell
+$ mkdir build
+$ cd build
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
+$ make
+```
+
+### Build for Wayland backend (Weston desktop-shell)
 
 This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
 
@@ -163,7 +199,8 @@ Please edit `cmake/user_config.cmake` file.
 | Option | Description |
 | ------------- | ------------- |
 | USE_DRM | Use DRM backend instead of Wayland |
-| DESKTOP_SHELL | Work as weston desktop-shell |
+| USE_X11 | Use X11 backend instead of Wayland |
+| DESKTOP_SHELL | Work as Weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
@@ -204,7 +241,7 @@ Comming soon. We are contributing to support this now. See: https://github.com/f
 
 #### Run with Wayland backend
 
-Wayland compositor (weston) must be running before running the program.
+Wayland compositor such as Weston must be running before running the program.
 
 ```Shell
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
@@ -232,13 +269,13 @@ If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a term
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
-## 5. Settings of weston.ini file (Only when you use weston desktop-shell)
+## 5. Settings of weston.ini file (Only when you use Weston desktop-shell)
 
-Sets the following parameters when this embedder works as a desktop-shell on weston. Sample file can be found [examples/config/weston.ini](./examples/config/weston.ini). See also `man weston.ini`.
+Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](./examples/config/weston.ini). See also `man weston.ini`.
 
 ### shell section
 
-Specifies the path to the binary file to start as the shell when weston starts.
+Specifies the path to the binary file to start as the shell when Weston starts.
 
 | Field | Description |
 | ------------- | ------------- |

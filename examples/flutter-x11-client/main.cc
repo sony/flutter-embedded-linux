@@ -32,10 +32,10 @@ int main(int argc, char** argv) {
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   // The Flutter instance hosted by this window.
-  int width = 640;
-  int height = 480;
+  int width = 1280;
+  int height = 720;
   auto flutter_controller = std::make_unique<flutter::FlutterViewController>(
-      flutter::FlutterViewController::ViewMode::kFullscreen, width, height,
+      flutter::FlutterViewController::ViewMode::kNormal, width, height,
       show_cursor, project);
 
   // Ensure that basic setup of the controller was successful.

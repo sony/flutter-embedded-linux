@@ -7,7 +7,7 @@
 
 namespace flutter {
 
-template <typename W>
+template <typename T>
 class NativeWindow {
  public:
   NativeWindow() = default;
@@ -15,14 +15,22 @@ class NativeWindow {
 
   bool IsValid() const { return valid_; };
 
-  W* Window() const { return window_; }
+#if defined(DISPLAY_BACKEND_TYPE_X11)
+  T Window() const { return window_; }
+#else
+  T* Window() const { return window_; }
+#endif
 
   virtual bool Resize(const size_t width, const size_t height) const = 0;
 
  protected:
   // Specifies the native winodw (NativeWindowType)
-  W* window_ = nullptr;
-  
+#if defined(DISPLAY_BACKEND_TYPE_X11)
+  T window_;
+#else
+  T* window_ = nullptr;
+#endif
+
   bool valid_ = false;
 };
 

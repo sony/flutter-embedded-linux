@@ -6,6 +6,18 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/standard_method_codec.h"
 
+// Avoids the following build error:
+// ----------------------------------------------------------------
+//  error: expected unqualified-id
+//    result->Success(document);
+//            ^
+// /usr/include/X11/X.h:350:21: note: expanded from macro 'Success'
+// #define Success            0    /* everything's okay */
+// ----------------------------------------------------------------
+#if defined(DISPLAY_BACKEND_TYPE_X11)
+#undef Success
+#endif
+
 namespace flutter {
 
 static constexpr char kChannelName[] = "flutter/mousecursor";

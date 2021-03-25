@@ -16,7 +16,7 @@ jobs:
     - name: Install libraries
       run: |
         sudo apt update
-        sudo apt install libgles2-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev wayland-protocols
+        sudo apt install libgles2-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev wayland-protocols libx11-xcb-dev
 
     - name: Install Flutter Engine library
       run: |
@@ -47,6 +47,16 @@ jobs:
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
 
     - name: Build for drm backend
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Configure CMake for x11 backend
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
+
+    - name: Build for x11 backend
       working-directory: ${{github.workspace}}/build
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
