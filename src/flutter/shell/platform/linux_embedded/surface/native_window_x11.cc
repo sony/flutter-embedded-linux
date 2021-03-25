@@ -40,7 +40,8 @@ NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
       XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_RESIZE_REDIRECT |
       XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_BUTTON_PRESS |
       XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION |
-      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW};
+      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW |
+      XCB_EVENT_MASK_KEY_PRESS | XCB_EVENT_MASK_KEY_RELEASE};
   xcb_create_window(xcb_connection_, XCB_COPY_FROM_PARENT, window_,
                     screen_iterator->root, 0, 0, width, height, 0,
                     XCB_WINDOW_CLASS_INPUT_OUTPUT, screen_iterator->root_visual,

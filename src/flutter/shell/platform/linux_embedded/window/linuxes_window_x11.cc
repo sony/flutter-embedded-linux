@@ -76,17 +76,39 @@ bool LinuxesWindowX11::DispatchEvent() {
       }
       case XCB_ENTER_NOTIFY: {
         auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        }
         break;
       }
       case XCB_MOTION_NOTIFY: {
         auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        }
         break;
       }
       case XCB_LEAVE_NOTIFY:
-        binding_handler_delegate_->OnPointerLeave();
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerLeave();
+        }
         break;
+      case XCB_KEY_PRESS: {
+        auto* ev = reinterpret_cast<xcb_key_press_event_t*>(event);
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnKey(ev->detail,
+                                           FLUTTER_LINUXES_BUTTON_DOWN);
+        }
+        break;
+      }
+      case XCB_KEY_RELEASE: {
+        auto* ev = reinterpret_cast<xcb_key_release_event_t*>(event);
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnKey(ev->detail,
+                                           FLUTTER_LINUXES_BUTTON_UP);
+        }
+        break;
+      }
       case XCB_CONFIGURE_NOTIFY:
         break;
       case XCB_RESIZE_REQUEST: {
