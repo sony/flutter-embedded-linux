@@ -75,17 +75,23 @@ bool LinuxesWindowX11::DispatchEvent() {
         break;
       }
       case XCB_ENTER_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        if (binding_handler_delegate_) {
+          auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
+          binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        }
         break;
       }
       case XCB_MOTION_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        if (binding_handler_delegate_) {
+          auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
+          binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+        }
         break;
       }
       case XCB_LEAVE_NOTIFY:
-        binding_handler_delegate_->OnPointerLeave();
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerLeave();
+        }
         break;
       case XCB_CONFIGURE_NOTIFY:
         break;
