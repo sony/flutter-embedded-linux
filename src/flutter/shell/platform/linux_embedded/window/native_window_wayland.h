@@ -7,7 +7,7 @@
 
 #include <wayland-egl.h>
 
-#include "flutter/shell/platform/linux_embedded/surface/native_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
