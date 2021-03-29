@@ -74,7 +74,7 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 
 ## 1. Install libraries
 
-You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Ubuntu OS and x64 hosts.
+You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
 
 #### Mandatory
 
@@ -252,7 +252,16 @@ $ ./flutter-client ./sample/build/linux/x64/release/bundle
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
-LD_LIBRARY_PATH=<path_to_engine> ./flutter-client ./sample/build/linux/x64/debug/bundle
+$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client <path_to_flutter_project_bundle>
+
+# e.g. Run in debug mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client ./sample/build/linux/x64/debug/bundle
+
+# e.g. Run in profile mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/build/linux/x64/profile/bundle
+
+# e.g. Run in release mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
 #### Run with DRM backend
@@ -261,7 +270,7 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
