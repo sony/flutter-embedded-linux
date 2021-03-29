@@ -5,6 +5,7 @@
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 

@@ -6,14 +6,14 @@ if(USE_DRM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_drm.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc)
 elseif(USE_X11)
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_x11.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)
   get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
@@ -37,8 +37,8 @@ else()
   set(DISPLAY_BACKEND_SRC
     ${_code}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_wayland.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc)
 endif()
 
 # desktop-shell for weston.
