@@ -62,6 +62,13 @@ if(USE_GLES3)
   add_definitions(-DUSE_GLES3)
 endif()
 
+# Flutter embedder runtime mode.
+if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+  add_definitions(
+    -DFLUTTER_RELEASE # release mode
+  )
+endif()
+
 # cmake script for developers.
 include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
 
