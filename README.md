@@ -247,6 +247,9 @@ Wayland compositor such as Weston must be running before running the program.
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
+### Debugging
+You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
+
 #### Supplement
 
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
