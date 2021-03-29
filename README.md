@@ -158,7 +158,7 @@ There are sample projects in [`examples`](./examples) directory. You can also co
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-wayland-client ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for DRM backend
@@ -167,7 +167,7 @@ $ make
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for x11 backend
@@ -178,7 +178,7 @@ Basically, the x11 backend is just only for debugging and developing Flutter app
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for Wayland backend (Weston desktop-shell)
@@ -189,7 +189,7 @@ This binary will run as a desktop-shell by setting `weston.ini` when Weston star
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
-$ make
+$ cmake --build .
 ```
 
 ### User configuration parameters (CMAKE options)
