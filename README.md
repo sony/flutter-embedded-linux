@@ -275,11 +275,11 @@ $ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
-### Debugging
-You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
-
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
+
+### Debugging
+You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
 
 ## 5. Settings of weston.ini file (Only when you use Weston desktop-shell)
 
