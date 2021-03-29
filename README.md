@@ -247,9 +247,6 @@ Wayland compositor such as Weston must be running before running the program.
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-### Debugging
-You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
-
 #### Supplement
 
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
@@ -277,6 +274,9 @@ $ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
+
+### Debugging
+You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
 
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
