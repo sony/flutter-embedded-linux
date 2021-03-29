@@ -28,7 +28,7 @@ jobs:
         curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
         ls
         unzip linux-x64-embedder
-        sudo mv libflutter_engine.so ./build/
+        mv libflutter_engine.so ${{github.workspace}}/build
 
     - name: Configure CMake for wayland client
       shell: bash
