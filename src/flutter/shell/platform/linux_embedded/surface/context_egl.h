@@ -13,7 +13,7 @@
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
-#include "flutter/shell/platform/linux_embedded/surface/native_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
