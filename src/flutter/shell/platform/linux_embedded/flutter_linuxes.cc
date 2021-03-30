@@ -19,6 +19,8 @@
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM)
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
+#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
+#include "flutter/shell/platform/linux_embedded/window/linuxes_window_eglstream.h"
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_x11.h"
 #else
@@ -75,6 +77,10 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM)
       std::make_unique<flutter::LinuxesWindowDrm>(
+          view_properties.windw_display_mode, view_properties.width,
+          view_properties.height, view_properties.show_cursor);
+#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
+      std::make_unique<flutter::LinuxesWindowEglstream>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
