@@ -144,7 +144,7 @@ $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/li
 Step 3) Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets. 
 ```Shell
 $ unzip ./linux-x64-embedder
-$ sudo cp ./libflutter_engine.so /usr/lib
+$ sudo cp ./libflutter_engine.so <path_to_cmake_build_directory>
 ```
 
 ## 2. Examples
