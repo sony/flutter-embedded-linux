@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/surface/native_window_x11.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_x11.h"
 
 #include <X11/Xlib-xcb.h>
 #include <xcb/xcb.h>

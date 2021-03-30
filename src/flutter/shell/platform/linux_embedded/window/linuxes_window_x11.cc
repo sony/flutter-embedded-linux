@@ -75,15 +75,15 @@ bool LinuxesWindowX11::DispatchEvent() {
         break;
       }
       case XCB_ENTER_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
         if (binding_handler_delegate_) {
+          auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
           binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
         }
         break;
       }
       case XCB_MOTION_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
         if (binding_handler_delegate_) {
+          auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
           binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
         }
         break;
@@ -94,8 +94,8 @@ bool LinuxesWindowX11::DispatchEvent() {
         }
         break;
       case XCB_KEY_PRESS: {
-        auto* ev = reinterpret_cast<xcb_key_press_event_t*>(event);
         if (binding_handler_delegate_) {
+          auto* ev = reinterpret_cast<xcb_key_press_event_t*>(event);
           binding_handler_delegate_->OnKey(ev->detail,
                                            FLUTTER_LINUXES_BUTTON_DOWN);
         }

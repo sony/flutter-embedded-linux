@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_X11_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_X11_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_X11_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_X11_H_
 
 #include <X11/Xlib.h>
 #include <xcb/xcb.h>
 
-#include "flutter/shell/platform/linux_embedded/surface/native_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
@@ -33,4 +33,4 @@ class NativeWindowX11 : public NativeWindow<xcb_window_t> {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_X11_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_X11_H_

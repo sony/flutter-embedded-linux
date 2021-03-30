@@ -13,7 +13,6 @@
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
-#include "flutter/shell/platform/linux_embedded/surface/native_window_drm.h"
 
 namespace flutter {
 
