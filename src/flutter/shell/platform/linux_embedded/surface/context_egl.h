@@ -15,7 +15,9 @@
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
+#if defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
 #include "flutter/shell/platform/linux_embedded/window/native_window_eglstream.h"
+#endif
 
 namespace flutter {
 
