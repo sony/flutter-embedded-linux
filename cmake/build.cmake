@@ -133,7 +133,7 @@ target_include_directories(${TARGET}
 )
 
 set(CMAKE_SKIP_RPATH true)
-set(FLUTTER_EMBEDDER_LIB /usr/lib/libflutter_engine.so)
+set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
 target_link_libraries(${TARGET}
   PRIVATE
     ${XKBCOMMON_LIBRARIES}

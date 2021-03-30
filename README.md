@@ -74,7 +74,7 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 
 ## 1. Install libraries
 
-You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Ubuntu OS and x64 hosts.
+You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
 
 #### Mandatory
 
@@ -158,7 +158,7 @@ There are sample projects in [`examples`](./examples) directory. You can also co
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-wayland-client ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for DRM backend
@@ -167,7 +167,7 @@ $ make
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for x11 backend
@@ -178,7 +178,7 @@ Basically, the x11 backend is just only for debugging and developing Flutter app
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
-$ make
+$ cmake --build .
 ```
 
 ### Build for Wayland backend (Weston desktop-shell)
@@ -189,7 +189,7 @@ This binary will run as a desktop-shell by setting `weston.ini` when Weston star
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
-$ make
+$ cmake --build .
 ```
 
 ### User configuration parameters (CMAKE options)
@@ -252,7 +252,16 @@ $ ./flutter-client ./sample/build/linux/x64/release/bundle
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
-LD_LIBRARY_PATH=<path_to_engine> ./flutter-client ./sample/build/linux/x64/debug/bundle
+$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client <path_to_flutter_project_bundle>
+
+# e.g. Run in debug mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client ./sample/build/linux/x64/debug/bundle
+
+# e.g. Run in profile mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/build/linux/x64/profile/bundle
+
+# e.g. Run in release mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
 #### Run with DRM backend
@@ -261,13 +270,16 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
+
+### Debugging
+You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
 
 ## 5. Settings of weston.ini file (Only when you use Weston desktop-shell)
 
