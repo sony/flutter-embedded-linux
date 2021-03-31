@@ -144,7 +144,7 @@ $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/li
 Step 3) Install the library. Note that the downloaded library is only **debug mode** and for **x64** targets. 
 ```Shell
 $ unzip ./linux-x64-embedder
-$ sudo cp ./libflutter_engine.so <path_to_cmake_build_directory>
+$ cp ./libflutter_engine.so <path_to_cmake_build_directory>
 ```
 
 ## 2. Examples
@@ -190,6 +190,13 @@ $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
 $ cmake --build .
+```
+
+### How to debug the embedder
+You need to build the embedder with `CMAKE_BUILD_TYPE=Debug` option if you want to debug the embedder. Using this option, you can get gather logs and debug them with debuggers such as gdb / lldb.
+
+```Shell
+$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_BUILD_TYPE=Debug ..
 ```
 
 ### User configuration parameters (CMAKE options)

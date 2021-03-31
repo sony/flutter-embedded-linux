@@ -1,14 +1,5 @@
 # How to debug Flutter apps
-It is possible to do most things, including source-level debugging, profiling and hot reload when you debug Flutter apps on this embedder. Naturally, you need to **use `libflutter_engine.so` built with debug mode**.
-
-## Building with debug mode
-
-You need to build the embedder using `CMAKE_BUILD_TYPE` option.
-
-```Shell
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client -DCMAKE_BUILD_TYPE=Debug ..
-$ cmake --build .
-```
+It is possible to do most things, including source-level debugging, profiling and hot reload when you debug Flutter apps on this embedder. Note that you need to use `libflutter_engine.so` built with **debug mode**.
 
 ## Getting the Observatory port
 
@@ -22,11 +13,12 @@ flutter: Observatory listening on http://127.0.0.1:40409/k8IUol2dnPI=/
 ### Command line
 
 ```Shell
+$ cd <path_to_flutter_project>/
 $ flutter attach --device-id=flutter-tester --debug-uri http://127.0.0.1:40409/k8IUol2dnPI=/
 ```
 
 ### How to use command line options in the Dart VM
-You can use the environment variables such as `FLUTTER_ENGINE_SWITCHES`, `FLUTTER_ENGINE_SWITCH_*` to use Dart VM command line options. If you want to fix always same observatory URI, you can use the following command.
+You can use the environment variables such as `FLUTTER_ENGINE_SWITCHES`, `FLUTTER_ENGINE_SWITCH_*` to use Dart VM command line options. If you want to fix always same observatory URI, you can use the following command. Note that this option is only available in debug mode. See also: [How to debug the embedder](https://github.com/sony/flutter-embedded-linux/blob/master/README.md#How-to-debug-the-embedder)
 
 ```Shell
 $ FLUTTER_ENGINE_SWITCHES=2 \
