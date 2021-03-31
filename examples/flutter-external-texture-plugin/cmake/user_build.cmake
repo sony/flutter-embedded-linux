@@ -1,10 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Flutter embedder runtime mode.
-add_definitions(
-  -DFLUTTER_RELEASE # release mode
-)
-
 # user binary name.
 set(TARGET flutter-client)
 
