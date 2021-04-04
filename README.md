@@ -50,7 +50,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
 
 ### Tested Wayland compositors
-| Compositors ||||||||
+|||||||||
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
 [Weston](https://gitlab.freedesktop.org/wayland/weston/-/blob/master/README.md) | :heavy_check_mark: | [Sway](https://swaywm.org/) | :heavy_check_mark: | [Wayfire](https://wayfire.org/) | :heavy_check_mark: | [Gnome](https://www.gnome.org/) | :heavy_check_mark: | 
 | [Cage](https://www.hjdskes.nl/projects/cage/) | :heavy_check_mark: | [Lomiri](https://lomiri.com/) | :heavy_check_mark: | [Plasma Wayland](https://community.kde.org/Plasma/Wayland) | :heavy_check_mark: | [Plasma Mobile](https://www.plasma-mobile.org/) | :heavy_check_mark: |
