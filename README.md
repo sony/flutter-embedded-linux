@@ -20,7 +20,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - X11 backend supoort
   - This is for the purpose of developing Flutter apps in Linux desktops. It is not intended for use in embedded systems.
 - Always single window fullscreen
-  - You can choose always-fullscreen or flexible-screen (any size) only when you use Wayland/X11 backend
+  - You can choose always-fullscreen or flexible-screen (any size) only when using Wayland/X11 backend
 - Keyboard, mouse and touch inputs support
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
@@ -31,13 +31,13 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 
 ### Tested devices
 
-| Board/SoC | Vendor | OS/BSP | Backend | Status |
+| Board/SoC | Vendor | OS / BSP | Backend | Status |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | X11 | :heavy_check_mark: |
-| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | Wayland | :heavy_check_mark: |
-| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) jellyfish / koi | DRM | :heavy_check_mark: |
+| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | Wayland | :heavy_check_mark: |
+| QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | DRM | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
@@ -50,18 +50,12 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
 
 ### Tested Wayland compositors
-| Compositor      | Status          |
-| :-------------: | :-------------: |
-| [Cage](https://www.hjdskes.nl/projects/cage/) | :o: |
-| [GlacierUX](https://wiki.merproject.org/wiki/Nemo/Glacier) | :x: |
-| [Gnome](https://www.gnome.org/) | :o: |
-| [Lomiri](https://lomiri.com/) | :o: |
-| [Phosh](https://source.puri.sm/Librem5/phosh) | :o: |
-| [Plasma Wayland](https://community.kde.org/Plasma/Wayland) | :o: |
-| [Plasma Mobile](https://www.plasma-mobile.org/) | :o: |
-| [Sway](https://swaywm.org/) | :o: |
-| [Wayfire](https://wayfire.org/) | :o: |
-| [Weston](https://gitlab.freedesktop.org/wayland/weston/-/blob/master/README.md) | :o: |
+| | | | | | |
+| :-: | :-: | :-: | :-: | :-: | :-: |
+| [Cage](https://www.hjdskes.nl/projects/cage/) | :heavy_check_mark: | [Lomiri](https://lomiri.com/) | :heavy_check_mark: | [Phosh](https://source.puri.sm/Librem5/phosh) | :heavy_check_mark: |
+| [GlacierUX](https://wiki.merproject.org/wiki/Nemo/Glacier) | :x: | [Plasma Wayland](https://community.kde.org/Plasma/Wayland) | :heavy_check_mark: | [Plasma Mobile](https://www.plasma-mobile.org/) | :heavy_check_mark: |
+| [Gnome](https://www.gnome.org/) | :heavy_check_mark: | [Sway](https://swaywm.org/) | :heavy_check_mark: | [Wayfire](https://wayfire.org/) | :heavy_check_mark: | 
+[Weston](https://gitlab.freedesktop.org/wayland/weston/-/blob/master/README.md) | :heavy_check_mark: | | | | |
 
 ## Contributing
 **Now, we cannot accept any Pull Request (PR).** Because We are building a system (e.g. CLA) to accept PRs, so please wait for a while the system is getting ready! However, we are always welcome to report bugs and request new features by creating issues.
@@ -90,7 +84,7 @@ You need to install the following dependent libraries to build and run. Here int
 $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
-#### Only when you use Wayland backend
+#### Only when using Wayland backend
 - libwayland
 - wayland-protocols (for generating xdg-shell source files)
 
@@ -98,14 +92,7 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 $ sudo apt install libwayland-dev wayland-protocols
 ```
 
-#### Only when you use weston desktop-shell
-- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
-
-```Shell
-$ sudo apt install weston
-```
-
-#### Only when you use DRM backend
+#### Only when using DRM backend
 - libdrm
 - libgbm
 - libinput
@@ -116,12 +103,19 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
-#### Only when you use x11 backend
+#### Only when using x11 backend
 - x11-xcb
 - xcb
 
 ```Shell
 $ sudo apt install libx11-xcb-dev
+```
+
+#### Only when using weston desktop-shell
+- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
+
+```Shell
+$ sudo apt install weston
 ```
 
 #### Install Flutter Engine library
@@ -170,7 +164,7 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
 $ cmake --build .
 ```
 
-### Build for x11 backend
+### Build for x11 backend (Stand-alone Wayland app)
 
 Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented now.
 
@@ -208,7 +202,7 @@ Please edit `cmake/user_config.cmake` file.
 | USE_DRM | Use DRM backend instead of Wayland |
 | USE_X11 | Use X11 backend instead of Wayland |
 | DESKTOP_SHELL | Work as Weston desktop-shell |
-| USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
+| USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
 ## 4. Running Flutter app
@@ -288,7 +282,7 @@ You need to run this program by a user who has the permission to access the inpu
 ### Debugging
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
 
-## 5. Settings of weston.ini file (Only when you use Weston desktop-shell)
+## 5. Settings of weston.ini file (Only when using Weston desktop-shell)
 
 Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](./examples/config/weston.ini). See also `man weston.ini`.
 
