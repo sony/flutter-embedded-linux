@@ -31,7 +31,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 
 ### Tested devices
 
-| Board/SoC | Vendor | OS / BSP | Backend | Status |
+| Board / SoC | Vendor | OS / BSP | Backend | Status |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
 | Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
