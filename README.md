@@ -153,6 +153,16 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-wayland-client ..
 $ cmake --build .
 ```
 
+### Build for Wayland backend (Weston desktop-shell)
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
+
+```Shell
+$ mkdir build
+$ cd build
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
+$ cmake --build .
+```
+
 ### Build for DRM backend
 
 ```Shell
@@ -162,7 +172,7 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
 $ cmake --build .
 ```
 
-### Build for x11 backend (Stand-alone Wayland app)
+### Build for x11 backend (Stand-alone X11 app)
 
 Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented now.
 
@@ -170,17 +180,6 @@ Basically, the x11 backend is just only for debugging and developing Flutter app
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
-$ cmake --build .
-```
-
-### Build for Wayland backend (Weston desktop-shell)
-
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
-
-```Shell
-$ mkdir build
-$ cd build
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-weston-desktop-shell ..
 $ cmake --build .
 ```
 
