@@ -65,11 +65,9 @@ See also: [Contributing to the Flutter engine](https://github.com/flutter/engine
 # Contents
 
 ## 1. Install libraries
-
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
 
 #### Mandatory
-
 - clang (for building)
 - cmake (for building)
 - build-essential (for building)
@@ -90,6 +88,13 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 $ sudo apt install libwayland-dev wayland-protocols
 ```
 
+#### Only when using weston desktop-shell
+- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
+
+```Shell
+$ sudo apt install weston
+```
+
 #### Only when using DRM backend
 - libdrm
 - libgbm
@@ -107,13 +112,6 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 
 ```Shell
 $ sudo apt install libx11-xcb-dev
-```
-
-#### Only when using weston desktop-shell
-- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
-
-```Shell
-$ sudo apt install weston
 ```
 
 #### Install Flutter Engine library
