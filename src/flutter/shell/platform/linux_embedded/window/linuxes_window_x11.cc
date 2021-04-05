@@ -89,7 +89,7 @@ bool LinuxesWindowX11::DispatchEvent() {
       case KeyRelease:
         if (binding_handler_delegate_) {
           binding_handler_delegate_->OnKey(event.xkey.keycode - 8,
-                                           FLUTTER_LINUXES_BUTTON_DOWN);
+                                           FLUTTER_LINUXES_BUTTON_UP);
         }
         break;
       case ConfigureNotify: {
