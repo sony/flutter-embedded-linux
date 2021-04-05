@@ -1,13 +1,13 @@
 # Overview
 
-This is the example of EGLStream backend.
+This is the example of DRM backend with GBM.
 
 ## Building
 
 ```Shell
 $ mkdir build
 $ cd build
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-eglstream-backend ..
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-gbm-backend ..
 $ cmake --build .
 ```
 
@@ -17,7 +17,7 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-eglstream-backend FLUTTER_BUNDLE_PATH
+$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-gbm-backend FLUTTER_BUNDLE_PATH
 ```
 
 Note that replace `FLUTTER_BUNDLE_PATH` with the flutter bundle path you want to use like ./sample/build/linux/x64/release/bundle.

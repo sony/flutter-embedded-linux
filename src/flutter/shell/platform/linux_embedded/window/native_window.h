@@ -15,7 +15,8 @@ class NativeWindow {
 
   bool IsValid() const { return valid_; };
 
-#if defined(DISPLAY_BACKEND_TYPE_X11)
+#if defined(DISPLAY_BACKEND_TYPE_X11) || \
+    defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   T Window() const { return window_; }
 #else
   T* Window() const { return window_; }
@@ -25,7 +26,8 @@ class NativeWindow {
 
  protected:
   // Specifies the native winodw (NativeWindowType)
-#if defined(DISPLAY_BACKEND_TYPE_X11)
+#if defined(DISPLAY_BACKEND_TYPE_X11) || \
+    defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   T window_;
 #else
   T* window_ = nullptr;

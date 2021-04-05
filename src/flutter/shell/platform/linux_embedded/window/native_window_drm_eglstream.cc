@@ -2,27 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/window/native_window_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
-
-#include <unordered_map>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
 
-static constexpr char kCursorNameNone[] = "none";
-
-// Buffer size for cursor image. The size must be at least 64x64 due to the
-// restrictions of drmModeSetCursor API.
-static constexpr uint32_t kCursorBufferWidth = 64;
-static constexpr uint32_t kCursorBufferHeight = 64;
-
-NativeWindowEglstream::NativeWindowEglstream(const char* deviceFilename) {
+NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename) {
   drm_device_ = open(deviceFilename, O_RDWR | O_CLOEXEC);
   if (drm_device_ == -1) {
     LINUXES_LOG(ERROR) << "Couldn't open " << deviceFilename;
@@ -34,7 +25,7 @@ NativeWindowEglstream::NativeWindowEglstream(const char* deviceFilename) {
   valid_ = true;
 }
 
-NativeWindowEglstream::~NativeWindowEglstream() {
+NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
   if (drm_device_ == -1) {
     return;
   }
@@ -57,26 +48,13 @@ NativeWindowEglstream::~NativeWindowEglstream() {
   close(drm_device_);
 }
 
-bool NativeWindowEglstream::Resize(const size_t width,
-                                   const size_t height) const {
-  if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
-    return false;
-  }
-
-  // todo: implement here.
-  LINUXES_LOG(ERROR) << "TODO: implement here!!";
-
-  return false;
-}
-
-bool NativeWindowEglstream::ShowCursor(double x, double y) {
+bool NativeWindowDrmEglstream::ShowCursor(double x, double y) {
   // todo: implement here.
   return true;
 }
 
-bool NativeWindowEglstream::UpdateCursor(const std::string& cursor_name,
-                                         double x, double y) {
+bool NativeWindowDrmEglstream::UpdateCursor(const std::string& cursor_name,
+                                            double x, double y) {
   if (cursor_name.compare(cursor_name_) == 0) {
     return true;
   }
@@ -90,23 +68,12 @@ bool NativeWindowEglstream::UpdateCursor(const std::string& cursor_name,
   return true;
 }
 
-bool NativeWindowEglstream::DismissCursor() {
+bool NativeWindowDrmEglstream::DismissCursor() {
   // todo: implement here.
   return true;
 }
 
-bool NativeWindowEglstream::MoveCursor(double x, double y) {
-  auto result =
-      drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
-                        x - cursor_hotspot_.first, y - cursor_hotspot_.second);
-  if (result < 0) {
-    LINUXES_LOG(ERROR) << "Could not move the mouse cursor: " << result;
-    return false;
-  }
-  return true;
-}
-
-bool NativeWindowEglstream::ConfigureDisplay() {
+bool NativeWindowDrmEglstream::ConfigureDisplay() {
   if (SetDrmClientCapability() != 0) {
     LINUXES_LOG(ERROR) << "Couldn't set drm client capability";
     return false;
@@ -171,37 +138,14 @@ bool NativeWindowEglstream::ConfigureDisplay() {
   return true;
 }
 
-int NativeWindowEglstream::SetDrmClientCapability() {
+int NativeWindowDrmEglstream::SetDrmClientCapability() {
   if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) == 0) {
     return drmSetClientCap(drm_device_, DRM_CLIENT_CAP_ATOMIC, 1);
   }
   return -1;
 }
 
-drmModeConnectorPtr NativeWindowEglstream::FindConnector(
-    drmModeResPtr resources) {
-  for (int i = 0; i < resources->count_connectors; i++) {
-    auto connector = drmModeGetConnector(drm_device_, resources->connectors[i]);
-    // pick the first connected connector
-    if (connector->connection == DRM_MODE_CONNECTED) {
-      return connector;
-    }
-    drmModeFreeConnector(connector);
-  }
-  // no connector found
-  return nullptr;
-}
-
-drmModeEncoder* NativeWindowEglstream::FindEncoder(
-    drmModeRes* resources, drmModeConnector* connector) {
-  if (connector->encoder_id) {
-    return drmModeGetEncoder(drm_device_, connector->encoder_id);
-  }
-  // no encoder found
-  return nullptr;
-}
-
-uint32_t NativeWindowEglstream::FindPlane(drmModePlaneResPtr resources) {
+uint32_t NativeWindowDrmEglstream::FindPlane(drmModePlaneResPtr resources) {
   for (uint32_t i = 0; i < resources->count_planes; i++) {
     auto plane = drmModeGetPlane(drm_device_, resources->planes[i]);
     if (plane) {
@@ -219,8 +163,8 @@ uint32_t NativeWindowEglstream::FindPlane(drmModePlaneResPtr resources) {
   return -1;
 }
 
-uint64_t NativeWindowEglstream::GetPropertyValue(uint32_t id, uint32_t type,
-                                                 const char* prop_name) {
+uint64_t NativeWindowDrmEglstream::GetPropertyValue(uint32_t id, uint32_t type,
+                                                    const char* prop_name) {
   uint64_t value = -1;
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {
@@ -240,7 +184,7 @@ uint64_t NativeWindowEglstream::GetPropertyValue(uint32_t id, uint32_t type,
   return value;
 }
 
-bool NativeWindowEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
+bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
   if (!CreatePropertyBlob() || !CreateFb()) {
     return false;
   }
@@ -272,8 +216,8 @@ bool NativeWindowEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
   return true;
 }
 
-void NativeWindowEglstream::GetPropertyIds(
-    struct NativeWindowEglstream::drm_property_ids* property_ids) {
+void NativeWindowDrmEglstream::GetPropertyIds(
+    struct NativeWindowDrmEglstream::drm_property_ids* property_ids) {
   struct drm_property_address crtc_table[] = {
       {"MODE_ID", &property_ids->crtc.mode_id},
       {"ACTIVE", &property_ids->crtc.active},
@@ -304,9 +248,9 @@ void NativeWindowEglstream::GetPropertyIds(
                      sizeof(connector_table) / sizeof(drm_property_address));
 }
 
-void NativeWindowEglstream::GetPropertyAddress(
+void NativeWindowDrmEglstream::GetPropertyAddress(
     uint32_t id, uint32_t type,
-    NativeWindowEglstream::drm_property_address* table, size_t length) {
+    NativeWindowDrmEglstream::drm_property_address* table, size_t length) {
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {
     for (uint32_t i = 0; i < properties->count_props; i++) {
@@ -325,7 +269,7 @@ void NativeWindowEglstream::GetPropertyAddress(
   }
 }
 
-bool NativeWindowEglstream::CreatePropertyBlob() {
+bool NativeWindowDrmEglstream::CreatePropertyBlob() {
   if (drmModeCreatePropertyBlob(drm_device_, &drm_mode_info_,
                                 sizeof(drm_mode_info_),
                                 &drm_property_blob_) != 0) {
@@ -335,7 +279,7 @@ bool NativeWindowEglstream::CreatePropertyBlob() {
   return true;
 }
 
-bool NativeWindowEglstream::CreateFb() {
+bool NativeWindowDrmEglstream::CreateFb() {
   struct drm_mode_create_dumb create_dump = {0};
   create_dump.width = drm_mode_info_.hdisplay;
   create_dump.height = drm_mode_info_.vdisplay;
@@ -369,67 +313,6 @@ bool NativeWindowEglstream::CreateFb() {
 
   memset(map, 0, create_dump.size);
   return true;
-}
-
-const uint32_t* NativeWindowEglstream::GetCursorData(
-    const std::string& cursor_name) {
-  // If there is no cursor data corresponding to the Flutter's cursor name, it
-  // is defined as empty. If empty, the default cursor data(LeftPtr) will be
-  // displayed.
-  static const std::unordered_map<std::string, const uint32_t*>
-      flutter_to_drm_cursor_map = {
-          {"alias", nullptr},
-          {"allScroll", nullptr},
-          {"basic", kCursorDataLeftPtr},
-          {"cell", nullptr},
-          {"click", kCursorDataHand1},
-          {"contextMenu", nullptr},
-          {"copy", nullptr},
-          {"forbidden", nullptr},
-          {"grab", nullptr},
-          {"grabbing", kCursorDataGrabbing},
-          {"help", nullptr},
-          {"move", nullptr},
-          {"noDrop", nullptr},
-          {"precise", nullptr},
-          {"progress", nullptr},
-          {"text", kCursorDataXterm},
-          {"resizeColumn", nullptr},
-          {"resizeDown", kCursorDataBottomSide},
-          {"resizeDownLeft", kCursorDataBottomLeftCorner},
-          {"resizeDownRight", kCursorDataBottomRightCorner},
-          {"resizeLeft", kCursorDataLeftSide},
-          {"resizeLeftRight", nullptr},
-          {"resizeRight", kCursorDataRightSide},
-          {"resizeRow", nullptr},
-          {"resizeUp", kCursorDataTopSide},
-          {"resizeUpDown", nullptr},
-          {"resizeUpLeft", kCursorDataTopLeftCorner},
-          {"resizeUpRight", kCursorDataTopRightCorner},
-          {"resizeUpLeftDownRight", nullptr},
-          {"resizeUpRightDownLeft", nullptr},
-          {"verticalText", nullptr},
-          {"wait", kCursorDataWatch},
-          {"zoomIn", nullptr},
-          {"zoomOut", nullptr},
-      };
-
-  const uint32_t* cursor_data = nullptr;
-  if (flutter_to_drm_cursor_map.find(cursor_name) !=
-      flutter_to_drm_cursor_map.end()) {
-    cursor_data = flutter_to_drm_cursor_map.at(cursor_name);
-  }
-
-  if (!cursor_data) {
-    if (!cursor_name.empty()) {
-      LINUXES_LOG(WARNING) << "Unsupported cursor: " << cursor_name.c_str()
-                           << ", use LeftPtr cursor.";
-    }
-    cursor_data = kCursorDataLeftPtr;
-  }
-
-  cursor_hotspot_ = cursor_hotspot_map.at(cursor_data);
-  return cursor_data;
 }
 
 }  // namespace flutter

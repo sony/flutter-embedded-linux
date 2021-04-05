@@ -17,10 +17,10 @@
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
-#if defined(DISPLAY_BACKEND_TYPE_DRM)
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
-#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_eglstream.h"
+#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
+#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm_gbm.h"
+#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
+#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm_eglstream.h"
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_x11.h"
 #else
@@ -75,12 +75,12 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
     FlutterDesktopEngineRef engine) {
   std::unique_ptr<flutter::WindowBindingHandler> window_wrapper =
 
-#if defined(DISPLAY_BACKEND_TYPE_DRM)
-      std::make_unique<flutter::LinuxesWindowDrm>(
+#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
+      std::make_unique<flutter::LinuxesWindowDrmGbm>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
-#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
-      std::make_unique<flutter::LinuxesWindowEglstream>(
+#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
+      std::make_unique<flutter::LinuxesWindowDrmEglstream>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)

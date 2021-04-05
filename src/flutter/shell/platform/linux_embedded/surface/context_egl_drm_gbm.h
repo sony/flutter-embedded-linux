@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_GBM_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_GBM_H_
 
 #include <gbm.h>
 
@@ -13,8 +13,8 @@
 
 namespace flutter {
 
-using ContextEglDrm = ContextEgl<gbm_device, gbm_surface>;
+using ContextEglDrmGbm = ContextEgl<gbm_device, gbm_surface>;
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_DRM_GBM_H_

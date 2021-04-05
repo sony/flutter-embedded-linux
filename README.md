@@ -116,16 +116,6 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
-#### Only when you use EGLStream backend
-- libdrm
-- libinput
-- libudev
-- libsystemd
-
-```Shell
-$ sudo apt install libdrm-dev libinput-dev libudev-dev libsystemd-dev
-```
-
 #### Only when you use x11 backend
 - x11-xcb
 - xcb
@@ -173,19 +163,21 @@ $ cmake --build .
 
 ### Build for DRM backend
 
+#### Use GBM
+
 ```Shell
 $ mkdir build
 $ cd build
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-gbm-backend ..
 $ cmake --build .
 ```
 
-### Build for EGLStream backend
+#### Use EGLStream
 
 ```Shell
 $ mkdir build
 $ cd build
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-eglstream-backend ..
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-eglstream-backend ..
 $ cmake --build .
 ```
 
@@ -217,9 +209,7 @@ Please edit `cmake/user_config.cmake` file.
 
 | Option | Description |
 | ------------- | ------------- |
-| USE_DRM | Use DRM backend instead of Wayland |
-| USE_EGLSTREAM | Use EGLStream backend instead of Wayland |
-| USE_X11 | Use X11 backend instead of Wayland |
+| BACKEND_TYPE | Select WAYLAND or DRM-GBM or DRM-EGLSTREAM or X11 as the display backend type (The default setting is WAYLAND) |
 | DESKTOP_SHELL | Work as Weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when you use `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
@@ -284,24 +274,19 @@ $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/bui
 $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Run with DRM backend or EGLStream backend
+#### Run with DRM backend
 
 You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-
-# e.g. Run with DRM backend
-$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
-
-# e.g. Run with EGLStream backend
-$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-eglstream-backend ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <./binary_file_name> ./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
 ##### Note
-You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend or EGLStream backend. Generally, it is a root user or a user who belongs to an input group.
+You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
 ### Debugging
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./DEBUGGING.md)
