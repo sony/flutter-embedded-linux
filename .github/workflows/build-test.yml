@@ -51,16 +51,6 @@ jobs:
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
 
-    - name: Configure CMake for eglstream backend
-      shell: bash
-      working-directory: ${{github.workspace}}/build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DUSER_PROJECT_PATH=examples/flutter-eglstream-backend ..
-
-    - name: Build for eglstream backend
-      working-directory: ${{github.workspace}}/build
-      shell: bash
-      run: cmake --build . --config $BUILD_TYPE
-
     - name: Configure CMake for x11 backend
       shell: bash
       working-directory: ${{github.workspace}}/build

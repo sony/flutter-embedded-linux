@@ -42,7 +42,7 @@ KeyeventPlugin::KeyeventPlugin(BinaryMessenger* messenger)
     : channel_(std::make_unique<BasicMessageChannel<rapidjson::Document>>(
           messenger, kChannelName, &flutter::JsonMessageCodec::GetInstance())),
       xkb_context_(xkb_context_new(XKB_CONTEXT_NO_FLAGS)) {
-#if defined(DISPLAY_BACKEND_TYPE_DRM) || defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
+#ifdef DISPLAY_BACKEND_TYPE_DRM
   xkb_keymap_ = CreateKeymap(xkb_context_);
   xkb_state_ = xkb_state_new(xkb_keymap_);
 #else
@@ -88,7 +88,7 @@ bool KeyeventPlugin::IsTextInputSuppressed(uint32_t code_point) {
 }
 
 void KeyeventPlugin::OnKey(uint32_t keycode, uint32_t state) {
-#if defined(DISPLAY_BACKEND_TYPE_DRM) || defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
+#ifdef DISPLAY_BACKEND_TYPE_DRM
   // We cannot get notifications of modifier keys when we use the DRM backend.
   // In this case, we need to handle it by using xkb_state_update_key.
   OnModifiers(keycode, state);

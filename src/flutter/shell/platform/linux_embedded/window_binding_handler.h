@@ -13,8 +13,6 @@
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM)
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
-#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_eglstream.h"
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.h"
 #else
@@ -34,8 +32,6 @@ struct PhysicalWindowBounds {
 using LinuxesRenderSurfaceTarget =
 #if defined(DISPLAY_BACKEND_TYPE_DRM)
     SurfaceGlDrm;
-#elif defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
-    SurfaceGlEglstream;
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
     SurfaceGlX11;
 #else

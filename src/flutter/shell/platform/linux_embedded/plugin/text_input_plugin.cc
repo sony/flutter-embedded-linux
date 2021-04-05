@@ -18,7 +18,7 @@
 // /usr/include/X11/X.h:350:21: note: expanded from macro 'Success'
 // #define Success            0    /* everything's okay */
 // ----------------------------------------------------------------
-#if defined(DISPLAY_BACKEND_TYPE_X11) || defined(DISPLAY_BACKEND_TYPE_EGLSTREAM)
+#if defined(DISPLAY_BACKEND_TYPE_X11)
 #undef Success
 #endif
 
