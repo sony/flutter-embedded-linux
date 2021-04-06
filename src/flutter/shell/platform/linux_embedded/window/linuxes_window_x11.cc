@@ -13,14 +13,6 @@
 
 namespace flutter {
 
-namespace {
-static constexpr uint8_t kButtonLeft = 1;
-static constexpr uint8_t kButtonMiddle = 2;
-static constexpr uint8_t kButtonRight = 3;
-static constexpr uint8_t kButtonBack = 4;
-static constexpr uint8_t kButtonForward = 5;
-}  // namespace
-
 LinuxesWindowX11::LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width,
                                    int32_t height, bool show_cursor) {
   window_mode_ = window_mode;
@@ -173,19 +165,19 @@ void LinuxesWindowX11::HandlePointerButtonEvent(uint32_t button,
   if (binding_handler_delegate_) {
     FlutterPointerMouseButtons flutter_button;
     switch (button) {
-      case kButtonLeft:
+      case Button1:
         flutter_button = kFlutterPointerButtonMousePrimary;
         break;
-      case kButtonRight:
-        flutter_button = kFlutterPointerButtonMouseSecondary;
-        break;
-      case kButtonMiddle:
+      case Button2:
         flutter_button = kFlutterPointerButtonMouseMiddle;
         break;
-      case kButtonBack:
+      case Button3:
+        flutter_button = kFlutterPointerButtonMouseSecondary;
+        break;
+      case Button4:
         flutter_button = kFlutterPointerButtonMouseBack;
         break;
-      case kButtonForward:
+      case Button5:
         flutter_button = kFlutterPointerButtonMouseForward;
         break;
       default:
