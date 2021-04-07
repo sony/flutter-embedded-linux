@@ -27,6 +27,10 @@ NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
   int visualsCount;
   auto* visual =
       XGetVisualInfo(display, VisualIDMask, &visualTemplate, &visualsCount);
+  if (!visual) {
+    LINUXES_LOG(ERROR) << "Failed to get Visual info.";
+    return;
+  }
 
   XSetWindowAttributes windowAttribs;
   windowAttribs.colormap = XCreateColormap(
@@ -41,6 +45,10 @@ NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
       XCreateWindow(display, RootWindow(display, visual->screen), 0, 0, width,
                     height, 0, visual->depth, InputOutput, visual->visual,
                     CWBorderPixel | CWColormap | CWEventMask, &windowAttribs);
+  if (!window_) {
+    LINUXES_LOG(ERROR) << "Failed to the create window.";
+    return;
+  }
 
   // Receive only WM_DELETE_WINDOW message in the ClientMessage.
   auto wm_delete_window = XInternAtom(display, kWmDeleteWindow, false);
