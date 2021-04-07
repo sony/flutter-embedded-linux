@@ -107,11 +107,10 @@ $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
 #### Only when using x11 backend
-- x11-xcb
-- xcb
+- x11
 
 ```Shell
-$ sudo apt install libx11-xcb-dev
+$ sudo apt install libx11-dev
 ```
 
 #### Install Flutter Engine library

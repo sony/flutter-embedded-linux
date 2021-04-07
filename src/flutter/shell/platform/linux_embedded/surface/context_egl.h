@@ -133,6 +133,12 @@ class ContextEgl {
     return reinterpret_cast<void*>(address);
   }
 
+  EGLint GetAttrib(EGLint attribute) {
+    EGLint value;
+    eglGetConfigAttrib(environment_->Display(), config_, attribute, &value);
+    return value;
+  }
+
  private:
   std::unique_ptr<EnvironmentEgl<D>> environment_;
   EGLConfig config_;

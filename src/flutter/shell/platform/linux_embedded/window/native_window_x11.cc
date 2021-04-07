@@ -4,8 +4,9 @@
 
 #include "flutter/shell/platform/linux_embedded/window/native_window_x11.h"
 
-#include <X11/Xlib-xcb.h>
-#include <xcb/xcb.h>
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 #include <cstring>
 
@@ -14,75 +15,69 @@
 namespace flutter {
 
 namespace {
-static constexpr char kXcbWmProtocols[] = "WM_PROTOCOLS";
-static constexpr char kXcbWmDeleteWindow[] = "WM_DELETE_WINDOW";
+static constexpr char kWmDeleteWindow[] = "WM_DELETE_WINDOW";
+static constexpr char kWindowTitle[] = "Flutter for Embedded Linux";
 }  // namespace
 
-NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
-                                 const size_t height) {
-  xcb_connection_ = XGetXCBConnection(display);
-  if (!xcb_connection_) {
-    LINUXES_LOG(ERROR) << "Failed to get xcb connection.";
+NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
+                                 const size_t width, const size_t height) {
+  XVisualInfo visualTemplate;
+  visualTemplate.visualid = visual_id;
+
+  int visualsCount;
+  auto* visual =
+      XGetVisualInfo(display, VisualIDMask, &visualTemplate, &visualsCount);
+  if (!visual) {
+    LINUXES_LOG(ERROR) << "Failed to get Visual info.";
     return;
   }
 
-  auto* setup = xcb_get_setup(xcb_connection_);
-  auto screen_iterator = xcb_setup_roots_iterator(setup).data;
-  if (!screen_iterator) {
-    LINUXES_LOG(ERROR) << "Failed to setup_roots.";
+  XSetWindowAttributes windowAttribs;
+  windowAttribs.colormap = XCreateColormap(
+      display, RootWindow(display, visual->screen), visual->visual, AllocNone);
+  windowAttribs.border_pixel = 0;
+  windowAttribs.event_mask =
+      ExposureMask | KeyPressMask | KeyReleaseMask | ButtonPressMask |
+      ButtonReleaseMask | PointerMotionMask | EnterWindowMask |
+      LeaveWindowMask | FocusChangeMask | StructureNotifyMask;
+
+  window_ =
+      XCreateWindow(display, RootWindow(display, visual->screen), 0, 0, width,
+                    height, 0, visual->depth, InputOutput, visual->visual,
+                    CWBorderPixel | CWColormap | CWEventMask, &windowAttribs);
+  if (!window_) {
+    LINUXES_LOG(ERROR) << "Failed to the create window.";
     return;
   }
 
-  window_ = xcb_generate_id(xcb_connection_);
+  // Receive only WM_DELETE_WINDOW message in the ClientMessage.
+  auto wm_delete_window = XInternAtom(display, kWmDeleteWindow, false);
+  XSetWMProtocols(display, window_, &wm_delete_window, 1);
 
-  uint32_t mask = XCB_CW_EVENT_MASK;
-  uint32_t valwin[1] = {
-      XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_RESIZE_REDIRECT |
-      XCB_EVENT_MASK_STRUCTURE_NOTIFY | XCB_EVENT_MASK_BUTTON_PRESS |
-      XCB_EVENT_MASK_BUTTON_RELEASE | XCB_EVENT_MASK_POINTER_MOTION |
-      XCB_EVENT_MASK_ENTER_WINDOW | XCB_EVENT_MASK_LEAVE_WINDOW};
-  xcb_create_window(xcb_connection_, XCB_COPY_FROM_PARENT, window_,
-                    screen_iterator->root, 0, 0, width, height, 0,
-                    XCB_WINDOW_CLASS_INPUT_OUTPUT, screen_iterator->root_visual,
-                    mask, valwin);
-  xcb_flush(xcb_connection_);
+  // Set the window title.
+  {
+    XTextProperty property;
+    property.value =
+        reinterpret_cast<unsigned char*>(const_cast<char*>(kWindowTitle));
+    property.encoding = XA_STRING;
+    property.format = 8;
+    property.nitems = std::strlen(kWindowTitle);
+    XSetWMName(display, window_, &property);
+  }
 
-  // Enable message when press close button.
-  auto protocols_cookie = xcb_intern_atom(
-      xcb_connection_, 1, std::strlen(kXcbWmProtocols), kXcbWmProtocols);
-  auto* protocol_reply =
-      xcb_intern_atom_reply(xcb_connection_, protocols_cookie, 0);
-  auto delete_cookie = xcb_intern_atom(
-      xcb_connection_, 0, std::strlen(kXcbWmDeleteWindow), kXcbWmDeleteWindow);
-  reply_delete_ = xcb_intern_atom_reply(xcb_connection_, delete_cookie, 0);
-  xcb_change_property(xcb_connection_, XCB_PROP_MODE_REPLACE, window_,
-                      (*protocol_reply).atom, 4, 32, 1, &(*reply_delete_).atom);
-  free(protocol_reply);
-
-  xcb_map_window(xcb_connection_, window_);
-  xcb_flush(xcb_connection_);
+  XMapWindow(display, window_);
 
   valid_ = true;
 }
 
-NativeWindowX11::~NativeWindowX11() {
-  if (reply_delete_) {
-    free(reply_delete_);
-    reply_delete_ = nullptr;
-  }
-}
-
 bool NativeWindowX11::Resize(const size_t width, const size_t height) const {
-  if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
-    return false;
-  }
+  // do nothing.
   return true;
 }
 
-void NativeWindowX11::Destroy() {
-  if (xcb_connection_) {
-    xcb_destroy_window(xcb_connection_, window_);
+void NativeWindowX11::Destroy(Display* display) {
+  if (window_) {
+    XDestroyWindow(display, window_);
   }
 }
 
