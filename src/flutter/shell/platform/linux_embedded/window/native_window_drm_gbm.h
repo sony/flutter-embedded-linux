@@ -35,8 +35,6 @@ class NativeWindowDrmGbm : public NativeWindowDrm<gbm_surface> {
   gbm_device* BufferDevice() const { return gbm_device_; }
 
  private:
-  bool ConfigureDisplay();
-
   bool CreateCursorBuffer(const std::string& cursor_name);
 
   gbm_bo* gbm_previous_bo_ = nullptr;

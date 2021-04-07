@@ -17,12 +17,14 @@
 
 namespace flutter {
 
+namespace {
 constexpr char kCursorNameNone[] = "none";
 
 // Buffer size for cursor image. The size must be at least 64x64 due to the
 // restrictions of drmModeSetCursor API.
 constexpr uint32_t kCursorBufferWidth = 64;
 constexpr uint32_t kCursorBufferHeight = 64;
+}  // namespace
 
 template <typename T>
 class NativeWindowDrm : public NativeWindow<T> {
@@ -31,7 +33,7 @@ class NativeWindowDrm : public NativeWindow<T> {
   virtual ~NativeWindowDrm() = default;
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) const override {
+  bool Resize(const size_t width, const size_t height) override {
     if (!this->valid_) {
       LINUXES_LOG(ERROR) << "Failed to resize the window.";
       return false;
@@ -61,23 +63,42 @@ class NativeWindowDrm : public NativeWindow<T> {
     return true;
   }
 
-  int32_t Width() {
-    if (!this->valid_) {
-      return -1;
-    }
-    return drm_mode_info_.hdisplay;
-  }
-
-  int32_t Height() {
-    if (!this->valid_) {
-      return -1;
-    }
-    return drm_mode_info_.vdisplay;
-  }
-
-  int* DrmDevice() { return &drm_device_; }
+  int DrmDevice() { return drm_device_; }
 
  protected:
+  bool ConfigureDisplay() {
+    auto resources = drmModeGetResources(drm_device_);
+    if (!resources) {
+      LINUXES_LOG(ERROR) << "Couldn't get resources";
+    }
+    auto connector = FindConnector(resources);
+    if (!connector) {
+      LINUXES_LOG(ERROR) << "Couldn't find a connector";
+      return false;
+    }
+
+    drm_connector_id_ = connector->connector_id;
+    drm_mode_info_ = connector->modes[0];
+    this->width_ = drm_mode_info_.hdisplay;
+    this->height_ = drm_mode_info_.vdisplay;
+    LINUXES_LOG(INFO) << "resolution: " << this->width_ << "x" << this->height_;
+
+    auto* encoder = FindEncoder(resources, connector);
+    if (!encoder) {
+      LINUXES_LOG(ERROR) << "Couldn't find a connector";
+      return false;
+    }
+    if (encoder->crtc_id) {
+      drm_crtc_ = drmModeGetCrtc(drm_device_, encoder->crtc_id);
+    }
+
+    drmModeFreeEncoder(encoder);
+    drmModeFreeConnector(connector);
+    drmModeFreeResources(resources);
+
+    return true;
+  }
+
   drmModeConnectorPtr FindConnector(drmModeResPtr resources) {
     for (int i = 0; i < resources->count_connectors; i++) {
       auto connector =

@@ -20,7 +20,9 @@ NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename) {
     return;
   }
 
-  ConfigureDisplay();
+  if (!ConfigureDisplay() || !ConfigureDisplayForEglstream()) {
+    return;
+  }
 
   valid_ = true;
 }
@@ -73,39 +75,11 @@ bool NativeWindowDrmEglstream::DismissCursor() {
   return true;
 }
 
-bool NativeWindowDrmEglstream::ConfigureDisplay() {
+bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
   if (SetDrmClientCapability() != 0) {
     LINUXES_LOG(ERROR) << "Couldn't set drm client capability";
     return false;
   }
-
-  auto resources = drmModeGetResources(drm_device_);
-  if (!resources) {
-    LINUXES_LOG(ERROR) << "Couldn't get resources";
-  }
-  auto connector = FindConnector(resources);
-  if (!connector) {
-    LINUXES_LOG(ERROR) << "Couldn't find a connector";
-    return false;
-  }
-
-  drm_connector_id_ = connector->connector_id;
-  drm_mode_info_ = connector->modes[0];
-  LINUXES_LOG(INFO) << "resolution: " << drm_mode_info_.hdisplay << "x"
-                    << drm_mode_info_.vdisplay;
-
-  auto* encoder = FindEncoder(resources, connector);
-  if (!encoder) {
-    LINUXES_LOG(ERROR) << "Couldn't find a connector";
-    return false;
-  }
-  if (encoder->crtc_id) {
-    drm_crtc_ = drmModeGetCrtc(drm_device_, encoder->crtc_id);
-  }
-
-  drmModeFreeEncoder(encoder);
-  drmModeFreeConnector(connector);
-  drmModeFreeResources(resources);
 
   auto plane_resources = drmModeGetPlaneResources(drm_device_);
   if (!plane_resources) {

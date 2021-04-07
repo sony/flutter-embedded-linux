@@ -62,6 +62,8 @@ NativeWindowX11::NativeWindowX11(Display* display, const size_t width,
   xcb_map_window(xcb_connection_, window_);
   xcb_flush(xcb_connection_);
 
+  width_ = width;
+  height_ = height;
   valid_ = true;
 }
 
@@ -72,11 +74,13 @@ NativeWindowX11::~NativeWindowX11() {
   }
 }
 
-bool NativeWindowX11::Resize(const size_t width, const size_t height) const {
+bool NativeWindowX11::Resize(const size_t width, const size_t height) {
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
+  width_ = width;
+  height_ = height;
   return true;
 }
 

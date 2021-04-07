@@ -26,7 +26,9 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename) {
     return;
   }
 
-  ConfigureDisplay();
+  if (!ConfigureDisplay()) {
+    return;
+  }
 
   gbm_device_ = gbm_create_device(drm_device_);
   if (!gbm_device_) {
@@ -151,38 +153,6 @@ void NativeWindowDrmGbm::SwapBuffer() {
   }
   gbm_previous_bo_ = bo;
   gbm_previous_fb_ = fb;
-}
-
-bool NativeWindowDrmGbm::ConfigureDisplay() {
-  auto resources = drmModeGetResources(drm_device_);
-  if (!resources) {
-    LINUXES_LOG(ERROR) << "Couldn't get resources";
-  }
-  auto connector = FindConnector(resources);
-  if (!connector) {
-    LINUXES_LOG(ERROR) << "Couldn't find a connector";
-    return false;
-  }
-
-  drm_connector_id_ = connector->connector_id;
-  drm_mode_info_ = connector->modes[0];
-  LINUXES_LOG(INFO) << "resolution: " << drm_mode_info_.hdisplay << "x"
-                    << drm_mode_info_.vdisplay;
-
-  auto* encoder = FindEncoder(resources, connector);
-  if (!encoder) {
-    LINUXES_LOG(ERROR) << "Couldn't find a connector";
-    return false;
-  }
-  if (encoder->crtc_id) {
-    drm_crtc_ = drmModeGetCrtc(drm_device_, encoder->crtc_id);
-  }
-
-  drmModeFreeEncoder(encoder);
-  drmModeFreeConnector(connector);
-  drmModeFreeResources(resources);
-
-  return true;
 }
 
 bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {

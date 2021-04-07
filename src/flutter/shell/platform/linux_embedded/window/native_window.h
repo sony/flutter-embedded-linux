@@ -22,7 +22,21 @@ class NativeWindow {
   T* Window() const { return window_; }
 #endif
 
-  virtual bool Resize(const size_t width, const size_t height) const = 0;
+  int32_t Width() {
+    if (!valid_) {
+      return -1;
+    }
+    return width_;
+  }
+
+  int32_t Height() {
+    if (!valid_) {
+      return -1;
+    }
+    return height_;
+  }
+
+  virtual bool Resize(const size_t width, const size_t height) = 0;
 
  protected:
   // Specifies the native winodw (NativeWindowType)
@@ -34,6 +48,8 @@ class NativeWindow {
 #endif
 
   bool valid_ = false;
+  int32_t width_;
+  int32_t height_;
 };
 
 }  // namespace flutter

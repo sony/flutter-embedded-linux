@@ -18,7 +18,7 @@ class NativeWindowWayland : public NativeWindow<wl_egl_window> {
   ~NativeWindowWayland();
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) const override;
+  bool Resize(const size_t width, const size_t height) override;
 
   wl_surface* Surface() const { return surface_; }
 

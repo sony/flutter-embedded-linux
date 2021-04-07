@@ -11,16 +11,13 @@
 #include <cstring>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
 
 namespace flutter {
 
-template <typename T>
-class EnvironmentEglDrmEglstream : public EnvironmentEgl<T> {
+class EnvironmentEglDrmEglstream : public EnvironmentEgl<void> {
  public:
-  EnvironmentEglDrmEglstream(T *platform_display)
-      : EnvironmentEgl<T>(platform_display) {
+  EnvironmentEglDrmEglstream(int drm_device) : EnvironmentEgl<void>() {
     if (!SetEglExtensionFunctionPointers()) {
       LINUXES_LOG(ERROR) << "Failed to set extension function pointers";
       return;
@@ -31,7 +28,7 @@ class EnvironmentEglDrmEglstream : public EnvironmentEgl<T> {
       return;
     }
 
-    EGLint attribs[] = {EGL_DRM_MASTER_FD_EXT, *platform_display, EGL_NONE};
+    EGLint attribs[] = {EGL_DRM_MASTER_FD_EXT, drm_device, EGL_NONE};
     this->display_ =
         eglGetPlatformDisplayEXT_(EGL_PLATFORM_DEVICE_EXT, device, attribs);
     if (this->display_ == EGL_NO_DISPLAY) {
@@ -39,18 +36,9 @@ class EnvironmentEglDrmEglstream : public EnvironmentEgl<T> {
       return;
     }
 
-    if (eglInitialize(this->display_, nullptr, nullptr) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
-                         << get_egl_error_cause();
-      return;
+    if (InitializeEgl()) {
+      valid_ = true;
     }
-
-    if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
-      return;
-    }
-
-    this->valid_ = true;
   }
 
   ~EnvironmentEglDrmEglstream() = default;
@@ -62,14 +50,11 @@ class EnvironmentEglDrmEglstream : public EnvironmentEgl<T> {
     eglQueryDeviceStringEXT_ = reinterpret_cast<PFNEGLQUERYDEVICESTRINGEXTPROC>(
         eglGetProcAddress("eglQueryDeviceStringEXT"));
     eglGetPlatformDisplayEXT_ =
-        (PFNEGLGETPLATFORMDISPLAYEXTPROC)eglGetProcAddress(
-            "eglGetPlatformDisplayEXT");
+        reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(
+            eglGetProcAddress("eglGetPlatformDisplayEXT"));
 
-    if (!eglQueryDevicesEXT_ || !eglQueryDeviceStringEXT_ ||
-        !eglGetPlatformDisplayEXT_) {
-      return false;
-    }
-    return true;
+    return eglQueryDevicesEXT_ && eglQueryDeviceStringEXT_ &&
+           eglGetPlatformDisplayEXT_;
   }
 
   EGLDeviceEXT GetEglDevice() {

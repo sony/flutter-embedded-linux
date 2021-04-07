@@ -21,7 +21,7 @@ class LinuxesWindowDrmEglstream
   std::unique_ptr<SurfaceGlDrmEglstream> CreateRenderSurface() override {
     return std::make_unique<SurfaceGlDrmEglstream>(
         std::make_unique<ContextEglDrmEglstream>(
-            std::make_unique<EnvironmentEglDrmEglstream<int>>(
+            std::make_unique<EnvironmentEglDrmEglstream>(
                 native_window_->DrmDevice())));
   }
 };

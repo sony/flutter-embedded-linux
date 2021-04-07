@@ -20,12 +20,13 @@ namespace flutter {
 template <typename D, typename W>
 class ContextEgl {
  public:
-  ContextEgl(std::unique_ptr<EnvironmentEgl<D>> environment)
+  ContextEgl(std::unique_ptr<EnvironmentEgl<D>> environment,
+             int32_t egl_surface_type = EGL_WINDOW_BIT)
       : environment_(std::move(environment)), config_(nullptr) {
-#if !defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
     EGLint config_count = 0;
     const EGLint attribs[] = {
         // clang-format off
+        EGL_SURFACE_TYPE,    egl_surface_type,
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_RED_SIZE,        8,
         EGL_GREEN_SIZE,      8,
@@ -68,7 +69,6 @@ class ContextEgl {
     }
 
     valid_ = true;
-#endif
   }
 
   ~ContextEgl() = default;

@@ -205,7 +205,7 @@ Please edit `cmake/user_config.cmake` file.
 
 | Option | Description |
 | ------------- | ------------- |
-| BACKEND_TYPE | Select WAYLAND or DRM-GBM or DRM-EGLSTREAM or X11 as the display backend type (The default setting is WAYLAND) |
+| BACKEND_TYPE | Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type (The default setting is WAYLAND) |
 | DESKTOP_SHELL | Work as Weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |

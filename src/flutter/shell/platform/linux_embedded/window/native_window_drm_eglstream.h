@@ -61,7 +61,7 @@ class NativeWindowDrmEglstream : public NativeWindowDrm<uint32_t> {
     uint32_t* ptr;
   };
 
-  bool ConfigureDisplay();
+  bool ConfigureDisplayForEglstream();
 
   int SetDrmClientCapability();
 

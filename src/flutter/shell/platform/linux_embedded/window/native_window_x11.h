@@ -18,7 +18,7 @@ class NativeWindowX11 : public NativeWindow<xcb_window_t> {
   ~NativeWindowX11();
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) const override;
+  bool Resize(const size_t width, const size_t height) override;
 
   xcb_connection_t* XcbConnection() { return xcb_connection_; }
 

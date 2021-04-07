@@ -7,7 +7,7 @@ set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 17)
 
 # Build options.
-option(BACKEND_TYPE "Select WAYLAND or DRM-GBM or DRM-EGLSTREAM or X11 as the display backend type" WAYLAND)
+option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
 option(DESKTOP_SHELL "Work as weston desktop-shell" OFF)
 option(USE_VIRTUAL_KEYBOARD "Use virtual keyboard" OFF)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)

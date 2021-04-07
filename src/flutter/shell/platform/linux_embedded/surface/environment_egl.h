@@ -17,7 +17,6 @@ class EnvironmentEgl {
  public:
   EnvironmentEgl(T* platform_display)
       : display_(EGL_NO_DISPLAY), valid_(false) {
-#if !defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
       LINUXES_LOG(ERROR) << "Failed to get the EGL display: "
@@ -25,20 +24,12 @@ class EnvironmentEgl {
       return;
     }
 
-    if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
-                         << get_egl_error_cause();
-      return;
+    if (InitializeEgl()) {
+      valid_ = true;
     }
-
-    if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
-      return;
-    }
-
-    valid_ = true;
-#endif
   }
+
+  EnvironmentEgl() : display_(EGL_NO_DISPLAY), valid_(false) {}
 
   ~EnvironmentEgl() {
     if (display_ != EGL_NO_DISPLAY) {
@@ -48,6 +39,21 @@ class EnvironmentEgl {
       }
       display_ = EGL_NO_DISPLAY;
     }
+  }
+
+  bool InitializeEgl() {
+    if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
+      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
+                         << get_egl_error_cause();
+      return false;
+    }
+
+    if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
+      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
+      return false;
+    }
+
+    return true;
   }
 
   bool IsValid() const { return valid_; }
