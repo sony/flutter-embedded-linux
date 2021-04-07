@@ -6,29 +6,23 @@
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_X11_H_
 
 #include <X11/Xlib.h>
-#include <xcb/xcb.h>
 
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
-class NativeWindowX11 : public NativeWindow<xcb_window_t> {
+class NativeWindowX11 : public NativeWindow<Window> {
  public:
-  NativeWindowX11(Display* display, const size_t width, const size_t height);
-  ~NativeWindowX11();
+  NativeWindowX11(Display* display, VisualID visual_id, const size_t width,
+                  const size_t height);
+  ~NativeWindowX11() = default;
 
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) const override;
 
-  xcb_connection_t* XcbConnection() { return xcb_connection_; }
-
-  xcb_intern_atom_reply_t* WmDeleteMessage() { return reply_delete_; }
-
-  void Destroy();
+  void Destroy(Display* display);
 
  private:
-  xcb_connection_t* xcb_connection_ = nullptr;
-  xcb_intern_atom_reply_t* reply_delete_ = nullptr;
 };
 
 }  // namespace flutter

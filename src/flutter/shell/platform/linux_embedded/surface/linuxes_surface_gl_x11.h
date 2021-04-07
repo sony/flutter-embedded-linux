@@ -5,7 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_GL_X11_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_GL_X11_H_
 
-#include <xcb/xcb.h>
+#include <X11/Xutil.h>
 
 #include <memory>
 
@@ -16,8 +16,7 @@
 
 namespace flutter {
 
-class SurfaceGlX11 final : public Surface<xcb_window_t>,
-                           public SurfaceGlDelegate {
+class SurfaceGlX11 final : public Surface<Window>, public SurfaceGlDelegate {
  public:
   SurfaceGlX11(std::unique_ptr<ContextEglX11> context);
   ~SurfaceGlX11() = default;
@@ -26,7 +25,7 @@ class SurfaceGlX11 final : public Surface<xcb_window_t>,
   bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<xcb_window_t>* window) override;
+  bool SetNativeWindow(NativeWindow<Window>* window) override;
 
   // |Surface|
   bool OnScreenSurfaceResize(const size_t width,
@@ -58,7 +57,7 @@ class SurfaceGlX11 final : public Surface<xcb_window_t>,
 
  private:
   std::unique_ptr<ContextEglX11> context_;
-  NativeWindow<xcb_window_t>* native_window_;
+  NativeWindow<Window>* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };
