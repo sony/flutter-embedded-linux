@@ -129,6 +129,13 @@ bool NativeWindowDrmGbm::DismissCursor() {
   return true;
 }
 
+std::unique_ptr<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>
+NativeWindowDrmGbm::CreateRenderSurface() {
+  return std::make_unique<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>(
+      std::make_unique<ContextEglDrmGbm>(
+          std::make_unique<EnvironmentEgl>(gbm_device_)));
+}
+
 void NativeWindowDrmGbm::SwapBuffer() {
   auto* bo = gbm_surface_lock_front_buffer(window_);
   auto width = gbm_bo_get_width(bo);

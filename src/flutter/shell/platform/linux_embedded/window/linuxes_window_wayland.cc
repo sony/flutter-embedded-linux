@@ -693,7 +693,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
 
   render_surface_ =
       std::make_unique<SurfaceGlWayland>(std::make_unique<ContextEglWayland>(
-          std::make_unique<EnvironmentEgl<wl_display>>(wl_display_)));
+          std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
   // The offscreen (resource) surface will not be mapped, but needs to be a

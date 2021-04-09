@@ -11,11 +11,15 @@
 
 #include <string>
 
+#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_gbm.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 
-class NativeWindowDrmGbm : public NativeWindowDrm<gbm_surface> {
+class NativeWindowDrmGbm
+    : public NativeWindowDrm<gbm_surface,
+                             SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>> {
  public:
   NativeWindowDrmGbm(const char* deviceFilename);
   ~NativeWindowDrmGbm();
@@ -30,9 +34,12 @@ class NativeWindowDrmGbm : public NativeWindowDrm<gbm_surface> {
   // |NativeWindowDrm|
   bool DismissCursor() override;
 
-  void SwapBuffer();
+  // |NativeWindowDrm|
+  std::unique_ptr<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>
+  CreateRenderSurface() override;
 
-  gbm_device* BufferDevice() const { return gbm_device_; }
+  // |NativeWindowDrm|
+  void SwapBuffer() override;
 
  private:
   bool CreateCursorBuffer(const std::string& cursor_name);

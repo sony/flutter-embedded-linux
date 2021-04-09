@@ -12,10 +12,9 @@
 
 namespace flutter {
 
-template <typename T>
 class EnvironmentEgl {
  public:
-  EnvironmentEgl(T* platform_display)
+  EnvironmentEgl(EGLNativeDisplayType platform_display)
       : display_(EGL_NO_DISPLAY), valid_(false) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
@@ -24,9 +23,7 @@ class EnvironmentEgl {
       return;
     }
 
-    if (InitializeEgl()) {
-      valid_ = true;
-    }
+    valid_ = InitializeEgl();
   }
 
   EnvironmentEgl() : display_(EGL_NO_DISPLAY), valid_(false) {}
@@ -41,7 +38,7 @@ class EnvironmentEgl {
     }
   }
 
-  bool InitializeEgl() {
+  bool InitializeEgl() const {
     if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
       LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
                          << get_egl_error_cause();
@@ -58,7 +55,7 @@ class EnvironmentEgl {
 
   bool IsValid() const { return valid_; }
 
-  EGLDisplay Display() const { return display_; };
+  EGLDisplay Display() const { return display_; }
 
  protected:
   EGLDisplay display_;

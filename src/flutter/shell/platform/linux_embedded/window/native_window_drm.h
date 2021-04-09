@@ -26,8 +26,8 @@ constexpr uint32_t kCursorBufferWidth = 64;
 constexpr uint32_t kCursorBufferHeight = 64;
 }  // namespace
 
-template <typename T>
-class NativeWindowDrm : public NativeWindow<T> {
+template <typename W, typename S>
+class NativeWindowDrm : public NativeWindow<W> {
  public:
   NativeWindowDrm() = default;
   virtual ~NativeWindowDrm() = default;
@@ -52,6 +52,10 @@ class NativeWindowDrm : public NativeWindow<T> {
 
   virtual bool DismissCursor() = 0;
 
+  virtual std::unique_ptr<S> CreateRenderSurface() = 0;
+
+  virtual void SwapBuffer(){};
+
   bool MoveCursor(double x, double y) {
     auto result = drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
                                     x - cursor_hotspot_.first,
@@ -62,8 +66,6 @@ class NativeWindowDrm : public NativeWindow<T> {
     }
     return true;
   }
-
-  int DrmDevice() { return drm_device_; }
 
  protected:
   bool ConfigureDisplay() {

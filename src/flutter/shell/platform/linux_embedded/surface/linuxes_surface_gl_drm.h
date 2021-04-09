@@ -11,11 +11,12 @@
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 
-template <typename S, typename C>
-class SurfaceGlDrm : public Surface<S>, public SurfaceGlDelegate {
+template <typename D, typename C>
+class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
  public:
   SurfaceGlDrm(std::unique_ptr<C> context)
       : native_window_(nullptr), onscreen_surface_(nullptr) {
@@ -30,7 +31,7 @@ class SurfaceGlDrm : public Surface<S>, public SurfaceGlDelegate {
   }
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<S>* window) override {
+  bool SetNativeWindow(NativeWindow<D>* window) override {
     native_window_ = window;
     onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
     if (!onscreen_surface_->IsValid()) {
@@ -39,7 +40,7 @@ class SurfaceGlDrm : public Surface<S>, public SurfaceGlDelegate {
     return true;
   }
 
-  bool SetNativeWindowResource(NativeWindow<S>* window) {
+  bool SetNativeWindowResource(NativeWindow<D>* window) {
     offscreen_surface_ = context_->CreateOffscreenSurface(window);
     if (!offscreen_surface_->IsValid()) {
       LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
@@ -83,6 +84,16 @@ class SurfaceGlDrm : public Surface<S>, public SurfaceGlDelegate {
   }
 
   // |SurfaceGlDelegate|
+  bool GLContextPresent(uint32_t fbo_id) const override {
+    if (!onscreen_surface_->SwapBuffers()) {
+      return false;
+    }
+    static_cast<NativeWindowDrm<D, SurfaceGlDrm<D, C>>*>(native_window_)
+        ->SwapBuffer();
+    return true;
+  }
+
+  // |SurfaceGlDelegate|
   uint32_t GLContextFBO() const override { return 0; }
 
   // |SurfaceGlDelegate|
@@ -92,7 +103,7 @@ class SurfaceGlDrm : public Surface<S>, public SurfaceGlDelegate {
 
  protected:
   std::unique_ptr<C> context_;
-  NativeWindow<S>* native_window_;
+  NativeWindow<D>* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

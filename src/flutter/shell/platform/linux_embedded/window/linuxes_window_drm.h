@@ -112,7 +112,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     }
     display_valid_ = true;
 
-    render_surface_ = CreateRenderSurface();
+    render_surface_ = native_window_->CreateRenderSurface();
     if (!render_surface_->SetNativeWindow(native_window_.get())) {
       return false;
     }
@@ -184,8 +184,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   void SetClipboardData(const std::string& data) override {
     clipboard_data_ = data;
   }
-
-  virtual std::unique_ptr<S> CreateRenderSurface() = 0;
 
  protected:
   static constexpr libinput_interface kLibinputInterface = {

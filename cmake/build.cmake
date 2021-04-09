@@ -7,8 +7,11 @@ if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc)
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
+  ## Define "EGL_NO_X11" to avoid including x11-related files.
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM -DEGL_NO_X11)
   set(DISPLAY_BACKEND_SRC
+    src/flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
@@ -44,13 +47,13 @@ else()
 endif()
 
 # desktop-shell for weston.
-if(DESKTOP_SHELL)
+if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   add_definitions(-DDESKTOP_SHELL)
 endif()
 
 # wayland & weston protocols.
 set(WAYLAND_PROTOCOL_SRC "")
-if(DESKTOP_SHELL)
+if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/weston-desktop-shell-protocol.c)  
 
   if(USE_VIRTUAL_KEYBOARD)

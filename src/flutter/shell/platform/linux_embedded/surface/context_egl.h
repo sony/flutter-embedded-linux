@@ -20,8 +20,8 @@ namespace flutter {
 template <typename D, typename W>
 class ContextEgl {
  public:
-  ContextEgl(std::unique_ptr<EnvironmentEgl<D>> environment,
-             int32_t egl_surface_type = EGL_WINDOW_BIT)
+  ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
+             EGLint egl_surface_type = EGL_WINDOW_BIT)
       : environment_(std::move(environment)), config_(nullptr) {
     EGLint config_count = 0;
     const EGLint attribs[] = {
@@ -143,7 +143,7 @@ class ContextEgl {
   }
 
  protected:
-  std::unique_ptr<EnvironmentEgl<D>> environment_;
+  std::unique_ptr<EnvironmentEgl> environment_;
   EGLConfig config_;
   EGLContext context_;
   EGLContext resource_context_;

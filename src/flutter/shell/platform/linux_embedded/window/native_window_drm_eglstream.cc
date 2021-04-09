@@ -75,6 +75,13 @@ bool NativeWindowDrmEglstream::DismissCursor() {
   return true;
 }
 
+std::unique_ptr<SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>>
+NativeWindowDrmEglstream::CreateRenderSurface() {
+  return std::make_unique<SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>>(
+      std::make_unique<ContextEglDrmEglstream>(
+          std::make_unique<EnvironmentEglDrmEglstream>()));
+}
+
 bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
   if (SetDrmClientCapability() != 0) {
     LINUXES_LOG(ERROR) << "Couldn't set drm client capability";

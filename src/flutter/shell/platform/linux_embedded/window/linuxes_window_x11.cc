@@ -110,7 +110,7 @@ bool LinuxesWindowX11::DispatchEvent() {
 
 bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
   auto context_egl = std::make_unique<ContextEglX11>(
-      std::make_unique<EnvironmentEgl<Display>>(display_));
+      std::make_unique<EnvironmentEgl>(display_));
 
   native_window_ = std::make_unique<NativeWindowX11>(
       display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID), width, height);
