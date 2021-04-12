@@ -125,6 +125,8 @@ Step 1) Check the version (SHA) of the channel you want to use.
 - [beta channel](https://raw.githubusercontent.com/flutter/flutter/beta/bin/internal/engine.version)
 - [stable channel](https://raw.githubusercontent.com/flutter/flutter/stable/bin/internal/engine.version)
 
+You can also get the version from `${path_to_flutter_sdk_install}/flutter/bin/internal/engine.version` of the Flutter SDK which you are currently using.
+
 Step 2) Download Flutter Engine embedder library. Note that replace `FLUTTER_ENGINE` with the SHA of the Flutter engine you want to use.
 ```Shell
 $ curl -O https://storage.googleapis.com/flutter_infra/flutter/FLUTTER_ENGINE/linux-x64/linux-x64-embedder
