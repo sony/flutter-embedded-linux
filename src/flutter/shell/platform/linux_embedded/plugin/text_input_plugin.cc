@@ -24,35 +24,36 @@
 
 namespace flutter {
 
-static constexpr char kChannelName[] = "flutter/textinput";
+namespace {
+constexpr char kChannelName[] = "flutter/textinput";
 
-static constexpr char kSetEditingStateMethod[] = "TextInput.setEditingState";
-static constexpr char kClearClientMethod[] = "TextInput.clearClient";
-static constexpr char kSetClientMethod[] = "TextInput.setClient";
-static constexpr char kShowMethod[] = "TextInput.show";
-static constexpr char kHideMethod[] = "TextInput.hide";
+constexpr char kSetEditingStateMethod[] = "TextInput.setEditingState";
+constexpr char kClearClientMethod[] = "TextInput.clearClient";
+constexpr char kSetClientMethod[] = "TextInput.setClient";
+constexpr char kShowMethod[] = "TextInput.show";
+constexpr char kHideMethod[] = "TextInput.hide";
 
-static constexpr char kMultilineInputType[] = "TextInputType.multiline";
+constexpr char kMultilineInputType[] = "TextInputType.multiline";
 
-static constexpr char kUpdateEditingStateMethod[] =
+constexpr char kUpdateEditingStateMethod[] =
     "TextInputClient.updateEditingState";
-static constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
+constexpr char kPerformActionMethod[] = "TextInputClient.performAction";
 
-static constexpr char kTextInputAction[] = "inputAction";
-static constexpr char kTextInputType[] = "inputType";
-static constexpr char kTextInputTypeName[] = "name";
-static constexpr char kComposingBaseKey[] = "composingBase";
-static constexpr char kComposingExtentKey[] = "composingExtent";
-static constexpr char kSelectionAffinityKey[] = "selectionAffinity";
-static constexpr char kAffinityDownstream[] = "TextAffinity.downstream";
-static constexpr char kSelectionBaseKey[] = "selectionBase";
-static constexpr char kSelectionExtentKey[] = "selectionExtent";
-static constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
-static constexpr char kTextKey[] = "text";
+constexpr char kTextInputAction[] = "inputAction";
+constexpr char kTextInputType[] = "inputType";
+constexpr char kTextInputTypeName[] = "name";
+constexpr char kComposingBaseKey[] = "composingBase";
+constexpr char kComposingExtentKey[] = "composingExtent";
+constexpr char kSelectionAffinityKey[] = "selectionAffinity";
+constexpr char kAffinityDownstream[] = "TextAffinity.downstream";
+constexpr char kSelectionBaseKey[] = "selectionBase";
+constexpr char kSelectionExtentKey[] = "selectionExtent";
+constexpr char kSelectionIsDirectionalKey[] = "selectionIsDirectional";
+constexpr char kTextKey[] = "text";
 
-static constexpr char kBadArgumentError[] = "Bad Arguments";
-static constexpr char kInternalConsistencyError[] =
-    "Internal Consistency Error";
+constexpr char kBadArgumentError[] = "Bad Arguments";
+constexpr char kInternalConsistencyError[] = "Internal Consistency Error";
+}  // namespace
 
 void TextInputPlugin::OnKeyPressed(uint32_t keycode, uint32_t code_point) {
   if (!active_model_) {

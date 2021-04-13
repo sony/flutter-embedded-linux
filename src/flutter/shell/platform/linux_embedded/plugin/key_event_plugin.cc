@@ -20,24 +20,24 @@
 namespace flutter {
 
 namespace {
-static constexpr char kChannelName[] = "flutter/keyevent";
-static constexpr char kKeyCodeKey[] = "keyCode";
-static constexpr char kKeyMapKey[] = "keymap";
-static constexpr char kScanCodeKey[] = "scanCode";
-static constexpr char kModifiersKey[] = "modifiers";
-static constexpr char kTypeKey[] = "type";
-static constexpr char kToolkitKey[] = "toolkit";
-static constexpr char kUnicodeScalarValues[] = "unicodeScalarValues";
-static constexpr char kLinuxKeyMap[] = "linux";
-static constexpr char kGLFWKey[] = "glfw";
-static constexpr char kKeyUp[] = "keyup";
-static constexpr char kKeyDown[] = "keydown";
+constexpr char kChannelName[] = "flutter/keyevent";
+constexpr char kKeyCodeKey[] = "keyCode";
+constexpr char kKeyMapKey[] = "keymap";
+constexpr char kScanCodeKey[] = "scanCode";
+constexpr char kModifiersKey[] = "modifiers";
+constexpr char kTypeKey[] = "type";
+constexpr char kToolkitKey[] = "toolkit";
+constexpr char kUnicodeScalarValues[] = "unicodeScalarValues";
+constexpr char kLinuxKeyMap[] = "linux";
+constexpr char kGLFWKey[] = "glfw";
+constexpr char kKeyUp[] = "keyup";
+constexpr char kKeyDown[] = "keydown";
 
-static constexpr char kKeyboardConfigFile[] = "/etc/default/keyboard";
-static constexpr char kXkbmodelKey[] = "XKBMODEL";
-static constexpr char kXkblayoutKey[] = "XKBLAYOUT";
-static constexpr char kXkbvariantKey[] = "XKBVARIANT";
-static constexpr char kXkboptionsKey[] = "XKBOPTIONS";
+constexpr char kKeyboardConfigFile[] = "/etc/default/keyboard";
+constexpr char kXkbmodelKey[] = "XKBMODEL";
+constexpr char kXkblayoutKey[] = "XKBLAYOUT";
+constexpr char kXkbvariantKey[] = "XKBVARIANT";
+constexpr char kXkboptionsKey[] = "XKBOPTIONS";
 }  // namespace
 
 KeyeventPlugin::KeyeventPlugin(BinaryMessenger* messenger)
@@ -162,11 +162,11 @@ xkb_keymap* KeyeventPlugin::CreateKeymap(xkb_context* context) {
   if (map.find(kXkboptionsKey) != map.end()) {
     xkboptions = map[kXkboptionsKey];
   }
-  struct xkb_rule_names names = {.rules = NULL,
-                                 .model = xkbmodel.c_str(),
-                                 .layout = xkblayout.c_str(),
-                                 .variant = xkbvariant.c_str(),
-                                 .options = xkboptions.c_str()};
+  xkb_rule_names names = {.rules = NULL,
+                          .model = xkbmodel.c_str(),
+                          .layout = xkblayout.c_str(),
+                          .variant = xkbvariant.c_str(),
+                          .options = xkboptions.c_str()};
   return xkb_keymap_new_from_names(context, &names,
                                    XKB_KEYMAP_COMPILE_NO_FLAGS);
 }

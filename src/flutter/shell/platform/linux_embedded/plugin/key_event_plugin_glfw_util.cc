@@ -10,14 +10,16 @@
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 
-static constexpr uint32_t kXModifierShift = 0x0001;
-static constexpr uint32_t kXModifierCapsLock = 0x0002;
-static constexpr uint32_t kXModifierControl = 0x0004;
-static constexpr uint32_t kXModifierAlt = 0x0008;
-static constexpr uint32_t kXModifierNumLock = 0x0010;
-static constexpr uint32_t kXModifierSuper = 0x0040;
-
 namespace flutter {
+
+namespace {
+constexpr uint32_t kXModifierShift = 0x0001;
+constexpr uint32_t kXModifierCapsLock = 0x0002;
+constexpr uint32_t kXModifierControl = 0x0004;
+constexpr uint32_t kXModifierAlt = 0x0008;
+constexpr uint32_t kXModifierNumLock = 0x0010;
+constexpr uint32_t kXModifierSuper = 0x0040;
+}  // namespace
 
 uint32_t GetGlfwModifiers(xkb_mod_mask_t xkb_mod_mask) {
   uint32_t mods = 0;
