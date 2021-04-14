@@ -15,8 +15,8 @@
 
 namespace flutter {
 
-template <typename D, typename C>
-class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
+template <typename C>
+class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
  public:
   SurfaceGlDrm(std::unique_ptr<C> context)
       : native_window_(nullptr), onscreen_surface_(nullptr) {
@@ -31,7 +31,7 @@ class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
   }
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<D>* window) override {
+  bool SetNativeWindow(NativeWindow* window) override {
     native_window_ = window;
     onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
     if (!onscreen_surface_->IsValid()) {
@@ -40,7 +40,7 @@ class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
     return true;
   }
 
-  bool SetNativeWindowResource(NativeWindow<D>* window) {
+  bool SetNativeWindowResource(NativeWindow* window) {
     offscreen_surface_ = context_->CreateOffscreenSurface(window);
     if (!offscreen_surface_->IsValid()) {
       LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
@@ -88,7 +88,7 @@ class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
     if (!onscreen_surface_->SwapBuffers()) {
       return false;
     }
-    static_cast<NativeWindowDrm<D, SurfaceGlDrm<D, C>>*>(native_window_)
+    static_cast<NativeWindowDrm<SurfaceGlDrm<C>>*>(native_window_)
         ->SwapBuffer();
     return true;
   }
@@ -103,7 +103,7 @@ class SurfaceGlDrm final : public Surface<D>, public SurfaceGlDelegate {
 
  protected:
   std::unique_ptr<C> context_;
-  NativeWindow<D>* native_window_;
+  NativeWindow* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

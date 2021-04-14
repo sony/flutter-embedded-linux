@@ -4,7 +4,6 @@
 
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
 
-#include <fcntl.h>
 #include <unistd.h>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
@@ -12,10 +11,9 @@
 
 namespace flutter {
 
-NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename) {
-  drm_device_ = open(deviceFilename, O_RDWR | O_CLOEXEC);
-  if (drm_device_ == -1) {
-    LINUXES_LOG(ERROR) << "Couldn't open " << deviceFilename;
+NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename)
+    : NativeWindowDrm(deviceFilename) {
+  if (!valid_) {
     return;
   }
 
@@ -23,16 +21,14 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename) {
     LINUXES_LOG(ERROR)
         << "Couldn't become the DRM master. Please confirm if another display "
            "backend such as X11 and Wayland is not running.";
-    return;
-  }
-
-  if (!ConfigureDisplay()) {
+    valid_ = false;
     return;
   }
 
   gbm_device_ = gbm_create_device(drm_device_);
   if (!gbm_device_) {
     LINUXES_LOG(ERROR) << "Couldn't create the GBM device.";
+    valid_ = false;
     return;
   }
 
@@ -41,10 +37,9 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename) {
                                GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
   if (!window_) {
     LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
+    valid_ = false;
     return;
   }
-
-  valid_ = true;
 }
 
 NativeWindowDrmGbm::~NativeWindowDrmGbm() {
@@ -66,8 +61,9 @@ NativeWindowDrmGbm::~NativeWindowDrmGbm() {
 
   if (gbm_previous_bo_) {
     drmModeRmFB(drm_device_, gbm_previous_fb_);
-    gbm_surface_release_buffer(window_, gbm_previous_bo_);
-    gbm_surface_destroy(window_);
+    gbm_surface_release_buffer(static_cast<gbm_surface*>(window_),
+                               gbm_previous_bo_);
+    gbm_surface_destroy(static_cast<gbm_surface*>(window_));
     window_ = nullptr;
   }
 
@@ -129,15 +125,15 @@ bool NativeWindowDrmGbm::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>
+std::unique_ptr<SurfaceGlDrm<ContextEgl>>
 NativeWindowDrmGbm::CreateRenderSurface() {
-  return std::make_unique<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>(
-      std::make_unique<ContextEglDrmGbm>(
+  return std::make_unique<SurfaceGlDrm<ContextEgl>>(
+      std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
 void NativeWindowDrmGbm::SwapBuffer() {
-  auto* bo = gbm_surface_lock_front_buffer(window_);
+  auto* bo = gbm_surface_lock_front_buffer(static_cast<gbm_surface*>(window_));
   auto width = gbm_bo_get_width(bo);
   auto height = gbm_bo_get_height(bo);
   auto handle = gbm_bo_get_handle(bo).u32;
@@ -156,7 +152,8 @@ void NativeWindowDrmGbm::SwapBuffer() {
 
   if (gbm_previous_bo_) {
     drmModeRmFB(drm_device_, gbm_previous_fb_);
-    gbm_surface_release_buffer(window_, gbm_previous_bo_);
+    gbm_surface_release_buffer(static_cast<gbm_surface*>(window_),
+                               gbm_previous_bo_);
   }
   gbm_previous_bo_ = bo;
   gbm_previous_fb_ = fb;

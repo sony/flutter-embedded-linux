@@ -19,8 +19,7 @@ ContextEglDrmEglstream::ContextEglDrmEglstream(
 }
 
 std::unique_ptr<LinuxesEGLSurface>
-ContextEglDrmEglstream::CreateOnscreenSurface(
-    NativeWindow<uint32_t>* window) const {
+ContextEglDrmEglstream::CreateOnscreenSurface(NativeWindow* window) const {
   EGLint layer_count = 0;
   EGLOutputLayerEXT layer;
   EGLAttrib layer_attribs[] = {

@@ -4,27 +4,29 @@
 
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 
-#include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
+
+#include <cstring>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
 
-NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename) {
-  drm_device_ = open(deviceFilename, O_RDWR | O_CLOEXEC);
-  if (drm_device_ == -1) {
-    LINUXES_LOG(ERROR) << "Couldn't open " << deviceFilename;
+NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename)
+    : NativeWindowDrm(deviceFilename) {
+  if (!valid_) {
     return;
   }
 
-  if (!ConfigureDisplay() || !ConfigureDisplayForEglstream()) {
+  if (!ConfigureDisplayAdditional()) {
+    valid_ = false;
     return;
   }
 
-  valid_ = true;
+  // DRM-NVDC doesn't have drmIsMaster() function.
+  // Master permissions are granted by default to all clients.
 }
 
 NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
@@ -75,15 +77,15 @@ bool NativeWindowDrmEglstream::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>>
+std::unique_ptr<SurfaceGlDrm<ContextEglDrmEglstream>>
 NativeWindowDrmEglstream::CreateRenderSurface() {
-  return std::make_unique<SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>>(
+  return std::make_unique<SurfaceGlDrm<ContextEglDrmEglstream>>(
       std::make_unique<ContextEglDrmEglstream>(
           std::make_unique<EnvironmentEglDrmEglstream>()));
 }
 
-bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
-  if (SetDrmClientCapability() != 0) {
+bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
+  if (!SetDrmClientCapabilities()) {
     LINUXES_LOG(ERROR) << "Couldn't set drm client capability";
     return false;
   }
@@ -93,7 +95,7 @@ bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
     LINUXES_LOG(ERROR) << "Couldn't get plane resources";
     return false;
   }
-  drm_plane_id_ = FindPlane(plane_resources);
+  drm_plane_id_ = FindPrimaryPlaneId(plane_resources);
   drmModeFreePlaneResources(plane_resources);
   if (drm_plane_id_ == -1) {
     LINUXES_LOG(ERROR) << "Could not find a plane.";
@@ -105,13 +107,13 @@ bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
     LINUXES_LOG(ERROR) << "Couldn't allocate atomic";
     return false;
   }
-  int ret = -1;
+  int result = -1;
   if (AssignAtomicRequest(atomic)) {
-    ret = drmModeAtomicCommit(drm_device_, atomic,
-                              DRM_MODE_ATOMIC_ALLOW_MODESET, nullptr);
+    result = drmModeAtomicCommit(drm_device_, atomic,
+                                 DRM_MODE_ATOMIC_ALLOW_MODESET, NULL);
   }
   drmModeAtomicFree(atomic);
-  if (ret != 0) {
+  if (result != 0) {
     LINUXES_LOG(ERROR) << "Failed to commit an atomic property change request";
     return false;
   }
@@ -119,14 +121,20 @@ bool NativeWindowDrmEglstream::ConfigureDisplayForEglstream() {
   return true;
 }
 
-int NativeWindowDrmEglstream::SetDrmClientCapability() {
-  if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) == 0) {
-    return drmSetClientCap(drm_device_, DRM_CLIENT_CAP_ATOMIC, 1);
+bool NativeWindowDrmEglstream::SetDrmClientCapabilities() {
+  if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) != 0) {
+    LINUXES_LOG(ERROR) << "Cannot set DRM_CLIENT_CAP_UNIVERSAL_PLANES";
+    return false;
   }
-  return -1;
+  if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_ATOMIC, 1) != 0) {
+    LINUXES_LOG(ERROR) << "Cannot set DRM_CLIENT_CAP_ATOMIC";
+    return false;
+  }
+  return true;
 }
 
-uint32_t NativeWindowDrmEglstream::FindPlane(drmModePlaneResPtr resources) {
+uint32_t NativeWindowDrmEglstream::FindPrimaryPlaneId(
+    drmModePlaneResPtr resources) {
   for (uint32_t i = 0; i < resources->count_planes; i++) {
     auto plane = drmModeGetPlane(drm_device_, resources->planes[i]);
     if (plane) {
@@ -152,7 +160,7 @@ uint64_t NativeWindowDrmEglstream::GetPropertyValue(uint32_t id, uint32_t type,
     for (uint32_t i = 0; i < properties->count_props; i++) {
       auto property = drmModeGetProperty(drm_device_, properties->props[i]);
       if (property) {
-        if (strcmp(prop_name, property->name) == 0) {
+        if (std::strcmp(prop_name, property->name) == 0) {
           value = properties->prop_values[i];
           drmModeFreeProperty(property);
           break;
@@ -166,12 +174,19 @@ uint64_t NativeWindowDrmEglstream::GetPropertyValue(uint32_t id, uint32_t type,
 }
 
 bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
-  if (!CreatePropertyBlob() || !CreateFb()) {
+  if (drmModeCreatePropertyBlob(drm_device_, &drm_mode_info_,
+                                sizeof(drm_mode_info_),
+                                &drm_property_blob_) != 0) {
+    LINUXES_LOG(ERROR) << "Failed to create property blob";
     return false;
   }
 
-  struct drm_property_ids property_ids = {0};
-  GetPropertyIds(&property_ids);
+  if (!CreateFb()) {
+    return false;
+  }
+
+  NativeWindowDrmEglstream::DrmPropertyIds property_ids = {0};
+  GetPropertyIds(property_ids);
   drmModeAtomicAddProperty(atomic, drm_crtc_->crtc_id,
                            property_ids.crtc.mode_id, drm_property_blob_);
   drmModeAtomicAddProperty(atomic, drm_crtc_->crtc_id, property_ids.crtc.active,
@@ -198,47 +213,47 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
 }
 
 void NativeWindowDrmEglstream::GetPropertyIds(
-    struct NativeWindowDrmEglstream::drm_property_ids* property_ids) {
-  struct drm_property_address crtc_table[] = {
-      {"MODE_ID", &property_ids->crtc.mode_id},
-      {"ACTIVE", &property_ids->crtc.active},
+    NativeWindowDrmEglstream::DrmPropertyIds& property_ids) {
+  struct DrmPropertyAddress crtc_table[] = {
+      {"MODE_ID", &property_ids.crtc.mode_id},
+      {"ACTIVE", &property_ids.crtc.active},
   };
-  struct drm_property_address plane_table[] = {
-      {"SRC_X", &property_ids->plane.src_x},
-      {"SRC_Y", &property_ids->plane.src_y},
-      {"SRC_W", &property_ids->plane.src_w},
-      {"SRC_H", &property_ids->plane.src_h},
-      {"CRTC_X", &property_ids->plane.crtc_x},
-      {"CRTC_Y", &property_ids->plane.crtc_y},
-      {"CRTC_W", &property_ids->plane.crtc_w},
-      {"CRTC_H", &property_ids->plane.crtc_h},
-      {"FB_ID", &property_ids->plane.fb_id},
-      {"CRTC_ID", &property_ids->plane.crtc_id},
-      {"CRTC_ID", &property_ids->connector.crtc_id},
+  struct DrmPropertyAddress plane_table[] = {
+      {"SRC_X", &property_ids.plane.src_x},
+      {"SRC_Y", &property_ids.plane.src_y},
+      {"SRC_W", &property_ids.plane.src_w},
+      {"SRC_H", &property_ids.plane.src_h},
+      {"CRTC_X", &property_ids.plane.crtc_x},
+      {"CRTC_Y", &property_ids.plane.crtc_y},
+      {"CRTC_W", &property_ids.plane.crtc_w},
+      {"CRTC_H", &property_ids.plane.crtc_h},
+      {"FB_ID", &property_ids.plane.fb_id},
+      {"CRTC_ID", &property_ids.plane.crtc_id},
+      {"CRTC_ID", &property_ids.connector.crtc_id},
   };
-  struct drm_property_address connector_table[] = {
-      {"CRTC_ID", &property_ids->connector.crtc_id},
+  struct DrmPropertyAddress connector_table[] = {
+      {"CRTC_ID", &property_ids.connector.crtc_id},
   };
 
   GetPropertyAddress(drm_crtc_->crtc_id, DRM_MODE_OBJECT_CRTC, crtc_table,
-                     sizeof(crtc_table) / sizeof(drm_property_address));
+                     sizeof(crtc_table) / sizeof(DrmPropertyAddress));
   GetPropertyAddress(drm_plane_id_, DRM_MODE_OBJECT_PLANE, plane_table,
-                     sizeof(plane_table) / sizeof(drm_property_address));
+                     sizeof(plane_table) / sizeof(DrmPropertyAddress));
   GetPropertyAddress(drm_connector_id_, DRM_MODE_OBJECT_CONNECTOR,
                      connector_table,
-                     sizeof(connector_table) / sizeof(drm_property_address));
+                     sizeof(connector_table) / sizeof(DrmPropertyAddress));
 }
 
 void NativeWindowDrmEglstream::GetPropertyAddress(
     uint32_t id, uint32_t type,
-    NativeWindowDrmEglstream::drm_property_address* table, size_t length) {
+    NativeWindowDrmEglstream::DrmPropertyAddress* table, size_t length) {
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {
     for (uint32_t i = 0; i < properties->count_props; i++) {
       auto property = drmModeGetProperty(drm_device_, properties->props[i]);
       if (property) {
         for (uint32_t j = 0; j < length; j++) {
-          if (strcmp(table[j].name, property->name) == 0) {
+          if (std::strcmp(table[j].name, property->name) == 0) {
             *(table[j].ptr) = property->prop_id;
             break;
           }
@@ -248,16 +263,6 @@ void NativeWindowDrmEglstream::GetPropertyAddress(
     }
     drmModeFreeObjectProperties(properties);
   }
-}
-
-bool NativeWindowDrmEglstream::CreatePropertyBlob() {
-  if (drmModeCreatePropertyBlob(drm_device_, &drm_mode_info_,
-                                sizeof(drm_mode_info_),
-                                &drm_property_blob_) != 0) {
-    LINUXES_LOG(ERROR) << "Failed to create property blob";
-    return false;
-  }
-  return true;
 }
 
 bool NativeWindowDrmEglstream::CreateFb() {

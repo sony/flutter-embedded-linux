@@ -11,15 +11,13 @@
 
 #include <string>
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_gbm.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 
-class NativeWindowDrmGbm
-    : public NativeWindowDrm<gbm_surface,
-                             SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>> {
+class NativeWindowDrmGbm : public NativeWindowDrm<SurfaceGlDrm<ContextEgl>> {
  public:
   NativeWindowDrmGbm(const char* deviceFilename);
   ~NativeWindowDrmGbm();
@@ -35,8 +33,7 @@ class NativeWindowDrmGbm
   bool DismissCursor() override;
 
   // |NativeWindowDrm|
-  std::unique_ptr<SurfaceGlDrm<gbm_surface, ContextEglDrmGbm>>
-  CreateRenderSurface() override;
+  std::unique_ptr<SurfaceGlDrm<ContextEgl>> CreateRenderSurface() override;
 
   // |NativeWindowDrm|
   void SwapBuffer() override;

@@ -5,9 +5,10 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_H_
 
+#include <EGL/egl.h>
+
 namespace flutter {
 
-template <typename T>
 class NativeWindow {
  public:
   NativeWindow() = default;
@@ -15,12 +16,7 @@ class NativeWindow {
 
   bool IsValid() const { return valid_; };
 
-#if defined(DISPLAY_BACKEND_TYPE_X11) || \
-    defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
-  T Window() const { return window_; }
-#else
-  T* Window() const { return window_; }
-#endif
+  EGLNativeWindowType Window() const { return window_; }
 
   int32_t Width() {
     if (!valid_) {
@@ -40,12 +36,7 @@ class NativeWindow {
 
  protected:
   // Specifies the native winodw (NativeWindowType)
-#if defined(DISPLAY_BACKEND_TYPE_X11) || \
-    defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
-  T window_;
-#else
-  T* window_ = nullptr;
-#endif
+  EGLNativeWindowType window_;
 
   bool valid_ = false;
   int32_t width_;

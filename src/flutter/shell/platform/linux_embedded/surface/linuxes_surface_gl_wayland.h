@@ -9,27 +9,25 @@
 
 #include <memory>
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_wayland.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
 
 namespace flutter {
 
-class SurfaceGlWayland final : public Surface<wl_egl_window>,
-                               public SurfaceGlDelegate {
+class SurfaceGlWayland final : public Surface, public SurfaceGlDelegate {
  public:
-  SurfaceGlWayland(std::unique_ptr<ContextEglWayland> context);
+  SurfaceGlWayland(std::unique_ptr<ContextEgl> context);
   ~SurfaceGlWayland() = default;
 
   // |Surface|
   bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<wl_egl_window>* window) override;
+  bool SetNativeWindow(NativeWindow* window) override;
 
-  bool SetNativeWindowResource(
-      std::unique_ptr<NativeWindow<wl_egl_window>> window);
+  bool SetNativeWindowResource(std::unique_ptr<NativeWindow> window);
 
   // |Surface|
   bool OnScreenSurfaceResize(const size_t width,
@@ -60,9 +58,9 @@ class SurfaceGlWayland final : public Surface<wl_egl_window>,
   void* GlProcResolver(const char* name) const override;
 
  private:
-  std::unique_ptr<ContextEglWayland> context_;
-  NativeWindow<wl_egl_window>* native_window_;
-  std::unique_ptr<NativeWindow<wl_egl_window>> native_window_resource_;
+  std::unique_ptr<ContextEgl> context_;
+  NativeWindow* native_window_;
+  std::unique_ptr<NativeWindow> native_window_resource_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

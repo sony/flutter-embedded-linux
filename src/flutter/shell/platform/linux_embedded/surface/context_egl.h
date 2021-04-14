@@ -17,7 +17,6 @@
 
 namespace flutter {
 
-template <typename D, typename W>
 class ContextEgl {
  public:
   ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
@@ -74,7 +73,7 @@ class ContextEgl {
   ~ContextEgl() = default;
 
   virtual std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
-      NativeWindow<W>* window) const {
+      NativeWindow* window) const {
     const EGLint attribs[] = {EGL_NONE};
     EGLSurface surface = eglCreateWindowSurface(
         environment_->Display(), config_, window->Window(), attribs);
@@ -87,7 +86,7 @@ class ContextEgl {
   }
 
   std::unique_ptr<LinuxesEGLSurface> CreateOffscreenSurface(
-      NativeWindow<W>* window_resource) const {
+      NativeWindow* window_resource) const {
 #if defined(DISPLAY_BACKEND_TYPE_X11) || \
     defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
     const EGLint attribs[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};

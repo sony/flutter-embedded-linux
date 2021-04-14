@@ -70,8 +70,8 @@ EGLDeviceEXT EnvironmentEglDrmEglstream::GetEglDevice() {
   constexpr char kEglExtensionDeviceDrm[] = "EGL_EXT_device_drm";
   for (int i = 0; i < num_devices; i++) {
     auto extensions = eglQueryDeviceStringEXT_(devices[i], EGL_EXTENSIONS);
-    if (std::string(extensions).find(kEglExtensionDeviceDrm) !=
-        std::string::npos) {
+    if (extensions && (std::string(extensions).find(kEglExtensionDeviceDrm) !=
+                       std::string::npos)) {
       device = devices[i];
       break;
     }

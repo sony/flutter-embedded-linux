@@ -14,7 +14,7 @@
 
 namespace flutter {
 
-class ContextEglDrmEglstream : public ContextEgl<void, uint32_t> {
+class ContextEglDrmEglstream : public ContextEgl {
  public:
   ContextEglDrmEglstream(
       std::unique_ptr<EnvironmentEglDrmEglstream> environment);
@@ -22,7 +22,7 @@ class ContextEglDrmEglstream : public ContextEgl<void, uint32_t> {
 
   // |ContextEgl|
   std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
-      NativeWindow<uint32_t>* window) const override;
+      NativeWindow* window) const override;
 
  private:
   bool SetEglExtensionFunctionPointers();

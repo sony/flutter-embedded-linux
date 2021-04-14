@@ -18,7 +18,7 @@
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_gbm.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
@@ -84,13 +84,13 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
       std::make_unique<flutter::LinuxesWindowDrm<
           flutter::NativeWindowDrmGbm,
-          flutter::SurfaceGlDrm<gbm_surface, flutter::ContextEglDrmGbm>>>(
+          flutter::SurfaceGlDrm<flutter::ContextEgl>>>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
 #elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
       std::make_unique<flutter::LinuxesWindowDrm<
           flutter::NativeWindowDrmEglstream,
-          flutter::SurfaceGlDrm<uint32_t, flutter::ContextEglDrmEglstream>>>(
+          flutter::SurfaceGlDrm<flutter::ContextEglDrmEglstream>>>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)

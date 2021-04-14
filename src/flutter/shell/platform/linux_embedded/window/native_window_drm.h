@@ -5,6 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_DRM_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_DRM_H_
 
+#include <fcntl.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
@@ -26,15 +27,28 @@ constexpr uint32_t kCursorBufferWidth = 64;
 constexpr uint32_t kCursorBufferHeight = 64;
 }  // namespace
 
-template <typename W, typename S>
-class NativeWindowDrm : public NativeWindow<W> {
+template <typename S>
+class NativeWindowDrm : public NativeWindow {
  public:
-  NativeWindowDrm() = default;
+  NativeWindowDrm(const char* deviceFilename) {
+    drm_device_ = open(deviceFilename, O_RDWR | O_CLOEXEC);
+    if (drm_device_ == -1) {
+      LINUXES_LOG(ERROR) << "Couldn't open " << deviceFilename;
+      return;
+    }
+
+    if (!ConfigureDisplay()) {
+      return;
+    }
+
+    valid_ = true;
+  }
+
   virtual ~NativeWindowDrm() = default;
 
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) override {
-    if (!this->valid_) {
+    if (!valid_) {
       LINUXES_LOG(ERROR) << "Failed to resize the window.";
       return false;
     }
@@ -81,9 +95,9 @@ class NativeWindowDrm : public NativeWindow<W> {
 
     drm_connector_id_ = connector->connector_id;
     drm_mode_info_ = connector->modes[0];
-    this->width_ = drm_mode_info_.hdisplay;
-    this->height_ = drm_mode_info_.vdisplay;
-    LINUXES_LOG(INFO) << "resolution: " << this->width_ << "x" << this->height_;
+    width_ = drm_mode_info_.hdisplay;
+    height_ = drm_mode_info_.vdisplay;
+    LINUXES_LOG(INFO) << "resolution: " << width_ << "x" << height_;
 
     auto* encoder = FindEncoder(resources, connector);
     if (!encoder) {

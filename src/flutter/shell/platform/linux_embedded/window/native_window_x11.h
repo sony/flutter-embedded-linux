@@ -11,7 +11,7 @@
 
 namespace flutter {
 
-class NativeWindowX11 : public NativeWindow<Window> {
+class NativeWindowX11 : public NativeWindow {
  public:
   NativeWindowX11(Display* display, VisualID visual_id, const size_t width,
                   const size_t height);

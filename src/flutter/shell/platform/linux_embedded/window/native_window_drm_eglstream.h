@@ -17,8 +17,7 @@
 namespace flutter {
 
 class NativeWindowDrmEglstream
-    : public NativeWindowDrm<uint32_t,
-                             SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>> {
+    : public NativeWindowDrm<SurfaceGlDrm<ContextEglDrmEglstream>> {
  public:
   NativeWindowDrmEglstream(const char* deviceFilename);
   ~NativeWindowDrmEglstream();
@@ -34,13 +33,13 @@ class NativeWindowDrmEglstream
   bool DismissCursor() override;
 
   // |NativeWindowDrm|
-  std::unique_ptr<SurfaceGlDrm<uint32_t, ContextEglDrmEglstream>>
-  CreateRenderSurface() override;
+  std::unique_ptr<SurfaceGlDrm<ContextEglDrmEglstream>> CreateRenderSurface()
+      override;
 
   uint32_t PlaneId() { return drm_plane_id_; }
 
  private:
-  struct drm_property_ids {
+  struct DrmPropertyIds {
     struct {
       uint32_t mode_id;
       uint32_t active;
@@ -64,27 +63,25 @@ class NativeWindowDrmEglstream
     } connector;
   };
 
-  struct drm_property_address {
+  struct DrmPropertyAddress {
     const char* name;
     uint32_t* ptr;
   };
 
-  bool ConfigureDisplayForEglstream();
+  bool ConfigureDisplayAdditional();
 
-  int SetDrmClientCapability();
+  bool SetDrmClientCapabilities();
 
-  uint32_t FindPlane(drmModePlaneResPtr resources);
+  uint32_t FindPrimaryPlaneId(drmModePlaneResPtr resources);
 
   uint64_t GetPropertyValue(uint32_t id, uint32_t type, const char* prop_name);
 
   bool AssignAtomicRequest(drmModeAtomicReqPtr atomic);
 
-  void GetPropertyIds(struct drm_property_ids* property_ids);
+  void GetPropertyIds(DrmPropertyIds& property_ids);
 
-  void GetPropertyAddress(uint32_t id, uint32_t type,
-                          drm_property_address* table, size_t length);
-
-  bool CreatePropertyBlob();
+  void GetPropertyAddress(uint32_t id, uint32_t type, DrmPropertyAddress* table,
+                          size_t length);
 
   bool CreateFb();
 
