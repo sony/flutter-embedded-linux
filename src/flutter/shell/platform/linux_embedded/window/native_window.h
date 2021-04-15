@@ -35,7 +35,6 @@ class NativeWindow {
   virtual bool Resize(const size_t width, const size_t height) = 0;
 
  protected:
-  // Specifies the native winodw (NativeWindowType)
   EGLNativeWindowType window_;
 
   bool valid_ = false;

@@ -15,10 +15,10 @@
 
 namespace flutter {
 
-template <typename C>
+template <typename T>
 class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
  public:
-  SurfaceGlDrm(std::unique_ptr<C> context)
+  SurfaceGlDrm(std::unique_ptr<T> context)
       : native_window_(nullptr), onscreen_surface_(nullptr) {
     context_ = std::move(context);
   }
@@ -88,7 +88,7 @@ class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
     if (!onscreen_surface_->SwapBuffers()) {
       return false;
     }
-    static_cast<NativeWindowDrm<SurfaceGlDrm<C>>*>(native_window_)
+    static_cast<NativeWindowDrm<SurfaceGlDrm<T>>*>(native_window_)
         ->SwapBuffer();
     return true;
   }
@@ -102,7 +102,7 @@ class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
   }
 
  protected:
-  std::unique_ptr<C> context_;
+  std::unique_ptr<T> context_;
   NativeWindow* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;

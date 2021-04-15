@@ -10,6 +10,10 @@
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 
+// For DRM-GBM backend, the definition of EGLNativeDisplayType requires
+// "__GBM__" definition defined in gbm.h. If we created environment_egl.cc, the
+// include order of gbm.h will cause link error issue, so we don't create it.
+
 namespace flutter {
 
 class EnvironmentEgl {

@@ -12,6 +12,10 @@ namespace flutter {
 ContextEglDrmEglstream::ContextEglDrmEglstream(
     std::unique_ptr<EnvironmentEglDrmEglstream> environment)
     : ContextEgl(std::move(environment), EGL_STREAM_BIT_KHR) {
+  if (!valid_) {
+    return;
+  }
+
   if (!SetEglExtensionFunctionPointers()) {
     LINUXES_LOG(ERROR) << "Failed to set extension function pointers";
     valid_ = false;

@@ -75,7 +75,7 @@ class NativeWindowDrm : public NativeWindow {
                                     x - cursor_hotspot_.first,
                                     y - cursor_hotspot_.second);
     if (result < 0) {
-      LINUXES_LOG(ERROR) << "Could not move the mouse cursor: " << result;
+      LINUXES_LOG(ERROR) << "Couldn't move the mouse cursor: " << result;
       return false;
     }
     return true;

@@ -20,13 +20,14 @@ NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename)
     return;
   }
 
-  if (!ConfigureDisplayAdditional()) {
-    valid_ = false;
-    return;
-  }
+  valid_ = ConfigureDisplayAdditional();
 
-  // DRM-NVDC doesn't have drmIsMaster() function.
-  // Master permissions are granted by default to all clients.
+  // DRM-NVDC doesn't have drmIsMaster() function. Master permissions are
+  // granted by default to all clients, so we don't need to check permissions
+  // with drmIsMaster().
+  //
+  // For details, see:
+  // https://docs.nvidia.com/drive/nvvib_docs/NVIDIA%20DRIVE%20Linux%20SDK%20Development%20Guide/baggage/group__direct__rendering__manager.html#ga3f9326af9fc8eddc23dc6e263a2160a1
 }
 
 NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
@@ -98,7 +99,7 @@ bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
   drm_plane_id_ = FindPrimaryPlaneId(plane_resources);
   drmModeFreePlaneResources(plane_resources);
   if (drm_plane_id_ == -1) {
-    LINUXES_LOG(ERROR) << "Could not find a plane.";
+    LINUXES_LOG(ERROR) << "Couldn't find a plane.";
     return false;
   }
 
@@ -123,11 +124,11 @@ bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
 
 bool NativeWindowDrmEglstream::SetDrmClientCapabilities() {
   if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) != 0) {
-    LINUXES_LOG(ERROR) << "Cannot set DRM_CLIENT_CAP_UNIVERSAL_PLANES";
+    LINUXES_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_UNIVERSAL_PLANES";
     return false;
   }
   if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_ATOMIC, 1) != 0) {
-    LINUXES_LOG(ERROR) << "Cannot set DRM_CLIENT_CAP_ATOMIC";
+    LINUXES_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_ATOMIC";
     return false;
   }
   return true;
