@@ -8,7 +8,7 @@ This is the example of External Texture Plugin. Source files are implemented bas
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-external-texture-plugin ..
-$ make
+$ cmake --build .
 ```
 
 ## Dart sample code for Flutter app

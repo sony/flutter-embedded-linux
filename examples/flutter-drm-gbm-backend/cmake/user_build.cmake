@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 
 # user binary name.
-set(TARGET flutter-drm-backend)
+set(TARGET flutter-drm-gbm-backend)
 
 # source files for user apps.
 set(USER_APP_SRCS
-  examples/flutter-drm-backend/main.cc
+  examples/flutter-drm-gbm-backend/main.cc
 )
 
 # header files for user apps.
@@ -18,7 +18,7 @@ set(USER_APP_INCLUDE_DIRS
   src/flutter/shell/platform/linux_embedded/public
   src/public/include
   ## header file include path for user apps.
-  examples/flutter-drm-backend
+  examples/flutter-drm-gbm-backend
 )
 
 # link libraries for user apps.

@@ -9,16 +9,18 @@ pkg_check_modules(EGL REQUIRED egl)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 
 # depends on backend type.
-if(USE_DRM)
+if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
   # DRM backend
   pkg_check_modules(DRM REQUIRED libdrm)
-  pkg_check_modules(GBM REQUIRED gbm)
   pkg_check_modules(LIBINPUT REQUIRED libinput)
   pkg_check_modules(LIBUDEV REQUIRED libudev)
   pkg_check_modules(LIBSYSTEMD REQUIRED libsystemd)
+  if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
+    pkg_check_modules(GBM REQUIRED gbm)
+  endif()
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
-elseif(USE_X11)
+elseif(${BACKEND_TYPE} STREQUAL "X11")
   pkg_check_modules(X11 REQUIRED x11)
 else()
   # Wayland backend
