@@ -22,11 +22,13 @@ NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename)
 
   valid_ = ConfigureDisplayAdditional();
 
-  // DRM-NVDC doesn't have drmIsMaster() function. Master permissions are
-  // granted by default to all clients, so we don't need to check permissions
-  // with drmIsMaster().
+  // drmIsMaster() is a relatively new API, and the main target of EGLStream is
+  // NVIDIA devices. Currently, NVIDIA devices' libdrm is a bit older.
+  // drmIsMaster() may not exist. However, according to NVIDA's API document,
+  // clients is always granted to become DRM master. So, we don't need to check
+  // permissions with it.
   //
-  // For details, see:
+  // See also:
   // https://docs.nvidia.com/drive/nvvib_docs/NVIDIA%20DRIVE%20Linux%20SDK%20Development%20Guide/baggage/group__direct__rendering__manager.html#ga3f9326af9fc8eddc23dc6e263a2160a1
 }
 
