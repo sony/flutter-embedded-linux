@@ -8,7 +8,7 @@
 
 namespace flutter {
 
-SurfaceGlX11::SurfaceGlX11(std::unique_ptr<ContextEglX11> context)
+SurfaceGlX11::SurfaceGlX11(std::unique_ptr<ContextEgl> context)
     : native_window_(nullptr),
       onscreen_surface_(nullptr),
       offscreen_surface_(nullptr) {
@@ -19,7 +19,7 @@ bool SurfaceGlX11::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
-bool SurfaceGlX11::SetNativeWindow(NativeWindow<Window>* window) {
+bool SurfaceGlX11::SetNativeWindow(NativeWindow* window) {
   native_window_ = window;
 
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);

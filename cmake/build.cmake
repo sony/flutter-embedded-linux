@@ -2,13 +2,18 @@ cmake_minimum_required(VERSION 3.10)
 
 # display backend type.
 set(DISPLAY_BACKEND_SRC "")
-if(USE_DRM)
-  add_definitions(-DDISPLAY_BACKEND_TYPE_DRM)
+if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
+  add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc)
-elseif(USE_X11)
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc)
+elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
+  ## Define "EGL_NO_X11" to avoid including x11-related files.
+  add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM -DEGL_NO_X11)
+  set(DISPLAY_BACKEND_SRC
+    src/flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
+elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
@@ -42,13 +47,13 @@ else()
 endif()
 
 # desktop-shell for weston.
-if(NOT USE_DRM AND DESKTOP_SHELL)
+if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   add_definitions(-DDESKTOP_SHELL)
 endif()
 
 # wayland & weston protocols.
 set(WAYLAND_PROTOCOL_SRC "")
-if(NOT USE_DRM AND DESKTOP_SHELL)
+if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/weston-desktop-shell-protocol.c)  
 
   if(USE_VIRTUAL_KEYBOARD)
@@ -90,6 +95,7 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/plugin/text_input_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/platform_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
+  src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
@@ -152,7 +158,7 @@ target_link_libraries(${TARGET}
     ${USER_APP_LIBRARIES}
 )
 
-if(USE_DRM)
+if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
 target_link_libraries(${TARGET}
     PRIVATE
       Threads::Threads

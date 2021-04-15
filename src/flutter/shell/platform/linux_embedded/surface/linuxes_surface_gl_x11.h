@@ -9,23 +9,23 @@
 
 #include <memory>
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_x11.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
 
 namespace flutter {
 
-class SurfaceGlX11 final : public Surface<Window>, public SurfaceGlDelegate {
+class SurfaceGlX11 final : public Surface, public SurfaceGlDelegate {
  public:
-  SurfaceGlX11(std::unique_ptr<ContextEglX11> context);
+  SurfaceGlX11(std::unique_ptr<ContextEgl> context);
   ~SurfaceGlX11() = default;
 
   // |Surface|
   bool IsValid() const override;
 
   // |Surface|
-  bool SetNativeWindow(NativeWindow<Window>* window) override;
+  bool SetNativeWindow(NativeWindow* window) override;
 
   // |Surface|
   bool OnScreenSurfaceResize(const size_t width,
@@ -56,8 +56,8 @@ class SurfaceGlX11 final : public Surface<Window>, public SurfaceGlDelegate {
   void* GlProcResolver(const char* name) const override;
 
  private:
-  std::unique_ptr<ContextEglX11> context_;
-  NativeWindow<Window>* native_window_;
+  std::unique_ptr<ContextEgl> context_;
+  NativeWindow* native_window_;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };

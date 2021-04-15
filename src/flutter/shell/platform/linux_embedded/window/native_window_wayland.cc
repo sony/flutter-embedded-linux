@@ -23,6 +23,8 @@ NativeWindowWayland::NativeWindowWayland(wl_compositor* compositor,
     return;
   }
 
+  width_ = width;
+  height_ = height;
   valid_ = true;
 }
 
@@ -38,13 +40,15 @@ NativeWindowWayland::~NativeWindowWayland() {
   }
 }
 
-bool NativeWindowWayland::Resize(const size_t width,
-                                 const size_t height) const {
+bool NativeWindowWayland::Resize(const size_t width, const size_t height) {
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
   wl_egl_window_resize(window_, width, height, 0, 0);
+
+  width_ = width;
+  height_ = height;
   return true;
 }
 

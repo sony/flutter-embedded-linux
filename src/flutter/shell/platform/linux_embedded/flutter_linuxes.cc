@@ -17,8 +17,16 @@
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
-#if defined(DISPLAY_BACKEND_TYPE_DRM)
+#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
+#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
+#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
+#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window_x11.h"
 #else
@@ -73,8 +81,16 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
     FlutterDesktopEngineRef engine) {
   std::unique_ptr<flutter::WindowBindingHandler> window_wrapper =
 
-#if defined(DISPLAY_BACKEND_TYPE_DRM)
-      std::make_unique<flutter::LinuxesWindowDrm>(
+#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
+      std::make_unique<flutter::LinuxesWindowDrm<
+          flutter::NativeWindowDrmGbm,
+          flutter::SurfaceGlDrm<flutter::ContextEgl>>>(
+          view_properties.windw_display_mode, view_properties.width,
+          view_properties.height, view_properties.show_cursor);
+#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
+      std::make_unique<flutter::LinuxesWindowDrm<
+          flutter::NativeWindowDrmEglstream,
+          flutter::SurfaceGlDrm<flutter::ContextEglDrmEglstream>>>(
           view_properties.windw_display_mode, view_properties.width,
           view_properties.height, view_properties.show_cursor);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)

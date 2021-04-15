@@ -20,17 +20,19 @@
 
 namespace flutter {
 
-static constexpr char kChannelName[] = "flutter/platform";
+namespace {
+constexpr char kChannelName[] = "flutter/platform";
 
-static constexpr char kGetClipboardDataMethod[] = "Clipboard.getData";
-static constexpr char kSetClipboardDataMethod[] = "Clipboard.setData";
-static constexpr char kSystemNavigatorPopMethod[] = "SystemNavigator.pop";
+constexpr char kGetClipboardDataMethod[] = "Clipboard.getData";
+constexpr char kSetClipboardDataMethod[] = "Clipboard.setData";
+constexpr char kSystemNavigatorPopMethod[] = "SystemNavigator.pop";
 
-static constexpr char kTextPlainFormat[] = "text/plain";
-static constexpr char kTextKey[] = "text";
+constexpr char kTextPlainFormat[] = "text/plain";
+constexpr char kTextKey[] = "text";
 
-static constexpr char kUnknownClipboardFormatError[] =
+constexpr char kUnknownClipboardFormatError[] =
     "Unknown clipboard format error";
+}  // namespace
 
 PlatformPlugin::PlatformPlugin(BinaryMessenger* messenger,
                                WindowBindingHandler* delegate)

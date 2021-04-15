@@ -11,14 +11,13 @@
 
 namespace flutter {
 
-template <typename T>
 class Surface {
  public:
   // Shows a surface is valid or not.
   virtual bool IsValid() const = 0;
 
   // Sets a netive platform's window.
-  virtual bool SetNativeWindow(NativeWindow<T>* window) = 0;
+  virtual bool SetNativeWindow(NativeWindow* window) = 0;
 
   // Changes an on-screen surface size.
   virtual bool OnScreenSurfaceResize(const size_t width,
