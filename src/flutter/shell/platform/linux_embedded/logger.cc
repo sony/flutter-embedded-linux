@@ -9,9 +9,9 @@ namespace flutter {
 namespace {
 
 #ifdef FLUTTER_RELEASE
-static constexpr int kFilterLogLevel = LINUXES_LOG_WARNING;
+constexpr int kFilterLogLevel = LINUXES_LOG_WARNING;
 #else
-static constexpr int kFilterLogLevel = LINUXES_LOG_TRACE;
+constexpr int kFilterLogLevel = LINUXES_LOG_TRACE;
 #endif
 
 const char* const kLogLevelNames[LINUXES_LOG_NUM] = {"TRACE", "INFO", "WARNING",

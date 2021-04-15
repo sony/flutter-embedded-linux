@@ -5,7 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_X11_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_CONTEXT_EGL_X11_H_
 
-#include <xcb/xcb.h>
+#include <X11/Xutil.h>
 
 #include <functional>
 
@@ -13,7 +13,7 @@
 
 namespace flutter {
 
-using ContextEglX11 = ContextEgl<Display, xcb_window_t>;
+using ContextEglX11 = ContextEgl<Display, Window>;
 
 }  // namespace flutter
 

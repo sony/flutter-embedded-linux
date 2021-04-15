@@ -19,7 +19,7 @@ bool SurfaceGlX11::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
-bool SurfaceGlX11::SetNativeWindow(NativeWindow<xcb_window_t>* window) {
+bool SurfaceGlX11::SetNativeWindow(NativeWindow<Window>* window) {
   native_window_ = window;
 
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);

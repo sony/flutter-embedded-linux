@@ -16,7 +16,10 @@ jobs:
     - name: Install libraries
       run: |
         sudo apt update
-        sudo apt install libgles2-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev wayland-protocols libx11-xcb-dev
+        sudo apt install libgles2-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev wayland-protocols libx11-dev
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
 
     - name: Install Flutter Engine library
       run: |
@@ -25,10 +28,7 @@ jobs:
         curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
         ls
         unzip linux-x64-embedder
-        sudo mv libflutter_engine.so /usr/lib/
-
-    - name: Create Build Environment
-      run: cmake -E make_directory ${{github.workspace}}/build
+        mv libflutter_engine.so ${{github.workspace}}/build
 
     - name: Configure CMake for wayland client
       shell: bash

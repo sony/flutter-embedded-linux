@@ -47,6 +47,8 @@ You can check the current engine version (commit id / SHA):
 - [beta channel](https://raw.githubusercontent.com/flutter/flutter/beta/bin/internal/engine.version)
 - [stable channel](https://raw.githubusercontent.com/flutter/flutter/stable/bin/internal/engine.version)
 
+You can also get the engine version from `${path_to_flutter_sdk_install}/flutter/bin/internal/engine.version` of the Flutter SDK which you are currently using.
+
 ```yaml
 solutions = [
   {
@@ -118,13 +120,22 @@ $ ninja -C out/host_release
 ## 5. Install embedder library
 
 ```Shell
-$ sudo cp ./out/linux_{your selected target and mode}/libflutter_engine.so /usr/lib
+$ sudo cp ./out/${path to your selected target and mode}/libflutter_engine.so <path_to_cmake_build_directory>
 ```
 
 ### Supplement
 
-You need to install `libflutter_engine.so` in `/usr/lib` to build. But you can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
+You need to install `libflutter_engine.so` in `<path_to_cmake_build_directory>` to build. But you can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
-LD_LIBRARY_PATH=<path_to_engine> ./flutter-client ./sample/build/linux/x64/debug/bundle
+$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client <path_to_flutter_project_bundle>
+
+# e.g. Run in debug mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client ./sample/build/linux/x64/debug/bundle
+
+# e.g. Run in profile mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/build/linux/x64/profile/bundle
+
+# e.g. Run in release mode
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```

@@ -17,37 +17,39 @@
 #include "flutter/shell/platform/linux_embedded/plugin/key_event_plugin_glfw_util.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
-static constexpr char kChannelName[] = "flutter/keyevent";
-static constexpr char kKeyCodeKey[] = "keyCode";
-static constexpr char kKeyMapKey[] = "keymap";
-static constexpr char kScanCodeKey[] = "scanCode";
-static constexpr char kModifiersKey[] = "modifiers";
-static constexpr char kTypeKey[] = "type";
-static constexpr char kToolkitKey[] = "toolkit";
-static constexpr char kUnicodeScalarValues[] = "unicodeScalarValues";
-static constexpr char kLinuxKeyMap[] = "linux";
-static constexpr char kGLFWKey[] = "glfw";
-static constexpr char kKeyUp[] = "keyup";
-static constexpr char kKeyDown[] = "keydown";
-
-static constexpr char kKeyboardConfigFile[] = "/etc/default/keyboard";
-static constexpr char kXkbmodelKey[] = "XKBMODEL";
-static constexpr char kXkblayoutKey[] = "XKBLAYOUT";
-static constexpr char kXkbvariantKey[] = "XKBVARIANT";
-static constexpr char kXkboptionsKey[] = "XKBOPTIONS";
-
 namespace flutter {
+
+namespace {
+constexpr char kChannelName[] = "flutter/keyevent";
+constexpr char kKeyCodeKey[] = "keyCode";
+constexpr char kKeyMapKey[] = "keymap";
+constexpr char kScanCodeKey[] = "scanCode";
+constexpr char kModifiersKey[] = "modifiers";
+constexpr char kTypeKey[] = "type";
+constexpr char kToolkitKey[] = "toolkit";
+constexpr char kUnicodeScalarValues[] = "unicodeScalarValues";
+constexpr char kLinuxKeyMap[] = "linux";
+constexpr char kGLFWKey[] = "glfw";
+constexpr char kKeyUp[] = "keyup";
+constexpr char kKeyDown[] = "keydown";
+
+constexpr char kKeyboardConfigFile[] = "/etc/default/keyboard";
+constexpr char kXkbmodelKey[] = "XKBMODEL";
+constexpr char kXkblayoutKey[] = "XKBLAYOUT";
+constexpr char kXkbvariantKey[] = "XKBVARIANT";
+constexpr char kXkboptionsKey[] = "XKBOPTIONS";
+}  // namespace
 
 KeyeventPlugin::KeyeventPlugin(BinaryMessenger* messenger)
     : channel_(std::make_unique<BasicMessageChannel<rapidjson::Document>>(
           messenger, kChannelName, &flutter::JsonMessageCodec::GetInstance())),
       xkb_context_(xkb_context_new(XKB_CONTEXT_NO_FLAGS)) {
-#ifdef DISPLAY_BACKEND_TYPE_DRM
-  xkb_keymap_ = CreateKeymap(xkb_context_);
-  xkb_state_ = xkb_state_new(xkb_keymap_);
-#else
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   xkb_keymap_ = nullptr;
   xkb_state_ = nullptr;
+#else
+  xkb_keymap_ = CreateKeymap(xkb_context_);
+  xkb_state_ = xkb_state_new(xkb_keymap_);
 #endif
 }
 
@@ -88,15 +90,16 @@ bool KeyeventPlugin::IsTextInputSuppressed(uint32_t code_point) {
 }
 
 void KeyeventPlugin::OnKey(uint32_t keycode, uint32_t state) {
-#ifdef DISPLAY_BACKEND_TYPE_DRM
-  // We cannot get notifications of modifier keys when we use the DRM backend.
-  // In this case, we need to handle it by using xkb_state_update_key.
-  OnModifiers(keycode, state);
-#endif
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   auto unicode = GetCodePoint(keycode);
   auto mods = GetGlfwModifiers(xkb_mods_mask_);
   auto keyscancode = GetGlfwKeyScancode(keycode);
   SendKeyEvent(keyscancode, unicode, mods, state);
+#else
+  // We cannot get notifications of modifier keys when we use the DRM backend.
+  // In this case, we need to handle it by using xkb_state_update_key.
+  OnModifiers(keycode, state);
+#endif
 }
 
 void KeyeventPlugin::OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
@@ -159,11 +162,11 @@ xkb_keymap* KeyeventPlugin::CreateKeymap(xkb_context* context) {
   if (map.find(kXkboptionsKey) != map.end()) {
     xkboptions = map[kXkboptionsKey];
   }
-  struct xkb_rule_names names = {.rules = NULL,
-                                 .model = xkbmodel.c_str(),
-                                 .layout = xkblayout.c_str(),
-                                 .variant = xkbvariant.c_str(),
-                                 .options = xkboptions.c_str()};
+  xkb_rule_names names = {.rules = NULL,
+                          .model = xkbmodel.c_str(),
+                          .layout = xkblayout.c_str(),
+                          .variant = xkbvariant.c_str(),
+                          .options = xkboptions.c_str()};
   return xkb_keymap_new_from_names(context, &names,
                                    XKB_KEYMAP_COMPILE_NO_FLAGS);
 }
