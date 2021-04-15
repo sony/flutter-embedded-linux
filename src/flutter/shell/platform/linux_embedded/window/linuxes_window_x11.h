@@ -8,8 +8,8 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.h"
-#include "flutter/shell/platform/linux_embedded/surface/native_window_x11.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window_x11.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 namespace flutter {
@@ -58,8 +58,8 @@ class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
 
  private:
   // Handles the events of the mouse button.
-  void HandlePointerButtonEvent(xcb_button_t button, bool button_pressed,
-                                int16_t x, int16_t y);
+  void HandlePointerButtonEvent(uint32_t button, bool button_pressed, int16_t x,
+                                int16_t y);
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.

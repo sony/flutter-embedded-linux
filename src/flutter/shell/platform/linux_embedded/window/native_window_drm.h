@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_DRM_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_DRM_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_DRM_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_DRM_H_
 
 #include <gbm.h>
 #include <xf86drm.h>
@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "flutter/shell/platform/linux_embedded/surface/native_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
@@ -78,4 +78,4 @@ class NativeWindowDrm : public NativeWindow<gbm_surface> {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_NATIVE_WINDOW_DRM_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_NATIVE_WINDOW_DRM_H_

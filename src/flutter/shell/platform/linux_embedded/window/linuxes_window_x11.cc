@@ -13,14 +13,6 @@
 
 namespace flutter {
 
-namespace {
-static constexpr uint8_t kButtonLeft = 1;
-static constexpr uint8_t kButtonMiddle = 2;
-static constexpr uint8_t kButtonRight = 3;
-static constexpr uint8_t kButtonBack = 4;
-static constexpr uint8_t kButtonForward = 5;
-}  // namespace
-
 LinuxesWindowX11::LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width,
                                    int32_t height, bool show_cursor) {
   window_mode_ = window_mode;
@@ -54,85 +46,80 @@ bool LinuxesWindowX11::IsValid() const {
 }
 
 bool LinuxesWindowX11::DispatchEvent() {
-  auto connection = native_window_->XcbConnection();
-
-  // TODO: support events such as keyboard input.
-  xcb_generic_event_t* event;
-  while ((event = xcb_poll_for_event(connection)) != NULL) {
-    switch (event->response_type & ~0x80) {
-      case XCB_BUTTON_PRESS: {
-        auto* ev = reinterpret_cast<xcb_button_press_event_t*>(event);
+  while (XPending(display_)) {
+    XEvent event;
+    XNextEvent(display_, &event);
+    switch (event.type) {
+      case EnterNotify:
+      case MotionNotify:
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerMove(event.xbutton.x,
+                                                   event.xbutton.y);
+        }
+        break;
+      case LeaveNotify:
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnPointerLeave();
+        }
+        break;
+      case ButtonPress: {
         constexpr bool button_pressed = true;
-        HandlePointerButtonEvent(ev->detail, button_pressed, ev->event_x,
-                                 ev->event_y);
-        break;
-      }
-      case XCB_BUTTON_RELEASE: {
-        auto* ev = reinterpret_cast<xcb_button_release_event_t*>(event);
+        HandlePointerButtonEvent(event.xbutton.button, button_pressed,
+                                 event.xbutton.x, event.xbutton.y);
+      } break;
+      case ButtonRelease: {
         constexpr bool button_pressed = false;
-        HandlePointerButtonEvent(ev->detail, button_pressed, ev->event_x,
-                                 ev->event_y);
+        HandlePointerButtonEvent(event.xbutton.button, button_pressed,
+                                 event.xbutton.x, event.xbutton.y);
+      } break;
+      case KeyPress:
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnKey(event.xkey.keycode - 8,
+                                           FLUTTER_LINUXES_BUTTON_DOWN);
+        }
         break;
-      }
-      case XCB_ENTER_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_enter_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
+      case KeyRelease:
+        if (binding_handler_delegate_) {
+          binding_handler_delegate_->OnKey(event.xkey.keycode - 8,
+                                           FLUTTER_LINUXES_BUTTON_UP);
+        }
         break;
-      }
-      case XCB_MOTION_NOTIFY: {
-        auto* ev = reinterpret_cast<xcb_motion_notify_event_t*>(event);
-        binding_handler_delegate_->OnPointerMove(ev->event_x, ev->event_y);
-        break;
-      }
-      case XCB_LEAVE_NOTIFY:
-        binding_handler_delegate_->OnPointerLeave();
-        break;
-      case XCB_CONFIGURE_NOTIFY:
-        break;
-      case XCB_RESIZE_REQUEST: {
-        auto resize = reinterpret_cast<xcb_resize_request_event_t*>(event);
-        if (resize->width != current_width_ ||
-            resize->height != current_height_) {
-          current_width_ = resize->width;
-          current_height_ = resize->height;
+      case ConfigureNotify: {
+        if (((event.xconfigure.width != current_width_) ||
+             (event.xconfigure.height != current_height_))) {
+          current_width_ = event.xconfigure.width;
+          current_height_ = event.xconfigure.height;
           if (binding_handler_delegate_) {
             binding_handler_delegate_->OnWindowSizeChanged(current_width_,
                                                            current_height_);
           }
         }
+      } break;
+      case ClientMessage:
+        native_window_->Destroy(display_);
         break;
-      }
-      case XCB_CLIENT_MESSAGE: {
-        auto message = (*reinterpret_cast<xcb_client_message_event_t*>(event))
-                           .data.data32[0];
-        if (message == (*native_window_->WmDeleteMessage()).atom) {
-          native_window_->Destroy();
-        }
-        break;
-      }
-      case XCB_DESTROY_NOTIFY:
+      case DestroyNotify:
         // Quit the main loop.
         return false;
       default:
         break;
     }
-    free(event);
-    xcb_flush(connection);
   }
-
   return true;
 }
 
 bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
-  native_window_ = std::make_unique<NativeWindowX11>(display_, width, height);
+  auto context_egl = std::make_unique<ContextEglX11>(
+      std::make_unique<EnvironmentEgl<Display>>(display_));
+
+  native_window_ = std::make_unique<NativeWindowX11>(
+      display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID), width, height);
   if (!native_window_->IsValid()) {
     LINUXES_LOG(ERROR) << "Failed to create the native window";
     return false;
   }
 
-  render_surface_ =
-      std::make_unique<SurfaceGlX11>(std::make_unique<ContextEglX11>(
-          std::make_unique<EnvironmentEgl<Display>>(display_)));
+  render_surface_ = std::make_unique<SurfaceGlX11>(std::move(context_egl));
   render_surface_->SetNativeWindow(native_window_.get());
 
   return true;
@@ -172,25 +159,25 @@ void LinuxesWindowX11::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
 }
 
-void LinuxesWindowX11::HandlePointerButtonEvent(xcb_button_t button,
+void LinuxesWindowX11::HandlePointerButtonEvent(uint32_t button,
                                                 bool button_pressed, int16_t x,
                                                 int16_t y) {
   if (binding_handler_delegate_) {
     FlutterPointerMouseButtons flutter_button;
     switch (button) {
-      case kButtonLeft:
+      case Button1:
         flutter_button = kFlutterPointerButtonMousePrimary;
         break;
-      case kButtonRight:
-        flutter_button = kFlutterPointerButtonMouseSecondary;
-        break;
-      case kButtonMiddle:
+      case Button2:
         flutter_button = kFlutterPointerButtonMouseMiddle;
         break;
-      case kButtonBack:
+      case Button3:
+        flutter_button = kFlutterPointerButtonMouseSecondary;
+        break;
+      case Button4:
         flutter_button = kFlutterPointerButtonMouseBack;
         break;
-      case kButtonForward:
+      case Button5:
         flutter_button = kFlutterPointerButtonMouseForward;
         break;
       default:

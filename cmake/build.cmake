@@ -6,14 +6,14 @@ if(USE_DRM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_drm.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.cc)
 elseif(USE_X11)
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_x11.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)
   get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
@@ -37,8 +37,8 @@ else()
   set(DISPLAY_BACKEND_SRC
     ${_code}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc
-    src/flutter/shell/platform/linux_embedded/surface/native_window_wayland.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc
+    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc)
 endif()
 
 # desktop-shell for weston.
@@ -60,6 +60,13 @@ endif()
 # OpenGL ES version.
 if(USE_GLES3)
   add_definitions(-DUSE_GLES3)
+endif()
+
+# Flutter embedder runtime mode.
+if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+  add_definitions(
+    -DFLUTTER_RELEASE # release mode
+  )
 endif()
 
 # cmake script for developers.
@@ -118,15 +125,14 @@ target_include_directories(${TARGET}
     ${LIBINPUT_INCLUDE_DIRS}
     ${LIBUDEV_INCLUDE_DIRS}
     ${LIBSYSTEMD_INCLUDE_DIRS}
-    ${XCB_INCLUDE_DIRS}
-    ${X11_XCB_INCLUDE_DIRS}
+    ${X11_INCLUDE_DIRS}
     ${LIBWESTON_INCLUDE_DIRS}
     ## User libraries
     ${USER_APP_INCLUDE_DIRS}
 )
 
 set(CMAKE_SKIP_RPATH true)
-set(FLUTTER_EMBEDDER_LIB /usr/lib/libflutter_engine.so)
+set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
 target_link_libraries(${TARGET}
   PRIVATE
     ${XKBCOMMON_LIBRARIES}
@@ -139,8 +145,7 @@ target_link_libraries(${TARGET}
     ${LIBINPUT_LIBRARIES}
     ${LIBUDEV_LIBRARIES}
     ${LIBSYSTEMD_LIBRARIES}
-    ${XCB_LIBRARIES}
-    ${X11_XCB_LIBRARIES}
+    ${X11_LIBRARIES}
     ${LIBWESTON_LIBRARIES}
     ${FLUTTER_EMBEDDER_LIB}
     ## User libraries

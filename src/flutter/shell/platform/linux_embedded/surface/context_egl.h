@@ -13,7 +13,7 @@
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
-#include "flutter/shell/platform/linux_embedded/surface/native_window.h"
+#include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
 
@@ -131,6 +131,12 @@ class ContextEgl {
       return nullptr;
     }
     return reinterpret_cast<void*>(address);
+  }
+
+  EGLint GetAttrib(EGLint attribute) {
+    EGLint value;
+    eglGetConfigAttrib(environment_->Display(), config_, attribute, &value);
+    return value;
   }
 
  private:

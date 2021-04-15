@@ -20,11 +20,13 @@
 
 namespace flutter {
 
-static constexpr char kChannelName[] = "flutter/mousecursor";
+namespace {
+constexpr char kChannelName[] = "flutter/mousecursor";
 
-static constexpr char kActivateSystemCursorMethod[] = "activateSystemCursor";
+constexpr char kActivateSystemCursorMethod[] = "activateSystemCursor";
 
-static constexpr char kKindKey[] = "kind";
+constexpr char kKindKey[] = "kind";
+}  // namespace
 
 MouseCursorPlugin::MouseCursorPlugin(BinaryMessenger* messenger,
                                      WindowBindingHandler* delegate)
