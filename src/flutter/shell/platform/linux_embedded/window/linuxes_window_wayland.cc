@@ -458,7 +458,7 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
 LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            int32_t width, int32_t height,
                                            bool show_cursor)
-    : cursor_info_({nullptr, 0, ""}),
+    : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
