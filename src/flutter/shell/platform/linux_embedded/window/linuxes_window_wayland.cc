@@ -18,25 +18,25 @@
 namespace flutter {
 
 namespace {
-static constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
-static constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
+constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
+constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 
-static constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
-static constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
-static constexpr char kWlCursorThemeBottomSide[] = "bottom_side";
-static constexpr char kWlCursorThemeGrabbing[] = "grabbing";
-static constexpr char kWlCursorThemeLeftPtr[] = "left_ptr";
-static constexpr char kWlCursorThemeLeftSide[] = "left_side";
-static constexpr char kWlCursorThemeRightSide[] = "right_side";
-static constexpr char kWlCursorThemeTopLeftCorner[] = "top_left_corner";
-static constexpr char kWlCursorThemeTopRightCorner[] = "top_right_corner";
-static constexpr char kWlCursorThemeTopSide[] = "top_side";
-static constexpr char kWlCursorThemeXterm[] = "xterm";
-static constexpr char kWlCursorThemeHand1[] = "hand1";
-static constexpr char kWlCursorThemeWatch[] = "watch";
-static constexpr char kCursorNameNone[] = "none";
+constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
+constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
+constexpr char kWlCursorThemeBottomSide[] = "bottom_side";
+constexpr char kWlCursorThemeGrabbing[] = "grabbing";
+constexpr char kWlCursorThemeLeftPtr[] = "left_ptr";
+constexpr char kWlCursorThemeLeftSide[] = "left_side";
+constexpr char kWlCursorThemeRightSide[] = "right_side";
+constexpr char kWlCursorThemeTopLeftCorner[] = "top_left_corner";
+constexpr char kWlCursorThemeTopRightCorner[] = "top_right_corner";
+constexpr char kWlCursorThemeTopSide[] = "top_side";
+constexpr char kWlCursorThemeXterm[] = "xterm";
+constexpr char kWlCursorThemeHand1[] = "hand1";
+constexpr char kWlCursorThemeWatch[] = "watch";
+constexpr char kCursorNameNone[] = "none";
 
-static constexpr char kClipboardMimeTypeText[] = "text/plain";
+constexpr char kClipboardMimeTypeText[] = "text/plain";
 }  // namespace
 
 const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
@@ -97,8 +97,8 @@ const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
 };
 
 const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
-    .enter = [](void* data, struct wl_pointer* wl_pointer, uint32_t serial,
-                struct wl_surface* surface, wl_fixed_t surface_x,
+    .enter = [](void* data, wl_pointer* wl_pointer, uint32_t serial,
+                wl_surface* surface, wl_fixed_t surface_x,
                 wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
@@ -115,7 +115,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
         self->pointer_y_ = y;
       }
     },
-    .leave = [](void* data, struct wl_pointer* pointer, uint32_t serial,
+    .leave = [](void* data, wl_pointer* pointer, uint32_t serial,
                 wl_surface* surface) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
@@ -125,7 +125,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
         self->pointer_y_ = -1;
       }
     },
-    .motion = [](void* data, struct wl_pointer* pointer, uint32_t time,
+    .motion = [](void* data, wl_pointer* pointer, uint32_t time,
                  wl_fixed_t surface_x, wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
@@ -136,7 +136,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
         self->pointer_y_ = y;
       }
     },
-    .button = [](void* data, struct wl_pointer* pointer, uint32_t serial,
+    .button = [](void* data, wl_pointer* pointer, uint32_t serial,
                  uint32_t time, uint32_t button, uint32_t status) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
@@ -172,8 +172,8 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
         }
       }
     },
-    .axis = [](void* data, struct wl_pointer* wl_pointer, uint32_t time,
-               uint32_t axis, wl_fixed_t value) -> void {
+    .axis = [](void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis,
+               wl_fixed_t value) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         double delta = wl_fixed_to_double(value);
@@ -188,9 +188,9 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
 };  // namespace flutter
 
 const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
-    .down = [](void* data, struct wl_touch* wl_touch, uint32_t serial,
-               uint32_t time, struct wl_surface* surface, int32_t id,
-               wl_fixed_t surface_x, wl_fixed_t surface_y) -> void {
+    .down = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time,
+               wl_surface* surface, int32_t id, wl_fixed_t surface_x,
+               wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
@@ -199,17 +199,16 @@ const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
         self->binding_handler_delegate_->OnTouchDown(time, id, x, y);
       }
     },
-    .up = [](void* data, struct wl_touch* wl_touch, uint32_t serial,
-             uint32_t time, int32_t id) -> void {
+    .up = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time,
+             int32_t id) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnTouchUp(time, id);
       }
     },
-    .motion = [](void* data, struct wl_touch* wl_touch, uint32_t time,
-                 int32_t id, wl_fixed_t surface_x,
-                 wl_fixed_t surface_y) -> void {
+    .motion = [](void* data, wl_touch* wl_touch, uint32_t time, int32_t id,
+                 wl_fixed_t surface_x, wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         double x = wl_fixed_to_double(surface_x);
@@ -217,8 +216,8 @@ const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
         self->binding_handler_delegate_->OnTouchMotion(time, id, x, y);
       }
     },
-    .frame = [](void* data, struct wl_touch* wl_touch) -> void {},
-    .cancel = [](void* data, struct wl_touch* wl_touch) -> void {
+    .frame = [](void* data, wl_touch* wl_touch) -> void {},
+    .cancel = [](void* data, wl_touch* wl_touch) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnTouchCancel();
@@ -270,12 +269,12 @@ const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
 };
 
 const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
-    .geometry = [](void* data, struct wl_output* wl_output, int32_t x,
-                   int32_t y, int32_t physical_width, int32_t physical_height,
+    .geometry = [](void* data, wl_output* wl_output, int32_t x, int32_t y,
+                   int32_t physical_width, int32_t physical_height,
                    int32_t subpixel, const char* make, const char* model,
                    int32_t output_transform) -> void {},
-    .mode = [](void* data, struct wl_output* wl_output, uint32_t flags,
-               int32_t width, int32_t height, int32_t refresh) -> void {
+    .mode = [](void* data, wl_output* wl_output, uint32_t flags, int32_t width,
+               int32_t height, int32_t refresh) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
         LINUXES_LOG(INFO) << "Display output resolution: " << width << "x"
@@ -289,9 +288,8 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
         }
       }
     },
-    .done = [](void* data, struct wl_output* wl_output) -> void {},
-    .scale = [](void* data, struct wl_output* wl_output,
-                int32_t scale) -> void {
+    .done = [](void* data, wl_output* wl_output) -> void {},
+    .scale = [](void* data, wl_output* wl_output, int32_t scale) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       LINUXES_LOG(INFO) << "Display output scale: " << scale;
       self->current_scale_ = scale;
@@ -300,8 +298,8 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
 
 const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
     {
-        .enter = [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
-                    struct wl_surface* surface) -> void {
+        .enter = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
+                    wl_surface* surface) -> void {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
           // If there is no input data, the backspace key cannot be used,
           // so set dummy data.
@@ -310,22 +308,20 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                                                    " ", 1, 1);
           }
         },
-        .leave = [](void* data,
-                    struct zwp_text_input_v1* zwp_text_input_v1) -> void {
+        .leave = [](void* data, zwp_text_input_v1* zwp_text_input_v1) -> void {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
           if (self->zwp_text_input_v1_) {
             zwp_text_input_v1_hide_input_panel(self->zwp_text_input_v1_);
           }
         },
-        .modifiers_map = [](void* data,
-                            struct zwp_text_input_v1* zwp_text_input_v1,
-                            struct wl_array* map) -> void {},
+        .modifiers_map = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
+                            wl_array* map) -> void {},
         .input_panel_state = [](void* data,
-                                struct zwp_text_input_v1* zwp_text_input_v1,
+                                zwp_text_input_v1* zwp_text_input_v1,
                                 uint32_t state) -> void {},
-        .preedit_string =
-            [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
-               uint32_t serial, const char* text, const char* commit) -> void {
+        .preedit_string = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
+                             uint32_t serial, const char* text,
+                             const char* commit) -> void {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
             self->binding_handler_delegate_->OnVirtualKey(text[0]);
@@ -338,14 +334,12 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                                                    " ", 1, 1);
           }
         },
-        .preedit_styling =
-            [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
-               uint32_t index, uint32_t length, uint32_t style) -> void {},
-        .preedit_cursor = [](void* data,
-                             struct zwp_text_input_v1* zwp_text_input_v1,
+        .preedit_styling = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
+                              uint32_t index, uint32_t length,
+                              uint32_t style) -> void {},
+        .preedit_cursor = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                              int32_t index) -> void {},
-        .commit_string = [](void* data,
-                            struct zwp_text_input_v1* zwp_text_input_v1,
+        .commit_string = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                             uint32_t serial, const char* text) -> void {
           // commit_string is notified only when the space key is pressed.
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
@@ -359,12 +353,11 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                                                    " ", 1, 1);
           }
         },
-        .cursor_position = [](void* data,
-                              struct zwp_text_input_v1* zwp_text_input_v1,
+        .cursor_position = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                               int32_t index, int32_t anchor) -> void {},
-        .delete_surrounding_text =
-            [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
-               int32_t index, uint32_t length) -> void {
+        .delete_surrounding_text = [](void* data,
+                                      zwp_text_input_v1* zwp_text_input_v1,
+                                      int32_t index, uint32_t length) -> void {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnVirtualSpecialKey(KEY_BACKSPACE);
@@ -376,7 +369,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                                                    " ", 1, 1);
           }
         },
-        .keysym = [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
+        .keysym = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                      uint32_t serial, uint32_t time, uint32_t sym,
                      uint32_t state, uint32_t modifiers) -> void {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
@@ -406,25 +399,24 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
             }
           }
         },
-        .language = [](void* data, struct zwp_text_input_v1* zwp_text_input_v1,
+        .language = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                        uint32_t serial, const char* language) -> void {},
-        .text_direction = [](void* data,
-                             struct zwp_text_input_v1* zwp_text_input_v1,
+        .text_direction = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                              uint32_t serial, uint32_t direction) -> void {},
 };
 
 const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
-    .data_offer = [](void* data, struct wl_data_device* wl_data_device,
-                     struct wl_data_offer* offer) -> void {},
-    .enter = [](void* data, struct wl_data_device* wl_data_device,
-                uint32_t serial, struct wl_surface* surface, wl_fixed_t x,
-                wl_fixed_t y, struct wl_data_offer* offer) -> void {},
-    .leave = [](void* data, struct wl_data_device* wl_data_device) -> void {},
-    .motion = [](void* data, struct wl_data_device* wl_data_device,
-                 uint32_t time, wl_fixed_t x, wl_fixed_t y) -> void {},
-    .drop = [](void* data, struct wl_data_device* wl_data_device) -> void {},
-    .selection = [](void* data, struct wl_data_device* wl_data_device,
-                    struct wl_data_offer* offer) -> void {
+    .data_offer = [](void* data, wl_data_device* wl_data_device,
+                     wl_data_offer* offer) -> void {},
+    .enter = [](void* data, wl_data_device* wl_data_device, uint32_t serial,
+                wl_surface* surface, wl_fixed_t x, wl_fixed_t y,
+                wl_data_offer* offer) -> void {},
+    .leave = [](void* data, wl_data_device* wl_data_device) -> void {},
+    .motion = [](void* data, wl_data_device* wl_data_device, uint32_t time,
+                 wl_fixed_t x, wl_fixed_t y) -> void {},
+    .drop = [](void* data, wl_data_device* wl_data_device) -> void {},
+    .selection = [](void* data, wl_data_device* wl_data_device,
+                    wl_data_offer* offer) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (self->wl_data_offer_) {
         wl_data_offer_destroy(self->wl_data_offer_);
@@ -434,9 +426,9 @@ const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
 };
 
 const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
-    .target = [](void* data, struct wl_data_source* wl_data_source,
+    .target = [](void* data, wl_data_source* wl_data_source,
                  const char* mime_type) -> void {},
-    .send = [](void* data, struct wl_data_source* wl_data_source,
+    .send = [](void* data, wl_data_source* wl_data_source,
                const char* mime_type, int32_t fd) -> void {
       if (strcmp(mime_type, kClipboardMimeTypeText)) {
         LINUXES_LOG(ERROR) << "Not expected mime_type: " << mime_type;
@@ -448,7 +440,7 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
             strlen(self->clipboard_data_.c_str()));
       close(fd);
     },
-    .cancelled = [](void* data, struct wl_data_source* wl_data_source) -> void {
+    .cancelled = [](void* data, wl_data_source* wl_data_source) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->clipboard_data_ = "";
       if (self->wl_data_source_) {
@@ -457,17 +449,16 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
       }
     },
     .dnd_drop_performed = [](void* data,
-                             struct wl_data_source* wl_data_source) -> void {},
-    .dnd_finished = [](void* data,
-                       struct wl_data_source* wl_data_source) -> void {},
-    .action = [](void* data, struct wl_data_source* wl_data_source,
+                             wl_data_source* wl_data_source) -> void {},
+    .dnd_finished = [](void* data, wl_data_source* wl_data_source) -> void {},
+    .action = [](void* data, wl_data_source* wl_data_source,
                  uint32_t dnd_action) -> void {},
 };
 
 LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            int32_t width, int32_t height,
                                            bool show_cursor)
-    : cursor_info_({nullptr, 0, ""}),
+    : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
