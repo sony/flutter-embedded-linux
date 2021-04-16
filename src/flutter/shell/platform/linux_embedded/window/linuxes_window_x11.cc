@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_x11.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 
 namespace flutter {
 
@@ -109,8 +109,8 @@ bool LinuxesWindowX11::DispatchEvent() {
 }
 
 bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
-  auto context_egl = std::make_unique<ContextEglX11>(
-      std::make_unique<EnvironmentEgl<Display>>(display_));
+  auto context_egl =
+      std::make_unique<ContextEgl>(std::make_unique<EnvironmentEgl>(display_));
 
   native_window_ = std::make_unique<NativeWindowX11>(
       display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID), width, height);

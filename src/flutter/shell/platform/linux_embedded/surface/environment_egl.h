@@ -10,12 +10,16 @@
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 
+// The definition of EGLNativeDisplayType depends on related include files or
+// define such as gbm.h or "__GBM__". So, we cannot create environment_egl.cc
+// file and need to avoid a link error which is caused by the include order of
+// related header files.
+
 namespace flutter {
 
-template <typename T>
 class EnvironmentEgl {
  public:
-  EnvironmentEgl(T* platform_display)
+  EnvironmentEgl(EGLNativeDisplayType platform_display)
       : display_(EGL_NO_DISPLAY), valid_(false) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
@@ -24,19 +28,10 @@ class EnvironmentEgl {
       return;
     }
 
-    if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
-                         << get_egl_error_cause();
-      return;
-    }
-
-    if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
-      return;
-    }
-
-    valid_ = true;
+    valid_ = InitializeEgl();
   }
+
+  EnvironmentEgl() : display_(EGL_NO_DISPLAY), valid_(false) {}
 
   ~EnvironmentEgl() {
     if (display_ != EGL_NO_DISPLAY) {
@@ -48,11 +43,26 @@ class EnvironmentEgl {
     }
   }
 
+  bool InitializeEgl() const {
+    if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
+      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
+                         << get_egl_error_cause();
+      return false;
+    }
+
+    if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
+      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
+      return false;
+    }
+
+    return true;
+  }
+
   bool IsValid() const { return valid_; }
 
-  EGLDisplay Display() const { return display_; };
+  EGLDisplay Display() const { return display_; }
 
- private:
+ protected:
   EGLDisplay display_;
   bool valid_;
 };

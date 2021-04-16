@@ -16,7 +16,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - [Wayland](https://wayland.freedesktop.org/) backend support
 - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
   - [x] Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
-  - [ ] [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices (coming soon)
+  - [x] [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
 - X11 backend supoort
   - This is for the purpose of developing Flutter apps in Linux desktops. It is not intended for use in embedded systems.
 - Always single window fullscreen
@@ -39,7 +39,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | Wayland | :heavy_check_mark: |
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | DRM | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
-| [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | See: [#1](https://github.com/sony/flutter-embedded-linux/issues/1) |
+| [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | DRM | :heavy_check_mark: ([#1](https://github.com/sony/flutter-embedded-linux/issues/1))|
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | :heavy_check_mark: ([#9](https://github.com/sony/flutter-embedded-linux/issues/9)) |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
@@ -164,10 +164,21 @@ $ cmake --build .
 
 ### Build for DRM backend
 
+#### Use GBM
+
 ```Shell
 $ mkdir build
 $ cd build
-$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-backend ..
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-gbm-backend ..
+$ cmake --build .
+```
+
+#### Use EGLStream
+
+```Shell
+$ mkdir build
+$ cd build
+$ cmake -DUSER_PROJECT_PATH=examples/flutter-drm-eglstream-backend ..
 $ cmake --build .
 ```
 
@@ -195,8 +206,7 @@ Please edit `cmake/user_config.cmake` file.
 
 | Option | Description |
 | ------------- | ------------- |
-| USE_DRM | Use DRM backend instead of Wayland |
-| USE_X11 | Use X11 backend instead of Wayland |
+| BACKEND_TYPE | Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type (The default setting is WAYLAND) |
 | DESKTOP_SHELL | Work as Weston desktop-shell |
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
@@ -267,7 +277,7 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-backend ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> ./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.

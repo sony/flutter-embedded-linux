@@ -68,10 +68,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   void SetClipboardData(const std::string& data) override;
 
  private:
-  struct cursor_info {
-    ::wl_pointer* wl_pointer;
-    uint32_t serial;
+  struct CursorInfo {
     std::string cursor_name;
+    uint32_t serial;
+    wl_pointer* wl_pointer;
   };
 
   void WlRegistryHandler(wl_registry* wl_registry, uint32_t name,
@@ -121,7 +121,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   zwp_text_input_manager_v1* zwp_text_input_manager_v1_;
   zwp_text_input_v1* zwp_text_input_v1_;
 
-  cursor_info cursor_info_;
+  CursorInfo cursor_info_;
 
   // List of cursor name and wl_cursor supported by Wayland.
   std::unordered_map<std::string, wl_cursor*> supported_wl_cursor_list_;
