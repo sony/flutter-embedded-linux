@@ -39,33 +39,9 @@ class NativeWindowDrmEglstream
   uint32_t PlaneId() { return drm_plane_id_; }
 
  private:
-  struct DrmPropertyIds {
-    struct {
-      uint32_t mode_id;
-      uint32_t active;
-    } crtc;
-
-    struct {
-      uint32_t src_x;
-      uint32_t src_y;
-      uint32_t src_w;
-      uint32_t src_h;
-      uint32_t crtc_x;
-      uint32_t crtc_y;
-      uint32_t crtc_w;
-      uint32_t crtc_h;
-      uint32_t fb_id;
-      uint32_t crtc_id;
-    } plane;
-
-    struct {
-      uint32_t crtc_id;
-    } connector;
-  };
-
-  struct DrmPropertyAddress {
+  struct DrmProperty {
     const char* name;
-    uint32_t* ptr;
+    uint64_t value;
   };
 
   bool ConfigureDisplayAdditional();
@@ -78,16 +54,13 @@ class NativeWindowDrmEglstream
 
   bool AssignAtomicRequest(drmModeAtomicReqPtr atomic);
 
-  void GetPropertyIds(DrmPropertyIds& property_ids);
-
-  void GetPropertyAddress(uint32_t id, uint32_t type, DrmPropertyAddress* table,
-                          size_t length);
-
-  bool CreateFb();
+  bool AssignAtomicRequest(drmModeAtomicReqPtr atomic, uint32_t id,
+                           uint32_t type,
+                           NativeWindowDrmEglstream::DrmProperty* table,
+                           size_t length);
 
   uint32_t drm_plane_id_;
   uint32_t drm_property_blob_ = 0;
-  uint32_t drm_fb_ = 0;
 };
 
 }  // namespace flutter
