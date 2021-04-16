@@ -181,29 +181,27 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
   }
 
   // Set the crtc mode and activate.
-  struct DrmProperty crtc_table[] = {
+  NativeWindowDrmEglstream::DrmProperty crtc_table[] = {
       {"MODE_ID", drm_property_blob_},
       {"ACTIVE", 1},
   };
-  if (!AssignAtomicRequest(atomic, drm_crtc_->crtc_id, DRM_MODE_OBJECT_CRTC,
-                           crtc_table,
-                           sizeof(crtc_table) / sizeof(DrmProperty))) {
+  if (!AssignAtomicPropertyValue(atomic, drm_crtc_->crtc_id,
+                                 DRM_MODE_OBJECT_CRTC, crtc_table)) {
     return false;
   }
 
   // Set the connector.
-  struct DrmProperty connector_table[] = {
+  NativeWindowDrmEglstream::DrmProperty connector_table[] = {
       {"CRTC_ID", drm_crtc_->crtc_id},
   };
-  if (!AssignAtomicRequest(atomic, drm_connector_id_, DRM_MODE_OBJECT_CONNECTOR,
-                           connector_table,
-                           sizeof(connector_table) / sizeof(DrmProperty))) {
+  if (!AssignAtomicPropertyValue(atomic, drm_connector_id_,
+                                 DRM_MODE_OBJECT_CONNECTOR, connector_table)) {
     return false;
   }
 
   // Set the plane source position, plane destination position, and crtc to
   // connect plane.
-  struct DrmProperty plane_table[] = {
+  NativeWindowDrmEglstream::DrmProperty plane_table[] = {
       {"SRC_X", 0},
       {"SRC_Y", 0},
       {"SRC_W", static_cast<uint64_t>(drm_mode_info_.hdisplay << 16)},
@@ -214,24 +212,24 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
       {"CRTC_H", static_cast<uint64_t>(drm_mode_info_.vdisplay)},
       {"CRTC_ID", drm_crtc_->crtc_id},
   };
-  if (!AssignAtomicRequest(atomic, drm_plane_id_, DRM_MODE_OBJECT_PLANE,
-                           plane_table,
-                           sizeof(plane_table) / sizeof(DrmProperty))) {
+  if (!AssignAtomicPropertyValue(atomic, drm_plane_id_, DRM_MODE_OBJECT_PLANE,
+                                 plane_table)) {
     return false;
   }
 
   return true;
 }
 
-bool NativeWindowDrmEglstream::AssignAtomicRequest(
+template <size_t N>
+bool NativeWindowDrmEglstream::AssignAtomicPropertyValue(
     drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
-    NativeWindowDrmEglstream::DrmProperty* table, size_t length) {
+    NativeWindowDrmEglstream::DrmProperty (&table)[N]) {
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {
     for (uint32_t i = 0; i < properties->count_props; i++) {
       auto property = drmModeGetProperty(drm_device_, properties->props[i]);
       if (property) {
-        for (uint32_t j = 0; j < length; j++) {
+        for (uint32_t j = 0; j < N; j++) {
           if (std::strcmp(table[j].name, property->name) == 0) {
             if (drmModeAtomicAddProperty(atomic, id, property->prop_id,
                                          table[j].value) < 0) {

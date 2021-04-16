@@ -54,10 +54,10 @@ class NativeWindowDrmEglstream
 
   bool AssignAtomicRequest(drmModeAtomicReqPtr atomic);
 
-  bool AssignAtomicRequest(drmModeAtomicReqPtr atomic, uint32_t id,
-                           uint32_t type,
-                           NativeWindowDrmEglstream::DrmProperty* table,
-                           size_t length);
+  template <size_t N>
+  bool AssignAtomicPropertyValue(
+      drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
+      NativeWindowDrmEglstream::DrmProperty (&table)[N]);
 
   uint32_t drm_plane_id_;
   uint32_t drm_property_blob_ = 0;
