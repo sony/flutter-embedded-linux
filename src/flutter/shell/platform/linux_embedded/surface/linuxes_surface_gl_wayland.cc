@@ -8,7 +8,7 @@
 
 namespace flutter {
 
-SurfaceGlWayland::SurfaceGlWayland(std::unique_ptr<ContextEglWayland> context)
+SurfaceGlWayland::SurfaceGlWayland(std::unique_ptr<ContextEgl> context)
     : native_window_(nullptr),
       onscreen_surface_(nullptr),
       offscreen_surface_(nullptr) {
@@ -19,7 +19,7 @@ bool SurfaceGlWayland::IsValid() const {
   return offscreen_surface_ && context_->IsValid();
 }
 
-bool SurfaceGlWayland::SetNativeWindow(NativeWindow<wl_egl_window>* window) {
+bool SurfaceGlWayland::SetNativeWindow(NativeWindow* window) {
   native_window_ = window;
   onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
   if (!onscreen_surface_->IsValid()) {
@@ -29,7 +29,7 @@ bool SurfaceGlWayland::SetNativeWindow(NativeWindow<wl_egl_window>* window) {
 }
 
 bool SurfaceGlWayland::SetNativeWindowResource(
-    std::unique_ptr<NativeWindow<wl_egl_window>> window) {
+    std::unique_ptr<NativeWindow> window) {
   native_window_resource_ = std::move(window);
   offscreen_surface_ =
       context_->CreateOffscreenSurface(native_window_resource_.get());

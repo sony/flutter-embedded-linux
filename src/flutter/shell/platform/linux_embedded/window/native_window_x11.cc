@@ -67,11 +67,14 @@ NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
 
   XMapWindow(display, window_);
 
+  width_ = width;
+  height_ = height;
   valid_ = true;
 }
 
-bool NativeWindowX11::Resize(const size_t width, const size_t height) const {
-  // do nothing.
+bool NativeWindowX11::Resize(const size_t width, const size_t height) {
+  width_ = width;
+  height_ = height;
   return true;
 }
 
