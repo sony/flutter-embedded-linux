@@ -69,7 +69,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
 
  private:
   struct cursor_info {
-    ::wl_pointer* wl_pointer;
+    wl_pointer* wl_pointer;
     uint32_t serial;
     std::string cursor_name;
   };
