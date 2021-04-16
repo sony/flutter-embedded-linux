@@ -11,14 +11,14 @@
 
 namespace flutter {
 
-class NativeWindowX11 : public NativeWindow<Window> {
+class NativeWindowX11 : public NativeWindow {
  public:
   NativeWindowX11(Display* display, VisualID visual_id, const size_t width,
                   const size_t height);
   ~NativeWindowX11() = default;
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) const override;
+  bool Resize(const size_t width, const size_t height) override;
 
   void Destroy(Display* display);
 

@@ -8,5 +8,5 @@ This is the example of X11 backend + stand-alone application.
 $ mkdir build
 $ cd build
 $ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
-$ make
+$ cmake --build .
 ```

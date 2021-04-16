@@ -47,6 +47,8 @@ You can check the current engine version (commit id / SHA):
 - [beta channel](https://raw.githubusercontent.com/flutter/flutter/beta/bin/internal/engine.version)
 - [stable channel](https://raw.githubusercontent.com/flutter/flutter/stable/bin/internal/engine.version)
 
+You can also get the engine version from `${path_to_flutter_sdk_install}/flutter/bin/internal/engine.version` of the Flutter SDK which you are currently using.
+
 ```yaml
 solutions = [
   {
