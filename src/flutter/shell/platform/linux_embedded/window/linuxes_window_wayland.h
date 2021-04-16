@@ -68,10 +68,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   void SetClipboardData(const std::string& data) override;
 
  private:
-  struct cursor_info {
-    wl_pointer* wl_pointer;
-    uint32_t serial;
+  struct CursorInfo {
     std::string cursor_name;
+    uint32_t serial;
+    wl_pointer* wl_pointer;
   };
 
   void WlRegistryHandler(wl_registry* wl_registry, uint32_t name,
