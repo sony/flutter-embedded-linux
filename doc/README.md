@@ -3,7 +3,7 @@
 ## 1. Install libraries
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
 
-#### Mandatory
+### Mandatory
 - clang (for building)
 - cmake (for building)
 - build-essential (for building)
@@ -16,7 +16,7 @@ You need to install the following dependent libraries to build and run. Here int
 $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
-#### Only when using Wayland backend
+### Only when using Wayland backend
 - libwayland
 - wayland-protocols (for generating xdg-shell source files)
 
@@ -24,14 +24,14 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 $ sudo apt install libwayland-dev wayland-protocols
 ```
 
-#### Only when using weston desktop-shell
+### Only when using weston desktop-shell
 - weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
 
 ```Shell
 $ sudo apt install weston
 ```
 
-#### Only when using DRM backend
+### Only when using DRM backend
 - libdrm
 - libgbm
 - libinput
@@ -42,14 +42,14 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
-#### Only when using x11 backend
+### Only when using x11 backend
 - x11
 
 ```Shell
 $ sudo apt install libx11-dev
 ```
 
-#### Install Flutter Engine library
+### Install Flutter Engine library
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./building-engine-embedder.md)
 
@@ -78,6 +78,7 @@ $ cp ./libflutter_engine.so <path_to_cmake_build_directory>
 There are sample projects in [`examples`](../examples) directory. You can also comunicate with Dart code by using the plugin APIs with the same specifications as with Flutter desktops for Windows.
 
 ## 3. Building
+Here show you how to self-build on the target hosts. Currently, we are preparing recipes for Yocto build ([#30](https://github.com/sony/flutter-embedded-linux/issues/30)).
 
 ### Build for Wayland backend (Stand-alone Wayland app)
 
@@ -89,7 +90,7 @@ $ cmake --build .
 ```
 
 ### Build for Wayland backend (Weston desktop-shell)
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#6-settings-of-westonini-file-only-when-using-weston-desktop-shell).
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#7-settings-of-westonini-file-only-when-using-weston-desktop-shell).
 
 ```Shell
 $ mkdir build
@@ -147,7 +148,7 @@ Please edit `cmake/user_config.cmake` file.
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
-## 4. Running Flutter app
+## 4. Building Flutter app
 
 ### Install Flutter SDK
 See also: [Desktop support for Flutter](https://flutter.dev/desktop)
@@ -180,9 +181,9 @@ $ cd ..
 
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
-### Run Flutter app
+## 5. Running Flutter app
 
-#### Run with Wayland backend
+### Run with Wayland backend
 
 Wayland compositor such as Weston must be running before running the program.
 
@@ -190,7 +191,7 @@ Wayland compositor such as Weston must be running before running the program.
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Supplement
+### Supplement
 
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
@@ -207,7 +208,7 @@ $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/bui
 $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Run with DRM backend
+### Run with DRM backend
 
 You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
@@ -218,13 +219,13 @@ $ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> ./sample/build/lin
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
-##### Note
+#### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
-## 5. Debugging Flutter apps
+## 6. Debugging Flutter apps
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./debugging.md)
 
-## 6. Settings of weston.ini file (Only when using Weston desktop-shell)
+## 7. Settings of weston.ini file (Only when using Weston desktop-shell)
 
 Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](../examples/config/weston.ini). See also `man weston.ini`.
 
