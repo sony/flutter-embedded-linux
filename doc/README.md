@@ -78,6 +78,7 @@ $ cp ./libflutter_engine.so <path_to_cmake_build_directory>
 There are sample projects in [`examples`](../examples) directory. You can also comunicate with Dart code by using the plugin APIs with the same specifications as with Flutter desktops for Windows.
 
 ## 3. Building
+Here show you how to self-build on the target hosts. Currently, we are preparing recipes for Yocto build ([#30](https://github.com/sony/flutter-embedded-linux/issues/30)).
 
 ### Build for Wayland backend (Stand-alone Wayland app)
 
