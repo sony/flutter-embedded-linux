@@ -90,7 +90,7 @@ $ cmake --build .
 ```
 
 ### Build for Wayland backend (Weston desktop-shell)
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#6-settings-of-westonini-file-only-when-using-weston-desktop-shell).
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#7-settings-of-westonini-file-only-when-using-weston-desktop-shell).
 
 ```Shell
 $ mkdir build
@@ -148,7 +148,7 @@ Please edit `cmake/user_config.cmake` file.
 | USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
-## 4. Running Flutter app
+## 4. Building Flutter app
 
 ### Install Flutter SDK
 See also: [Desktop support for Flutter](https://flutter.dev/desktop)
@@ -181,9 +181,9 @@ $ cd ..
 
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
-### Run Flutter app
+## 5. Running Flutter app
 
-#### Run with Wayland backend
+### Run with Wayland backend
 
 Wayland compositor such as Weston must be running before running the program.
 
@@ -191,7 +191,7 @@ Wayland compositor such as Weston must be running before running the program.
 $ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Supplement
+### Supplement
 
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
@@ -208,7 +208,7 @@ $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/bui
 $ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
 ```
 
-#### Run with DRM backend
+### Run with DRM backend
 
 You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
@@ -219,13 +219,13 @@ $ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> ./sample/build/lin
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
 
-##### Note
+#### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
-## 5. Debugging Flutter apps
+## 6. Debugging Flutter apps
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./debugging.md)
 
-## 6. Settings of weston.ini file (Only when using Weston desktop-shell)
+## 7. Settings of weston.ini file (Only when using Weston desktop-shell)
 
 Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](../examples/config/weston.ini). See also `man weston.ini`.
 
