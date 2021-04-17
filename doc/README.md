@@ -3,7 +3,7 @@
 ## 1. Install libraries
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
 
-#### Mandatory
+### Mandatory
 - clang (for building)
 - cmake (for building)
 - build-essential (for building)
@@ -16,7 +16,7 @@ You need to install the following dependent libraries to build and run. Here int
 $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxkbcommon-dev libgles2-mesa-dev
 ```
 
-#### Only when using Wayland backend
+### Only when using Wayland backend
 - libwayland
 - wayland-protocols (for generating xdg-shell source files)
 
@@ -24,14 +24,14 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 $ sudo apt install libwayland-dev wayland-protocols
 ```
 
-#### Only when using weston desktop-shell
+### Only when using weston desktop-shell
 - weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
 
 ```Shell
 $ sudo apt install weston
 ```
 
-#### Only when using DRM backend
+### Only when using DRM backend
 - libdrm
 - libgbm
 - libinput
@@ -42,14 +42,14 @@ $ sudo apt install weston
 $ sudo apt install libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev
 ```
 
-#### Only when using x11 backend
+### Only when using x11 backend
 - x11
 
 ```Shell
 $ sudo apt install libx11-dev
 ```
 
-#### Install Flutter Engine library
+### Install Flutter Engine library
 
 This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./building-engine-embedder.md)
 
