@@ -18,7 +18,7 @@ $ flutter attach --device-id=flutter-tester --debug-uri http://127.0.0.1:40409/k
 ```
 
 ### How to use command line options in the Dart VM
-You can use the environment variables such as `FLUTTER_ENGINE_SWITCHES`, `FLUTTER_ENGINE_SWITCH_*` to use Dart VM command line options. If you want to fix always same observatory URI, you can use the following command. Note that this option is only available in debug mode. See also: [How to debug the embedder](https://github.com/sony/flutter-embedded-linux/blob/master/README.md#How-to-debug-the-embedder)
+You can use the environment variables such as `FLUTTER_ENGINE_SWITCHES`, `FLUTTER_ENGINE_SWITCH_*` to use Dart VM command line options. If you want to fix always same observatory URI, you can use the following command. Note that this option is only available in debug mode. See also: [How to debug the embedder](./README.md#how-to-debug-the-embedder)
 
 ```Shell
 $ FLUTTER_ENGINE_SWITCHES=2 \
