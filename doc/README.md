@@ -50,8 +50,7 @@ $ sudo apt install libx11-dev
 ```
 
 ### Install Flutter Engine library
-
-This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install `libflutter_engine.so` in `/usr/lib` to build. See: [Building Flutter Engine embedder](./building-engine-embedder.md)
+This embedder requres `libflutter_engine.so` (Flutter embedder library). You need to install it in <path_to_cmake_build_directory> to build. See: [Building Flutter Engine embedder](./building-engine-embedder.md)
 
 Or you can download a specific pre-built Flutter Engine from Google's infra by the following steps, but it's limited to **debug mode** and **x64** targets.
 
