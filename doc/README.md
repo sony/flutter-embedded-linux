@@ -221,7 +221,7 @@ If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a term
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
-## 5. Debugging
+## 5. Debugging Flutter apps
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./debugging.md)
 
 ## 6. Settings of weston.ini file (Only when using Weston desktop-shell)
