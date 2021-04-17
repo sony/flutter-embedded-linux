@@ -89,7 +89,7 @@ $ cmake --build .
 ```
 
 ### Build for Wayland backend (Weston desktop-shell)
-This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#5-settings-of-westonini-file-only-when-you-use-weston-desktop-shell).
+This binary will run as a desktop-shell by setting `weston.ini` when Weston starts. See [Settings of weston.ini file](#6-settings-of-westonini-file-only-when-using-weston-desktop-shell).
 
 ```Shell
 $ mkdir build
@@ -221,10 +221,10 @@ If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a term
 ##### Note
 You need to run this program by a user who has the permission to access the input devices(/dev/input/xxx), if you use the DRM backend. Generally, it is a root user or a user who belongs to an input group.
 
-### Debugging
+## 5. Debugging
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./debugging.md)
 
-## 5. Settings of weston.ini file (Only when using Weston desktop-shell)
+## 6. Settings of weston.ini file (Only when using Weston desktop-shell)
 
 Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](../examples/config/weston.ini). See also `man weston.ini`.
 

@@ -62,6 +62,5 @@ With the assumption, our final goal of this software openly is to be merged this
 
 See also: [Contributing to the Flutter engine](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
 
-# Documents
-
+## Documents
 All documents for this embedder are under the [doc](./doc/README.md) directory.
