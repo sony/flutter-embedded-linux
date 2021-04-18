@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
@@ -125,11 +126,9 @@ bool NativeWindowDrmGbm::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGlDrm<ContextEgl>>
-NativeWindowDrmGbm::CreateRenderSurface() {
-  return std::make_unique<SurfaceGlDrm<ContextEgl>>(
-      std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(gbm_device_)));
+std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
+  return std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
+      std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
 void NativeWindowDrmGbm::SwapBuffers() {

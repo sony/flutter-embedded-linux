@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_x11.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
@@ -67,7 +67,7 @@ class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
 
   Display* display_ = nullptr;
   std::unique_ptr<NativeWindowX11> native_window_;
-  std::unique_ptr<SurfaceGlX11> render_surface_;
+  std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
 };

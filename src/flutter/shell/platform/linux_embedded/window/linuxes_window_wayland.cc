@@ -682,9 +682,8 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   xdg_toplevel_set_title(xdg_toplevel_, "Flutter");
   wl_surface_commit(native_window_->Surface());
 
-  render_surface_ =
-      std::make_unique<SurfaceGlWayland>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(wl_display_)));
+  render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
+      std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
   // The offscreen (resource) surface will not be mapped, but needs to be a
