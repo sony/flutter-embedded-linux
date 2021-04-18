@@ -48,10 +48,6 @@ NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
     drmModeDestroyPropertyBlob(drm_device_, drm_property_blob_);
   }
 
-  if (drm_fb_) {
-    drmModeRmFB(drm_device_, drm_fb_);
-  }
-
   close(drm_device_);
 }
 
@@ -184,80 +180,65 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
     return false;
   }
 
-  if (!CreateFb()) {
+  // Set the crtc mode and activate.
+  NativeWindowDrmEglstream::DrmProperty crtc_table[] = {
+      {"MODE_ID", drm_property_blob_},
+      {"ACTIVE", 1},
+  };
+  if (!AssignAtomicPropertyValue(atomic, drm_crtc_->crtc_id,
+                                 DRM_MODE_OBJECT_CRTC, crtc_table)) {
     return false;
   }
 
-  NativeWindowDrmEglstream::DrmPropertyIds property_ids = {0};
-  GetPropertyIds(property_ids);
-  drmModeAtomicAddProperty(atomic, drm_crtc_->crtc_id,
-                           property_ids.crtc.mode_id, drm_property_blob_);
-  drmModeAtomicAddProperty(atomic, drm_crtc_->crtc_id, property_ids.crtc.active,
-                           1);
-  drmModeAtomicAddProperty(atomic, drm_connector_id_,
-                           property_ids.connector.crtc_id, drm_crtc_->crtc_id);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.src_x, 0);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.src_y, 0);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.src_w,
-                           drm_mode_info_.hdisplay << 16);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.src_h,
-                           drm_mode_info_.vdisplay << 16);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.crtc_x, 0);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.crtc_y, 0);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.crtc_w,
-                           drm_mode_info_.hdisplay);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.crtc_h,
-                           drm_mode_info_.vdisplay);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.fb_id,
-                           drm_fb_);
-  drmModeAtomicAddProperty(atomic, drm_plane_id_, property_ids.plane.crtc_id,
-                           drm_crtc_->crtc_id);
+  // Set the connector.
+  NativeWindowDrmEglstream::DrmProperty connector_table[] = {
+      {"CRTC_ID", drm_crtc_->crtc_id},
+  };
+  if (!AssignAtomicPropertyValue(atomic, drm_connector_id_,
+                                 DRM_MODE_OBJECT_CONNECTOR, connector_table)) {
+    return false;
+  }
+
+  // Set the plane source position, plane destination position, and crtc to
+  // connect plane.
+  NativeWindowDrmEglstream::DrmProperty plane_table[] = {
+      {"SRC_X", 0},
+      {"SRC_Y", 0},
+      {"SRC_W", static_cast<uint64_t>(drm_mode_info_.hdisplay << 16)},
+      {"SRC_H", static_cast<uint64_t>(drm_mode_info_.vdisplay << 16)},
+      {"CRTC_X", 0},
+      {"CRTC_Y", 0},
+      {"CRTC_W", static_cast<uint64_t>(drm_mode_info_.hdisplay)},
+      {"CRTC_H", static_cast<uint64_t>(drm_mode_info_.vdisplay)},
+      {"CRTC_ID", drm_crtc_->crtc_id},
+  };
+  if (!AssignAtomicPropertyValue(atomic, drm_plane_id_, DRM_MODE_OBJECT_PLANE,
+                                 plane_table)) {
+    return false;
+  }
+
   return true;
 }
 
-void NativeWindowDrmEglstream::GetPropertyIds(
-    NativeWindowDrmEglstream::DrmPropertyIds& property_ids) {
-  struct DrmPropertyAddress crtc_table[] = {
-      {"MODE_ID", &property_ids.crtc.mode_id},
-      {"ACTIVE", &property_ids.crtc.active},
-  };
-  struct DrmPropertyAddress plane_table[] = {
-      {"SRC_X", &property_ids.plane.src_x},
-      {"SRC_Y", &property_ids.plane.src_y},
-      {"SRC_W", &property_ids.plane.src_w},
-      {"SRC_H", &property_ids.plane.src_h},
-      {"CRTC_X", &property_ids.plane.crtc_x},
-      {"CRTC_Y", &property_ids.plane.crtc_y},
-      {"CRTC_W", &property_ids.plane.crtc_w},
-      {"CRTC_H", &property_ids.plane.crtc_h},
-      {"FB_ID", &property_ids.plane.fb_id},
-      {"CRTC_ID", &property_ids.plane.crtc_id},
-      {"CRTC_ID", &property_ids.connector.crtc_id},
-  };
-  struct DrmPropertyAddress connector_table[] = {
-      {"CRTC_ID", &property_ids.connector.crtc_id},
-  };
-
-  GetPropertyAddress(drm_crtc_->crtc_id, DRM_MODE_OBJECT_CRTC, crtc_table,
-                     sizeof(crtc_table) / sizeof(DrmPropertyAddress));
-  GetPropertyAddress(drm_plane_id_, DRM_MODE_OBJECT_PLANE, plane_table,
-                     sizeof(plane_table) / sizeof(DrmPropertyAddress));
-  GetPropertyAddress(drm_connector_id_, DRM_MODE_OBJECT_CONNECTOR,
-                     connector_table,
-                     sizeof(connector_table) / sizeof(DrmPropertyAddress));
-}
-
-void NativeWindowDrmEglstream::GetPropertyAddress(
-    uint32_t id, uint32_t type,
-    NativeWindowDrmEglstream::DrmPropertyAddress* table, size_t length) {
+template <size_t N>
+bool NativeWindowDrmEglstream::AssignAtomicPropertyValue(
+    drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
+    NativeWindowDrmEglstream::DrmProperty (&table)[N]) {
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {
     for (uint32_t i = 0; i < properties->count_props; i++) {
       auto property = drmModeGetProperty(drm_device_, properties->props[i]);
       if (property) {
-        for (uint32_t j = 0; j < length; j++) {
+        for (uint32_t j = 0; j < N; j++) {
           if (std::strcmp(table[j].name, property->name) == 0) {
-            *(table[j].ptr) = property->prop_id;
+            if (drmModeAtomicAddProperty(atomic, id, property->prop_id,
+                                         table[j].value) < 0) {
+              LINUXES_LOG(ERROR)
+                  << "Failed to add " << table[j].name << " property";
+              drmModeFreeProperty(property);
+              drmModeFreeObjectProperties(properties);
+              return false;
+            }
             break;
           }
         }
@@ -266,41 +247,6 @@ void NativeWindowDrmEglstream::GetPropertyAddress(
     }
     drmModeFreeObjectProperties(properties);
   }
-}
-
-bool NativeWindowDrmEglstream::CreateFb() {
-  struct drm_mode_create_dumb create_dump = {0};
-  create_dump.width = drm_mode_info_.hdisplay;
-  create_dump.height = drm_mode_info_.vdisplay;
-  create_dump.bpp = 32;
-  if (drmIoctl(drm_device_, DRM_IOCTL_MODE_CREATE_DUMB, &create_dump) != 0) {
-    LINUXES_LOG(ERROR) << "Failed to create dumb buffer";
-    return false;
-  }
-
-  if (drmModeAddFB(drm_device_, drm_mode_info_.hdisplay,
-                   drm_mode_info_.vdisplay, 24, 32, create_dump.pitch,
-                   create_dump.handle, &drm_fb_) != 0) {
-    LINUXES_LOG(ERROR) << "Failed to add a framebuffer";
-    return false;
-  }
-
-  struct drm_mode_map_dumb map_dump = {0};
-  map_dump.handle = create_dump.handle;
-  if (drmIoctl(drm_device_, DRM_IOCTL_MODE_MAP_DUMB, &map_dump) != 0) {
-    LINUXES_LOG(ERROR) << "Failed to map dumb buffer";
-    return false;
-  }
-
-  auto map =
-      static_cast<uint8_t*>(mmap(0, create_dump.size, PROT_READ | PROT_WRITE,
-                                 MAP_SHARED, drm_device_, map_dump.offset));
-  if (map == MAP_FAILED) {
-    LINUXES_LOG(ERROR) << "Failed to mmap fb";
-    return false;
-  }
-
-  memset(map, 0, create_dump.size);
   return true;
 }
 
