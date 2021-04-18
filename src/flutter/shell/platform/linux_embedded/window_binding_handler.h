@@ -9,11 +9,8 @@
 #include <variant>
 
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
-#include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
-
-//#include <gbm.h>
-//#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
+#include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
 namespace flutter {
 
