@@ -8,10 +8,7 @@
 
 namespace flutter {
 
-SurfaceGlX11::SurfaceGlX11(std::unique_ptr<ContextEgl> context)
-    : native_window_(nullptr),
-      onscreen_surface_(nullptr),
-      offscreen_surface_(nullptr) {
+SurfaceGlX11::SurfaceGlX11(std::unique_ptr<ContextEgl> context) {
   context_ = std::move(context);
 }
 

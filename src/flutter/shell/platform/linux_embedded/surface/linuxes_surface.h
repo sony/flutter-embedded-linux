@@ -34,10 +34,10 @@ class Surface {
   virtual bool ResourceContextMakeCurrent() const = 0;
 
  protected:
-  NativeWindow* native_window_;
-  std::unique_ptr<NativeWindow> native_window_resource_;
-  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
-  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
+  NativeWindow* native_window_ = nullptr;
+  std::unique_ptr<NativeWindow> native_window_resource_ = nullptr;
+  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_ = nullptr;
+  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_ = nullptr;
 };
 
 }  // namespace flutter

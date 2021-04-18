@@ -17,11 +17,7 @@ namespace flutter {
 template <typename T>
 class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
  public:
-  SurfaceGlDrm(std::unique_ptr<T> context)
-      : native_window_(nullptr), onscreen_surface_(nullptr) {
-    context_ = std::move(context);
-  }
-
+  SurfaceGlDrm(std::unique_ptr<T> context) { context_ = std::move(context); }
   ~SurfaceGlDrm() = default;
 
   // |Surface|

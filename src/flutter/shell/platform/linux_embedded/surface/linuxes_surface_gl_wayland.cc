@@ -8,10 +8,7 @@
 
 namespace flutter {
 
-SurfaceGlWayland::SurfaceGlWayland(std::unique_ptr<ContextEgl> context)
-    : native_window_(nullptr),
-      onscreen_surface_(nullptr),
-      offscreen_surface_(nullptr) {
+SurfaceGlWayland::SurfaceGlWayland(std::unique_ptr<ContextEgl> context) {
   context_ = std::move(context);
 }
 
