@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
@@ -88,8 +87,7 @@ class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
     if (!onscreen_surface_->SwapBuffers()) {
       return false;
     }
-    static_cast<NativeWindowDrm<SurfaceGlDrm<T>>*>(native_window_)
-        ->SwapBuffer();
+    native_window_->SwapBuffers();
     return true;
   }
 
@@ -103,9 +101,6 @@ class SurfaceGlDrm final : public Surface, public SurfaceGlDelegate {
 
  protected:
   std::unique_ptr<T> context_;
-  NativeWindow* native_window_;
-  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
-  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };
 
 }  // namespace flutter

@@ -132,7 +132,7 @@ NativeWindowDrmGbm::CreateRenderSurface() {
           std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
-void NativeWindowDrmGbm::SwapBuffer() {
+void NativeWindowDrmGbm::SwapBuffers() {
   auto* bo = gbm_surface_lock_front_buffer(static_cast<gbm_surface*>(window_));
   auto width = gbm_bo_get_width(bo);
   auto height = gbm_bo_get_height(bo);
