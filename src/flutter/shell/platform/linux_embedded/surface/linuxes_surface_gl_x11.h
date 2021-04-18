@@ -5,12 +5,9 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_GL_X11_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_GL_X11_H_
 
-#include <X11/Xutil.h>
-
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
 
@@ -57,9 +54,6 @@ class SurfaceGlX11 final : public Surface, public SurfaceGlDelegate {
 
  private:
   std::unique_ptr<ContextEgl> context_;
-  NativeWindow* native_window_;
-  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
-  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };
 
 }  // namespace flutter

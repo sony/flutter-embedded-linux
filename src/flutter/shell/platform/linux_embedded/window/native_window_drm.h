@@ -68,8 +68,6 @@ class NativeWindowDrm : public NativeWindow {
 
   virtual std::unique_ptr<S> CreateRenderSurface() = 0;
 
-  virtual void SwapBuffer(){};
-
   bool MoveCursor(double x, double y) {
     auto result = drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
                                     x - cursor_hotspot_.first,
