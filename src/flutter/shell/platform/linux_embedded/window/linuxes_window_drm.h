@@ -12,7 +12,6 @@
 #include <unistd.h>
 
 #include <memory>
-#include <thread>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
