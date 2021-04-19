@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
 
+# The platform-dependent definitions such as EGLNativeDisplayType and 
+# EGLNativeWindowType depend on related include files or define such as gbm.h
+# or "__GBM__". So, need to avoid a link error which is caused by the 
+# include order of related header files. See: /usr/include/EGL/eglplatform.h
+if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
+  add_definitions(-D__GBM__)
+elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
+  add_definitions(-DEGL_NO_X11)
+elseif(${BACKEND_TYPE} STREQUAL "X11")
+  add_definitions(-DUSE_X11)
+else()
+  add_definitions(-DWL_EGL_PLATFORM)
+endif()
+
 # display backend type.
 set(DISPLAY_BACKEND_SRC "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
@@ -7,8 +21,7 @@ if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc)
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
-  ## Define "EGL_NO_X11" to avoid including x11-related files.
-  add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM -DEGL_NO_X11)
+  add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.cc
     src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
@@ -17,8 +30,7 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)
   get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
@@ -37,13 +49,11 @@ else()
     DEPENDS ${_infile} ${_client_header} VERBATIM
   )
 
-  add_definitions(-DWL_EGL_PLATFORM)
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
     ${_code}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
 
 # desktop-shell for weston.
@@ -97,6 +107,8 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
+  src/flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.cc
+  src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
   ## The following file were copied from:

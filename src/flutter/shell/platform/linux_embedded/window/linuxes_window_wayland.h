@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_wayland.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
@@ -100,7 +100,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   WindowBindingHandlerDelegate* binding_handler_delegate_;
 
   std::unique_ptr<NativeWindowWayland> native_window_;
-  std::unique_ptr<SurfaceGlWayland> render_surface_;
+  std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
 
