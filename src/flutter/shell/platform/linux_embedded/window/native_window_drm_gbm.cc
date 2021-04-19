@@ -4,16 +4,23 @@
 
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
 
-#include <unistd.h>
-
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
 
-NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename)
-    : NativeWindowDrm(deviceFilename) {
+namespace {
+constexpr char kCursorNameNone[] = "none";
+
+// Buffer size for cursor image. The size must be at least 64x64 due to the
+// restrictions of drmModeSetCursor API.
+constexpr uint32_t kCursorBufferWidth = 64;
+constexpr uint32_t kCursorBufferHeight = 64;
+}  // namespace
+
+NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
+    : NativeWindowDrm(device_filename) {
   if (!valid_) {
     return;
   }
@@ -71,8 +78,6 @@ NativeWindowDrmGbm::~NativeWindowDrmGbm() {
   if (gbm_device_) {
     gbm_device_destroy(gbm_device_);
   }
-
-  close(drm_device_);
 }
 
 bool NativeWindowDrmGbm::ShowCursor(double x, double y) {
