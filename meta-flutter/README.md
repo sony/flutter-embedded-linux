@@ -11,7 +11,9 @@ $ bitbake flutter-client
 
 ### DRM-GBM backend  
 You need to install the libsytemd to build this back end. Please add systemd into your conf/local.conf:    
-`DESTRO_FEATURES_append = " systemd"`  
+```
+DESTRO_FEATURES_append = " systemd"
+```
 See also: https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#using-systemd-for-the-main-image-and-using-sysvinit-for-the-rescue-image
 
 ```Shell
