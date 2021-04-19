@@ -5,7 +5,6 @@
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 
 #include <sys/mman.h>
-#include <unistd.h>
 
 #include <cstring>
 
@@ -15,8 +14,12 @@
 
 namespace flutter {
 
-NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename)
-    : NativeWindowDrm(deviceFilename) {
+namespace {
+constexpr char kCursorNameNone[] = "none";
+}  // namespace
+
+NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* device_filename)
+    : NativeWindowDrm(device_filename) {
   if (!valid_) {
     return;
   }
@@ -48,8 +51,6 @@ NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
   if (drm_property_blob_) {
     drmModeDestroyPropertyBlob(drm_device_, drm_property_blob_);
   }
-
-  close(drm_device_);
 }
 
 bool NativeWindowDrmEglstream::ShowCursor(double x, double y) {

@@ -16,7 +16,7 @@ namespace flutter {
 
 class NativeWindowDrmEglstream : public NativeWindowDrm {
  public:
-  NativeWindowDrmEglstream(const char* deviceFilename);
+  NativeWindowDrmEglstream(const char* device_filename);
   ~NativeWindowDrmEglstream();
 
   // |NativeWindowDrm|

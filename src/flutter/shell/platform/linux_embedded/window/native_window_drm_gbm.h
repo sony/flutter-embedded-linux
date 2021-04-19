@@ -17,7 +17,7 @@ namespace flutter {
 
 class NativeWindowDrmGbm : public NativeWindowDrm {
  public:
-  NativeWindowDrmGbm(const char* deviceFilename);
+  NativeWindowDrmGbm(const char* device_filename);
   ~NativeWindowDrmGbm();
 
   // |NativeWindowDrm|
