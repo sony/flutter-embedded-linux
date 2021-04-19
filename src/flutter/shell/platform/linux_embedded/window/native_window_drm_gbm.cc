@@ -80,8 +80,6 @@ NativeWindowDrmGbm::~NativeWindowDrmGbm() {
   if (gbm_device_) {
     gbm_device_destroy(gbm_device_);
   }
-
-  close(drm_device_);
 }
 
 bool NativeWindowDrmGbm::ShowCursor(double x, double y) {

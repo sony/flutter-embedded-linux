@@ -17,7 +17,7 @@ namespace flutter {
 class NativeWindowDrm : public NativeWindow {
  public:
   NativeWindowDrm(const char* device_filename);
-  virtual ~NativeWindowDrm() = default;
+  virtual ~NativeWindowDrm();
 
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) override;

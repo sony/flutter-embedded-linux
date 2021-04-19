@@ -28,6 +28,12 @@ NativeWindowDrm::NativeWindowDrm(const char* device_filename) {
   valid_ = true;
 }
 
+NativeWindowDrm::~NativeWindowDrm() {
+  if (drm_device_ != -1) {
+    close(drm_device_);
+  }
+}
+
 bool NativeWindowDrm::Resize(const size_t width, const size_t height) {
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";

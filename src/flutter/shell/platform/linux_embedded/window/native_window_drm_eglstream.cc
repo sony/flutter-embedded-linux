@@ -52,8 +52,6 @@ NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
   if (drm_property_blob_) {
     drmModeDestroyPropertyBlob(drm_device_, drm_property_blob_);
   }
-
-  close(drm_device_);
 }
 
 bool NativeWindowDrmEglstream::ShowCursor(double x, double y) {
