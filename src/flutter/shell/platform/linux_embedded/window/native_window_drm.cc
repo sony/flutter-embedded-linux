@@ -14,15 +14,6 @@
 
 namespace flutter {
 
-namespace {
-constexpr char kCursorNameNone[] = "none";
-
-// Buffer size for cursor image. The size must be at least 64x64 due to the
-// restrictions of drmModeSetCursor API.
-constexpr uint32_t kCursorBufferWidth = 64;
-constexpr uint32_t kCursorBufferHeight = 64;
-}  // namespace
-
 NativeWindowDrm::NativeWindowDrm(const char* device_filename) {
   drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
   if (drm_device_ == -1) {
