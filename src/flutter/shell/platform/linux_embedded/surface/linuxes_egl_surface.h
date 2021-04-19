@@ -11,6 +11,7 @@ namespace flutter {
 
 class LinuxesEGLSurface {
  public:
+  // Note that EGLSurface will be destroyed in this class's destructor.
   LinuxesEGLSurface(EGLSurface surface, EGLDisplay display, EGLContext context);
   ~LinuxesEGLSurface();
 
