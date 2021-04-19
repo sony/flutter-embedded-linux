@@ -9,7 +9,7 @@ Recipe file examples for Yocto Project Yocto Project. See also: https://docs.yoc
 $ bitbake flutter-client
 ```
 
-### DRM-GBM backend  
+### DRM-GBM backend
 You need to install the libsytemd to build this back end. Please add systemd into your conf/local.conf:    
 ```
 DESTRO_FEATURES_append = " systemd"
@@ -18,6 +18,17 @@ See also: https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html
 
 ```Shell
 $ bitbake flutter-drm-backend
+```
+
+### DRM-EGLStream backend
+You need to install the libsytemd to build this back end. Please add systemd into your conf/local.conf:    
+```
+DESTRO_FEATURES_append = " systemd"
+```
+See also: https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#using-systemd-for-the-main-image-and-using-sysvinit-for-the-rescue-image
+
+```Shell
+$ bitbake flutter-drm-eglstream-backend
 ```
 
 ## Note
