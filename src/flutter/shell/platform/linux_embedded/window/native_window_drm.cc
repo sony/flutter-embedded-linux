@@ -5,6 +5,7 @@
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 #include <fcntl.h>
+#include <unistd.h>
 #include <xf86drm.h>
 
 #include <unordered_map>

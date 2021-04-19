@@ -4,8 +4,6 @@
 
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
 
-#include <unistd.h>
-
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"

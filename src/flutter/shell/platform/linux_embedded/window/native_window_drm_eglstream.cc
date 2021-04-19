@@ -5,7 +5,6 @@
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 
 #include <sys/mman.h>
-#include <unistd.h>
 
 #include <cstring>
 
