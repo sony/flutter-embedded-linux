@@ -97,7 +97,6 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
-  src/flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
   ## The following file were copied from:

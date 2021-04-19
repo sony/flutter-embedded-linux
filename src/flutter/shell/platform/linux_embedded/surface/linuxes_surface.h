@@ -7,7 +7,6 @@
 
 #include <memory>
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surfae.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
@@ -32,12 +31,6 @@ class Surface {
 
   // Makes an off-screen resource context.
   virtual bool ResourceContextMakeCurrent() const = 0;
-
- protected:
-  NativeWindow* native_window_;
-  std::unique_ptr<NativeWindow> native_window_resource_;
-  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_;
-  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_;
 };
 
 }  // namespace flutter

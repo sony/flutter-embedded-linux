@@ -35,8 +35,8 @@ class NativeWindowDrmGbm : public NativeWindowDrm<SurfaceGlDrm<ContextEgl>> {
   // |NativeWindowDrm|
   std::unique_ptr<SurfaceGlDrm<ContextEgl>> CreateRenderSurface() override;
 
-  // |NativeWindow|
-  void SwapBuffers() override;
+  // |NativeWindowDrm|
+  void SwapBuffer() override;
 
  private:
   bool CreateCursorBuffer(const std::string& cursor_name);

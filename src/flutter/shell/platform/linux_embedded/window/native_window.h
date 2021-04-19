@@ -18,14 +18,14 @@ class NativeWindow {
 
   EGLNativeWindowType Window() const { return window_; }
 
-  int32_t Width() const {
+  int32_t Width() {
     if (!valid_) {
       return -1;
     }
     return width_;
   }
 
-  int32_t Height() const {
+  int32_t Height() {
     if (!valid_) {
       return -1;
     }
@@ -34,15 +34,12 @@ class NativeWindow {
 
   virtual bool Resize(const size_t width, const size_t height) = 0;
 
-  // Swaps frame buffers. This API performs processing only for the DRM-GBM
-  // backend. It is prepared to make the interface common.
-  virtual void SwapBuffers(){/* do nothing. */};
-
  protected:
   EGLNativeWindowType window_;
+
+  bool valid_ = false;
   int32_t width_;
   int32_t height_;
-  bool valid_ = false;
 };
 
 }  // namespace flutter
