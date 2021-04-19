@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
@@ -26,7 +26,7 @@ constexpr char kFlutterDrmDeviceEnvironmentKey[] = "FLUTTER_DRM_DEVICE";
 constexpr char kDrmDeviceDefaultFilename[] = "/dev/dri/card0";
 }  // namespace
 
-template <typename W, typename S>
+template <typename T>
 class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
  public:
   LinuxesWindowDrm(FlutterWindowMode window_mode, int32_t width, int32_t height,
@@ -104,7 +104,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
                            << " is not set, use " << kDrmDeviceDefaultFilename;
       device_filename = const_cast<char*>(kDrmDeviceDefaultFilename);
     }
-    native_window_ = std::make_unique<W>(device_filename);
+    native_window_ = std::make_unique<T>(device_filename);
     if (!native_window_->IsValid()) {
       LINUXES_LOG(ERROR) << "Failed to create the native window";
       return false;
@@ -465,8 +465,8 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   // windowing and input state.
   WindowBindingHandlerDelegate* binding_handler_delegate_;
 
-  std::unique_ptr<W> native_window_;
-  std::unique_ptr<S> render_surface_;
+  std::unique_ptr<T> native_window_;
+  std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
   bool is_pending_cursor_add_event_;

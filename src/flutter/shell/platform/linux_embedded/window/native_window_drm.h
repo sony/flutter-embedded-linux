@@ -14,6 +14,7 @@
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
@@ -27,7 +28,6 @@ constexpr uint32_t kCursorBufferWidth = 64;
 constexpr uint32_t kCursorBufferHeight = 64;
 }  // namespace
 
-template <typename S>
 class NativeWindowDrm : public NativeWindow {
  public:
   NativeWindowDrm(const char* deviceFilename) {
@@ -66,9 +66,7 @@ class NativeWindowDrm : public NativeWindow {
 
   virtual bool DismissCursor() = 0;
 
-  virtual std::unique_ptr<S> CreateRenderSurface() = 0;
-
-  virtual void SwapBuffer(){};
+  virtual std::unique_ptr<SurfaceGl> CreateRenderSurface() = 0;
 
   bool MoveCursor(double x, double y) {
     auto result = drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
