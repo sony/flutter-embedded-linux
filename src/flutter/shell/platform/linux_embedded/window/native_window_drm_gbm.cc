@@ -21,8 +21,8 @@ constexpr uint32_t kCursorBufferWidth = 64;
 constexpr uint32_t kCursorBufferHeight = 64;
 }  // namespace
 
-NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename)
-    : NativeWindowDrm(deviceFilename) {
+NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
+    : NativeWindowDrm(device_filename) {
   if (!valid_) {
     return;
   }

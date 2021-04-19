@@ -15,8 +15,12 @@
 
 namespace flutter {
 
-NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* deviceFilename)
-    : NativeWindowDrm(deviceFilename) {
+namespace {
+constexpr char kCursorNameNone[] = "none";
+}  // namespace
+
+NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* device_filename)
+    : NativeWindowDrm(device_filename) {
   if (!valid_) {
     return;
   }
