@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
@@ -33,7 +34,7 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename)
   }
 
   window_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
-                               drm_mode_info_.vdisplay, GBM_BO_FORMAT_ARGB8888,
+                               drm_mode_info_.vdisplay, GBM_FORMAT_ARGB8888,
                                GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
   if (!window_) {
     LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
@@ -125,14 +126,12 @@ bool NativeWindowDrmGbm::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGlDrm<ContextEgl>>
-NativeWindowDrmGbm::CreateRenderSurface() {
-  return std::make_unique<SurfaceGlDrm<ContextEgl>>(
-      std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(gbm_device_)));
+std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
+  return std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
+      std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
-void NativeWindowDrmGbm::SwapBuffer() {
+void NativeWindowDrmGbm::SwapBuffers() {
   auto* bo = gbm_surface_lock_front_buffer(static_cast<gbm_surface*>(window_));
   auto width = gbm_bo_get_width(bo);
   auto height = gbm_bo_get_height(bo);
@@ -162,7 +161,7 @@ void NativeWindowDrmGbm::SwapBuffer() {
 bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {
   if (!gbm_cursor_bo_) {
     gbm_cursor_bo_ = gbm_bo_create(gbm_device_, kCursorBufferWidth,
-                                   kCursorBufferHeight, GBM_BO_FORMAT_ARGB8888,
+                                   kCursorBufferHeight, GBM_FORMAT_ARGB8888,
                                    GBM_BO_USE_CURSOR | GBM_BO_USE_WRITE);
     if (!gbm_cursor_bo_) {
       LINUXES_LOG(ERROR) << "Failed to create cursor buffer";

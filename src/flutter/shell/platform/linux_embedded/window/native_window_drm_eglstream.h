@@ -10,14 +10,11 @@
 
 #include <string>
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 
-class NativeWindowDrmEglstream
-    : public NativeWindowDrm<SurfaceGlDrm<ContextEglDrmEglstream>> {
+class NativeWindowDrmEglstream : public NativeWindowDrm {
  public:
   NativeWindowDrmEglstream(const char* deviceFilename);
   ~NativeWindowDrmEglstream();
@@ -33,8 +30,7 @@ class NativeWindowDrmEglstream
   bool DismissCursor() override;
 
   // |NativeWindowDrm|
-  std::unique_ptr<SurfaceGlDrm<ContextEglDrmEglstream>> CreateRenderSurface()
-      override;
+  std::unique_ptr<SurfaceGl> CreateRenderSurface() override;
 
   uint32_t PlaneId() { return drm_plane_id_; }
 
