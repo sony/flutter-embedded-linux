@@ -33,7 +33,7 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* deviceFilename)
   }
 
   window_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
-                               drm_mode_info_.vdisplay, GBM_BO_FORMAT_ARGB8888,
+                               drm_mode_info_.vdisplay, GBM_FORMAT_ARGB8888,
                                GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
   if (!window_) {
     LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
@@ -162,7 +162,7 @@ void NativeWindowDrmGbm::SwapBuffer() {
 bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {
   if (!gbm_cursor_bo_) {
     gbm_cursor_bo_ = gbm_bo_create(gbm_device_, kCursorBufferWidth,
-                                   kCursorBufferHeight, GBM_BO_FORMAT_ARGB8888,
+                                   kCursorBufferHeight, GBM_FORMAT_ARGB8888,
                                    GBM_BO_USE_CURSOR | GBM_BO_USE_WRITE);
     if (!gbm_cursor_bo_) {
       LINUXES_LOG(ERROR) << "Failed to create cursor buffer";
