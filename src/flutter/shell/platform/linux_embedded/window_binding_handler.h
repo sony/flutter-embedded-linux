@@ -9,21 +9,8 @@
 #include <variant>
 
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
-
-#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
-#include <gbm.h>
-
-#include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
-#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
-#elif defined(DISPLAY_BACKEND_TYPE_X11)
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_x11.h"
-#else
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.h"
-#endif
 
 namespace flutter {
 
@@ -35,16 +22,7 @@ struct PhysicalWindowBounds {
   size_t height;
 };
 
-using LinuxesRenderSurfaceTarget =
-#if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
-    SurfaceGlDrm<ContextEgl>;
-#elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
-    SurfaceGlDrm<ContextEglDrmEglstream>;
-#elif defined(DISPLAY_BACKEND_TYPE_X11)
-    SurfaceGlX11;
-#else
-    SurfaceGlWayland;
-#endif
+using LinuxesRenderSurfaceTarget = SurfaceGl;
 
 // Abstract class for binding Linux embedded platform windows to Flutter views.
 class WindowBindingHandler {
