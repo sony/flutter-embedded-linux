@@ -17,7 +17,7 @@ $ bitbake flutter-wayland-client
 ```
 
 ### DRM-GBM backend
-`libsystemd` is required to build this backend. Adding the following in your conf/local.conf:  
+`libsystemd` is required to build this backend. Putting the following in your conf/local.conf:  
 ```
 DESTRO_FEATURES_append = " systemd"
 ```
