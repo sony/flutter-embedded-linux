@@ -5,7 +5,7 @@ Recipe file examples for Yocto Project Yocto Project. See also: https://docs.yoc
 ## Building Flutter
 
 ### Setup the environment
-Please add the meta-clang layer to bblayers.conf:
+Please add the meta-clang layer into your conf/bblayers.conf:
 ```Shell
 $ git clone https://github.com/kraj/meta-clang -b dunfell
 $ bitbake-layers add-layer meta-clang
