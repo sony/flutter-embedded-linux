@@ -10,16 +10,13 @@
 
 #include <string>
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 
 namespace flutter {
 
-class NativeWindowDrmEglstream
-    : public NativeWindowDrm<SurfaceGlDrm<ContextEglDrmEglstream>> {
+class NativeWindowDrmEglstream : public NativeWindowDrm {
  public:
-  NativeWindowDrmEglstream(const char* deviceFilename);
+  NativeWindowDrmEglstream(const char* device_filename);
   ~NativeWindowDrmEglstream();
 
   // |NativeWindowDrm|
@@ -33,39 +30,14 @@ class NativeWindowDrmEglstream
   bool DismissCursor() override;
 
   // |NativeWindowDrm|
-  std::unique_ptr<SurfaceGlDrm<ContextEglDrmEglstream>> CreateRenderSurface()
-      override;
+  std::unique_ptr<SurfaceGl> CreateRenderSurface() override;
 
   uint32_t PlaneId() { return drm_plane_id_; }
 
  private:
-  struct DrmPropertyIds {
-    struct {
-      uint32_t mode_id;
-      uint32_t active;
-    } crtc;
-
-    struct {
-      uint32_t src_x;
-      uint32_t src_y;
-      uint32_t src_w;
-      uint32_t src_h;
-      uint32_t crtc_x;
-      uint32_t crtc_y;
-      uint32_t crtc_w;
-      uint32_t crtc_h;
-      uint32_t fb_id;
-      uint32_t crtc_id;
-    } plane;
-
-    struct {
-      uint32_t crtc_id;
-    } connector;
-  };
-
-  struct DrmPropertyAddress {
+  struct DrmProperty {
     const char* name;
-    uint32_t* ptr;
+    uint64_t value;
   };
 
   bool ConfigureDisplayAdditional();
@@ -78,16 +50,13 @@ class NativeWindowDrmEglstream
 
   bool AssignAtomicRequest(drmModeAtomicReqPtr atomic);
 
-  void GetPropertyIds(DrmPropertyIds& property_ids);
-
-  void GetPropertyAddress(uint32_t id, uint32_t type, DrmPropertyAddress* table,
-                          size_t length);
-
-  bool CreateFb();
+  template <size_t N>
+  bool AssignAtomicPropertyValue(
+      drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
+      NativeWindowDrmEglstream::DrmProperty (&table)[N]);
 
   uint32_t drm_plane_id_;
   uint32_t drm_property_blob_ = 0;
-  uint32_t drm_fb_ = 0;
 };
 
 }  // namespace flutter

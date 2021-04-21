@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_wayland.h"
+#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_wayland.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
@@ -68,10 +68,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   void SetClipboardData(const std::string& data) override;
 
  private:
-  struct cursor_info {
-    ::wl_pointer* wl_pointer;
-    uint32_t serial;
+  struct CursorInfo {
     std::string cursor_name;
+    uint32_t serial;
+    wl_pointer* wl_pointer;
   };
 
   void WlRegistryHandler(wl_registry* wl_registry, uint32_t name,
@@ -100,7 +100,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   WindowBindingHandlerDelegate* binding_handler_delegate_;
 
   std::unique_ptr<NativeWindowWayland> native_window_;
-  std::unique_ptr<SurfaceGlWayland> render_surface_;
+  std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
 
@@ -121,7 +121,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   zwp_text_input_manager_v1* zwp_text_input_manager_v1_;
   zwp_text_input_v1* zwp_text_input_v1_;
 
-  cursor_info cursor_info_;
+  CursorInfo cursor_info_;
 
   // List of cursor name and wl_cursor supported by Wayland.
   std::unordered_map<std::string, wl_cursor*> supported_wl_cursor_list_;

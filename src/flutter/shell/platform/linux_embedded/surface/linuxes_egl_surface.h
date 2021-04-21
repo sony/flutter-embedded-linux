@@ -7,44 +7,19 @@
 
 #include <EGL/egl.h>
 
-#include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
-
 namespace flutter {
 
 class LinuxesEGLSurface {
  public:
-  LinuxesEGLSurface(EGLSurface surface, EGLDisplay display, EGLContext context)
-      : surface_(surface), display_(display), context_(context){};
+  // Note that EGLSurface will be destroyed in this class's destructor.
+  LinuxesEGLSurface(EGLSurface surface, EGLDisplay display, EGLContext context);
+  ~LinuxesEGLSurface();
 
-  ~LinuxesEGLSurface() {
-    if (surface_ != EGL_NO_SURFACE) {
-      if (eglDestroySurface(display_, surface_) != EGL_TRUE) {
-        LINUXES_LOG(ERROR) << "Failed to destory surface";
-      }
-      surface_ = EGL_NO_SURFACE;
-    }
-  }
+  bool IsValid() const;
 
-  bool IsValid() { return surface_ != EGL_NO_SURFACE; }
+  bool MakeCurrent() const;
 
-  bool MakeCurrent() {
-    if (eglMakeCurrent(display_, surface_, surface_, context_) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to make the EGL context current: "
-                         << get_egl_error_cause();
-      return false;
-    }
-    return true;
-  }
-
-  bool SwapBuffers() {
-    if (eglSwapBuffers(display_, surface_) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to swap the EGL buffer: "
-                         << get_egl_error_cause();
-      return false;
-    }
-    return true;
-  }
+  bool SwapBuffers() const;
 
  private:
   EGLDisplay display_;
