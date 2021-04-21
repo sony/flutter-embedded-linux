@@ -2,6 +2,13 @@
 
 Recipe file examples for Yocto Project Yocto Project. See also: https://docs.yoctoproject.org/
 
+## Setup environment
+### Adding meta-clang layer into conf/bblayers.conf:
+```Shell
+$ git clone https://github.com/kraj/meta-clang -b dunfell
+$ bitbake-layers add-layer meta-clang
+```
+
 ## Building Flutter
 
 ### Wayland backend 
@@ -10,7 +17,7 @@ $ bitbake flutter-wayland-client
 ```
 
 ### DRM-GBM backend
-You need to install libsystemd to build this backend. Please add systemd into your conf/local.conf:    
+`libsystemd` is required to build this backend. Putting the following in your conf/local.conf:  
 ```
 DESTRO_FEATURES_append = " systemd"
 ```
