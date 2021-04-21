@@ -9,16 +9,17 @@ Our objective is to use Flutter in embedded systems. We're developing this embed
 We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover specifications of general-purpose embedded systems.
 
 ## Features
-- Suitable for use in embedded systems
+- Flutter embedder optimized for Embedded Systems
   - Minimal dependent libraries
   - Lightweight than Flutter desktop for Linux (Not using X11 and GTK)
   - The main target of this embedder is Arm64 devices. We haven't confirmed in Arm 32bit (ARMv7, armhf) devices
-- [Wayland](https://wayland.freedesktop.org/) backend support
-- Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
-  - Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
-  - [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
-- X11 backend supoort
-  - This is for the purpose of developing Flutter apps in Linux desktops. It is not intended for use in embedded systems.
+- Display backend support
+  - [Wayland](https://wayland.freedesktop.org/)
+  - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager))
+    - Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
+    - [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
+  - X11
+    - For developing Flutter apps on Linux desktops purposes. It is not intended for use in embedded systems. 
 - Always single window fullscreen
   - You can choose always-fullscreen or flexible-screen (any size) only when using Wayland/X11 backend
 - Keyboard, mouse and touch inputs support
