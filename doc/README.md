@@ -1,4 +1,5 @@
-# Documents
+# Documentation
+If you want to build using yocto, see: [meta-flutter](../meta-flutter/)
 
 ## 1. Install libraries
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
