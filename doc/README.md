@@ -165,9 +165,9 @@ See also: [Building Flutter Engine embedder](./building-engine-embedder.md)
 ### Build Flutter app
 Here introduce how to build the flutter sample app.
 
-#### for x64 targets on x64 hosts / for Arm64 targets on Arm64 hosts
+#### For x64 targets on x64 hosts / for Arm64 targets on Arm64 hosts
 
-Build for release mode.
+Build for release mode:
 ```Shell
 $ flutter create sample
 $ cd sample/$ cd sample/
@@ -175,12 +175,12 @@ $ flutter build linux
 $ cd ..
 ```
 
-Build for debug mode.
+Build for debug mode:
 ```Shell
 $ flutter build linux --debug
 ```
 
-#### for Arm64 targets on x64 hosts
+#### For Arm64 targets on x64 hosts
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
 
 #### FYI: only in debug mode
