@@ -1,3 +1,7 @@
+// Copyright 2021 Sony Corporation. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -6,11 +10,15 @@
 #include <unordered_map>
 #include <vector>
 
+// todo: Supports other types besides int, string.
+
 namespace commandline {
 
 namespace {
-constexpr char kOptionValueMessage[] = "=<value>";
-}
+constexpr char kOptionStyleNormal[] = "--";
+constexpr char kOptionStyleShort[] = "-";
+constexpr char kOptionValueForHelpMessage[] = "=<value>";
+}  // namespace
 
 class Exception : public std::exception {
  public:
@@ -22,8 +30,6 @@ class Exception : public std::exception {
  private:
   std::string msg_;
 };
-
-// todo: Supports other types besides int, string.
 
 class CommandOptions {
  public:
@@ -50,7 +56,7 @@ class CommandOptions {
                                    ReaderString(), required, true);
   }
 
-  template <class T, class F>
+  template <typename T, typename F>
   void Add(const std::string& name, const std::string& short_name,
            const std::string& description, const T default_value,
            F reader = F(), bool required = true, bool required_value = true) {
@@ -79,7 +85,7 @@ class CommandOptions {
     return itr != options_.end() && itr->second->HasValue();
   }
 
-  template <class T>
+  template <typename T>
   const T& GetValue(const std::string& name) {
     auto itr = options_.find(name);
     if (itr == options_.end()) {
@@ -104,7 +110,8 @@ class CommandOptions {
       const std::string arg(argv[i]);
 
       // normal options: e.g. --bundle=/data/sample/bundle --fullscreen
-      if (arg.length() > 2 && arg.substr(0, 2).compare("--") == 0) {
+      if (arg.length() > 2 &&
+          arg.substr(0, 2).compare(kOptionStyleNormal) == 0) {
         const size_t option_value_len = arg.find("=") != std::string::npos
                                             ? (arg.length() - arg.find("="))
                                             : 0;
@@ -134,7 +141,8 @@ class CommandOptions {
         }
       }
       // short options: e.g. -f /foo/file.txt -h 640 -abc
-      else if (arg.length() > 1 && arg.substr(0, 1).compare("-") == 0) {
+      else if (arg.length() > 1 &&
+               arg.substr(0, 1).compare(kOptionStyleShort) == 0) {
         for (int j = 1; j < arg.length(); j++) {
           const std::string option_name{argv[i][j]};
 
@@ -194,8 +202,8 @@ class CommandOptions {
 
     for (auto i = 0; i < registration_order_options_.size(); i++) {
       if (!registration_order_options_[i]->GetShortName().empty()) {
-        ostream << "-" << registration_order_options_[i]->GetShortName()
-                << ", ";
+        ostream << kOptionStyleShort
+                << registration_order_options_[i]->GetShortName() << ", ";
       } else {
         ostream << std::string(4, ' ');
       }
@@ -203,10 +211,11 @@ class CommandOptions {
       size_t index_adjust = 0;
       constexpr int kSpacerNum = 5;
       auto need_value = registration_order_options_[i]->IsRequiredValue();
-      ostream << "--" << registration_order_options_[i]->GetName();
+      ostream << kOptionStyleNormal
+              << registration_order_options_[i]->GetName();
       if (need_value) {
-        ostream << kOptionValueMessage;
-        index_adjust += std::string(kOptionValueMessage).length();
+        ostream << kOptionValueForHelpMessage;
+        index_adjust += std::string(kOptionValueForHelpMessage).length();
       }
       ostream << std::string(
           max_name_len + kSpacerNum - index_adjust -
@@ -246,9 +255,9 @@ class CommandOptions {
     const std::string& GetDescription() const { return description_; };
 
     const std::string GetHelpShortMessage() const {
-      std::string message = "--" + name_;
+      std::string message = kOptionStyleNormal + name_;
       if (is_required_value_) {
-        message += kOptionValueMessage;
+        message += kOptionValueForHelpMessage;
       }
       return message;
     }
@@ -272,7 +281,7 @@ class CommandOptions {
     bool value_set_;
   };
 
-  template <class T>
+  template <typename T>
   class OptionValue : public Option {
    public:
     OptionValue(const std::string& name, const std::string& short_name,
@@ -300,7 +309,7 @@ class CommandOptions {
     T value_;
   };
 
-  template <class T, class F>
+  template <typename T, typename F>
   class OptionValueReader : public OptionValue<T> {
    public:
     OptionValueReader(const std::string& name, const std::string& short_name,
