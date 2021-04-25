@@ -24,7 +24,7 @@ You can use the environment variables such as `FLUTTER_ENGINE_SWITCHES`, `FLUTTE
 $ FLUTTER_ENGINE_SWITCHES=2 \
     FLUTTER_ENGINE_SWITCH_1="observatory-port=12345"  \
     FLUTTER_ENGINE_SWITCH_2="disable-service-auth-codes" \
-    ./flutter-x11-clinet sample/build/linux/x64/debug/bundle
+    ./flutter-x11-clinet --bundle=sample/build/linux/x64/debug/bundle
 flutter: Observatory listening on http://127.0.0.1:12345/
 ```
 
