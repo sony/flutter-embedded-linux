@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
   options.AddInt("width", "w", "Flutter app window width", 1280, false);
   options.AddInt("height", "h", "Flutter app window height", 720, false);
   if (!options.Parse(argc, argv)) {
-    std::cerr << options.GetErrors() << std::endl;
+    std::cerr << options.GetError() << std::endl;
     std::cout << options.ShowHelp();
     return 0;
   }

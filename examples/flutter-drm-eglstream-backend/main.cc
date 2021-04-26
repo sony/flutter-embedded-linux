@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
                     true);
   options.AddWithoutValue("no-cursor", "n", "No mouse cursor/pointer", false);
   if (!options.Parse(argc, argv)) {
-    std::cerr << options.GetErrors() << std::endl;
+    std::cerr << options.GetError() << std::endl;
     std::cout << options.ShowHelp();
     return 0;
   }

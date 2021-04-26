@@ -120,17 +120,17 @@ class CommandOptions {
 
         if (options_.find(option_name) == options_.end()) {
           errors_.push_back("Not found option: " + option_name);
-          return false;
+          continue;
         }
 
         if (!has_value && options_[option_name]->IsRequiredValue()) {
           errors_.push_back(option_name + " requres an option value");
-          return false;
+          continue;
         }
 
         if (has_value && !options_[option_name]->IsRequiredValue()) {
           errors_.push_back(option_name + " doesn't requres an option value");
-          return false;
+          continue;
         }
 
         if (has_value) {
@@ -148,14 +148,14 @@ class CommandOptions {
           if (lut_short_options_.find(option_name) ==
               lut_short_options_.end()) {
             errors_.push_back("Not found short option: " + option_name);
-            return false;
+            break;
           }
 
           if (j == arg.length() - 1 &&
               options_[lut_short_options_[option_name]]->IsRequiredValue()) {
             if (i == argc - 1) {
               errors_.push_back("Invalid format option: " + option_name);
-              return false;
+              break;
             }
             SetOptionValue(lut_short_options_[option_name], argv[++i]);
           } else {
@@ -179,7 +179,9 @@ class CommandOptions {
     return errors_.size() == 0;
   }
 
-  std::string GetErrors() { return errors_.size() > 0 ? errors_[0] : ""; }
+  std::string GetError() { return errors_.size() > 0 ? errors_[0] : ""; }
+
+  std::vector<std::string>& GetErrors() { return errors_; }
 
   std::string ShowHelp() {
     std::ostringstream ostream;
