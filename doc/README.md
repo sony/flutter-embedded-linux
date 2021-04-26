@@ -197,23 +197,23 @@ $ cp <path_to_flutter_sdk_install>/bin/cache/artifacts/engine/linux-*/icudtl.dat
 Wayland compositor such as Weston must be running before running the program.
 
 ```Shell
-$ ./flutter-client ./sample/build/linux/x64/release/bundle
+$ ./flutter-client --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 ### Supplement
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
-$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client <path_to_flutter_project_bundle>
+$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client --bundle=<path_to_flutter_project_bundle>
 
 # e.g. Run in debug mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client ./sample/build/linux/x64/debug/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client --bundle=./sample/build/linux/x64/debug/bundle
 
 # e.g. Run in profile mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/build/linux/x64/profile/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client --bundle=./sample/build/linux/x64/profile/bundle
 
 # e.g. Run in release mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 ### Run with DRM backend
@@ -221,7 +221,7 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
@@ -240,7 +240,7 @@ Specifies the path to the binary file to start as the shell when Weston starts.
 
 | Field | Description |
 | ------------- | ------------- |
-| client | ${path to the binary}/flutter-desktop-shell |
+| client | <path to the binary>/flutter-desktop-shell |
 
 ### extended section
 An extended section for this embedder. The entries that can appear in this section are:
