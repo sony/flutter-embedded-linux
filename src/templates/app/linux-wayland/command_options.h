@@ -60,8 +60,7 @@ class CommandOptions {
   void Add(const std::string& name, const std::string& short_name,
            const std::string& description, const T default_value,
            F reader = F(), bool required = true, bool required_value = true) {
-    auto itr = options_.find(name);
-    if (itr != options_.end()) {
+    if (options_.find(name) != options_.end()) {
       std::cerr << "Already registered option: " << name << std::endl;
       return;
     }
