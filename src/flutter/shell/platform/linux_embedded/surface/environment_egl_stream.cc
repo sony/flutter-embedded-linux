@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/surface/environment_egl_stream.h"
 
 #include <cstring>
 
@@ -10,11 +10,12 @@
 
 namespace flutter {
 
-EnvironmentEglDrmEglstream::EnvironmentEglDrmEglstream() : EnvironmentEgl() {
+EnvironmentEglStream::EnvironmentEglStream() : EnvironmentEgl() {
   if (!SetEglExtensionFunctionPointers()) {
     LINUXES_LOG(ERROR) << "Failed to set extension function pointers";
     return;
   }
+
   auto device = GetEglDevice();
   if (device == EGL_NO_DEVICE_EXT) {
     LINUXES_LOG(ERROR) << "Couldn't find EGL device";
@@ -30,7 +31,7 @@ EnvironmentEglDrmEglstream::EnvironmentEglDrmEglstream() : EnvironmentEgl() {
   valid_ = InitializeEgl();
 }
 
-bool EnvironmentEglDrmEglstream::SetEglExtensionFunctionPointers() {
+bool EnvironmentEglStream::SetEglExtensionFunctionPointers() {
   eglQueryDevicesEXT_ = reinterpret_cast<PFNEGLQUERYDEVICESEXTPROC>(
       eglGetProcAddress("eglQueryDevicesEXT"));
   eglQueryDeviceStringEXT_ = reinterpret_cast<PFNEGLQUERYDEVICESTRINGEXTPROC>(
@@ -42,7 +43,7 @@ bool EnvironmentEglDrmEglstream::SetEglExtensionFunctionPointers() {
          eglGetPlatformDisplayEXT_;
 }
 
-EGLDeviceEXT EnvironmentEglDrmEglstream::GetEglDevice() {
+EGLDeviceEXT EnvironmentEglStream::GetEglDevice() {
   EGLint num_devices;
   if (eglQueryDevicesEXT_(0, NULL, &num_devices) != EGL_TRUE) {
     LINUXES_LOG(ERROR) << "Failed to query EGL devices";

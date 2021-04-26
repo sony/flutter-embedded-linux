@@ -9,16 +9,15 @@
 #include <EGL/eglext.h>
 
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/surface/environment_egl_stream.h"
 #include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 
 namespace flutter {
 
-class ContextEglDrmEglstream : public ContextEgl {
+class ContextEglStream : public ContextEgl {
  public:
-  ContextEglDrmEglstream(
-      std::unique_ptr<EnvironmentEglDrmEglstream> environment);
-  ~ContextEglDrmEglstream() = default;
+  ContextEglStream(std::unique_ptr<EnvironmentEglStream> environment);
+  ~ContextEglStream() = default;
 
   // |ContextEgl|
   std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(

@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_DRM_EGLSTREAM_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_DRM_EGLSTREAM_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_STREAM_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_STREAM_H_
 
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -12,10 +12,10 @@
 
 namespace flutter {
 
-class EnvironmentEglDrmEglstream : public EnvironmentEgl {
+class EnvironmentEglStream : public EnvironmentEgl {
  public:
-  EnvironmentEglDrmEglstream();
-  ~EnvironmentEglDrmEglstream() = default;
+  EnvironmentEglStream();
+  ~EnvironmentEglStream() = default;
 
  private:
   bool SetEglExtensionFunctionPointers();
@@ -29,4 +29,4 @@ class EnvironmentEglDrmEglstream : public EnvironmentEgl {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_DRM_EGLSTREAM_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_STREAM_H_
