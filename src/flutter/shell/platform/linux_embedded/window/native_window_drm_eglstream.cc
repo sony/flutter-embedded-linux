@@ -80,7 +80,7 @@ bool NativeWindowDrmEglstream::DismissCursor() {
 
 std::unique_ptr<SurfaceGl> NativeWindowDrmEglstream::CreateRenderSurface() {
   return std::make_unique<SurfaceGl>(std::make_unique<ContextEglStream>(
-      std::make_unique<EnvironmentEglDrmEglstream>()));
+      std::make_unique<EnvironmentEglStream>()));
 }
 
 bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
