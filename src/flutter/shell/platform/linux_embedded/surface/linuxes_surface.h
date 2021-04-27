@@ -16,55 +16,28 @@ namespace flutter {
 class Surface {
  public:
   // Shows a surface is valid or not.
-  bool IsValid() const { return offscreen_surface_ && context_->IsValid(); };
+  bool IsValid() const;
 
   // Sets a netive platform's window.
-  bool SetNativeWindow(NativeWindow* window) {
-    native_window_ = window;
-    onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
-    if (!onscreen_surface_->IsValid()) {
-      return false;
-    }
-    return true;
-  };
+  bool SetNativeWindow(NativeWindow* window);
 
   // Sets a netive platform's window for offscreen.
-  bool SetNativeWindowResource(NativeWindow* window) {
-    offscreen_surface_ = context_->CreateOffscreenSurface(window);
-    if (!offscreen_surface_->IsValid()) {
-      LINUXES_LOG(WARNING) << "Off-Screen surface is invalid.";
-      offscreen_surface_ = nullptr;
-      return false;
-    }
-    return true;
-  }
+  bool SetNativeWindowResource(NativeWindow* window);
 
-  bool SetNativeWindowResource(std::unique_ptr<NativeWindow> window) {
-    native_window_resource_ = std::move(window);
-    return SetNativeWindowResource(native_window_resource_.get());
-  }
+  // Sets a netive platform's window for offscreen.
+  bool SetNativeWindowResource(std::unique_ptr<NativeWindow> window);
 
   // Changes an on-screen surface size.
-  bool OnScreenSurfaceResize(const size_t width, const size_t height) const {
-    return native_window_->Resize(width, height);
-  };
+  bool OnScreenSurfaceResize(const size_t width, const size_t height) const;
 
   // Clears current on-screen context.
-  bool ClearCurrentContext() const { return context_->ClearCurrent(); };
+  bool ClearCurrentContext() const;
 
   // Clears and destroys current ons-screen context.
-  void DestroyOnScreenContext() {
-    context_->ClearCurrent();
-    onscreen_surface_ = nullptr;
-  };
+  void DestroyOnScreenContext();
 
   // Makes an off-screen resource context.
-  bool ResourceContextMakeCurrent() const {
-    if (!offscreen_surface_) {
-      return false;
-    }
-    return offscreen_surface_->MakeCurrent();
-  };
+  bool ResourceContextMakeCurrent() const;
 
  protected:
   std::unique_ptr<ContextEgl> context_;
