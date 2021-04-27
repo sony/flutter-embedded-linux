@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl_stream.h"
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 
 namespace flutter {
 
-ContextEglDrmEglstream::ContextEglDrmEglstream(
-    std::unique_ptr<EnvironmentEglDrmEglstream> environment)
+ContextEglStream::ContextEglStream(
+    std::unique_ptr<EnvironmentEglStream> environment)
     : ContextEgl(std::move(environment), EGL_STREAM_BIT_KHR) {
   if (!valid_) {
     return;
@@ -22,8 +22,8 @@ ContextEglDrmEglstream::ContextEglDrmEglstream(
   }
 }
 
-std::unique_ptr<LinuxesEGLSurface>
-ContextEglDrmEglstream::CreateOnscreenSurface(NativeWindow* window) const {
+std::unique_ptr<LinuxesEGLSurface> ContextEglStream::CreateOnscreenSurface(
+    NativeWindow* window) const {
   EGLint layer_count = 0;
   EGLOutputLayerEXT layer;
   EGLAttrib layer_attribs[] = {
@@ -68,7 +68,7 @@ ContextEglDrmEglstream::CreateOnscreenSurface(NativeWindow* window) const {
                                              context_);
 }
 
-bool ContextEglDrmEglstream::SetEglExtensionFunctionPointers() {
+bool ContextEglStream::SetEglExtensionFunctionPointers() {
   eglGetOutputLayersEXT_ = reinterpret_cast<PFNEGLGETOUTPUTLAYERSEXTPROC>(
       eglGetProcAddress("eglGetOutputLayersEXT"));
   eglCreateStreamKHR_ = reinterpret_cast<PFNEGLCREATESTREAMKHRPROC>(

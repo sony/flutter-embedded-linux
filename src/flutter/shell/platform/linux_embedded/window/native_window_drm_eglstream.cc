@@ -9,7 +9,7 @@
 #include <cstring>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.h"
+#include "flutter/shell/platform/linux_embedded/surface/context_egl_stream.h"
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
@@ -79,8 +79,8 @@ bool NativeWindowDrmEglstream::DismissCursor() {
 }
 
 std::unique_ptr<SurfaceGl> NativeWindowDrmEglstream::CreateRenderSurface() {
-  return std::make_unique<SurfaceGl>(std::make_unique<ContextEglDrmEglstream>(
-      std::make_unique<EnvironmentEglDrmEglstream>()));
+  return std::make_unique<SurfaceGl>(std::make_unique<ContextEglStream>(
+      std::make_unique<EnvironmentEglStream>()));
 }
 
 bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
