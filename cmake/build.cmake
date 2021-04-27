@@ -25,7 +25,7 @@ elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
     src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc
-    src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
 elseif(${BACKEND_TYPE} STREQUAL "X11")
