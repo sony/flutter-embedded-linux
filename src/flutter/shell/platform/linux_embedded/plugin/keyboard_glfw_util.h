@@ -10,8 +10,7 @@
 namespace flutter {
 
 // Converts modifiers for xkb to modifiers for GLFW.
-uint32_t GetGlfwModifiers(const xkb_keymap* xkb_keymap,
-                          const xkb_mod_mask_t& xkb_mod_mask);
+uint32_t GetGlfwModifiers(xkb_keymap* xkb_keymap, xkb_mod_mask_t& xkb_mod_mask);
 
 // Converts xkb keycode to GLFW keycode.
 uint32_t GetGlfwKeycode(uint32_t xkb_keycode);
