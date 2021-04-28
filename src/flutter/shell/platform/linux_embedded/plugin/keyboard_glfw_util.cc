@@ -22,13 +22,6 @@ constexpr uint32_t kGlfwModifierSuper = 0x0008;
 constexpr uint32_t kGlfwModifierCapsLock = 0x0010;
 constexpr uint32_t kGlfwModifierNumLock = 0x0020;
 
-// constexpr uint32_t kXModifierShift = 0x0001;
-// constexpr uint32_t kXModifierCapsLock = 0x0002;
-// constexpr uint32_t kXModifierControl = 0x0004;
-// constexpr uint32_t kXModifierAlt = 0x0008;
-// constexpr uint32_t kXModifierNumLock = 0x0010;
-// constexpr uint32_t kXModifierSuper = 0x0040;
-
 // Printable keys
 constexpr uint32_t kGlfwKeySpace = 32;
 constexpr uint32_t kGlfwKeyApostrophe = 39; /* ' */
