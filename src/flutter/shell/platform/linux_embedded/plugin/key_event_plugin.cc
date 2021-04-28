@@ -88,7 +88,8 @@ bool KeyeventPlugin::IsTextInputSuppressed(uint32_t code_point) {
     auto alt_key_index =
         xkb_keymap_mod_get_index(xkb_keymap_, XKB_MOD_NAME_ALT);
 
-    return (xkb_mods_mask_ & ((1 << ctrl_key_index) | (1 << alt_key_index)) != 0;
+    return (xkb_mods_mask_ & ((1 << ctrl_key_index) | (1 << alt_key_index))) !=
+           0;
   }
   return false;
 }
@@ -97,7 +98,7 @@ void KeyeventPlugin::OnKey(uint32_t keycode, uint32_t state) {
 #if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   auto unicode = GetCodePoint(keycode);
   auto mods = GetGlfwModifiers(xkb_keymap_, xkb_mods_mask_);
-  auto keyscancode = GetGlfwKeyScancode(keycode);
+  auto keyscancode = GetGlfwKeycode(keycode);
   SendKeyEvent(keyscancode, unicode, mods, state);
 #else
   // We cannot get notifications of modifier keys when we use the DRM backend.
