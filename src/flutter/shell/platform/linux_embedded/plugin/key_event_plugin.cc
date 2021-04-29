@@ -95,16 +95,15 @@ bool KeyeventPlugin::IsTextInputSuppressed(uint32_t code_point) {
 }
 
 void KeyeventPlugin::OnKey(uint32_t keycode, uint32_t state) {
-#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+#if !defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+  // We cannot get notifications of modifier keys when we use the DRM/X11
+  // backends. In this case, we need to handle it by using xkb_state_update_key.
+  OnModifiers(keycode, state);
+#endif
   auto unicode = GetCodePoint(keycode);
   auto mods = GetGlfwModifiers(xkb_keymap_, xkb_mods_mask_);
   auto keyscancode = GetGlfwKeycode(keycode);
   SendKeyEvent(keyscancode, unicode, mods, state);
-#else
-  // We cannot get notifications of modifier keys when we use the DRM backend.
-  // In this case, we need to handle it by using xkb_state_update_key.
-  OnModifiers(keycode, state);
-#endif
 }
 
 void KeyeventPlugin::OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
