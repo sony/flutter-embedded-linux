@@ -63,7 +63,7 @@ class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
-  WindowBindingHandlerDelegate* binding_handler_delegate_;
+  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
 
   Display* display_ = nullptr;
   std::unique_ptr<NativeWindowX11> native_window_;

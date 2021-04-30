@@ -97,7 +97,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
-  WindowBindingHandlerDelegate* binding_handler_delegate_;
+  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
 
   std::unique_ptr<NativeWindowWayland> native_window_;
   std::unique_ptr<SurfaceGl> render_surface_;
