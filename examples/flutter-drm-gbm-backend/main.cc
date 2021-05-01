@@ -11,32 +11,31 @@
 #include <string>
 #include <thread>
 
-static void PrintHelp() {
-  std::cout << "Usage: ./${execute filename} {Flutter project bundle path}"
-            << std::endl;
-}
+#include "command_options.h"
 
 int main(int argc, char** argv) {
-  if (argc != 2) {
-    PrintHelp();
+  commandline::CommandOptions options;
+  options.AddString("bundle", "b", "Path to Flutter app bundle", "./bundle",
+                    true);
+  options.AddWithoutValue("no-cursor", "n", "No mouse cursor/pointer", false);
+  if (!options.Parse(argc, argv)) {
+    std::cerr << options.GetError() << std::endl;
+    std::cout << options.ShowHelp();
     return 0;
   }
 
-  bool show_cursor = true;
-  std::string str(argv[1]);
-  std::wstring fl_path(str.begin(), str.end());
-
   // The project to run.
+  const auto bundle_path = options.GetValue<std::string>("bundle");
+  const std::wstring fl_path(bundle_path.begin(), bundle_path.end());
   flutter::DartProject project(fl_path);
   auto command_line_arguments = std::vector<std::string>();
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   // The Flutter instance hosted by this window.
-  int width = 640;
-  int height = 480;
+  const bool show_cursor = !options.Exist("no-cursor");
   auto flutter_controller = std::make_unique<flutter::FlutterViewController>(
-      flutter::FlutterViewController::ViewMode::kFullscreen, width, height,
-      show_cursor, project);
+      flutter::FlutterViewController::ViewMode::kFullscreen, 0, 0, show_cursor,
+      project);
 
   // Ensure that basic setup of the controller was successful.
   if (!flutter_controller->engine() || !flutter_controller->view()) {

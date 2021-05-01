@@ -9,16 +9,17 @@ Our objective is to use Flutter in embedded systems. We're developing this embed
 We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover specifications of general-purpose embedded systems.
 
 ## Features
-- Suitable for use in embedded systems
+- Flutter embedder optimized for Embedded Systems
   - Minimal dependent libraries
   - Lightweight than Flutter desktop for Linux (Not using X11 and GTK)
   - The main target of this embedder is Arm64 devices. We haven't confirmed in Arm 32bit (ARMv7, armhf) devices
-- [Wayland](https://wayland.freedesktop.org/) backend support
-- Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager)) backend support
-  - Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
-  - [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
-- X11 backend supoort
-  - This is for the purpose of developing Flutter apps in Linux desktops. It is not intended for use in embedded systems.
+- Display backend support
+  - [Wayland](https://wayland.freedesktop.org/)
+  - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager))
+    - Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
+    - [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
+  - X11
+    - For developing Flutter apps on Linux desktops purposes. It is not intended for use in embedded systems. 
 - Always single window fullscreen
   - You can choose always-fullscreen or flexible-screen (any size) only when using Wayland/X11 backend
 - Keyboard, mouse and touch inputs support
@@ -43,11 +44,12 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | Wayland | :heavy_check_mark: |
 | [Raspberry Pi 4 Model B](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) | Raspberry Pi Foundation | Ubuntu 20.10 | DRM | :heavy_check_mark: ([#9](https://github.com/sony/flutter-embedded-linux/issues/9)) |
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
-| [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | DRM | Not tested |
 | [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | Wayland | :heavy_check_mark: |
-| [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | DRM | Not tested |
 | Zynq | Xilinx | - | - | Not tested |
 | [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
+
+Note
+ - i.MX 8M platforms don't support applications using EGL on GBM, which means the DRM-GBM backend won't work on i.MX 8M devices.
 
 ### Tested Wayland compositors
 |||||||||||
@@ -62,5 +64,5 @@ With the assumption, our final goal of this software openly is to be merged this
 
 See also: [Contributing to the Flutter engine](https://github.com/flutter/engine/blob/master/CONTRIBUTING.md)
 
-## Documents
-All documents for this embedder are under the [doc](./doc/README.md) directory.
+## Documentation
+Documentation for this embedder is under the [doc](./doc/README.md) directory.

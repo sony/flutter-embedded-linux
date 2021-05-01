@@ -17,7 +17,7 @@ You need to switch from GUI which is running X11 or Wayland to the Character Use
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-gbm-backend FLUTTER_BUNDLE_PATH
+$ FLUTTER_DRM_DEVICE="/dev/dri/card1" ./flutter-drm-gbm-backend --bundle=FLUTTER_BUNDLE_PATH
 ```
 
 Note that replace `FLUTTER_BUNDLE_PATH` with the flutter bundle path you want to use like ./sample/build/linux/x64/release/bundle.

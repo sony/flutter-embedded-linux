@@ -1,4 +1,5 @@
-# Documents
+# Documentation
+If you want to build using yocto, see: [meta-flutter](../meta-flutter/)
 
 ## 1. Install libraries
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
@@ -119,7 +120,6 @@ $ cmake --build .
 ```
 
 ### Build for x11 backend (Stand-alone X11 app)
-
 Basically, the x11 backend is just only for debugging and developing Flutter apps on desktops. And it's still being implemented now.
 
 ```Shell
@@ -137,7 +137,6 @@ $ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_BUILD_TYPE=Debug ..
 ```
 
 ### User configuration parameters (CMAKE options)
-
 Please edit `cmake/user_config.cmake` file.
 
 | Option | Description |
@@ -164,56 +163,65 @@ Please note that you must use the same version (channel) that you built Flutter 
 See also: [Building Flutter Engine embedder](./building-engine-embedder.md)
 
 ### Build Flutter app
-
 Here introduce how to build the flutter sample app.
 
-#### for x64 targets on x64 hosts / for Arm64 targets on Arm64 hosts
+#### For x64 targets on x64 hosts / for Arm64 targets on Arm64 hosts
 
+Build for release mode:
 ```Shell
 $ flutter create sample
-$ cd sample/
+$ cd sample/$ cd sample/
 $ flutter build linux
 $ cd ..
 ```
 
-#### for Arm64 targets on x64 hosts
+Build for debug mode:
+```Shell
+$ flutter build linux --debug
+```
 
+#### For Arm64 targets on x64 hosts
 Comming soon. We are contributing to support this now. See: https://github.com/flutter/flutter/issues/74929
+
+#### FYI: only in debug mode
+If you want to work Flutter apps in debug mode, you can also do the following steps on both x64 and arm64 hosts. In debug mode, the Flutter bundle artifacts are not architecturally different between x64 and arm64.
+
+```Shell
+$ flutter build bundle --asset-dir=./bundle/data/flutter_assets
+$ cp <path_to_flutter_sdk_install>/bin/cache/artifacts/engine/linux-*/icudtl.dat ./bundle/data
+```
 
 ## 5. Running Flutter app
 
 ### Run with Wayland backend
-
 Wayland compositor such as Weston must be running before running the program.
 
 ```Shell
-$ ./flutter-client ./sample/build/linux/x64/release/bundle
+$ ./flutter-client --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 ### Supplement
-
 You can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
-$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client <path_to_flutter_project_bundle>
+$ LD_LIBRARY_PATH=<path_to_engine> ./flutter-client --bundle=<path_to_flutter_project_bundle>
 
 # e.g. Run in debug mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client ./sample/build/linux/x64/debug/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/debug/ ./flutter-client --bundle=./sample/build/linux/x64/debug/bundle
 
 # e.g. Run in profile mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client ./sample/build/linux/x64/profile/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/profile/ ./flutter-client --bundle=./sample/build/linux/x64/profile/bundle
 
 # e.g. Run in release mode
-$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client ./sample/build/linux/x64/release/bundle
+$ LD_LIBRARY_PATH=/usr/lib/flutter_engine/release/ ./flutter-client --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 ### Run with DRM backend
-
 You need to switch from GUI which is running X11 or Wayland to the Character User Interface (CUI). In addition, `FLUTTER_DRM_DEVICE` must be set properly. The default value is `/dev/dri/card0`.
 
 ```Shell
 $ Ctrl + Alt + F3 # Switching to CUI
-$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> ./sample/build/linux/x64/release/bundle
+$ sudo FLUTTER_DRM_DEVICE="/dev/dri/card1" <binary_file_name> --bundle=./sample/build/linux/x64/release/bundle
 ```
 
 If you want to switch back from CUI to GUI, run `Ctrl + Alt + F2` keys in a terminal.
@@ -225,19 +233,16 @@ You need to run this program by a user who has the permission to access the inpu
 You can do debugging Flutter apps. Please see: [How to debug Flutter apps](./debugging.md)
 
 ## 7. Settings of weston.ini file (Only when using Weston desktop-shell)
-
 Sets the following parameters when this embedder works as a desktop-shell on Weston. Sample file can be found [examples/config/weston.ini](../examples/config/weston.ini). See also `man weston.ini`.
 
 ### shell section
-
 Specifies the path to the binary file to start as the shell when Weston starts.
 
 | Field | Description |
 | ------------- | ------------- |
-| client | ${path to the binary}/flutter-desktop-shell |
+| client | <path to the binary>/flutter-desktop-shell |
 
 ### extended section
-
 An extended section for this embedder. The entries that can appear in this section are:
 
 | Field | Description |

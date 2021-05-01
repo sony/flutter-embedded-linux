@@ -1,20 +1,32 @@
 # meta-flutter for Yocto Project
-
 Recipe file examples for Yocto Project Yocto Project. See also: https://docs.yoctoproject.org/
 
-## Building Flutter
+## Setup environment
+### meta-clang
+If needed, add meta-clang layer into conf/bblayers.conf:
+```Shell
+$ git clone https://github.com/kraj/meta-clang -b dunfell
+$ bitbake-layers add-layer meta-clang
+```
 
+### meta-flutter
+```Shell
+$ git clone https://github.com/sony/flutter-embedded-linux.git
+$ bitbake-layers add-layer ./flutter-embedded-linux/meta-flutter/
+```
+
+## Building Flutter
 ### Wayland backend 
 ```Shell
 $ bitbake flutter-wayland-client
 ```
 
 ### DRM-GBM backend
-You need to install libsystemd to build this backend. Please add systemd into your conf/local.conf:    
+`libsystemd` is required to build this backend. Putting the following in your conf/local.conf: 
 ```
 DESTRO_FEATURES_append = " systemd"
 ```
-See also: https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#using-systemd-for-the-main-image-and-using-sysvinit-for-the-rescue-image
+See also: [Using systemd for the Main Image and Using SysVinit for the Rescue Image](https://www.yoctoproject.org/docs/current/mega-manual/mega-manual.html#using-systemd-for-the-main-image-and-using-sysvinit-for-the-rescue-image)
 
 ```Shell
 $ bitbake flutter-drm-gbm-backend

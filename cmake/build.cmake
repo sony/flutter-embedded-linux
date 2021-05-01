@@ -19,12 +19,14 @@ set(DISPLAY_BACKEND_SRC "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
   set(DISPLAY_BACKEND_SRC
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc)
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.cc
-    src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc
+    src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc
+    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
@@ -33,7 +35,7 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
     src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
   find_program(WaylandScannerExec NAMES wayland-scanner)
-  get_filename_component(_infile /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
+  get_filename_component(_infile $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
   set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-client-protocol.h)
   set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-protocol.c)
   set_source_files_properties(${_client_header} GENERATED)
@@ -101,13 +103,14 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
   src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
   src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin_glfw_util.cc
+  src/flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.cc
   src/flutter/shell/platform/linux_embedded/plugin/text_input_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/platform_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
   src/flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.cc
+  src/flutter/shell/platform/linux_embedded/surface/linuxes_surface.cc
   src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
