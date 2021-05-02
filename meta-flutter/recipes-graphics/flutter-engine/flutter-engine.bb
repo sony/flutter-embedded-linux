@@ -12,13 +12,14 @@ DEPENDS = "freetype libx11 gtk+3"
 
 GN_TOOLS_PYTHON2_PATH ??= "bootstrap-3.8.0.chromium.8_bin/python/bin"
 
-require gn-utils.inc
-GN_ARGS = "--target-sysroot ${PKG_CONFIG_SYSROOT_DIR}"
+RUNTIME_MODE = "release"
+GN_TARGET_ARCH = "arm64"
+GN_ARGS = "--target-sysroot ${STAGING_DIR_TARGET}"
 GN_ARGS_append = " --target-os ${TARGET_OS}"
-GN_ARGS_append = " --linux-cpu ${@gn_target_arch_name(d)}"
-GN_ARGS_append = " --runtime-mode release"
+GN_ARGS_append = " --linux-cpu ${GN_TARGET_ARCH}"
+GN_ARGS_append = " --runtime-mode ${RUNTIME_MODE}"
 GN_ARGS_append = " --embedder-for-target"
-OUT_DIR = "out/${TARGET_OS}_release_${@gn_target_arch_name(d)}"
+OUT_DIR = "out/${TARGET_OS}_${RUNTIME_MODE}_${GN_TARGET_ARCH}"
 
 do_configure() {
     export DEPOT_TOOLS_UPDATE=0
