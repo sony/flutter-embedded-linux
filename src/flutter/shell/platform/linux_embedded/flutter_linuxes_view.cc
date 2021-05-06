@@ -171,7 +171,7 @@ void FlutterLinuxesView::OnKeyMap(uint32_t format, int fd, uint32_t size) {
 }
 
 void FlutterLinuxesView::OnKey(uint32_t key, bool pressed) {
-  keyboard_handler_->OnKey(key, state);
+  keyboard_handler_->OnKey(key, pressed);
   if (pressed) {
     auto code_point = keyboard_handler_->GetCodePoint(key);
     if (!keyboard_handler_->IsTextInputSuppressed(code_point)) {
