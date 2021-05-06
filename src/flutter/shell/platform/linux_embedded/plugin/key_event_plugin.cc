@@ -126,7 +126,11 @@ void KeyeventPlugin::SendKeyEvent(uint32_t keycode, uint32_t unicode,
   if (unicode != 0) {
     event.AddMember(kUnicodeScalarValues, unicode, allocator);
   }
-  event.AddMember(kTypeKey, pressed ? kKeyDown : kKeyUp, allocator);
+  if (pressed) {
+    event.AddMember(kTypeKey, kKeyDown, allocator);
+  } else {
+    event.AddMember(kTypeKey, kKeyUp, allocator);
+  }
   channel_->Send(event);
 }
 
