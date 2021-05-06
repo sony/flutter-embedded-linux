@@ -250,9 +250,7 @@ const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnKey(
-            key, (state == WL_KEYBOARD_KEY_STATE_PRESSED)
-                     ? FLUTTER_LINUXES_BUTTON_DOWN
-                     : FLUTTER_LINUXES_BUTTON_UP);
+            key, state == WL_KEYBOARD_KEY_STATE_PRESSED);
       }
     },
     .modifiers = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial,
