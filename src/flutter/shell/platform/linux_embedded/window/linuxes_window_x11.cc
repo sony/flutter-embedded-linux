@@ -74,14 +74,14 @@ bool LinuxesWindowX11::DispatchEvent() {
       } break;
       case KeyPress:
         if (binding_handler_delegate_) {
-          binding_handler_delegate_->OnKey(event.xkey.keycode - 8,
-                                           FLUTTER_LINUXES_BUTTON_DOWN);
+          constexpr bool pressed = true;
+          binding_handler_delegate_->OnKey(event.xkey.keycode - 8, pressed);
         }
         break;
       case KeyRelease:
         if (binding_handler_delegate_) {
-          binding_handler_delegate_->OnKey(event.xkey.keycode - 8,
-                                           FLUTTER_LINUXES_BUTTON_UP);
+          constexpr bool pressed = false;
+          binding_handler_delegate_->OnKey(event.xkey.keycode - 8, pressed);
         }
         break;
       case ConfigureNotify: {
