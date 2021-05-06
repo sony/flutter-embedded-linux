@@ -7,9 +7,6 @@
 
 #include "flutter/shell/platform/embedder/embedder.h"
 
-#define FLUTTER_LINUXES_BUTTON_UP 0
-#define FLUTTER_LINUXES_BUTTON_DOWN 1
-
 namespace flutter {
 
 class WindowBindingHandlerDelegate {
@@ -63,7 +60,7 @@ class WindowBindingHandlerDelegate {
 
   // Notifies delegate that backing window key has been pressed.
   // Typically called by currently configured WindowBindingHandler
-  virtual void OnKey(uint32_t key, uint32_t state) = 0;
+  virtual void OnKey(uint32_t key, bool pressed) = 0;
 
   // Notifies delegate that backing window virtual key has been pressed.
   // Typically called by currently configured WindowBindingHandler

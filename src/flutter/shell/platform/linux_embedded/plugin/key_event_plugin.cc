@@ -14,7 +14,7 @@
 
 #include "flutter/shell/platform/common/json_message_codec.h"
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/plugin/key_event_plugin_glfw_util.h"
+#include "flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
 namespace flutter {
@@ -83,23 +83,27 @@ uint32_t KeyeventPlugin::GetCodePoint(uint32_t keycode) {
 
 bool KeyeventPlugin::IsTextInputSuppressed(uint32_t code_point) {
   if (code_point) {
-    auto mods = GetGlfwModifiers(xkb_mods_mask_);
-    return (mods & (GLFW_MOD_CONTROL | GLFW_MOD_ALT));
+    auto ctrl_key_index =
+        xkb_keymap_mod_get_index(xkb_keymap_, XKB_MOD_NAME_CTRL);
+    auto alt_key_index =
+        xkb_keymap_mod_get_index(xkb_keymap_, XKB_MOD_NAME_ALT);
+
+    return (xkb_mods_mask_ & ((1 << ctrl_key_index) | (1 << alt_key_index))) !=
+           0;
   }
   return false;
 }
 
-void KeyeventPlugin::OnKey(uint32_t keycode, uint32_t state) {
-#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
-  auto unicode = GetCodePoint(keycode);
-  auto mods = GetGlfwModifiers(xkb_mods_mask_);
-  auto keyscancode = GetGlfwKeyScancode(keycode);
-  SendKeyEvent(keyscancode, unicode, mods, state);
-#else
-  // We cannot get notifications of modifier keys when we use the DRM backend.
-  // In this case, we need to handle it by using xkb_state_update_key.
-  OnModifiers(keycode, state);
+void KeyeventPlugin::OnKey(uint32_t keycode, bool pressed) {
+#if !defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+  // We cannot get notifications of modifier keys when we use the DRM/X11
+  // backends. In this case, we need to handle it by using xkb_state_update_key.
+  OnModifiers(keycode, pressed);
 #endif
+  auto unicode = GetCodePoint(keycode);
+  auto mods = GetGlfwModifiers(xkb_keymap_, xkb_mods_mask_);
+  auto keyscancode = GetGlfwKeycode(keycode);
+  SendKeyEvent(keyscancode, unicode, mods, pressed);
 }
 
 void KeyeventPlugin::OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
@@ -111,7 +115,7 @@ void KeyeventPlugin::OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
 }
 
 void KeyeventPlugin::SendKeyEvent(uint32_t keycode, uint32_t unicode,
-                                  uint32_t modifiers, uint32_t key_state) {
+                                  uint32_t modifiers, bool pressed) {
   rapidjson::Document event(rapidjson::kObjectType);
   auto& allocator = event.GetAllocator();
   event.AddMember(kKeyCodeKey, keycode, allocator);
@@ -122,23 +126,17 @@ void KeyeventPlugin::SendKeyEvent(uint32_t keycode, uint32_t unicode,
   if (unicode != 0) {
     event.AddMember(kUnicodeScalarValues, unicode, allocator);
   }
-  switch (key_state) {
-    case FLUTTER_LINUXES_BUTTON_DOWN:
-      event.AddMember(kTypeKey, kKeyDown, allocator);
-      break;
-    case FLUTTER_LINUXES_BUTTON_UP:
-      event.AddMember(kTypeKey, kKeyUp, allocator);
-      break;
-    default:
-      LINUXES_LOG(ERROR) << "Unknown key event action: " << key_state;
-      return;
+  if (pressed) {
+    event.AddMember(kTypeKey, kKeyDown, allocator);
+  } else {
+    event.AddMember(kTypeKey, kKeyUp, allocator);
   }
   channel_->Send(event);
 }
 
-void KeyeventPlugin::OnModifiers(uint32_t keycode, uint32_t state) {
+void KeyeventPlugin::OnModifiers(uint32_t keycode, bool pressed) {
   xkb_state_update_key(xkb_state_, keycode + 8,
-                       static_cast<xkb_key_direction>(state));
+                       pressed ? XKB_KEY_DOWN : XKB_KEY_UP);
   xkb_mods_mask_ =
       xkb_state_serialize_mods(xkb_state_, XKB_STATE_MODS_EFFECTIVE);
 }

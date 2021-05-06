@@ -294,9 +294,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
           static_cast<uint16_t>(libinput_event_keyboard_get_key(key_event));
       auto key_state = libinput_event_keyboard_get_key_state(key_event);
       binding_handler_delegate_->OnKey(evdev_keycode,
-                                       (key_state == LIBINPUT_KEY_STATE_PRESSED)
-                                           ? FLUTTER_LINUXES_BUTTON_DOWN
-                                           : FLUTTER_LINUXES_BUTTON_UP);
+                                       key_state == LIBINPUT_KEY_STATE_PRESSED);
     }
   }
 
@@ -463,7 +461,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
-  WindowBindingHandlerDelegate* binding_handler_delegate_;
+  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
 
   std::unique_ptr<T> native_window_;
   std::unique_ptr<SurfaceGl> render_surface_;

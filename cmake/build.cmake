@@ -24,8 +24,8 @@ if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/surface/context_egl_drm_eglstream.cc
-    src/flutter/shell/platform/linux_embedded/surface/environment_egl_drm_eglstream.cc
+    src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc
+    src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
 elseif(${BACKEND_TYPE} STREQUAL "X11")
@@ -103,13 +103,14 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
   src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
   src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin_glfw_util.cc
+  src/flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.cc
   src/flutter/shell/platform/linux_embedded/plugin/text_input_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/platform_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
   src/flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.cc
+  src/flutter/shell/platform/linux_embedded/surface/linuxes_surface.cc
   src/flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
