@@ -83,3 +83,5 @@ $ mkdir build && cd build
 $ cmake -DCMAKE_TOOLCHAIN_FILE=./cmake/cross-toolchain.cmake -DUSER_PROJECT_PATH=examples/flutter-wayland-clinet ..
 $ make
 ```
+## Note
+The build would fail because of the lack of flutter-engine recipe. We are still creating it. Please wait.  
