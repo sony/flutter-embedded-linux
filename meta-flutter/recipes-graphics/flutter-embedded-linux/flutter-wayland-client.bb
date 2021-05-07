@@ -5,6 +5,7 @@ require repository.inc
 require dependency.inc
 
 DEPENDS += "wayland \
+            wayland-protocols \
             wayland-native"
 
 EXTRA_OECMAKE = "-DUSER_PROJECT_PATH=examples/flutter-wayland-client"
