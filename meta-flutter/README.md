@@ -23,12 +23,12 @@ Set your target machine in your conf/local.conf:
 MACHINE ?= "qemuarm64"
 ```
 
-Add meta-clang layer into conf/bblayers.conf:
+Add meta-clang layer into conf/bblayers.conf.
 ```Shell
 $ bitbake-layers add-layer ../meta-clang
 ```
 
-Add meta-flutter layer into conf/bblayers.conf:
+Add meta-flutter layer into conf/bblayers.conf.
 ```Shell
 $ bitbake-layers add-layer ../flutter-embedded-linux/meta-flutter
 ```
