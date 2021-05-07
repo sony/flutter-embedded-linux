@@ -130,7 +130,6 @@ std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
 }
 
 bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
-  window_changed_ = false;
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";
     return false;
@@ -151,7 +150,7 @@ bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
   if (!CreateGbmSurface()) {
     return false;
   }
-  window_changed_ = true;
+  recreate_surface_ = true;
   return true;
 }
 

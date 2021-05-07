@@ -32,7 +32,9 @@ class NativeWindow {
     return height_;
   }
 
-  bool WindowChanged() const { return window_changed_; }
+  bool RecreateSurface() const { return recreate_surface_; }
+
+  void RecreateSurfaceCompleted() { recreate_surface_ = false; }
 
   virtual bool Resize(const size_t width, const size_t height) = 0;
 
@@ -45,7 +47,7 @@ class NativeWindow {
   int32_t width_;
   int32_t height_;
   bool valid_ = false;
-  bool window_changed_ = false;
+  bool recreate_surface_ = false;
 };
 
 }  // namespace flutter
