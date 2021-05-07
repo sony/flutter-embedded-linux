@@ -40,14 +40,7 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
     return;
   }
 
-  window_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
-                               drm_mode_info_.vdisplay, GBM_FORMAT_ARGB8888,
-                               GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
-  if (!window_) {
-    LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
-    valid_ = false;
-    return;
-  }
+  CreateGbmSurface();
 }
 
 NativeWindowDrmGbm::~NativeWindowDrmGbm() {
@@ -136,6 +129,27 @@ std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
       std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
+bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
+  if (!valid_) {
+    LINUXES_LOG(ERROR) << "Failed to resize the window.";
+    return false;
+  }
+  if (!gbm_previous_bo_) {
+    // Do nothing when called in the initialization process.
+    LINUXES_LOG(INFO) << "No size change.";
+    return false;
+  }
+
+  LINUXES_LOG(INFO) << "resize: " << width << "x" << height;
+  drmModeRmFB(drm_device_, gbm_previous_fb_);
+  gbm_surface_release_buffer(static_cast<gbm_surface*>(window_),
+                             gbm_previous_bo_);
+  gbm_previous_bo_ = nullptr;
+
+  gbm_surface_destroy(static_cast<gbm_surface*>(window_));
+  return CreateGbmSurface();
+}
+
 void NativeWindowDrmGbm::SwapBuffers() {
   auto* bo = gbm_surface_lock_front_buffer(static_cast<gbm_surface*>(window_));
   auto width = gbm_bo_get_width(bo);
@@ -161,6 +175,18 @@ void NativeWindowDrmGbm::SwapBuffers() {
   }
   gbm_previous_bo_ = bo;
   gbm_previous_fb_ = fb;
+}
+
+bool NativeWindowDrmGbm::CreateGbmSurface() {
+  window_ = gbm_surface_create(gbm_device_, drm_mode_info_.hdisplay,
+                               drm_mode_info_.vdisplay, GBM_FORMAT_ARGB8888,
+                               GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
+  if (!window_) {
+    LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
+    valid_ = false;
+    return false;
+  }
+  return true;
 }
 
 bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {
