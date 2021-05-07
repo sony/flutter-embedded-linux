@@ -136,7 +136,7 @@ $ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolc
 ```
 
 ### 3.3. Yocto-build
-If you want to build using yocto, see: [meta-flutter](../meta-flutter/)
+If you want to build using Yocto, see: [meta-flutter](../meta-flutter/)
 
 ### How to debug the embedder
 You need to build the embedder with `CMAKE_BUILD_TYPE=Debug` option if you want to debug the embedder. Using this option, you can get gather logs and debug them with debuggers such as gdb / lldb.
