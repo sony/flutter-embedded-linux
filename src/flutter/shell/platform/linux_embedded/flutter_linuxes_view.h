@@ -103,7 +103,7 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
                       uint32_t mods_locked, uint32_t group) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnKey(uint32_t key, uint32_t state) override;
+  void OnKey(uint32_t key, bool pressed) override;
 
   // |WindowBindingHandlerDelegate|
   void OnVirtualKey(uint32_t code_point) override;
