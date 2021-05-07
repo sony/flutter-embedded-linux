@@ -3,7 +3,7 @@ Recipe file examples for Yocto Project. In this README, we explain how to build 
 
 
 ## Setup environment
-There are two ways to build using Yocto. One is a build using bitbake and the other is a build using Yocto SDK. Please set up the build environment for its use.
+There are two ways to build using Yocto. One is a build using bitbake and the other is a build using Yocto SDK.
 
 ### Building Yocto Image
 Downloading the Poky and meta-clang, meta-flutter source code :
@@ -13,12 +13,12 @@ $ git clone https://github.com/kraj/meta-clang -b dunfell
 $ git clone https://github.com/sony/flutter-embedded-linux.git
 ```
 
-Inside the poky directory, there is a script named oe-init-build-env, which should be used to set up the build environment :
+Setup the build environment using 'oe-init-build-env' script in Poky
 ```Shell
 $ source poky/oe-init-build-env build
 ```
 
-You need to select a specific machine to target the build with. Selecting the following in your conf/local.conf :
+Set your target machine in your conf/local.conf :
 ```
 MACHINE ?= "qemuarm64"
 ```
@@ -33,20 +33,20 @@ Add meta-flutter layer into conf/bblayers.conf :
 $ bitbake-layers add-layer ../flutter-embedded-linux/meta-flutter
 ```
 
-### Building Yocto SDK(Only when using cross-building with Yocto SDK)
-Putting the following in your conf/local.conf :
+### Building Yocto SDK (Only when using cross-building with Yocto SDK)
+Add the following in your conf/local.conf :
 ```
 CLANGSDK = "1"
 ```
 See also: [Adding clang in generated SDK toolchain](https://github.com/kraj/meta-clang/blob/master/README.md#adding-clang-in-generated-sdk-toolchain)
 
-Building a target Yocto SDK :
+Build Yocto SDK for cross-building
 ```Shell
 $ bitbake core-image-weston -c populate_sdk
 ```
 See also: [SDK building an sdk installer](https://www.yoctoproject.org/docs/2.1/sdk-manual/sdk-manual.html#sdk-building-an-sdk-installer)
 
-Installing Yocto SDK on host PC :
+Install Yocto SDK
 ```Shell
 $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolchain-3.1.7.sh
 ```
@@ -78,18 +78,18 @@ $ bitbake flutter-drm-eglstream-backend
 ```
 
 ## Cross-building with Yocto SDK
-Source the cross-toolchain environment setup file :
+Setup the cross-building toolchain environment using a script that you built and installed.
 ```Shell
 $ source /opt/poky/3.1.7/environment-setup-aarch64-poky-linux
 ```
 
-Setting environment variables :
+Set the following environment vars to cross-build using clang.
 ```Shell
 $ export CC=${CLANGCC}
 $ export CXX=${CLANGCXX}
 ```
 
-Build is the same way as self-build, see: [3.1. Self-build](../doc/README.md)
+After doing that, you can build the embedder as normal like self-building on hosts. It means you don't need to be aware of cross-building. See: [3.1. Self-build](../doc/README.md)
 
 
 ## Note
