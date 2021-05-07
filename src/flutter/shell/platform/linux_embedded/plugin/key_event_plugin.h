@@ -23,7 +23,7 @@ class KeyeventPlugin {
 
   void OnKeymap(uint32_t format, uint32_t fd, uint32_t size);
 
-  void OnKey(uint32_t keycode, uint32_t state);
+  void OnKey(uint32_t keycode, bool pressed);
 
   void OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
                    uint32_t mods_locked, uint32_t group);
@@ -34,8 +34,8 @@ class KeyeventPlugin {
 
  private:
   void SendKeyEvent(uint32_t keycode, uint32_t unicode, uint32_t modifiers,
-                    uint32_t key_state);
-  void OnModifiers(uint32_t keycode, uint32_t state);
+                    bool pressed);
+  void OnModifiers(uint32_t keycode, bool pressed);
   xkb_keymap* CreateKeymap(xkb_context* context);
   std::unordered_map<std::string, std::string> GetKeyboardConfig(
       std::string filename);
