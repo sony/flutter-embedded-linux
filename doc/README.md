@@ -136,6 +136,12 @@ You need to build the embedder with `CMAKE_BUILD_TYPE=Debug` option if you want 
 $ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_BUILD_TYPE=Debug ..
 ```
 
+### How to cross-building
+You need to build the embedder with `CMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>` option if you want to cross-building. This [toolcahin-template-file](../cmake/cross-toolchain-aarch64-template.cmake) is a template of aarch64.
+```Shell
+$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>
+```
+
 ### User configuration parameters (CMAKE options)
 Please edit `cmake/user_config.cmake` file.
 
