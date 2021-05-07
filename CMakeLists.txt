@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project("flutter_linuxes" LANGUAGES CXX C)
 
-# Rules of compiler and cpp version.
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+# We only support clang, so the build will be faild if you try to build with gcc compiler instead of it.
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_C_COMPILER clang)
+    set(CMAKE_CXX_COMPILER clang++)
+endif()
 set(CMAKE_CXX_STANDARD 17)
 
 # Build options.
