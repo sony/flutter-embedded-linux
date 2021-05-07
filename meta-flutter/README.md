@@ -1,5 +1,5 @@
 # meta-flutter for Yocto Project
-Recipe file examples for Yocto Project. In this README, we explain how to build for aarch64 using core-image-weston which is one of Yocto Images, and dunfell which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
+Recipe file examples for Yocto Project. In this README, we explain how to build for aarch64 using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
 
 
 ## Setup environment
@@ -78,7 +78,7 @@ $ bitbake flutter-drm-eglstream-backend
 ```
 
 ## Cross-building with Yocto SDK
-Installation of the cross-toolchain creates a cross-toolchain environment setup script in the directory that Yocto SDK was installed. Source the cross-toolchain environment setup file :
+Source the cross-toolchain environment setup file :
 ```Shell
 $ source /opt/poky/3.1.7/environment-setup-aarch64-poky-linux
 ```
