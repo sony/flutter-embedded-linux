@@ -1,5 +1,4 @@
 # Documentation
-If you want to build using yocto, see: [meta-flutter](../meta-flutter/)
 
 ## 1. Install libraries
 You need to install the following dependent libraries to build and run. Here introduce how to install the libraries on Debian-based systems like Ubuntu.
@@ -78,7 +77,8 @@ $ cp ./libflutter_engine.so <path_to_cmake_build_directory>
 There are sample projects in [`examples`](../examples) directory. You can also comunicate with Dart code by using the plugin APIs with the same specifications as with Flutter desktops for Windows.
 
 ## 3. Building
-Here show you how to self-build on the target hosts. Currently, we are preparing recipes for Yocto build ([#30](https://github.com/sony/flutter-embedded-linux/issues/30)).
+
+### 3.1. Self-build
 
 ### Build for Wayland backend (Stand-alone Wayland app)
 
@@ -129,17 +129,20 @@ $ cmake -DUSER_PROJECT_PATH=examples/flutter-x11-client ..
 $ cmake --build .
 ```
 
+### 3.2. Cross-build
+You need to create a toolchain file to cross compile using the Yocto SDK for aarch64 on x64 hosts. [toolcahin-template.cmake](../cmake/cross-toolchain-aarch64-template.cmake) is the templete file for aarch64 toolchain. Also, you need to modify <path_to_user_target_sysroot> appropriately for your environment if you want to use the template file.
+```Shell
+$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>
+```
+
+### 3.3. Yocto-build
+If you want to build using yocto, see: [meta-flutter](../meta-flutter/)
+
 ### How to debug the embedder
 You need to build the embedder with `CMAKE_BUILD_TYPE=Debug` option if you want to debug the embedder. Using this option, you can get gather logs and debug them with debuggers such as gdb / lldb.
 
 ```Shell
 $ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_BUILD_TYPE=Debug ..
-```
-
-### How to cross-building
-You need to build the embedder with `CMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>` option if you want to cross-building. This [toolcahin-template-file](../cmake/cross-toolchain-aarch64-template.cmake) is a template of aarch64.
-```Shell
-$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>
 ```
 
 ### User configuration parameters (CMAKE options)

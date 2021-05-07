@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR aarch64)
 
-# Specify the sysroot
+# Specify the sysroot. You need to modify <path_to_user_target_sysroot> appropriately for your environment
 set(target_sysroot <path_to_user_target_sysroot>)
 set(CMAKE_SYSROOT ${target_sysroot})
 
