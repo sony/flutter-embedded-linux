@@ -117,6 +117,10 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       LINUXES_LOG(ERROR) << "Failed to create the native window";
       return false;
     }
+    if (!RegisterUdevDrmEventLoop(device_filename)) {
+      LINUXES_LOG(ERROR) << "Failed to register udev drm event loop.";
+      return false;
+    }
     display_valid_ = true;
 
     render_surface_ = native_window_->CreateRenderSurface();
@@ -131,7 +135,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       is_pending_cursor_add_event_ = false;
     }
 
-    return RegisterUdevDrmEventLoop(device_filename);
+    return true;
   }
 
   // |FlutterWindowBindingHandler|
@@ -232,6 +236,11 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
     constexpr char kFileNameSeparator[] = "/";
     auto pos = device_filename.find_last_of(kFileNameSeparator);
+    if (pos == std::string::npos) {
+      LINUXES_LOG(ERROR) << "Failed to get device name position.";
+      udev_unref(udev);
+      return false;
+    }
     auto device_name = device_filename.substr(pos + 1);
     auto device = udev_device_new_from_subsystem_sysname(
         udev, kUdevMonitorSubsystemDrm, device_name.c_str());
@@ -281,10 +290,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       if (self->current_width_ != self->native_window_->Width() ||
           self->current_height_ != self->native_window_->Height()) {
         self->ChangeWindowSize();
-        self->render_surface_->DestroyOnScreenContext();
-        self->render_surface_->SetNativeWindow(self->native_window_.get());
-        self->render_surface_->SetNativeWindowResource(
-            self->native_window_.get());
       }
     }
 
@@ -587,8 +592,8 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   sd_event* libinput_event_loop_;
   libinput* libinput_;
 
-  sd_event* udev_drm_event_loop_;
-  udev_monitor* udev_monitor_;
+  sd_event* udev_drm_event_loop_ = nullptr;
+  udev_monitor* udev_monitor_ = nullptr;
   int drm_device_id_;
 };
 

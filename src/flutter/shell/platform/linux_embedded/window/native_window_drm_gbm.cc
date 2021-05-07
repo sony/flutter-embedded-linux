@@ -130,13 +130,14 @@ std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
 }
 
 bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
+  window_changed_ = false;
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
   if (!gbm_previous_bo_) {
-    // Do nothing when called in the initialization process.
-    LINUXES_LOG(INFO) << "No size change.";
+    // Do nothing until SwapBuffers() is called.
+    // For example, called at the initialization process.
     return false;
   }
 
@@ -147,7 +148,11 @@ bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
   gbm_previous_bo_ = nullptr;
 
   gbm_surface_destroy(static_cast<gbm_surface*>(window_));
-  return CreateGbmSurface();
+  if (!CreateGbmSurface()) {
+    return false;
+  }
+  window_changed_ = true;
+  return true;
 }
 
 void NativeWindowDrmGbm::SwapBuffers() {
