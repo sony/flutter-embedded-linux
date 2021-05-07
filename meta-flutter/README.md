@@ -6,47 +6,47 @@ Recipe file examples for Yocto Project. In this README, we explain how to build 
 There are two ways to build using Yocto. One is a build using bitbake and the other is a build using Yocto SDK.
 
 ### Building Yocto Image
-Downloading the Poky and meta-clang, meta-flutter source code :
+Downloading the Poky and meta-clang, meta-flutter source code:
 ```Shell
 $ git clone git://git.yoctoproject.org/poky.git -b dunfell
 $ git clone https://github.com/kraj/meta-clang -b dunfell
 $ git clone https://github.com/sony/flutter-embedded-linux.git
 ```
 
-Setup the build environment using 'oe-init-build-env' script in Poky
+Setup the build environment using 'oe-init-build-env' script in Poky.
 ```Shell
 $ source poky/oe-init-build-env build
 ```
 
-Set your target machine in your conf/local.conf :
+Set your target machine in your conf/local.conf:
 ```
 MACHINE ?= "qemuarm64"
 ```
 
-Add meta-clang layer into conf/bblayers.conf :
+Add meta-clang layer into conf/bblayers.conf:
 ```Shell
 $ bitbake-layers add-layer ../meta-clang
 ```
 
-Add meta-flutter layer into conf/bblayers.conf :
+Add meta-flutter layer into conf/bblayers.conf:
 ```Shell
 $ bitbake-layers add-layer ../flutter-embedded-linux/meta-flutter
 ```
 
 ### Building Yocto SDK (Only when using cross-building with Yocto SDK)
-Add the following in your conf/local.conf :
+Add the following in your conf/local.conf:
 ```
 CLANGSDK = "1"
 ```
 See also: [Adding clang in generated SDK toolchain](https://github.com/kraj/meta-clang/blob/master/README.md#adding-clang-in-generated-sdk-toolchain)
 
-Build Yocto SDK for cross-building
+Build Yocto SDK for cross-building.
 ```Shell
 $ bitbake core-image-weston -c populate_sdk
 ```
 See also: [SDK building an sdk installer](https://www.yoctoproject.org/docs/2.1/sdk-manual/sdk-manual.html#sdk-building-an-sdk-installer)
 
-Install Yocto SDK
+Install Yocto SDK.
 ```Shell
 $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolchain-3.1.7.sh
 ```
