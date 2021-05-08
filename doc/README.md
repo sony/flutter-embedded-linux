@@ -130,9 +130,9 @@ $ cmake --build .
 ```
 
 ### 3.2. Cross-build
-You need to create a toolchain file to cross compile using the Yocto SDK for aarch64 on x64 hosts. [toolcahin-template.cmake](../cmake/cross-toolchain-aarch64-template.cmake) is the templete file for aarch64 toolchain. Also, you need to modify <path_to_user_target_sysroot> appropriately for your environment if you want to use the template file.
+You need to create a toolchain file to cross compile using the Yocto SDK for aarch64 on x64 hosts. [toolchain-template.cmake](../cmake/cross-toolchain-aarch64-template.cmake) is the templete file for aarch64 toolchain. Also, you need to modify <path_to_user_target_sysroot> appropriately for your environment if you want to use the template file.
 ```Shell
-$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>
+$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolchain-template-file> ..
 ```
 
 ### 3.3. Yocto-build
