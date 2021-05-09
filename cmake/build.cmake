@@ -55,7 +55,7 @@ else()
 
   # generate text-input for virtual keyboard souce files
   get_filename_component(_infile $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v1.xml ABSOLUTE)
-  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/text-input-unstable-v1-protocol.h)
+  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/text-input-unstable-v1-client-protocol.h)
   set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/text-input-unstable-v1-protocol.c)
   set_source_files_properties(${_client_header} GENERATED)
   set_source_files_properties(${_code} GENERATED)
