@@ -34,21 +34,24 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
-  include(${USER_PROJECT_PATH}/cmake/generate_wayland_protocols.cmake)
+  include(cmake/generate_wayland_protocols.cmake)
+  set(_wayland_protocols_xml_dir $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols)
+  set(_wayland_protocols_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol)
 
-  # generate xdg-shell souce files
-  set(_wayland_client_protocols_srcs "")
-  generate_wayland_client_protocol(${_wayland_client_protocols_srcs}
-                                   PROTOCOL_NAME "xdg-shell"
-                                   PROTOCOL_FILE "/stable/xdg-shell/xdg-shell.xml")
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml
+    CODE_FILE ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/xdg-shell-client-protocol.h)
 
-  generate_wayland_client_protocol(${_wayland_client_protocols_srcs}
-                                   PROTOCOL_NAME "text-input-unstable-v1"
-                                   PROTOCOL_FILE "/unstable/text-input/text-input-unstable-v1.xml")
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/"unstable/text-input/text-input-unstable-v1.xml"
+    CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-client-protocol.h)
 
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
-    ${_wayland_client_protocols_srcs}
+    ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
+    ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
