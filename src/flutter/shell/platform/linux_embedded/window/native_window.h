@@ -32,9 +32,7 @@ class NativeWindow {
     return height_;
   }
 
-  bool RecreateSurface() const { return recreate_surface_; }
-
-  void RecreateSurfaceCompleted() { recreate_surface_ = false; }
+  bool IsNeedRecreateSurface() const { return recreate_surface_; }
 
   virtual bool Resize(const size_t width, const size_t height) = 0;
 

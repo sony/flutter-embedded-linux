@@ -155,6 +155,11 @@ bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
 }
 
 void NativeWindowDrmGbm::SwapBuffers() {
+  // This function is called after recreating the surface, so reset the
+  // recreate_surface_ flag at this time.
+  if (recreate_surface_) {
+    recreate_surface_ = false;
+  }
   auto* bo = gbm_surface_lock_front_buffer(static_cast<gbm_surface*>(window_));
   auto width = gbm_bo_get_width(bo);
   auto height = gbm_bo_get_height(bo);
