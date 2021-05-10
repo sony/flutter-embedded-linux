@@ -34,46 +34,21 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
-  find_program(WaylandScannerExec NAMES wayland-scanner)
+  include(${USER_PROJECT_PATH}/cmake/generate_wayland_protocols.cmake)
 
   # generate xdg-shell souce files
-  get_filename_component(_infile $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
-  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-client-protocol.h)
-  set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-protocol.c)
-  set_source_files_properties(${_client_header} GENERATED)
-  set_source_files_properties(${_code} GENERATED)
-  add_custom_command(
-    OUTPUT ${_client_header}
-    COMMAND ${WaylandScannerExec} client-header ${_infile} ${_client_header}
-    DEPENDS ${_infile} VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${_code}
-    COMMAND ${WaylandScannerExec} private-code ${_infile} ${_code}
-    DEPENDS ${_infile} ${_client_header} VERBATIM
-  )
+  set(_wayland_client_protocols_srcs "")
+  generate_wayland_client_protocol(${_wayland_client_protocols_srcs}
+                                   PROTOCOL_NAME "xdg-shell"
+                                   PROTOCOL_FILE "/stable/xdg-shell/xdg-shell.xml")
 
-  # generate text-input for virtual keyboard souce files
-  get_filename_component(_infile $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols/unstable/text-input/text-input-unstable-v1.xml ABSOLUTE)
-  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/text-input-unstable-v1-client-protocol.h)
-  set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/text-input-unstable-v1-protocol.c)
-  set_source_files_properties(${_client_header} GENERATED)
-  set_source_files_properties(${_code} GENERATED)
-  add_custom_command(
-    OUTPUT ${_client_header}
-    COMMAND ${WaylandScannerExec} client-header ${_infile} ${_client_header}
-    DEPENDS ${_infile} VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${_code}
-    COMMAND ${WaylandScannerExec} private-code ${_infile} ${_code}
-    DEPENDS ${_infile} ${_client_header} VERBATIM
-  )
+  generate_wayland_client_protocol(${_wayland_client_protocols_srcs}
+                                   PROTOCOL_NAME "text-input-unstable-v1"
+                                   PROTOCOL_FILE "/unstable/text-input/text-input-unstable-v1.xml")
 
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
-    src/wayland/protocol/xdg-shell-protocol.c
-    src/wayland/protocol/text-input-unstable-v1-protocol.c
+    ${_wayland_client_protocols_srcs}
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
