@@ -44,7 +44,7 @@ else()
     HEADER_FILE ${_wayland_protocols_src_dir}/xdg-shell-client-protocol.h)
 
   generate_wayland_client_protocol(
-    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/"unstable/text-input/text-input-unstable-v1.xml"
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v1.xml
     CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-client-protocol.h)
 
