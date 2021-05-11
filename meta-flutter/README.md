@@ -1,11 +1,11 @@
 # meta-flutter for Yocto Project
-Recipe file examples for Yocto Project. In this README, we explain how to build for aarch64 using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
+Recipe file examples for Yocto Project. In this README, we explain how to build for Arm64 using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
 
 
 ## Setup environment
 There are two ways to build using Yocto. One is a build using bitbake and the other is a build using Yocto SDK.
 
-### Building Yocto Image
+### Building Yocto
 Downloading `Poky` and `meta-clang`, `meta-flutter` source code:
 ```Shell
 $ git clone git://git.yoctoproject.org/poky.git -b dunfell
@@ -52,6 +52,29 @@ $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolcha
 ```
 
 ## Cross-building with bitbake
+### Flutter Engine (libflutter_engine.so)
+Build target is fixed to Linux and Arm64, and Flutter Engine version is also fixed in the recipe file.
+
+#### Flutter Engine version
+```
+ENGINE_VERSION ?= "f5b97d0b23a3905e9b5b69aa873afcb52f550aaf"
+```
+
+When creating a Flutter project, you will need to use the following version of the Flutter SDK.  
+`Flutter 2.3.0-1.0.pre.269`
+
+If you want to change the version of the Flutter engine, change <engine_version> to the appropriate version of the Flutter SDK and add the following to `conf/local.conf`:
+```
+ENGINE_VERSION_pn-flutter-engine = "<engine_version>"
+```
+
+Flutter Engine is built with release mode by default. If you want to change the build mode, you can change it to add the following in your `conf/local.conf`:
+#### Flutter Engine mode
+```
+# e.g. debug mode
+PACKAGECONFIG_pn-flutter-engine = "debug-mode"
+```
+
 ### Wayland backend
 ```Shell
 $ bitbake flutter-wayland-client
@@ -88,6 +111,3 @@ $ export CXX=${CLANGCXX}
 ```
 
 After doing that, you can build the embedder as normal like self-building on hosts. It means you don't need to be aware of cross-building. See: [3.1. Self-build](../doc/README.md)
-
-## Note
-The build would fail because of the lack of flutter-engine recipe. We are still creating it. Please wait.  
