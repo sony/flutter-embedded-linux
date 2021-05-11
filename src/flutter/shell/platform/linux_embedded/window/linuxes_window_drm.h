@@ -76,6 +76,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     if (udev_drm_event_loop_) {
       sd_event_unref(udev_drm_event_loop_);
     }
+
     if (udev_monitor_) {
       udev_monitor_unref(udev_monitor_);
     }
@@ -117,6 +118,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       LINUXES_LOG(ERROR) << "Failed to create the native window";
       return false;
     }
+
     if (!RegisterUdevDrmEventLoop(device_filename)) {
       LINUXES_LOG(ERROR) << "Failed to register udev drm event loop.";
       return false;
@@ -128,7 +130,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       return false;
     }
     render_surface_->SetNativeWindowResource(native_window_.get());
-    ChangeWindowSize();
+    UpdateWindowInfo();
 
     if (is_pending_cursor_add_event_) {
       native_window_->ShowCursor(pointer_x_, pointer_y_);
@@ -197,19 +199,24 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       .close_restricted = [](int fd, void* user_data) -> void { close(fd); },
   };
 
-  void ChangeWindowSize() {
+  void UpdateWindowInfo() {
     if (window_mode_ == FlutterWindowMode::kFullscreen) {
       current_width_ = native_window_->Width();
       current_height_ = native_window_->Height();
       LINUXES_LOG(INFO) << "Display output resolution: " << current_width_
                         << "x" << current_height_;
-      if (binding_handler_delegate_) {
-        binding_handler_delegate_->OnWindowSizeChanged(current_width_,
-                                                       current_height_);
-      }
     } else {
       // todo: implement here.
       LINUXES_LOG(ERROR) << "Not supported specific surface size.";
+    }
+  }
+
+  void ResizeWindow() {
+    UpdateWindowInfo();
+    if (window_mode_ == FlutterWindowMode::kFullscreen &&
+        binding_handler_delegate_) {
+      binding_handler_delegate_->OnWindowSizeChanged(current_width_,
+                                                     current_height_);
     }
   }
 
@@ -219,6 +226,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       LINUXES_LOG(ERROR) << "Failed to create udev instance.";
       return false;
     }
+
     constexpr char kUdevMonitorSystemUdev[] = "udev";
     udev_monitor_ = udev_monitor_new_from_netlink(udev, kUdevMonitorSystemUdev);
     if (!udev_monitor_) {
@@ -226,6 +234,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       udev_unref(udev);
       return false;
     }
+
     constexpr char kUdevMonitorSubsystemDrm[] = "drm";
     if (udev_monitor_filter_add_match_subsystem_devtype(
             udev_monitor_, kUdevMonitorSubsystemDrm, NULL) < 0) {
@@ -241,6 +250,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       udev_unref(udev);
       return false;
     }
+
     auto device_name = device_filename.substr(pos + 1);
     auto device = udev_device_new_from_subsystem_sysname(
         udev, kUdevMonitorSubsystemDrm, device_name.c_str());
@@ -249,6 +259,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       udev_unref(udev);
       return false;
     }
+
     auto sysnum = udev_device_get_sysnum(device);
     if (!sysnum) {
       LINUXES_LOG(ERROR) << "Failed to get device id.";
@@ -262,12 +273,14 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       LINUXES_LOG(ERROR) << "Failed to create udev drm event loop.";
       return false;
     }
+
     if (sd_event_add_io(
             udev_drm_event_loop_, NULL, udev_monitor_get_fd(udev_monitor_),
             EPOLLIN | EPOLLRDHUP | EPOLLPRI, OnUdevDrmEvent, this) < 0) {
       LINUXES_LOG(ERROR) << "Failed to listen for udev drm event.";
       return false;
     }
+
     if (udev_monitor_enable_receiving(udev_monitor_) < 0) {
       LINUXES_LOG(ERROR) << "Failed to enable udev monitor receiving.";
       return false;
@@ -289,7 +302,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
         self->native_window_->ConfigureDisplay()) {
       if (self->current_width_ != self->native_window_->Width() ||
           self->current_height_ != self->native_window_->Height()) {
-        self->ChangeWindowSize();
+        self->ResizeWindow();
       }
     }
 
@@ -314,6 +327,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       LINUXES_LOG(ERROR) << "Failed to get udev device property value.";
       return false;
     }
+
     constexpr char kPropertyOn[] = "1";
     return std::strcmp(value, kPropertyOn) == 0;
   }

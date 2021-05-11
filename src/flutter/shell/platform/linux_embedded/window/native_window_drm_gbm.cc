@@ -41,7 +41,6 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
   }
 
   CreateGbmSurface();
-  recreate_surface_ = true;
 }
 
 NativeWindowDrmGbm::~NativeWindowDrmGbm() {
@@ -130,11 +129,16 @@ std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
       std::make_unique<EnvironmentEgl>(gbm_device_)));
 }
 
+bool NativeWindowDrmGbm::IsNeedRecreateSurfaceAfterResize() const {
+  return true;
+}
+
 bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
   if (!valid_) {
     LINUXES_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
+
   if (!gbm_previous_bo_) {
     // Do nothing until SwapBuffers() is called.
     // For example, called at the initialization process.

@@ -28,6 +28,8 @@ class Surface {
   bool SetNativeWindowResource(std::unique_ptr<NativeWindow> window);
 
   // Changes an on-screen surface size.
+  // In the case of the DRM-GBM backend, recreate the on-screen surface because
+  // the gbm-surface is recreated.
   bool OnScreenSurfaceResize(const size_t width, const size_t height);
 
   // Clears current on-screen context.

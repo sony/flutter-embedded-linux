@@ -42,15 +42,11 @@ bool Surface::OnScreenSurfaceResize(const size_t width, const size_t height) {
     return false;
   }
 
-  // This API returns true only for the DRM-GBM backend.
-  // On the DRM-GBM backend, the gbm-surface is recreated by notification of
-  // Resize(). In this case, we also need to recreate the on-screen surface
-  // with the newly created gbm-surface.
-  if (native_window_->IsNeedRecreateSurface()) {
+  if (native_window_->IsNeedRecreateSurfaceAfterResize()) {
     DestroyOnScreenContext();
     onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
     if (!onscreen_surface_->IsValid()) {
-      LINUXES_LOG(WARNING) << "On-Screen surface is invalid.";
+      LINUXES_LOG(WARNING) << "Failed to recreate on-screen surface.";
       onscreen_surface_ = nullptr;
       return false;
     }
