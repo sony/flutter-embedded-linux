@@ -8,13 +8,14 @@ SRCREV = "da768751d43b1f287bf99bea703ea13e2eedcf4d"
 S = "${WORKDIR}/git"
 
 inherit pkgconfig
+# TODO: Add dependent packages.
 DEPENDS = "freetype"
-
 
 GN_TOOLS_PYTHON2_PATH ??= "bootstrap-3.8.0.chromium.8_bin/python/bin"
 
-require gn-utils.inc
+require gn-args-utils.inc
 
+ENGINE_VERSION ?= "f5b97d0b23a3905e9b5b69aa873afcb52f550aaf"
 PACKAGECONFIG ?= "release-mode"
 PACKAGECONFIG[debug-mode] = "--runtime-mode debug --unoptimized"
 PACKAGECONFIG[profile-mode] = "--runtime-mode profile --no-lto"
@@ -28,9 +29,10 @@ GN_ARGS_append = " --target-os ${GN_TARGET_OS}"
 GN_ARGS_append = " --linux-cpu ${GN_TARGET_ARCH}"
 GN_ARGS_append = " --embedder-for-target"
 GN_ARGS_append = " --disable-desktop-embeddings"
-OUT_DIR = "out/${@get_out_dir(d)}"
+ARTIFACT_DIR = "${@get_engine_artifact_dir(d)}"
 
 do_configure() {
+    # To disable auto update.
     export DEPOT_TOOLS_UPDATE=0
     export PATH=${S}:${S}/${GN_TOOLS_PYTHON2_PATH}:$PATH
 
@@ -39,7 +41,7 @@ do_configure() {
         {
             "managed" : False,
             "name" : "src/flutter",
-            "url" : "https://github.com/flutter/engine.git@f5b97d0b23a3905e9b5b69aa873afcb52f550aaf",
+            "url" : "https://github.com/flutter/engine.git@${ENGINE_VERSION}",
             "custom_deps": {},
             "deps_file": "DEPS",
             "safesync_url": "",
@@ -49,19 +51,18 @@ do_configure() {
 
     cd ${WORKDIR}/src
     ./flutter/tools/gn ${GN_ARGS}
-    
 }
 
 do_compile() {
     export PATH=${S}:${S}/${GN_TOOLS_PYTHON2_PATH}:$PATH
 
     cd ${WORKDIR}/src
-    ninja -C ${OUT_DIR}
+    ninja -C ${ARTIFACT_DIR}
 }
 
 do_install() {
     install -d ${D}${libdir}
-    install -m 0755 ${WORKDIR}/src/${OUT_DIR}/libflutter_engine.so ${D}${libdir}
+    install -m 0755 ${WORKDIR}/src/${ARTIFACT_DIR}/libflutter_engine.so ${D}${libdir}
 }
 
 FILES_${PN} = "${libdir}"
