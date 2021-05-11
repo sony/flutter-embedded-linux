@@ -130,7 +130,16 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       return false;
     }
     render_surface_->SetNativeWindowResource(native_window_.get());
-    UpdateWindowInfo();
+
+    if (window_mode_ != FlutterWindowMode::kFullscreen) {
+      LINUXES_LOG(WARNING)
+          << "Only fullscreen mode is supported, use fullscreen mode";
+      window_mode_ = FlutterWindowMode::kFullscreen;
+    }
+    current_width_ = native_window_->Width();
+    current_height_ = native_window_->Height();
+    LINUXES_LOG(INFO) << "Display output resolution: " << current_width_ << "x"
+                      << current_height_;
 
     if (is_pending_cursor_add_event_) {
       native_window_->ShowCursor(pointer_x_, pointer_y_);
@@ -198,27 +207,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       },
       .close_restricted = [](int fd, void* user_data) -> void { close(fd); },
   };
-
-  void UpdateWindowInfo() {
-    if (window_mode_ == FlutterWindowMode::kFullscreen) {
-      current_width_ = native_window_->Width();
-      current_height_ = native_window_->Height();
-      LINUXES_LOG(INFO) << "Display output resolution: " << current_width_
-                        << "x" << current_height_;
-    } else {
-      // todo: implement here.
-      LINUXES_LOG(ERROR) << "Not supported specific surface size.";
-    }
-  }
-
-  void ResizeWindow() {
-    UpdateWindowInfo();
-    if (window_mode_ == FlutterWindowMode::kFullscreen &&
-        binding_handler_delegate_) {
-      binding_handler_delegate_->OnWindowSizeChanged(current_width_,
-                                                     current_height_);
-    }
-  }
 
   bool RegisterUdevDrmEventLoop(const std::string& device_filename) {
     auto udev = udev_new();
@@ -302,7 +290,15 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
         self->native_window_->ConfigureDisplay()) {
       if (self->current_width_ != self->native_window_->Width() ||
           self->current_height_ != self->native_window_->Height()) {
-        self->ResizeWindow();
+        self->current_width_ = self->native_window_->Width();
+        self->current_height_ = self->native_window_->Height();
+        LINUXES_LOG(INFO) << "Display output resolution: "
+                          << self->current_width_ << "x"
+                          << self->current_height_;
+        if (self->binding_handler_delegate_) {
+          self->binding_handler_delegate_->OnWindowSizeChanged(
+              self->current_width_, self->current_height_);
+        }
       }
     }
 
