@@ -8,19 +8,27 @@ SRCREV = "da768751d43b1f287bf99bea703ea13e2eedcf4d"
 S = "${WORKDIR}/git"
 
 inherit pkgconfig
-DEPENDS = "freetype libx11 gtk+3"
+DEPENDS = "freetype"
+
 
 GN_TOOLS_PYTHON2_PATH ??= "bootstrap-3.8.0.chromium.8_bin/python/bin"
 
+require gn-utils.inc
+
+PACKAGECONFIG ?= "release-mode"
+PACKAGECONFIG[debug-mode] = "--runtime-mode debug --unoptimized"
+PACKAGECONFIG[profile-mode] = "--runtime-mode profile --no-lto"
+PACKAGECONFIG[release-mode] = "--runtime-mode release"
+
 GN_TARGET_OS = "linux"
-GN_RUNTIME_MODE = "release"
 GN_TARGET_ARCH = "arm64"
-GN_ARGS = "--target-sysroot ${STAGING_DIR_TARGET}"
+
+GN_ARGS = "--target-sysroot ${STAGING_DIR_TARGET}${PACKAGECONFIG_CONFARGS}"
 GN_ARGS_append = " --target-os ${GN_TARGET_OS}"
 GN_ARGS_append = " --linux-cpu ${GN_TARGET_ARCH}"
-GN_ARGS_append = " --runtime-mode ${GN_RUNTIME_MODE}"
 GN_ARGS_append = " --embedder-for-target"
-OUT_DIR = "out/${GN_TARGET_OS}_${GN_RUNTIME_MODE}_${GN_TARGET_ARCH}"
+GN_ARGS_append = " --disable-desktop-embeddings"
+OUT_DIR = "out/${@get_out_dir(d)}"
 
 do_configure() {
     export DEPOT_TOOLS_UPDATE=0
@@ -31,7 +39,7 @@ do_configure() {
         {
             "managed" : False,
             "name" : "src/flutter",
-            "url" : "https://github.com/flutter/engine.git",
+            "url" : "https://github.com/flutter/engine.git@f5b97d0b23a3905e9b5b69aa873afcb52f550aaf",
             "custom_deps": {},
             "deps_file": "DEPS",
             "safesync_url": "",
