@@ -36,9 +36,22 @@ bool Surface::SetNativeWindowResource(std::unique_ptr<NativeWindow> window) {
   return SetNativeWindowResource(native_window_resource_.get());
 }
 
-bool Surface::OnScreenSurfaceResize(const size_t width,
-                                    const size_t height) const {
-  return native_window_->Resize(width, height);
+bool Surface::OnScreenSurfaceResize(const size_t width, const size_t height) {
+  if (!native_window_->Resize(width, height)) {
+    LINUXES_LOG(ERROR) << "Failed to resize.";
+    return false;
+  }
+
+  if (native_window_->IsNeedRecreateSurfaceAfterResize()) {
+    DestroyOnScreenContext();
+    onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
+    if (!onscreen_surface_->IsValid()) {
+      LINUXES_LOG(WARNING) << "Failed to recreate on-screen surface.";
+      onscreen_surface_ = nullptr;
+      return false;
+    }
+  }
+  return true;
 };
 
 bool Surface::ClearCurrentContext() const { return context_->ClearCurrent(); };

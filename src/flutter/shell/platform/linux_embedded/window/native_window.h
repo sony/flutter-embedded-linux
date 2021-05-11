@@ -32,6 +32,8 @@ class NativeWindow {
     return height_;
   }
 
+  virtual bool IsNeedRecreateSurfaceAfterResize() const { return false; }
+
   virtual bool Resize(const size_t width, const size_t height) = 0;
 
   // Swaps frame buffers. This API performs processing only for the DRM-GBM
