@@ -33,9 +33,9 @@ class NativeWindowDrm : public NativeWindow {
 
   virtual std::unique_ptr<SurfaceGl> CreateRenderSurface() = 0;
 
- protected:
   bool ConfigureDisplay();
 
+ protected:
   drmModeConnectorPtr FindConnector(drmModeResPtr resources);
 
   drmModeEncoder* FindEncoder(drmModeRes* resources,

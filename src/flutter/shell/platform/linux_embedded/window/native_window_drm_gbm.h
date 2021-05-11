@@ -34,9 +34,17 @@ class NativeWindowDrmGbm : public NativeWindowDrm {
   std::unique_ptr<SurfaceGl> CreateRenderSurface() override;
 
   // |NativeWindow|
+  bool IsNeedRecreateSurfaceAfterResize() const override;
+
+  // |NativeWindow|
+  bool Resize(const size_t width, const size_t height) override;
+
+  // |NativeWindow|
   void SwapBuffers() override;
 
  private:
+  bool CreateGbmSurface();
+
   bool CreateCursorBuffer(const std::string& cursor_name);
 
   gbm_bo* gbm_previous_bo_ = nullptr;
