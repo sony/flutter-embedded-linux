@@ -1,5 +1,5 @@
 # meta-flutter for Yocto Project
-Recipe file examples for Yocto Project. In this README, we explain how to build for AArch64 (ARM64) using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
+Recipe file examples for Yocto Project. In this README, we explain how to build for Arm64 using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
 
 
 ## Setup environment
@@ -53,7 +53,7 @@ $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolcha
 
 ## Cross-building with bitbake
 ### Flutter Engine library
-Flutter Engine recipe is limited to **linux** and **AArch64(ARM64)** targets. Flutter Engine version (commit id / SHA) defined in the recipe is as follows.
+Build target is fixed to Linux and Arm64, and Flutter Engine version is also fixed in the recipe file.
 ```
 # FYI: Latest as of 2021-05-09.
 ENGINE_VERSION ?= "f5b97d0b23a3905e9b5b69aa873afcb52f550aaf"
@@ -66,16 +66,10 @@ Add the following in your `conf/local.conf`, if you want to change the Flutter E
 ENGINE_VERSION_pn-flutter-engine = <engine_version>
 ```
 
-Flutter Engine recipe has three compile options (debug / profile / release modes). The default compile option is `release-mode`. Add the following in your `conf/local.conf`, if you want to change the compile options:
+Flutter Engine is built with release mode by default. If you want to change the build mode, you can change it to add the following in your conf/local.conf:
 ```
 # e.g. debug mode
 PACKAGECONFIG_pn-flutter-engine = "debug-mode"
-```
-
-#### Supplement
-Flutter Engine recipe has a build dependency with Flutter Embedded Linux recipe, and the Flutter Embedded Linux recipe is built first. Build as follows, if you want to build only Flutter Engine.
-```Shell
-$ bitbake flutter-engine
 ```
 
 ### Wayland backend
