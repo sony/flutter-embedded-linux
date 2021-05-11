@@ -38,17 +38,22 @@ bool Surface::SetNativeWindowResource(std::unique_ptr<NativeWindow> window) {
 
 bool Surface::OnScreenSurfaceResize(const size_t width, const size_t height) {
   if (!native_window_->Resize(width, height)) {
+    LINUXES_LOG(ERROR) << "Failed to resize.";
     return false;
   }
 
   // This API returns true only for the DRM-GBM backend.
   // On the DRM-GBM backend, the gbm-surface is recreated by notification of
-  // Resize(). In this case, we also need to recreate the on/off-screen surface
+  // Resize(). In this case, we also need to recreate the on-screen surface
   // with the newly created gbm-surface.
   if (native_window_->IsNeedRecreateSurface()) {
     DestroyOnScreenContext();
-    SetNativeWindow(native_window_);
-    SetNativeWindowResource(native_window_);
+    onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
+    if (!onscreen_surface_->IsValid()) {
+      LINUXES_LOG(WARNING) << "On-Screen surface is invalid.";
+      onscreen_surface_ = nullptr;
+      return false;
+    }
   }
   return true;
 };
