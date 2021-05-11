@@ -1,11 +1,11 @@
 # meta-flutter for Yocto Project
-Recipe file examples for Yocto Project. In this README, we explain how to build for aarch64 using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
+Recipe file examples for Yocto Project. In this README, we explain how to build for AArch64 (ARM64) using `core-image-weston` which is one of Yocto Images, and `dunfell` which is one of LTS Yocto versions. See also: https://docs.yoctoproject.org/
 
 
 ## Setup environment
 There are two ways to build using Yocto. One is a build using bitbake and the other is a build using Yocto SDK.
 
-### Building Yocto Image
+### Building Yocto
 Downloading `Poky` and `meta-clang`, `meta-flutter` source code:
 ```Shell
 $ git clone git://git.yoctoproject.org/poky.git -b dunfell
@@ -52,6 +52,32 @@ $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolcha
 ```
 
 ## Cross-building with bitbake
+### Flutter Engine library
+Flutter Engine recipe is limited to **linux** and **AArch64(ARM64)** targets. Flutter Engine version (commit id / SHA) defined in the recipe is as follows.
+```
+# FYI: Latest as of 2021-05-09.
+ENGINE_VERSION ?= "f5b97d0b23a3905e9b5b69aa873afcb52f550aaf"
+```
+You need to use the following Flutter SDK versions when creating a Flutter project.  
+`Flutter 2.3.0-1.0.pre.269`
+
+Add the following in your `conf/local.conf`, if you want to change the Flutter Engine version. You need to modify <engine_version> appropriately for your Flutter SDK versions:
+```
+ENGINE_VERSION_pn-flutter-engine = <engine_version>
+```
+
+Flutter Engine recipe has three compile options (debug / profile / release modes). The default compile option is `release-mode`. Add the following in your `conf/local.conf`, if you want to change the compile options:
+```
+# e.g. debug mode
+PACKAGECONFIG_pn-flutter-engine = "debug-mode"
+```
+
+#### Supplement
+Flutter Engine recipe has a build dependency with Flutter Embedded Linux recipe, and the Flutter Embedded Linux recipe is built first. Build as follows, if you want to build only Flutter Engine.
+```Shell
+$ bitbake flutter-engine
+```
+
 ### Wayland backend
 ```Shell
 $ bitbake flutter-wayland-client
@@ -88,6 +114,3 @@ $ export CXX=${CLANGCXX}
 ```
 
 After doing that, you can build the embedder as normal like self-building on hosts. It means you don't need to be aware of cross-building. See: [3.1. Self-build](../doc/README.md)
-
-## Note
-The build would fail because of the lack of flutter-engine recipe. We are still creating it. Please wait.  
