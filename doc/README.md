@@ -130,9 +130,9 @@ $ cmake --build .
 ```
 
 ### 3.2. Cross-build
-You need to create a toolchain file to cross compile using the Yocto SDK for aarch64 on x64 hosts. [toolcahin-template.cmake](../cmake/cross-toolchain-aarch64-template.cmake) is the templete file for aarch64 toolchain. Also, you need to modify <path_to_user_target_sysroot> appropriately for your environment if you want to use the template file.
+You need to create a toolchain file to cross compile using the Yocto SDK for aarch64 on x64 hosts. [toolchain-template.cmake](../cmake/cross-toolchain-aarch64-template.cmake) is the templete file for aarch64 toolchain. Also, you need to modify <path_to_user_target_sysroot> appropriately for your environment if you want to use the template file.
 ```Shell
-$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolcahin-template-file>
+$ cmake -DUSER_PROJECT_PATH=<path_to_user_project> -DCMAKE_TOOLCHAIN_FILE=<toolchain-template-file> ..
 ```
 
 ### 3.3. Yocto-build
@@ -152,7 +152,7 @@ Please edit `cmake/user_config.cmake` file.
 | ------------- | ------------- |
 | BACKEND_TYPE | Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type (The default setting is WAYLAND) |
 | DESKTOP_SHELL | Work as Weston desktop-shell |
-| USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (only when using `DESKTOP_SHELL`) |
+| USE_VIRTUAL_KEYBOARD | Use Virtual Keyboard (Only available when you choose Wayland backend) |
 | USE_GLES3 | Use OpenGLES3 instead of OpenGLES2 |
 
 ## 4. Building Flutter app

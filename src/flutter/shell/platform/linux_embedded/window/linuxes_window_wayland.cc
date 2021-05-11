@@ -185,7 +185,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
             kScrollOffsetMultiplier);
       }
     },
-};  // namespace flutter
+};
 
 const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
     .down = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time,
@@ -655,7 +655,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     height = current_height_;
   }
 
-  LINUXES_LOG(TRACE) << "Created the Wyalnad surface: " << width << "x"
+  LINUXES_LOG(TRACE) << "Created the Waylnad surface: " << width << "x"
                      << height;
   if (show_cursor_) {
     wl_cursor_surface_ = wl_compositor_create_surface(wl_compositor_);
