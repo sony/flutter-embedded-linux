@@ -69,6 +69,7 @@ ENGINE_VERSION_pn-flutter-engine = "<engine_version>"
 ```
 
 Flutter Engine is built with release mode by default. If you want to change the build mode, you can change it to add the following in your `conf/local.conf`:
+#### Flutter Engine mode
 ```
 # e.g. debug mode
 PACKAGECONFIG_pn-flutter-engine = "debug-mode"
