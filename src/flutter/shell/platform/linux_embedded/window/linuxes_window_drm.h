@@ -133,7 +133,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
     if (window_mode_ != FlutterWindowMode::kFullscreen) {
       LINUXES_LOG(WARNING)
-          << "Only fullscreen mode is supported, use fullscreen mode";
+          << "Normal mode is not supported, use fullscreen mode.";
       window_mode_ = FlutterWindowMode::kFullscreen;
     }
     current_width_ = native_window_->Width();
