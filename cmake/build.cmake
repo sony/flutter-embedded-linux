@@ -34,26 +34,24 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
-  find_program(WaylandScannerExec NAMES wayland-scanner)
-  get_filename_component(_infile $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml ABSOLUTE)
-  set(_client_header ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-client-protocol.h)
-  set(_code ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol/xdg-shell-protocol.c)
-  set_source_files_properties(${_client_header} GENERATED)
-  set_source_files_properties(${_code} GENERATED)
-  add_custom_command(
-    OUTPUT ${_client_header}
-    COMMAND ${WaylandScannerExec} client-header ${_infile} ${_client_header}
-    DEPENDS ${_infile} VERBATIM
-  )
-  add_custom_command(
-    OUTPUT ${_code}
-    COMMAND ${WaylandScannerExec} private-code ${_infile} ${_code}
-    DEPENDS ${_infile} ${_client_header} VERBATIM
-  )
+  include(cmake/generate_wayland_protocols.cmake)
+  set(_wayland_protocols_xml_dir $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols)
+  set(_wayland_protocols_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol)
+
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml
+    CODE_FILE ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/xdg-shell-client-protocol.h)
+
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v1.xml
+    CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-client-protocol.h)
 
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
-    ${_code}
+    ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
+    ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
@@ -63,15 +61,15 @@ if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   add_definitions(-DDESKTOP_SHELL)
 endif()
 
-# wayland & weston protocols.
+# weston private protocols.
 set(WAYLAND_PROTOCOL_SRC "")
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/weston-desktop-shell-protocol.c)  
+endif()
 
-  if(USE_VIRTUAL_KEYBOARD)
-    add_definitions(-DUSE_VIRTUAL_KEYBOARD)
-    set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/text-input-unstable-v1-protocol.c)
-  endif()
+# Use virtual keybard(on-screen keyboard).
+if(USE_VIRTUAL_KEYBOARD)
+  add_definitions(-DUSE_VIRTUAL_KEYBOARD)
 endif()
 
 # OpenGL ES version.
