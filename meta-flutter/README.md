@@ -52,21 +52,23 @@ $ ./tmp/deploy/sdk/poky-glibc-x86_64-core-image-weston-aarch64-qemuarm64-toolcha
 ```
 
 ## Cross-building with bitbake
-### Flutter Engine library
+### Flutter Engine (libflutter_engine.so)
 Build target is fixed to Linux and Arm64, and Flutter Engine version is also fixed in the recipe file.
+
+#### Flutter Engine version
 ```
-# FYI: Latest as of 2021-05-09.
 ENGINE_VERSION ?= "f5b97d0b23a3905e9b5b69aa873afcb52f550aaf"
 ```
-You need to use the following Flutter SDK versions when creating a Flutter project.  
+
+When creating a Flutter project, you will need to use the following version of the Flutter SDK.  
 `Flutter 2.3.0-1.0.pre.269`
 
-Add the following in your `conf/local.conf`, if you want to change the Flutter Engine version. You need to modify <engine_version> appropriately for your Flutter SDK versions:
+If you want to change the version of the Flutter engine, change <engine_version> to the appropriate version of the Flutter SDK and add the following to `conf/local.conf`:
 ```
-ENGINE_VERSION_pn-flutter-engine = <engine_version>
+ENGINE_VERSION_pn-flutter-engine = "<engine_version>"
 ```
 
-Flutter Engine is built with release mode by default. If you want to change the build mode, you can change it to add the following in your conf/local.conf:
+Flutter Engine is built with release mode by default. If you want to change the build mode, you can change it to add the following in your `conf/local.conf`:
 ```
 # e.g. debug mode
 PACKAGECONFIG_pn-flutter-engine = "debug-mode"
