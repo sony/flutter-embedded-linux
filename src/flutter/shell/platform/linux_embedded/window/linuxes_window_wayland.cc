@@ -655,7 +655,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     height = current_height_;
   }
 
-  LINUXES_LOG(TRACE) << "Created the Waylnad surface: " << width << "x"
+  LINUXES_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
                      << height;
   if (show_cursor_) {
     wl_cursor_surface_ = wl_compositor_create_surface(wl_compositor_);
