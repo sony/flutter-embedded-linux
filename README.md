@@ -4,7 +4,7 @@
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
 ## Objective & Goal
-Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add embedded systems support into Flutter officially for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
+Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add an embedded systems version into Flutter mainline for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
 
 We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover specifications of general-purpose embedded systems.
 
@@ -18,8 +18,6 @@ We would be grateful if you could give us feedback on bugs and new feature reque
   - Direct rendering module ([DRM](https://en.wikipedia.org/wiki/Direct_Rendering_Manager))
     - Generic Buffer Management ([GBM](https://en.wikipedia.org/wiki/Mesa_(computer_graphics)))
     - [EGLStream](https://docs.nvidia.com/drive/drive_os_5.1.6.1L/nvvib_docs/index.html#page/DRIVE_OS_Linux_SDK_Development_Guide/Graphics/graphics_eglstream_user_guide.html) for NVIDIA devices
-  - X11
-    - For developing Flutter apps on Linux desktops purposes. It is not intended for use in embedded systems. 
 - Always single window fullscreen
   - You can choose always-fullscreen or flexible-screen (any size) only when using Wayland/X11 backend
 - Keyboard, mouse and touch inputs support
