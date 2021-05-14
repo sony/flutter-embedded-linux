@@ -4,9 +4,9 @@
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
 ## Objective & Goal
-Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add an embedded systems version into Flutter mainline for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
+Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add an embedded systems version into the Flutter repo for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
 
-We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover specifications of general-purpose embedded systems.
+We would be grateful if you could give us feedback on bugs and new feature requests. We would like to cover the specifications of general-purpose embedded systems.
 
 ## Features
 - Flutter embedder optimized for Embedded Systems
@@ -32,9 +32,9 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 
 | Board / SoC | Vendor | OS / BSP | Backend | Status |
 | :-------------: | :-------------: | :-------------: | :-------------: | :-------------: |
-| Desktop (x86_64) | Intel | Ubuntu18.04 | Wayland | :heavy_check_mark: |
-| Desktop (x86_64) | Intel | Ubuntu18.04 | DRM | :heavy_check_mark: |
-| Desktop (x86_64) | Intel | Ubuntu18.04 | X11 | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu 18.04 | Wayland | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu 18.04 | DRM | :heavy_check_mark: |
+| Desktop (x86_64) | Intel | Ubuntu 18.04 | X11 | :heavy_check_mark: |
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | Wayland | :heavy_check_mark: |
 | QEMU (x86_64) | QEMU | [AGL (Automotive Grade Linux)](https://wiki.automotivelinux.org/) koi | DRM | :heavy_check_mark: |
 | [Jetson Nano](https://developer.nvidia.com/embedded/jetson-nano-developer-kit) | NVIDIA | JetPack 4.3 | Wayland | :heavy_check_mark: |
@@ -44,7 +44,7 @@ This embedder supports x64 and Arm64 (aarch64, ARMv8) architectures on Linux whi
 | [i.MX 8MQuad EVK](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-applications-processor:MCIMX8M-EVK) | NXP | Sumo (kernel 4.14.98) | Wayland | :heavy_check_mark: |
 | [i.MX 8M Mini EVKB](https://www.nxp.com/design/development-boards/i-mx-evaluation-and-development-boards/evaluation-kit-for-the-i-mx-8m-mini-applications-processor:8MMINILPD4-EVK) | NXP | Zeus (kernel 5.4.70) | Wayland | :heavy_check_mark: |
 | Zynq | Xilinx | - | - | Not tested |
-| [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | - | - | Not tested |
+| [RB5 Development Kit](https://developer.qualcomm.com/qualcomm-robotics-rb5-kit) | Qualcomm | Ubuntu 18.04.05 | DRM | Not tested |
 
 Note
  - i.MX 8M platforms don't support applications using EGL on GBM, which means the DRM-GBM backend won't work on i.MX 8M devices.
