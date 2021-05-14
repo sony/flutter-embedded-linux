@@ -25,10 +25,11 @@ $ sudo apt install libwayland-dev wayland-protocols
 ```
 
 ### Only when using weston desktop-shell
-- weston (>=6.0.1, see: [#3](https://github.com/sony/flutter-embedded-linux/issues/3))
+- weston (>=8.0.0)
+- libweston-*-dev
 
 ```Shell
-$ sudo apt install weston
+$ sudo apt install weston libweston-8-dev
 ```
 
 ### Only when using DRM backend

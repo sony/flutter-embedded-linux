@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include <config-parser.h>
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
+#include <libweston/config-parser.h>
 
 #include <iostream>
 #include <memory>
@@ -12,14 +12,14 @@
 
 int main(int argc, char** argv) {
   // Works as a weston desktop shell.
-  int show_cursor = 1;
+  bool show_cursor;
   auto config_file = weston_config_get_name_from_env();
   auto config = weston_config_parse(config_file);
-  auto s =
-      weston_config_get_section(config, "flutter_linux_wayland", NULL, NULL);
+  auto s = weston_config_get_section(config, "flutter_linux_wayland", nullptr,
+                                     nullptr);
   char* path = nullptr;
   if (s) {
-    weston_config_section_get_bool(s, "show-cursor", &show_cursor, 1);
+    weston_config_section_get_bool(s, "show-cursor", &show_cursor, true);
     weston_config_section_get_string(
         s, "flutter-project-path", &path,
         "../../sample-app/sample/build/linux/x64/release/bundle");
