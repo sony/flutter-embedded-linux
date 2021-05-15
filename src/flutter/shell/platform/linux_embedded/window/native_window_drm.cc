@@ -41,8 +41,7 @@ bool NativeWindowDrm::Resize(const size_t width, const size_t height) {
     return false;
   }
 
-  // todo: implement here.
-  LINUXES_LOG(ERROR) << "TODO: implement here!!";
+  LINUXES_LOG(ERROR) << "Not supported now.";
 
   return false;
 }

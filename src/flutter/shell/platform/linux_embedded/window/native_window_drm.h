@@ -22,6 +22,8 @@ class NativeWindowDrm : public NativeWindow {
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) override;
 
+  bool ConfigureDisplay();
+
   bool MoveCursor(double x, double y);
 
   virtual bool ShowCursor(double x, double y) = 0;
@@ -32,8 +34,6 @@ class NativeWindowDrm : public NativeWindow {
   virtual bool DismissCursor() = 0;
 
   virtual std::unique_ptr<SurfaceGl> CreateRenderSurface() = 0;
-
-  bool ConfigureDisplay();
 
  protected:
   drmModeConnectorPtr FindConnector(drmModeResPtr resources);
