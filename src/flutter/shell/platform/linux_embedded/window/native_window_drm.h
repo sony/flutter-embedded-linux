@@ -19,9 +19,6 @@ class NativeWindowDrm : public NativeWindow {
   NativeWindowDrm(const char* device_filename);
   virtual ~NativeWindowDrm();
 
-  // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) override;
-
   bool ConfigureDisplay();
 
   bool MoveCursor(double x, double y);

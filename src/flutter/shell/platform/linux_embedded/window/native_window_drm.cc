@@ -35,17 +35,6 @@ NativeWindowDrm::~NativeWindowDrm() {
   }
 }
 
-bool NativeWindowDrm::Resize(const size_t width, const size_t height) {
-  if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
-    return false;
-  }
-
-  LINUXES_LOG(ERROR) << "Not supported now.";
-
-  return false;
-}
-
 bool NativeWindowDrm::MoveCursor(double x, double y) {
   auto result =
       drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
