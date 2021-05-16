@@ -684,11 +684,6 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
       std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
-  // The offscreen (resource) surface will not be mapped, but needs to be a
-  // wl_surface because ONLY window EGL surfaces are supported on Wayland.
-  render_surface_->SetNativeWindowResource(
-      std::make_unique<NativeWindowWayland>(wl_compositor_, 1, 1));
-
   return true;
 }
 

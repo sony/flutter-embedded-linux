@@ -74,7 +74,7 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOnscreenSurface(
 }
 
 std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
-    NativeWindow* window_resource) const {
+    NativeWindow* window) const {
 #if defined(DISPLAY_BACKEND_TYPE_X11) || \
     defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   const EGLint attribs[] = {
@@ -95,7 +95,7 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
   // Therefore, we neet to create a dummy wl_egl_window when we use Wayland.
   const EGLint attribs[] = {EGL_NONE};
   EGLSurface surface = eglCreateWindowSurface(
-      environment_->Display(), config_, window_resource->Window(), attribs);
+      environment_->Display(), config_, window->WindowOffscreen(), attribs);
   if (surface == EGL_NO_SURFACE) {
     LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
                          << "(" << get_egl_error_cause() << ")";

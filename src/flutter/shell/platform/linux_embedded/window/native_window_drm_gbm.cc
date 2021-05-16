@@ -66,6 +66,9 @@ NativeWindowDrmGbm::~NativeWindowDrmGbm() {
                                gbm_previous_bo_);
     gbm_surface_destroy(static_cast<gbm_surface*>(window_));
     window_ = nullptr;
+
+    gbm_surface_destroy(static_cast<gbm_surface*>(window_offscreen_));
+    window_offscreen_ = nullptr;
   }
 
   if (gbm_device_) {
@@ -194,6 +197,14 @@ bool NativeWindowDrmGbm::CreateGbmSurface() {
     valid_ = false;
     return false;
   }
+
+  window_offscreen_ = gbm_surface_create(gbm_device_, 1, 1, GBM_FORMAT_ARGB8888,
+                                         GBM_BO_USE_RENDERING);
+  if (!window_offscreen_) {
+    LINUXES_LOG(ERROR) << "Failed to create the gbm surface for offscreen.";
+    return false;
+  }
+
   return true;
 }
 

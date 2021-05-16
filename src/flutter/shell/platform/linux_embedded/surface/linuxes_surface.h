@@ -21,12 +21,6 @@ class Surface {
   // Sets a netive platform's window.
   bool SetNativeWindow(NativeWindow* window);
 
-  // Sets a netive platform's window for offscreen.
-  bool SetNativeWindowResource(NativeWindow* window);
-
-  // Sets a netive platform's window for offscreen.
-  bool SetNativeWindowResource(std::unique_ptr<NativeWindow> window);
-
   // Changes an on-screen surface size.
   // On-screen surface needs to be recreated after window size changed only when
   // using DRM-GBM backend. Because gbm-surface is recreated when the window
@@ -45,7 +39,6 @@ class Surface {
  protected:
   std::unique_ptr<ContextEgl> context_;
   NativeWindow* native_window_ = nullptr;
-  std::unique_ptr<NativeWindow> native_window_resource_ = nullptr;
   std::unique_ptr<LinuxesEGLSurface> onscreen_surface_ = nullptr;
   std::unique_ptr<LinuxesEGLSurface> offscreen_surface_ = nullptr;
 };
