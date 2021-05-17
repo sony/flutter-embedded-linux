@@ -53,6 +53,17 @@ NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
   }
 }
 
+bool NativeWindowDrmEglstream::Resize(const size_t width, const size_t height) {
+  if (!valid_) {
+    LINUXES_LOG(ERROR) << "Failed to resize the window.";
+    return false;
+  }
+
+  LINUXES_LOG(ERROR) << "Not supported now.";
+
+  return false;
+}
+
 bool NativeWindowDrmEglstream::ShowCursor(double x, double y) {
   // todo: implement here.
   return true;

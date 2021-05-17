@@ -129,7 +129,6 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     if (!render_surface_->SetNativeWindow(native_window_.get())) {
       return false;
     }
-    render_surface_->SetNativeWindowResource(native_window_.get());
 
     if (window_mode_ != FlutterWindowMode::kFullscreen) {
       LINUXES_LOG(WARNING)

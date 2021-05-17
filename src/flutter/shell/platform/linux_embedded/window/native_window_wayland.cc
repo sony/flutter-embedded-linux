@@ -23,6 +23,14 @@ NativeWindowWayland::NativeWindowWayland(wl_compositor* compositor,
     return;
   }
 
+  // The offscreen (resource) surface will not be mapped, but needs to be a
+  // wl_surface because ONLY window EGL surfaces are supported on Wayland.
+  window_offscreen_ = wl_egl_window_create(surface_, 1, 1);
+  if (!window_offscreen_) {
+    LINUXES_LOG(ERROR) << "Failed to create the EGL window for offscreen.";
+    return;
+  }
+
   width_ = width;
   height_ = height;
   valid_ = true;
@@ -32,6 +40,11 @@ NativeWindowWayland::~NativeWindowWayland() {
   if (window_) {
     wl_egl_window_destroy(window_);
     window_ = nullptr;
+  }
+
+  if (window_offscreen_) {
+    wl_egl_window_destroy(window_offscreen_);
+    window_offscreen_ = nullptr;
   }
 
   if (surface_) {

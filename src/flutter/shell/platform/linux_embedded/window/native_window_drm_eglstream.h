@@ -32,6 +32,9 @@ class NativeWindowDrmEglstream : public NativeWindowDrm {
   // |NativeWindowDrm|
   std::unique_ptr<SurfaceGl> CreateRenderSurface() override;
 
+  // |NativeWindow|
+  bool Resize(const size_t width, const size_t height) override;
+
   uint32_t PlaneId() { return drm_plane_id_; }
 
  private:
