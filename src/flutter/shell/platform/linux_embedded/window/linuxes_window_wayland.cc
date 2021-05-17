@@ -790,7 +790,7 @@ void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
       zwp_text_input_v3_commit(zwp_text_input_v3_);
 
       zwp_text_input_v3_set_content_type(
-          zwp_text_input_, ZWP_TEXT_INPUT_V3_CONTENT_HINT_NONE,
+          zwp_text_input_v3_, ZWP_TEXT_INPUT_V3_CONTENT_HINT_NONE,
           ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_TERMINAL);
       zwp_text_input_v3_commit(zwp_text_input_v3_);
     } else {
