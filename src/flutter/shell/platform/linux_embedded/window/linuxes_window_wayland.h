@@ -21,6 +21,7 @@
 // wayland-scanner.
 extern "C" {
 #include "wayland/protocol/text-input-unstable-v1-client-protocol.h"
+#include "wayland/protocol/text-input-unstable-v3-client-protocol.h"
 #include "wayland/protocol/weston-desktop-shell-client-protocol.h"
 #include "wayland/protocol/xdg-shell-client-protocol.h"
 }
@@ -93,9 +94,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   static const wl_touch_listener kWlTouchListener;
   static const wl_keyboard_listener kWlKeyboardListener;
   static const wl_output_listener kWlOutputListener;
-  static const zwp_text_input_v1_listener kZwpTextInputV1Listener;
   static const wl_data_device_listener kWlDataDeviceListener;
   static const wl_data_source_listener kWlDataSourceListener;
+  static const zwp_text_input_v1_listener kZwpTextInputV1Listener;
+  static const zwp_text_input_v3_listener kZwpTextInputV3Listener;
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
@@ -109,9 +111,6 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   wl_display* wl_display_;
   wl_registry* wl_registry_;
   wl_compositor* wl_compositor_;
-  xdg_wm_base* xdg_wm_base_;
-  xdg_surface* xdg_surface_;
-  xdg_toplevel* xdg_toplevel_;
   wl_seat* wl_seat_;
   wl_output* wl_output_;
   wl_shm* wl_shm_;
@@ -120,8 +119,15 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   wl_keyboard* wl_keyboard_;
   wl_surface* wl_cursor_surface_;
   wl_cursor_theme* wl_cursor_theme_;
+  xdg_wm_base* xdg_wm_base_;
+  xdg_surface* xdg_surface_;
+  xdg_toplevel* xdg_toplevel_;
+
+  // text-input protocol for onscreen keyboard inputs.
   zwp_text_input_manager_v1* zwp_text_input_manager_v1_;
+  zwp_text_input_manager_v3* zwp_text_input_manager_v3_;
   zwp_text_input_v1* zwp_text_input_v1_;
+  zwp_text_input_v3* zwp_text_input_v3_;
 
   CursorInfo cursor_info_;
 

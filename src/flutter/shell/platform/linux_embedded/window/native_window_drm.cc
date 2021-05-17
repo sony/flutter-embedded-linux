@@ -35,18 +35,6 @@ NativeWindowDrm::~NativeWindowDrm() {
   }
 }
 
-bool NativeWindowDrm::Resize(const size_t width, const size_t height) {
-  if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
-    return false;
-  }
-
-  // todo: implement here.
-  LINUXES_LOG(ERROR) << "TODO: implement here!!";
-
-  return false;
-}
-
 bool NativeWindowDrm::MoveCursor(double x, double y) {
   auto result =
       drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,

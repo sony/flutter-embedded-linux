@@ -18,6 +18,9 @@ class NativeWindow {
 
   EGLNativeWindowType Window() const { return window_; }
 
+  // Gets a window (GBM surface) for offscreen resource.
+  EGLNativeWindowType WindowOffscreen() const { return window_offscreen_; }
+
   int32_t Width() const {
     if (!valid_) {
       return -1;
@@ -42,6 +45,7 @@ class NativeWindow {
 
  protected:
   EGLNativeWindowType window_;
+  EGLNativeWindowType window_offscreen_;
   int32_t width_;
   int32_t height_;
   bool valid_ = false;

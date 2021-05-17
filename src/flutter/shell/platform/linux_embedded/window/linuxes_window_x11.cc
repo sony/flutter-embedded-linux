@@ -121,7 +121,6 @@ bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
 
   render_surface_ = std::make_unique<SurfaceGl>(std::move(context_egl));
   render_surface_->SetNativeWindow(native_window_.get());
-  render_surface_->SetNativeWindowResource(nullptr);
 
   return true;
 }
