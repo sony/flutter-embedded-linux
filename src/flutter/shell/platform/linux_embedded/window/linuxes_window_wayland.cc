@@ -104,7 +104,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
       if (self->show_cursor_) {
-        self->cursor_info_.wl_pointer = wl_pointer;
+        self->cursor_info_.pointer = wl_pointer;
         self->cursor_info_.serial = serial;
       }
 
@@ -813,7 +813,7 @@ void LinuxesWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
 
     if (cursor_name.compare(kCursorNameNone) == 0) {
       // Turn off the cursor.
-      wl_pointer_set_cursor(cursor_info_.wl_pointer, cursor_info_.serial,
+      wl_pointer_set_cursor(cursor_info_.pointer, cursor_info_.serial,
                             wl_cursor_surface_, 0, 0);
       wl_surface_attach(wl_cursor_surface_, nullptr, 0, 0);
       wl_surface_damage(wl_cursor_surface_, 0, 0, 0, 0);
@@ -828,7 +828,7 @@ void LinuxesWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
     auto image = wl_cursor->images[0];
     auto buffer = wl_cursor_image_get_buffer(image);
     if (buffer) {
-      wl_pointer_set_cursor(cursor_info_.wl_pointer, cursor_info_.serial,
+      wl_pointer_set_cursor(cursor_info_.pointer, cursor_info_.serial,
                             wl_cursor_surface_, image->hotspot_x,
                             image->hotspot_y);
       wl_surface_attach(wl_cursor_surface_, buffer, 0, 0);

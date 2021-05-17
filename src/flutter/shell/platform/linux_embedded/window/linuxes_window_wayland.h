@@ -74,7 +74,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   struct CursorInfo {
     std::string cursor_name;
     uint32_t serial;
-    wl_pointer* wl_pointer;
+    wl_pointer* pointer;
   };
 
   void WlRegistryHandler(wl_registry* wl_registry, uint32_t name,
