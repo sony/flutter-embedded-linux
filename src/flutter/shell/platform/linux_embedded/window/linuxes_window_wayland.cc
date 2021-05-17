@@ -20,6 +20,7 @@ namespace flutter {
 namespace {
 constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
+constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
 
 constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
 constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
@@ -403,6 +404,30 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                              uint32_t serial, uint32_t direction) -> void {},
 };
 
+const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
+    {
+        .enter = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+                    wl_surface* surface) -> void {},
+        .leave = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+                    wl_surface* surface) -> void {},
+        .preedit_string = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+                             const char* text, int32_t cursor_begin,
+                             int32_t cursor_end) -> void {},
+        .commit_string = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+                            const char* text) -> void {
+          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          if (self->binding_handler_delegate_ && strlen(text)) {
+            self->binding_handler_delegate_->OnVirtualKey(text[0]);
+          }
+        },
+        .delete_surrounding_text =
+            [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+               uint32_t before_length, uint32_t after_length) -> void {},
+        .done = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
+                   uint32_t serial) -> void {},
+
+};
+
 const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
     .data_offer = [](void* data, wl_data_device* wl_data_device,
                      wl_data_offer* offer) -> void {},
@@ -458,17 +483,20 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            bool show_cursor)
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
+      wl_seat_(nullptr),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
       wl_keyboard_(nullptr),
-      zwp_text_input_manager_v1_(nullptr),
-      zwp_text_input_v1_(nullptr),
       wl_shm_(nullptr),
-      wl_cursor_theme_(nullptr),
       wl_data_device_manager_(nullptr),
       wl_data_device_(nullptr),
       wl_data_offer_(nullptr),
       wl_data_source_(nullptr),
+      wl_cursor_theme_(nullptr),
+      zwp_text_input_manager_v1_(nullptr),
+      zwp_text_input_manager_v3_(nullptr),
+      zwp_text_input_v1_(nullptr),
+      zwp_text_input_v3_(nullptr),
       serial_(0) {
   window_mode_ = window_mode;
   current_width_ = width;
@@ -497,6 +525,31 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
     wl_data_device_add_listener(wl_data_device_, &kWlDataDeviceListener, this);
   }
 
+  // Setup text-input protocol for onscreen keyboard inputs.
+  {
+    if (zwp_text_input_manager_v3_ && wl_seat_) {
+      zwp_text_input_v3_ = zwp_text_input_manager_v3_get_text_input(
+          zwp_text_input_manager_v3_, wl_seat_);
+      if (!zwp_text_input_v3_) {
+        LINUXES_LOG(ERROR) << "Failed to create the text input manager v3.";
+        return;
+      }
+      zwp_text_input_v3_add_listener(zwp_text_input_v3_,
+                                     &kZwpTextInputV3Listener, this);
+    } else if (zwp_text_input_manager_v1_) {
+      zwp_text_input_v1_ = zwp_text_input_manager_v1_create_text_input(
+          zwp_text_input_manager_v1_);
+      if (!zwp_text_input_v1_) {
+        LINUXES_LOG(ERROR) << "Failed to create text input manager v1.";
+        return;
+      }
+      zwp_text_input_v1_add_listener(zwp_text_input_v1_,
+                                     &kZwpTextInputV1Listener, this);
+    } else {
+      // do nothing.
+    }
+  }
+
   if (weston_desktop_shell_) {
     weston_desktop_shell_desktop_ready(weston_desktop_shell_);
   }
@@ -517,14 +570,26 @@ LinuxesWindowWayland::~LinuxesWindowWayland() {
     wl_cursor_theme_ = nullptr;
   }
 
-  if (zwp_text_input_v1_) {
-    zwp_text_input_v1_destroy(zwp_text_input_v1_);
-    zwp_text_input_v1_ = nullptr;
-  }
+  {
+    if (zwp_text_input_v1_) {
+      zwp_text_input_v1_destroy(zwp_text_input_v1_);
+      zwp_text_input_v1_ = nullptr;
+    }
 
-  if (zwp_text_input_manager_v1_) {
-    zwp_text_input_manager_v1_destroy(zwp_text_input_manager_v1_);
-    zwp_text_input_manager_v1_ = nullptr;
+    if (zwp_text_input_manager_v1_) {
+      zwp_text_input_manager_v1_destroy(zwp_text_input_manager_v1_);
+      zwp_text_input_manager_v1_ = nullptr;
+    }
+
+    if (zwp_text_input_v3_) {
+      zwp_text_input_v3_destroy(zwp_text_input_v3_);
+      zwp_text_input_v3_ = nullptr;
+    }
+
+    if (zwp_text_input_manager_v3_) {
+      zwp_text_input_manager_v3_destroy(zwp_text_input_manager_v3_);
+      zwp_text_input_manager_v3_ = nullptr;
+    }
   }
 
   if (wl_data_offer_) {
@@ -712,18 +777,36 @@ void LinuxesWindowWayland::DestroyRenderSurface() {
 
 void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
   // Not supported virtual keyboard.
-  if (!zwp_text_input_v1_ || !wl_seat_) {
+  if (!(zwp_text_input_v1_ || zwp_text_input_v3_) || !wl_seat_) {
     return;
   }
 
   if (show) {
-    if (native_window_) {
-      zwp_text_input_v1_show_input_panel(zwp_text_input_v1_);
-      zwp_text_input_v1_activate(zwp_text_input_v1_, wl_seat_,
-                                 native_window_->Surface());
+    if (zwp_text_input_v3_) {
+      // I'm not sure the reason, but enable needs to be called twice.
+      zwp_text_input_v3_enable(zwp_text_input_v3_);
+      zwp_text_input_v3_commit(zwp_text_input_v3_);
+      zwp_text_input_v3_enable(zwp_text_input_v3_);
+      zwp_text_input_v3_commit(zwp_text_input_v3_);
+
+      zwp_text_input_v3_set_content_type(
+          zwp_text_input_, ZWP_TEXT_INPUT_V3_CONTENT_HINT_NONE,
+          ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_TERMINAL);
+      zwp_text_input_v3_commit(zwp_text_input_v3_);
+    } else {
+      if (native_window_) {
+        zwp_text_input_v1_show_input_panel(zwp_text_input_v1_);
+        zwp_text_input_v1_activate(zwp_text_input_v1_, wl_seat_,
+                                   native_window_->Surface());
+      }
     }
   } else {
-    zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
+    if (zwp_text_input_v3_) {
+      zwp_text_input_v3_disable(zwp_text_input_v3_);
+      zwp_text_input_v3_commit(zwp_text_input_v3_);
+    } else {
+      zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
+    }
   }
 }
 
@@ -875,14 +958,13 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     zwp_text_input_manager_v1_ =
         static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
             wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
-    zwp_text_input_v1_ =
-        zwp_text_input_manager_v1_create_text_input(zwp_text_input_manager_v1_);
-    if (!zwp_text_input_v1_) {
-      LINUXES_LOG(ERROR) << "Failed to create text input manager.";
-      return;
-    }
-    zwp_text_input_v1_add_listener(zwp_text_input_v1_, &kZwpTextInputV1Listener,
-                                   this);
+    return;
+  }
+
+  if (!strcmp(interface, kZwpTextInputManagerV3)) {
+    zwp_text_input_manager_v3_ =
+        static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
+            wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
     return;
   }
 #endif
