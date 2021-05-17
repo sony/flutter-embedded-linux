@@ -425,7 +425,6 @@ const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
                uint32_t before_length, uint32_t after_length) -> void {},
         .done = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
                    uint32_t serial) -> void {},
-
 };
 
 const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
