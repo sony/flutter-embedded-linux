@@ -24,7 +24,7 @@ See also: https://github.com/dart-lang/sdk/wiki/Building#python-2
 
 ## 2. Create .gclient file
 
-### When using the latest version
+### When using the latest version of Flutter Engine
 
 ```yaml
 solutions = [
@@ -39,7 +39,7 @@ solutions = [
 ]
 ```
 
-### When using a specific version
+### When using a specific version of Flutter Engine
 
 You can check the current engine version (commit id / SHA):
 - [master channel](https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version)
@@ -75,56 +75,55 @@ $ gclient sync
 $ cd src
 ```
 
-### for arm64 targets with debug mode
+### arm64 targets with debug mode
 
 ```Shell
-$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode debug --unoptimized --embedder-for-target
+$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode debug --unoptimized --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/linux_debug_unopt_arm64
 ```
 
-### for arm64 targets with profile mode
+### arm64 targets with profile mode
 
 ```Shell
-$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode profile --no-lto --embedder-for-target
+$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode profile --no-lto --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/linux_profile_arm64
 ```
 
-### for arm64 targets with release mode
+### arm64 targets with release mode
 
 ```Shell
-$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode release --embedder-for-target
+$ ./flutter/tools/gn --target-os linux --linux-cpu arm64 --runtime-mode release --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/linux_release_arm64
 ```
 
-### for x64 targets with debug mode
+### x64 targets with debug mode
 
 ```Shell
-$ ./flutter/tools/gn --runtime-mode debug --unoptimized --embedder-for-target
+$ ./flutter/tools/gn --runtime-mode debug --unoptimized --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/host_debug_unopt
 ```
 
-### for x64 targets with profile mode
+### x64 targets with profile mode
 
 ```Shell
-$ ./flutter/tools/gn --runtime-mode profile --no-lto --embedder-for-target
+$ ./flutter/tools/gn --runtime-mode profile --no-lto --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/host_profile
 ```
 
-### for x64 targets with release mode
+### x64 targets with release mode
 
 ```Shell
-$ ./flutter/tools/gn --runtime-mode release --embedder-for-target
+$ ./flutter/tools/gn --runtime-mode release --embedder-for-target --disable-desktop-embeddings
 $ ninja -C out/host_release
 ```
 
 ## 5. Install embedder library
 
 ```Shell
-$ sudo cp ./out/${path to your selected target and mode}/libflutter_engine.so <path_to_cmake_build_directory>
+$ cp ./out/${path to your selected target and mode}/libflutter_engine.so <path_to_cmake_build_directory>
 ```
 
 ### Supplement
-
 You need to install `libflutter_engine.so` in `<path_to_cmake_build_directory>` to build. But you can switch quickly between debug / profile / release modes for the Flutter app without replacing `libflutter_engine.so` by using `LD_LIBRARY_PATH` when you run the Flutter app.
 
 ```Shell
