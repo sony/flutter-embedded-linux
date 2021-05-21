@@ -702,8 +702,8 @@ bool LinuxesWindowWayland::DispatchEvent() {
     return false;
   }
 
-  // If Wayland compositor (Weston) terminates, -1 is returned.
-  return (wl_display_dispatch(wl_display_) != -1);
+  // If Wayland compositor terminates, -1 is returned.
+  return wl_display_dispatch_pending(wl_display_) != -1;
 }
 
 bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
