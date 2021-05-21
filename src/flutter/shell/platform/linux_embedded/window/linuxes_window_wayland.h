@@ -86,6 +86,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
 
   wl_cursor* GetWlCursor(const std::string& cursor_name);
 
+  void ShowVirtualKeyboard();
+
+  void DismissVirtualKeybaord();
+
   static const wl_registry_listener kWlRegistryListener;
   static const xdg_wm_base_listener kXdgWmBaseListener;
   static const xdg_surface_listener kXdgSurfaceListener;
@@ -107,6 +111,9 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
+
+  // Indicates that exists a keyboard show request from Flutter Engine.
+  bool is_requested_show_virtual_keyboard_;
 
   wl_display* wl_display_;
   wl_registry* wl_registry_;
