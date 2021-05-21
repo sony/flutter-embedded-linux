@@ -407,7 +407,14 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
 const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
     {
         .enter = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
-                    wl_surface* surface) -> void {},
+                    wl_surface* surface) -> void {
+          // To appear the on-screen keyboard when the user returns to a Flutter
+          // app which needs to show the on-screen keyboard.
+          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          if (self->is_requested_show_virtual_keyboard_) {
+            self->ShowVirtualKeyboard();
+          }
+        },
         .leave = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
                     wl_surface* surface) -> void {},
         .preedit_string = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
@@ -482,6 +489,7 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
                                            bool show_cursor)
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
+      is_requested_show_virtual_keyboard_(false),
       wl_seat_(nullptr),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
@@ -775,32 +783,11 @@ void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
     return;
   }
 
-  if (show) {
-    if (zwp_text_input_v3_) {
-      // I'm not sure the reason, but enable needs to be called twice.
-      zwp_text_input_v3_enable(zwp_text_input_v3_);
-      zwp_text_input_v3_commit(zwp_text_input_v3_);
-      zwp_text_input_v3_enable(zwp_text_input_v3_);
-      zwp_text_input_v3_commit(zwp_text_input_v3_);
-
-      zwp_text_input_v3_set_content_type(
-          zwp_text_input_v3_, ZWP_TEXT_INPUT_V3_CONTENT_HINT_NONE,
-          ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_TERMINAL);
-      zwp_text_input_v3_commit(zwp_text_input_v3_);
-    } else {
-      if (native_window_) {
-        zwp_text_input_v1_show_input_panel(zwp_text_input_v1_);
-        zwp_text_input_v1_activate(zwp_text_input_v1_, wl_seat_,
-                                   native_window_->Surface());
-      }
-    }
+  is_requested_show_virtual_keyboard_ = show;
+  if (is_requested_show_virtual_keyboard_) {
+    ShowVirtualKeyboard();
   } else {
-    if (zwp_text_input_v3_) {
-      zwp_text_input_v3_disable(zwp_text_input_v3_);
-      zwp_text_input_v3_commit(zwp_text_input_v3_);
-    } else {
-      zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
-    }
+    DismissVirtualKeybaord();
   }
 }
 
@@ -1061,6 +1048,37 @@ wl_cursor* LinuxesWindowWayland::GetWlCursor(const std::string& cursor_name) {
 
   LINUXES_LOG(ERROR) << "Unsupported cursor: " << cursor_name.c_str();
   return supported_wl_cursor_list_[kWlCursorThemeLeftPtr];
+}
+
+void LinuxesWindowWayland::ShowVirtualKeyboard() {
+  if (zwp_text_input_v3_) {
+    // I'm not sure the reason, but enable needs to be called twice.
+    zwp_text_input_v3_enable(zwp_text_input_v3_);
+    zwp_text_input_v3_commit(zwp_text_input_v3_);
+    zwp_text_input_v3_enable(zwp_text_input_v3_);
+    zwp_text_input_v3_commit(zwp_text_input_v3_);
+
+    zwp_text_input_v3_set_content_type(
+        zwp_text_input_v3_, ZWP_TEXT_INPUT_V3_CONTENT_HINT_NONE,
+        ZWP_TEXT_INPUT_V3_CONTENT_PURPOSE_TERMINAL);
+    zwp_text_input_v3_commit(zwp_text_input_v3_);
+  } else {
+    if (native_window_) {
+      zwp_text_input_v1_show_input_panel(zwp_text_input_v1_);
+      zwp_text_input_v1_activate(zwp_text_input_v1_, wl_seat_,
+                                 native_window_->Surface());
+    }
+  }
+}
+}
+
+void LinuxesWindowWayland::DismissVirtualKeybaord() {
+  if (zwp_text_input_v3_) {
+    zwp_text_input_v3_disable(zwp_text_input_v3_);
+    zwp_text_input_v3_commit(zwp_text_input_v3_);
+  } else {
+    zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
+  }
 }
 
 }  // namespace flutter
