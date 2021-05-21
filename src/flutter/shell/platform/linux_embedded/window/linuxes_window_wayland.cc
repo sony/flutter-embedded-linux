@@ -1070,7 +1070,6 @@ void LinuxesWindowWayland::ShowVirtualKeyboard() {
     }
   }
 }
-}
 
 void LinuxesWindowWayland::DismissVirtualKeybaord() {
   if (zwp_text_input_v3_) {
