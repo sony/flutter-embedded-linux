@@ -10,6 +10,8 @@
 #include <memory>
 #include <string>
 
+#include "flutter_window.h"
+
 int main(int argc, char** argv) {
   // Works as a weston desktop shell.
   bool show_cursor;
@@ -45,26 +47,21 @@ int main(int argc, char** argv) {
   // weston_config_destroy(config);
 
   // The project to run.
+  constexpr int width = 640;
+  constexpr int height = 480;
+
   flutter::DartProject project(fl_path);
   auto command_line_arguments = std::vector<std::string>();
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   // The Flutter instance hosted by this window.
-  int width = 640;
-  int height = 480;
-  auto flutter_controller = std::make_unique<flutter::FlutterViewController>(
-      flutter::FlutterViewController::ViewMode::kFullscreen, width, height,
-      show_cursor, project);
-
-  // Ensure that basic setup of the controller was successful.
-  if (!flutter_controller->engine() || !flutter_controller->view()) {
+  FlutterWindow window(project);
+  if (!window.OnCreate(flutter::FlutterViewController::ViewMode::kFullscreen,
+                       width, height, show_cursor)) {
+    std::cerr << "Failed to create a Flutter window." << std::endl;
     return 0;
   }
-
-  // Main loop.
-  while (flutter_controller->view()->DispatchEvent()) {
-    flutter_controller->engine()->ProcessMessages();
-  }
-
+  window.Run();
+  window.OnDestroy();
   return 0;
 }

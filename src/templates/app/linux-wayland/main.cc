@@ -10,6 +10,7 @@
 #include <string>
 
 #include "command_options.h"
+#include "flutter_window.h"
 
 int main(int argc, char** argv) {
   commandline::CommandOptions options;
@@ -28,12 +29,6 @@ int main(int argc, char** argv) {
 
   // The project to run.
   const auto bundle_path = options.GetValue<std::string>("bundle");
-  const std::wstring fl_path(bundle_path.begin(), bundle_path.end());
-  flutter::DartProject project(fl_path);
-  auto command_line_arguments = std::vector<std::string>();
-  project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
-
-  // The Flutter instance hosted by this window.
   const bool show_cursor = !options.Exist("no-cursor");
   const auto view_mode =
       options.Exist("fullscreen")
@@ -41,18 +36,19 @@ int main(int argc, char** argv) {
           : flutter::FlutterViewController::ViewMode::kNormal;
   const auto width = options.GetValue<int>("width");
   const auto height = options.GetValue<int>("height");
-  auto flutter_controller = std::make_unique<flutter::FlutterViewController>(
-      view_mode, width, height, show_cursor, project);
 
-  // Ensure that basic setup of the controller was successful.
-  if (!flutter_controller->engine() || !flutter_controller->view()) {
+  const std::wstring fl_path(bundle_path.begin(), bundle_path.end());
+  flutter::DartProject project(fl_path);
+  auto command_line_arguments = std::vector<std::string>();
+  project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
+
+  // The Flutter instance hosted by this window.
+  FlutterWindow window(project);
+  if (!window.OnCreate(view_mode, width, height, show_cursor)) {
+    std::cerr << "Failed to create a Flutter window." << std::endl;
     return 0;
   }
-
-  // Main loop.
-  while (flutter_controller->view()->DispatchEvent()) {
-    flutter_controller->engine()->ProcessMessages();
-  }
-
+  window.Run();
+  window.OnDestroy();
   return 0;
 }
