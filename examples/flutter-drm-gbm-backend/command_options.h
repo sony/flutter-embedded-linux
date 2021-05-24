@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#ifndef COMMAND_OPTIONS_
+#define COMMAND_OPTIONS_
+
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -360,3 +363,5 @@ class CommandOptions {
 };
 
 }  // namespace commandline
+
+#endif  // COMMAND_OPTIONS_

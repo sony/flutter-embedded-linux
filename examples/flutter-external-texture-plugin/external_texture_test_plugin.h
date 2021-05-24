@@ -1,8 +1,10 @@
 #ifndef EXAMPLES_FLUTTER_EXTERNAL_TEXTURE_PLUGIN_EXTERNAL_TEXTURE_TEST_PLUGIN_H_
 #define EXAMPLES_FLUTTER_EXTERNAL_TEXTURE_PLUGIN_EXTERNAL_TEXTURE_TEST_PLUGIN_H_
 
-#include "flutter/shell/platform/common/client_wrapper/include/flutter/method_channel.h"
-#include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
+#include <flutter/method_channel.h>
+#include <flutter/plugin_registrar.h>
+
+#include <memory>
 
 namespace {
 class ColorBarTexture {
