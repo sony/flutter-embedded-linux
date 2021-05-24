@@ -62,15 +62,16 @@ int main(int argc, char** argv) {
     {
       auto next_event_time = std::chrono::steady_clock::time_point::max();
       if (wait_duration != std::chrono::nanoseconds::max()) {
-        auto next_wakeup =
-            std::max(std::chrono::steady_clock::time_point::max(),
+        next_event_time =
+            std::min(next_event_time,
                      std::chrono::steady_clock::time_point::clock::now() +
                          wait_duration);
-        next_event_time = std::min(next_event_time, next_wakeup);
       } else {
         // Wait 1/60 [sec] = 13 [msec] if no events.
-        next_event_time = std::chrono::steady_clock::time_point::clock::now() +
-                          std::chrono::milliseconds(13);
+        next_event_time =
+            std::min(next_event_time,
+                     std::chrono::steady_clock::time_point::clock::now() +
+                         std::chrono::milliseconds(13));
       }
       next_flutter_event_time =
           std::max(next_flutter_event_time, next_event_time);

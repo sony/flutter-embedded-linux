@@ -6,6 +6,7 @@
 
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
+#include <poll.h>
 #include <unistd.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
 
@@ -702,8 +703,35 @@ bool LinuxesWindowWayland::DispatchEvent() {
     return false;
   }
 
-  // If Wayland compositor (Weston) terminates, -1 is returned.
-  return (wl_display_dispatch(wl_display_) != -1);
+  pollfd fds[] = {
+      {wl_display_get_fd(wl_display_), POLLIN},
+  };
+
+  // Prepare to call wl_display_read_events.
+  while (wl_display_prepare_read(wl_display_) != 0) {
+    // If Wayland compositor terminates, -1 is returned.
+    auto result = wl_display_dispatch_pending(wl_display_);
+    if (result == -1) {
+      return false;
+    }
+  }
+
+  // Handle events.
+  wl_display_flush(wl_display_);
+  if (poll(fds, 1, 0) > 0) {
+    int result = wl_display_read_events(wl_display_);
+    if (result == -1) {
+      return false;
+    }
+    result = wl_display_dispatch_pending(wl_display_);
+    if (result == -1) {
+      return false;
+    }
+  } else {
+    wl_display_cancel_read(wl_display_);
+  }
+
+  return true;
 }
 
 bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
