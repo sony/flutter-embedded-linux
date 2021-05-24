@@ -31,18 +31,16 @@ class _MyAppState extends State<MyApp> {
   int _textureId = 0;
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-
-    await initialize();
-    setState(() {});
+    initialize().then((value) => setState(() {}));
   }
 
   Future<void> initialize() async {
     late Completer<void> creatingCompleter;
     try {
       creatingCompleter = Completer<void>();
-      final channel = const MethodChannel('external_texture_test');
+      var channel = const MethodChannel('external_texture_test');
       final reply =
           await channel.invokeMapMethod<String, dynamic>('initialize');
       if (reply != null) {
