@@ -5,6 +5,7 @@ set(TARGET flutter-drm-eglstream-backend)
 
 # source files for user apps.
 set(USER_APP_SRCS
+  examples/flutter-drm-eglstream-backend/flutter_window.cc
   examples/flutter-drm-eglstream-backend/main.cc
 )
 

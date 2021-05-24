@@ -5,6 +5,7 @@ set(TARGET flutter-client)
 
 # source files for user apps.
 set(USER_APP_SRCS
+  examples/flutter-wayland-client/flutter_window.cc
   examples/flutter-wayland-client/main.cc
 )
 

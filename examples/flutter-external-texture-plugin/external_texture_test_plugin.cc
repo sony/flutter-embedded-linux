@@ -1,8 +1,7 @@
 #include "external_texture_test_plugin.h"
 
+#include <flutter/standard_method_codec.h>
 #include <unistd.h>
-
-#include "flutter/shell/platform/common/client_wrapper/include/flutter/standard_method_codec.h"
 
 namespace {
 

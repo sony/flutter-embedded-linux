@@ -5,6 +5,7 @@ set(TARGET flutter-drm-gbm-backend)
 
 # source files for user apps.
 set(USER_APP_SRCS
+  examples/flutter-drm-gbm-backend/flutter_window.cc
   examples/flutter-drm-gbm-backend/main.cc
 )
 

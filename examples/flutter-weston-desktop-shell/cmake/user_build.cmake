@@ -5,6 +5,7 @@ set(TARGET flutter-desktop-shell)
 
 # source files for user apps.
 set(USER_APP_SRCS
+  examples/flutter-weston-desktop-shell/flutter_window.cc
   examples/flutter-weston-desktop-shell/main.cc
 )
 
