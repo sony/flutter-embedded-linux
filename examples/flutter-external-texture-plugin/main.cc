@@ -5,9 +5,11 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 
+#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
+#include <thread>
 
 #include "command_options.h"
 #include "external_texture_test_plugin.h"
@@ -55,8 +57,39 @@ int main(int argc, char** argv) {
           "ExternalTextureTestPlugin"));
 
   // Main loop.
+  auto next_flutter_event_time =
+      std::chrono::steady_clock::time_point::clock::now();
   while (flutter_controller->view()->DispatchEvent()) {
-    flutter_controller->engine()->ProcessMessages();
+    // Wait until the next event.
+    {
+      auto wait_duration =
+          std::max(std::chrono::nanoseconds(0),
+                   next_flutter_event_time -
+                       std::chrono::steady_clock::time_point::clock::now());
+      std::this_thread::sleep_for(
+          std::chrono::duration_cast<std::chrono::milliseconds>(wait_duration));
+    }
+
+    // Processes any pending events in the Flutter engine, and returns the
+    // number of nanoseconds until the next scheduled event (or max, if none).
+    auto wait_duration = flutter_controller->engine()->ProcessMessages();
+    {
+      auto next_event_time = std::chrono::steady_clock::time_point::max();
+      if (wait_duration != std::chrono::nanoseconds::max()) {
+        next_event_time =
+            std::min(next_event_time,
+                     std::chrono::steady_clock::time_point::clock::now() +
+                         wait_duration);
+      } else {
+        // Wait 1/60 [sec] = 13 [msec] if no events.
+        next_event_time =
+            std::min(next_event_time,
+                     std::chrono::steady_clock::time_point::clock::now() +
+                         std::chrono::milliseconds(13));
+      }
+      next_flutter_event_time =
+          std::max(next_flutter_event_time, next_event_time);
+    }
   }
 
   return 0;
