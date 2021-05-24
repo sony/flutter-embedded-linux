@@ -6,6 +6,7 @@ set(TARGET flutter-x11-client)
 # source files for user apps.
 set(USER_APP_SRCS
   examples/flutter-x11-client/flutter_window.cc
+  examples/flutter-x11-client/generated_plugin_registrant.cc
   examples/flutter-x11-client/main.cc
 )
 

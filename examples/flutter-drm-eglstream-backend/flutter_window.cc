@@ -12,8 +12,6 @@
 FlutterWindow::FlutterWindow(const flutter::DartProject project)
     : project_(project) {}
 
-FlutterWindow::~FlutterWindow() {}
-
 bool FlutterWindow::OnCreate(flutter::FlutterViewController::ViewMode view_mode,
                              int width, int height, bool show_cursor) {
   flutter_view_controller_ = std::make_unique<flutter::FlutterViewController>(
