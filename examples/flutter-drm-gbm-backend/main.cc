@@ -5,11 +5,9 @@
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 
-#include <chrono>
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 
 #include "command_options.h"
 #include "flutter_window.h"
