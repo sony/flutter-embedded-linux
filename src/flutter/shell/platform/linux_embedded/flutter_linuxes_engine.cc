@@ -367,8 +367,8 @@ bool FlutterLinuxesEngine::MarkExternalTextureFrameAvailable(
               engine_, texture_id) == kSuccess);
 }
 
-void OnVsync(uint64_t last_frame_time_nanos,
-             uint64_t vsync_interval_time_nanos) {
+void FlutterLinuxesEngine::OnVsync(uint64_t last_frame_time_nanos,
+                                   uint64_t vsync_interval_time_nanos) {
   uint64_t current_time_nanos = embedder_api_.GetCurrentTime();
   uint64_t after_vsync_passed_time_nanos =
       (current_time_nanos - last_frame_time_nanos) % vsync_interval_time_nanos;
@@ -377,6 +377,7 @@ void OnVsync(uint64_t last_frame_time_nanos,
       (vsync_interval_time_nanos - after_vsync_passed_time_nanos);
   uint64_t frame_target_time_nanos =
       frame_start_time_nanos + vsync_interval_time_nanos;
+
   vsync_waiter_->NotifyVsync(frame_start_time_nanos, frame_target_time_nanos);
 }
 
