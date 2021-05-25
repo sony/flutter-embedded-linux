@@ -53,11 +53,17 @@ else()
     CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
     HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-client-protocol.h)
 
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/presentation-time/presentation-time.xml
+    CODE_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.h)    
+
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
     ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
     ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
+    ${_wayland_protocols_src_dir}/presentation-time-protocol.c
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
