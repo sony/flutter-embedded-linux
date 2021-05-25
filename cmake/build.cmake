@@ -105,6 +105,7 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/system_utils.cc
   src/flutter/shell/platform/linux_embedded/logger.cc
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
+  src/flutter/shell/platform/linux_embedded/vsync_waiter.cc
   src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
   src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.cc

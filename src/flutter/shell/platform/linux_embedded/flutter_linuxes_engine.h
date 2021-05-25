@@ -21,6 +21,7 @@
 #include "flutter/shell/platform/linux_embedded/flutter_project_bundle.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
 #include "flutter/shell/platform/linux_embedded/task_runner.h"
+#include "flutter/shell/platform/linux_embedded/vsync_waiter.h"
 
 namespace flutter {
 
@@ -110,6 +111,10 @@ class FlutterLinuxesEngine {
   // given |texture_id|.
   bool MarkExternalTextureFrameAvailable(int64_t texture_id);
 
+  // Notifies the engine about the vsync event.
+  void OnVsync(uint64_t last_frame_time_nanos,
+               uint64_t vsync_interval_time_nanos);
+
  private:
   // Allows swapping out embedder_api_ calls in tests.
   friend class EngineEmbedderApiModifier;
@@ -158,6 +163,9 @@ class FlutterLinuxesEngine {
   // is being destroyed.
   FlutterDesktopOnPluginRegistrarDestroyed
       plugin_registrar_destruction_callback_ = nullptr;
+
+  // The vsync waiter.
+  std::unique_ptr<VsyncWaiter> vsync_waiter_;
 };
 
 }  // namespace flutter

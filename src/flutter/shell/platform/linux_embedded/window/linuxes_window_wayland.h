@@ -102,6 +102,8 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   static const wl_data_source_listener kWlDataSourceListener;
   static const zwp_text_input_v1_listener kZwpTextInputV1Listener;
   static const zwp_text_input_v3_listener kZwpTextInputV3Listener;
+  static const wp_presentation_listener kWpPresentationListener;
+  static const wl_callback_listener kWlSurfaceFrameListener;
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
@@ -111,6 +113,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   std::unique_ptr<SurfaceGl> render_surface_;
 
   bool display_valid_;
+  uint32_t last_frame_time_;
 
   // Indicates that exists a keyboard show request from Flutter Engine.
   bool is_requested_show_virtual_keyboard_;
@@ -135,6 +138,12 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   zwp_text_input_manager_v3* zwp_text_input_manager_v3_;
   zwp_text_input_v1* zwp_text_input_v1_;
   zwp_text_input_v3* zwp_text_input_v3_;
+
+  // Frame information for Vsync events.
+  wp_presentation* wp_presentation_;
+  uint32_t wp_presentation_clk_id_;
+  uint64_t last_frame_time_nanos_;
+  int32_t refresh_rate_;
 
   CursorInfo cursor_info_;
 
