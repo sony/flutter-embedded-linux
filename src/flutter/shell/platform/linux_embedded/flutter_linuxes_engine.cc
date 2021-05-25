@@ -136,7 +136,7 @@ FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
           messenger_wrapper_.get(), "flutter/settings",
           &JsonMessageCodec::GetInstance());
 
-  vsync_waiter_ = std::make_unique<VsyncWaiter>(engine_, &embedder_api_);
+  vsync_waiter_ = std::make_unique<VsyncWaiter>();
 }
 
 FlutterLinuxesEngine::~FlutterLinuxesEngine() { Stop(); }
@@ -378,7 +378,8 @@ void FlutterLinuxesEngine::OnVsync(uint64_t last_frame_time_nanos,
   uint64_t frame_target_time_nanos =
       frame_start_time_nanos + vsync_interval_time_nanos;
 
-  vsync_waiter_->NotifyVsync(frame_start_time_nanos, frame_target_time_nanos);
+  vsync_waiter_->NotifyVsync(engine_, &embedder_api_, frame_start_time_nanos,
+                             frame_target_time_nanos);
 }
 
 }  // namespace flutter

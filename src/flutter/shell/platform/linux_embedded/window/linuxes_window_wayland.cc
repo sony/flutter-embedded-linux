@@ -78,18 +78,20 @@ const wp_presentation_listener LinuxesWindowWayland::kWpPresentationListener = {
 
 const wp_presentation_feedback_listener
     LinuxesWindowWayland::kWpPresentationFeedbackListener = {
-        .sync_output = [](void* data,
-                          wp_presentation_feedback* wp_presentation_feedback,
-                          wl_output* output) {},
+        .sync_output =
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback,
+               wl_output* output) {},
         .presented =
-            [](void* data, wp_presentation_feedback* wp_presentation_feedback,
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback,
                uint32_t tv_sec_hi, uint32_t tv_sec_lo, uint32_t tv_nsec,
                uint32_t refresh, uint32_t seq_hi, uint32_t seq_lo,
                uint32_t flags) {
               auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
               self->last_frame_time_nanos_ =
                   (((static_cast<uint64_t>(tv_sec_hi) << 32) + tv_sec_lo) *
-                   1_000_000_000) +
+                   1000000000) +
                   tv_nsec;
               self->refresh_rate_ = refresh;
               LINUXES_LOG(TRACE)
@@ -97,8 +99,9 @@ const wp_presentation_feedback_listener
                   << self->last_frame_time_nanos_
                   << ", refresh = " << self->refresh_rate_;
             },
-        .discarded = [](void* data,
-                        wp_presentation_feedback* wp_presentation_feedback) {},
+        .discarded =
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback) {},
 };
 
 const wl_callback_listener LinuxesWindowWayland::kWlSurfaceFrameListener = {
@@ -109,9 +112,9 @@ const wl_callback_listener LinuxesWindowWayland::kWlSurfaceFrameListener = {
             return;
           }
 
-          self->last_frame_time_nanos_ = time;
+          self->last_frame_time_nanos_ = static_cast<uint64_t>(time) << 32;
           LINUXES_LOG(TRACE)
-              << "Frame done: time = " << self->last_frame_time_nanos_;
+              << "Frame callback done: time = " << self->last_frame_time_nanos_;
 
           auto callback = wl_surface_frame(self->native_window_->Surface());
           wl_callback_destroy(wl_callback);
@@ -785,8 +788,7 @@ bool LinuxesWindowWayland::DispatchEvent() {
     }
 
     if (binding_handler_delegate_) {
-      const uint64_t vsync_interval_time_nanos =
-          1_000_000_000_000 / refresh_rate_;
+      const uint64_t vsync_interval_time_nanos = 1000000000000 / refresh_rate_;
       binding_handler_delegate_->OnVsync(last_frame_time_nanos_,
                                          vsync_interval_time_nanos);
     }

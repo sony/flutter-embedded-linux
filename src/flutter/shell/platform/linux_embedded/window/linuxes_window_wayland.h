@@ -103,8 +103,10 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   static const wl_data_source_listener kWlDataSourceListener;
   static const zwp_text_input_v1_listener kZwpTextInputV1Listener;
   static const zwp_text_input_v3_listener kZwpTextInputV3Listener;
-  static const wp_presentation_listener kWpPresentationListener;
   static const wl_callback_listener kWlSurfaceFrameListener;
+  static const wp_presentation_listener kWpPresentationListener;
+  static const wp_presentation_feedback_listener
+      kWpPresentationFeedbackListener;
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
