@@ -176,6 +176,7 @@ See also: [Building Flutter Engine embedder](./building-engine-embedder.md)
 Here introduce how to build the flutter sample app.
 
 #### For x64 targets on x64 hosts / for Arm64 targets on Arm64 hosts
+Note that you need to build Flutter apps in the same mode(release/debug) `libflutter_engine.so` was built. It means you need to build Flutter apps in the release mode if you use `libflutter_engine.so` was built in release mode.
 
 Build for release mode:
 ```Shell
