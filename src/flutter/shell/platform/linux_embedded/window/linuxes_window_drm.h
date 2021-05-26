@@ -174,6 +174,9 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
+  int32_t GetFrameRate() override { return 60000; }
+
+  // |FlutterWindowBindingHandler|
   void UpdateFlutterCursor(const std::string& cursor_name) override {
     if (show_cursor_) {
       native_window_->UpdateCursor(cursor_name, pointer_x_, pointer_y_);

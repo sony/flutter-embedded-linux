@@ -74,6 +74,11 @@ class WindowBindingHandlerDelegate {
   // Typically called by currently configured WindowBindingHandler
   virtual void OnScroll(double x, double y, double delta_x, double delta_y,
                         int scroll_offset_multiplier) = 0;
+
+  // Notifies delegate that backing window vsync has happened.
+  // Typically called by currently configured WindowBindingHandler
+  virtual void OnVsync(uint64_t last_frame_time_nanos,
+                       uint64_t vsync_interval_time_nanos) = 0;
 };
 
 }  // namespace flutter

@@ -109,12 +109,15 @@ FLUTTER_EXPORT void FlutterDesktopViewControllerDestroy(
 // Its lifetime is the same as the |controller|'s.
 FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopViewControllerGetEngine(
     FlutterDesktopViewControllerRef controller);
-// Returns the view managed by the given controller.
 
+// Returns the view managed by the given controller.
 FLUTTER_EXPORT FlutterDesktopViewRef
 FlutterDesktopViewControllerGetView(FlutterDesktopViewControllerRef controller);
 
 FLUTTER_EXPORT bool FlutterDesktopViewDispatchEvent(FlutterDesktopViewRef view);
+
+// Returns the display frame rate by the given controller.
+FLUTTER_EXPORT int32_t FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view);
 
 // ========== Engine ==========
 

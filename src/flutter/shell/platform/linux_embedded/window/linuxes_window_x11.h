@@ -45,6 +45,9 @@ class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
   PhysicalWindowBounds GetPhysicalWindowBounds() override;
 
   // |FlutterWindowBindingHandler|
+  int32_t GetFrameRate() override;
+
+  // |FlutterWindowBindingHandler|
   void UpdateFlutterCursor(const std::string& cursor_name) override;
 
   // |FlutterWindowBindingHandler|

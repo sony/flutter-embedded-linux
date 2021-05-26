@@ -5,6 +5,8 @@
 #include "flutter_window.h"
 
 #include <chrono>
+#include <cmath>
+#include <iostream>
 #include <thread>
 
 #include "generated_plugin_registrant.h"
@@ -61,11 +63,13 @@ void FlutterWindow::Run() {
                      std::chrono::steady_clock::time_point::clock::now() +
                          wait_duration);
       } else {
-        // Wait 1/60 [sec] = 13 [msec] if no events.
-        next_event_time =
-            std::min(next_event_time,
-                     std::chrono::steady_clock::time_point::clock::now() +
-                         std::chrono::milliseconds(13));
+        // Wait for the next frame if no events.
+        auto frame_rate = flutter_view_controller_->view()->GetFrameRate();
+        next_event_time = std::min(
+            next_event_time,
+            std::chrono::steady_clock::time_point::clock::now() +
+                std::chrono::milliseconds(
+                    static_cast<int>(std::trunc(1000000.0 / frame_rate))));
       }
       next_flutter_event_time =
           std::max(next_flutter_event_time, next_event_time);

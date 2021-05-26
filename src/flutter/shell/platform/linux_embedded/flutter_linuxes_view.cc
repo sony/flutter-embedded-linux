@@ -204,6 +204,11 @@ void FlutterLinuxesView::OnScroll(double x, double y, double delta_x,
   SendScroll(x, y, delta_x, delta_y, scroll_offset_multiplier);
 }
 
+void FlutterLinuxesView::OnVsync(uint64_t last_frame_time_nanos,
+                                 uint64_t vsync_interval_time_nanos) {
+  engine_->OnVsync(last_frame_time_nanos, vsync_interval_time_nanos);
+}
+
 FlutterLinuxesView::touch_point* FlutterLinuxesView::GgeTouchPoint(int32_t id) {
   const size_t nmemb = sizeof(touch_event_) / sizeof(struct touch_point);
   int invalid = -1;
@@ -380,5 +385,9 @@ LinuxesRenderSurfaceTarget* FlutterLinuxesView::GetRenderSurfaceTarget() const {
 }
 
 FlutterLinuxesEngine* FlutterLinuxesView::GetEngine() { return engine_.get(); }
+
+int32_t FlutterLinuxesView::GetFrameRate() {
+  return binding_handler_->GetFrameRate();
+}
 
 }  // namespace flutter
