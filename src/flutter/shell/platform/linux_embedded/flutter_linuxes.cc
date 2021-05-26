@@ -136,6 +136,10 @@ bool FlutterDesktopViewDispatchEvent(FlutterDesktopViewRef view) {
   return ViewFromHandle(view)->DispatchEvent();
 }
 
+int32_t FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view) {
+  return ViewFromHandle(view)->GetFrameRate();
+}
+
 FlutterDesktopEngineRef FlutterDesktopEngineCreate(
     const FlutterDesktopEngineProperties& engine_properties) {
   flutter::FlutterProjectBundle project(engine_properties);

@@ -53,11 +53,17 @@ else()
     CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
     HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-client-protocol.h)
 
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/presentation-time/presentation-time.xml
+    CODE_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.c
+    HEADER_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.h)    
+
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
     ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
     ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
+    ${_wayland_protocols_src_dir}/presentation-time-protocol.c
     src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
@@ -105,6 +111,7 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/system_utils.cc
   src/flutter/shell/platform/linux_embedded/logger.cc
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
+  src/flutter/shell/platform/linux_embedded/vsync_waiter.cc
   src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
   src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.cc

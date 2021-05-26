@@ -24,6 +24,9 @@ class FlutterView {
   // you have to call this every time in the main loop.
   bool DispatchEvent() { return FlutterDesktopViewDispatchEvent(view_); }
 
+  // Returns the display frame rate.
+  int32_t GetFrameRate() { return FlutterDesktopViewGetFrameRate(view_); }
+
  private:
   // Handle for interacting with the C API's view.
   FlutterDesktopViewRef view_ = nullptr;

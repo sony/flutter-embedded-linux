@@ -135,6 +135,8 @@ FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
       std::make_unique<BasicMessageChannel<rapidjson::Document>>(
           messenger_wrapper_.get(), "flutter/settings",
           &JsonMessageCodec::GetInstance());
+
+  vsync_waiter_ = std::make_unique<VsyncWaiter>();
 }
 
 FlutterLinuxesEngine::~FlutterLinuxesEngine() { Stop(); }
@@ -204,7 +206,15 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
     auto host = static_cast<FlutterLinuxesEngine*>(user_data);
     return host->HandlePlatformMessage(engine_message);
   };
-
+// todo: add drm/x11 support.
+// https://github.com/sony/flutter-embedded-linux/issues/136
+// https://github.com/sony/flutter-embedded-linux/issues/137
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+  args.vsync_callback = [](void* user_data, intptr_t baton) -> void {
+    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    host->vsync_waiter_->NotifyWaitForVsync(baton);
+  };
+#endif
   args.custom_task_runners = &custom_task_runners;
 
   if (aot_data_) {
@@ -360,6 +370,21 @@ bool FlutterLinuxesEngine::MarkExternalTextureFrameAvailable(
     int64_t texture_id) {
   return (embedder_api_.MarkExternalTextureFrameAvailable(
               engine_, texture_id) == kSuccess);
+}
+
+void FlutterLinuxesEngine::OnVsync(uint64_t last_frame_time_nanos,
+                                   uint64_t vsync_interval_time_nanos) {
+  uint64_t current_time_nanos = embedder_api_.GetCurrentTime();
+  uint64_t after_vsync_passed_time_nanos =
+      (current_time_nanos - last_frame_time_nanos) % vsync_interval_time_nanos;
+  uint64_t frame_start_time_nanos =
+      current_time_nanos +
+      (vsync_interval_time_nanos - after_vsync_passed_time_nanos);
+  uint64_t frame_target_time_nanos =
+      frame_start_time_nanos + vsync_interval_time_nanos;
+
+  vsync_waiter_->NotifyVsync(engine_, &embedder_api_, frame_start_time_nanos,
+                             frame_target_time_nanos);
 }
 
 }  // namespace flutter

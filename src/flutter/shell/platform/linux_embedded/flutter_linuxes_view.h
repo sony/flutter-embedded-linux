@@ -55,6 +55,9 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   // Returns the engine backing this view.
   FlutterLinuxesEngine* GetEngine();
 
+  // Returns the frame rate of the display.
+  int32_t GetFrameRate();
+
   // Callbacks for clearing context, settings context and swapping buffers.
   void* ProcResolver(const char* name);
   bool MakeCurrent();
@@ -114,6 +117,10 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   // |WindowBindingHandlerDelegate|
   void OnScroll(double x, double y, double delta_x, double delta_y,
                 int scroll_offset_multiplier) override;
+
+  // |WindowBindingHandlerDelegate|
+  void OnVsync(uint64_t frame_start_time_nanos,
+               uint64_t frame_target_time_nanos) override;
 
  private:
   // Struct holding the mouse state. The engine doesn't keep track of which

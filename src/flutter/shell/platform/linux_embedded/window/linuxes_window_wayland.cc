@@ -67,6 +67,57 @@ const xdg_surface_listener LinuxesWindowWayland::kXdgSurfaceListener = {
         },
 };
 
+const wp_presentation_listener LinuxesWindowWayland::kWpPresentationListener = {
+    .clock_id =
+        [](void* data, wp_presentation* wp_presentation, uint32_t clk_id) {
+          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          self->wp_presentation_clk_id_ = clk_id;
+          LINUXES_LOG(TRACE) << "presentation info: clk_id = " << clk_id;
+        },
+};
+
+const wp_presentation_feedback_listener
+    LinuxesWindowWayland::kWpPresentationFeedbackListener = {
+        .sync_output =
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback,
+               wl_output* output) {},
+        .presented =
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback,
+               uint32_t tv_sec_hi, uint32_t tv_sec_lo, uint32_t tv_nsec,
+               uint32_t refresh, uint32_t seq_hi, uint32_t seq_lo,
+               uint32_t flags) {
+              auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+              self->last_frame_time_nanos_ =
+                  (((static_cast<uint64_t>(tv_sec_hi) << 32) + tv_sec_lo) *
+                   1000000000) +
+                  tv_nsec;
+              self->frame_rate_ = refresh;
+            },
+        .discarded =
+            [](void* data,
+               struct wp_presentation_feedback* wp_presentation_feedback) {},
+};
+
+const wl_callback_listener LinuxesWindowWayland::kWlSurfaceFrameListener = {
+    .done =
+        [](void* data, wl_callback* wl_callback, uint32_t time) {
+          // The presentation-time is an extended protocol and isn't supported
+          // by all compositors. This path is for when it wasn't supported.
+          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          if (self->wp_presentation_clk_id_ != UINT32_MAX) {
+            return;
+          }
+
+          self->last_frame_time_nanos_ = static_cast<uint64_t>(time) * 1000000;
+
+          auto callback = wl_surface_frame(self->native_window_->Surface());
+          wl_callback_destroy(wl_callback);
+          wl_callback_add_listener(callback, &kWlSurfaceFrameListener, data);
+        },
+};
+
 const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
     .capabilities = [](void* data, wl_seat* seat, uint32_t caps) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
@@ -277,8 +328,14 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
                int32_t height, int32_t refresh) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
-        LINUXES_LOG(INFO) << "Display output resolution: " << width << "x"
-                          << height;
+        LINUXES_LOG(INFO) << "Display output info: width = " << width
+                          << ", height = " << height
+                          << ", refresh = " << refresh;
+        // Some composers send 0 for the refresh value.
+        if (refresh != 0) {
+          self->frame_rate_ = refresh;
+        }
+
         if (self->window_mode_ == FlutterWindowMode::kFullscreen) {
           self->current_width_ = width;
           self->current_height_ = height;
@@ -501,11 +558,14 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
       wl_data_offer_(nullptr),
       wl_data_source_(nullptr),
       wl_cursor_theme_(nullptr),
+      serial_(0),
       zwp_text_input_manager_v1_(nullptr),
       zwp_text_input_manager_v3_(nullptr),
       zwp_text_input_v1_(nullptr),
       zwp_text_input_v3_(nullptr),
-      serial_(0) {
+      wp_presentation_(nullptr),
+      wp_presentation_clk_id_(UINT32_MAX),
+      frame_rate_(60000) {
   window_mode_ = window_mode;
   current_width_ = width;
   current_height_ = height;
@@ -697,15 +757,13 @@ PhysicalWindowBounds LinuxesWindowWayland::GetPhysicalWindowBounds() {
   return {GetCurrentWidth(), GetCurrentHeight()};
 }
 
+int32_t LinuxesWindowWayland::GetFrameRate() { return frame_rate_; }
+
 bool LinuxesWindowWayland::DispatchEvent() {
   if (!IsValid()) {
     LINUXES_LOG(ERROR) << "Wayland display is invalid.";
     return false;
   }
-
-  pollfd fds[] = {
-      {wl_display_get_fd(wl_display_), POLLIN},
-  };
 
   // Prepare to call wl_display_read_events.
   while (wl_display_prepare_read(wl_display_) != 0) {
@@ -715,14 +773,40 @@ bool LinuxesWindowWayland::DispatchEvent() {
       return false;
     }
   }
-
-  // Handle events.
   wl_display_flush(wl_display_);
+
+  // Handle Vsync.
+  {
+    if (wp_presentation_clk_id_ != UINT32_MAX) {
+      // This path is used if the presentation-time protocol is supported by the
+      // compositor.
+      wp_presentation_feedback_add_listener(
+          ::wp_presentation_feedback(wp_presentation_,
+                                     native_window_->Surface()),
+          &kWpPresentationFeedbackListener, this);
+      auto result = wl_display_dispatch_pending(wl_display_);
+      if (result == -1) {
+        return false;
+      }
+    }
+
+    if (binding_handler_delegate_) {
+      const uint64_t vsync_interval_time_nanos = 1000000000000 / frame_rate_;
+      binding_handler_delegate_->OnVsync(last_frame_time_nanos_,
+                                         vsync_interval_time_nanos);
+    }
+  }
+
+  // Handle Wayland events.
+  pollfd fds[] = {
+      {wl_display_get_fd(wl_display_), POLLIN},
+  };
   if (poll(fds, 1, 0) > 0) {
-    int result = wl_display_read_events(wl_display_);
+    auto result = wl_display_read_events(wl_display_);
     if (result == -1) {
       return false;
     }
+
     result = wl_display_dispatch_pending(wl_display_);
     if (result == -1) {
       return false;
@@ -779,6 +863,9 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   xdg_toplevel_ = xdg_surface_get_toplevel(xdg_surface_);
   xdg_toplevel_set_title(xdg_toplevel_, "Flutter");
   wl_surface_commit(native_window_->Surface());
+
+  auto* callback = wl_surface_frame(native_window_->Surface());
+  wl_callback_add_listener(callback, &kWlSurfaceFrameListener, this);
 
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
       std::make_unique<EnvironmentEgl>(wl_display_)));
@@ -946,6 +1033,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     wl_output_ = static_cast<decltype(wl_output_)>(
         wl_registry_bind(wl_registry, name, &wl_output_interface, 1));
     wl_output_add_listener(wl_output_, &kWlOutputListener, this);
+    return;
   }
 
   if (!strcmp(interface, wl_shm_interface.name)) {
@@ -987,6 +1075,16 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     wl_data_device_manager_ = static_cast<decltype(wl_data_device_manager_)>(
         wl_registry_bind(wl_registry, name, &wl_data_device_manager_interface,
                          wl_data_device_manager_version_));
+    return;
+  }
+
+  if (!strcmp(interface, wp_presentation_interface.name)) {
+    constexpr uint32_t kMaxVersion = 1;
+    wp_presentation_ = static_cast<decltype(wp_presentation_)>(wl_registry_bind(
+        wl_registry, name, &wp_presentation_interface, kMaxVersion));
+    wp_presentation_add_listener(wp_presentation_, &kWpPresentationListener,
+                                 this);
+    return;
   }
 }
 

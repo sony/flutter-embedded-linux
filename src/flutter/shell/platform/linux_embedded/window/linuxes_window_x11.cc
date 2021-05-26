@@ -145,6 +145,8 @@ PhysicalWindowBounds LinuxesWindowX11::GetPhysicalWindowBounds() {
   return {GetCurrentWidth(), GetCurrentHeight()};
 }
 
+int32_t LinuxesWindowX11::GetFrameRate() { return 60000; }
+
 void LinuxesWindowX11::UpdateFlutterCursor(const std::string& cursor_name) {
   // TODO: implement here
 }
