@@ -206,10 +206,15 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
     auto host = static_cast<FlutterLinuxesEngine*>(user_data);
     return host->HandlePlatformMessage(engine_message);
   };
+// todo: add drm/x11 support.
+// https://github.com/sony/flutter-embedded-linux/issues/136
+// https://github.com/sony/flutter-embedded-linux/issues/137
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   args.vsync_callback = [](void* user_data, intptr_t baton) -> void {
     auto host = static_cast<FlutterLinuxesEngine*>(user_data);
     host->vsync_waiter_->NotifyWaitForVsync(baton);
   };
+#endif
   args.custom_task_runners = &custom_task_runners;
 
   if (aot_data_) {
