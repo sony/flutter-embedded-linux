@@ -4,37 +4,70 @@
 
 #include "logger.h"
 
+#include <cstring>
+#include <unordered_map>
+
 namespace flutter {
 
 namespace {
 
-#ifdef FLUTTER_RELEASE
-constexpr int kFilterLogLevel = LINUXES_LOG_WARNING;
-#else
-constexpr int kFilterLogLevel = LINUXES_LOG_TRACE;
-#endif
+constexpr char kFlutterLogLevelsEnvironmentKey[] = "FLUTTER_LOG_LEVELS";
+constexpr char kFlutterLogLevelTrace[] = "TRACE";
+constexpr char kFlutterLogLevelInfo[] = "INFO";
+constexpr char kFlutterLogLevelWarning[] = "WARNING";
+constexpr char kFlutterLogLevelError[] = "ERROR";
+constexpr char kFlutterLogLevelFatal[] = "FATAL";
+constexpr char kFlutterLogLevelUnknown[] = "UNKNOWN";
 
-const char* const kLogLevelNames[LINUXES_LOG_NUM] = {"TRACE", "INFO", "WARNING",
-                                                     "ERROR", "FATAL"};
+const char* const kLogLevelNames[LINUXES_LOG_NUM] = {
+    kFlutterLogLevelTrace, kFlutterLogLevelInfo, kFlutterLogLevelWarning,
+    kFlutterLogLevelError, kFlutterLogLevelFatal};
+
+const std::unordered_map<std::string, int> gLogLevelsMap{
+    {kFlutterLogLevelTrace, LINUXES_LOG_TRACE},
+    {kFlutterLogLevelInfo, LINUXES_LOG_INFO},
+    {kFlutterLogLevelWarning, LINUXES_LOG_WARNING},
+    {kFlutterLogLevelError, LINUXES_LOG_ERROR},
+    {kFlutterLogLevelFatal, LINUXES_LOG_FATAL},
+};
+
+int gFilterLogLevel = -1;
+
+int GetCurrentLogLevel() {
+  if (gFilterLogLevel == -1) {
+    auto env_log_level = std::getenv(kFlutterLogLevelsEnvironmentKey);
+    if (!env_log_level || (env_log_level[0] == '\0')) {
+      gFilterLogLevel = LINUXES_LOG_WARNING;
+    } else {
+      if (gLogLevelsMap.find(env_log_level) != gLogLevelsMap.end()) {
+        gFilterLogLevel = gLogLevelsMap.at(env_log_level);
+      } else {
+        gFilterLogLevel = LINUXES_LOG_WARNING;
+      }
+    }
+  }
+  return gFilterLogLevel;
+}
 
 const char* GetLogLevelName(int level) {
   if (LINUXES_LOG_TRACE <= level && level < LINUXES_LOG_NUM)
     return kLogLevelNames[level];
-  return "UNKNOWN";
+  return kFlutterLogLevelUnknown;
 }
 
 }  // namespace
 
 Logger::Logger(int level, const char* file, int line) : level_(level) {
-  if (level_ < kFilterLogLevel) {
+  if (level_ < GetCurrentLogLevel()) {
     return;
   }
+
   stream_ << "[" << GetLogLevelName(level_) << "]";
   stream_ << "[" << file << "(" << line << ")] ";
 }
 
 Logger::~Logger() {
-  if (level_ < kFilterLogLevel) {
+  if (level_ < GetCurrentLogLevel()) {
     return;
   }
 

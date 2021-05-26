@@ -18,7 +18,7 @@ $ sudo apt install clang cmake build-essential pkg-config libegl1-mesa-dev libxk
 
 ### Only when using Wayland backend
 - libwayland
-- wayland-protocols (for generating xdg-shell source files)
+- wayland-protocols (to generate the source files of Wayland protocols)
 
 ```Shell
 $ sudo apt install libwayland-dev wayland-protocols
@@ -209,6 +209,17 @@ Wayland compositor such as Weston must be running before running the program.
 
 ```Shell
 $ ./flutter-client --bundle=./sample/build/linux/x64/release/bundle
+```
+
+### Logging levels
+The logging levels of the embedder are controlled by `FLUTTER_LOG_LEVELS` environment var. If you want to do debugging, set `FLUTTER_LOG_LEVELS`. The default level is `WARNING`.
+
+```Shell
+$ FLUTTER_LOG_LEVELS=TRACE ./flutter-client --bundle=<path_to_flutter_project_bundle>
+$ FLUTTER_LOG_LEVELS=INFO ./flutter-client --bundle=<path_to_flutter_project_bundle>
+$ FLUTTER_LOG_LEVELS=WARNING ./flutter-client --bundle=<path_to_flutter_project_bundle>
+$ FLUTTER_LOG_LEVELS=ERROR ./flutter-client --bundle=<path_to_flutter_project_bundle>
+$ FLUTTER_LOG_LEVELS=FATAL ./flutter-client --bundle=<path_to_flutter_project_bundle>
 ```
 
 ### Supplement
