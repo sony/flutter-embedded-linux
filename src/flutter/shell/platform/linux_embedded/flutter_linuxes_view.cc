@@ -386,4 +386,8 @@ LinuxesRenderSurfaceTarget* FlutterLinuxesView::GetRenderSurfaceTarget() const {
 
 FlutterLinuxesEngine* FlutterLinuxesView::GetEngine() { return engine_.get(); }
 
+int32_t FlutterLinuxesView::GetFrameRate() {
+  return binding_handler_->GetFrameRate();
+}
+
 }  // namespace flutter

@@ -55,6 +55,9 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   // Returns the engine backing this view.
   FlutterLinuxesEngine* GetEngine();
 
+  // Returns the frame rate of the display.
+  int32_t GetFrameRate();
+
   // Callbacks for clearing context, settings context and swapping buffers.
   void* ProcResolver(const char* name);
   bool MakeCurrent();

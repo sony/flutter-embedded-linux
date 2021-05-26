@@ -60,6 +60,9 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   PhysicalWindowBounds GetPhysicalWindowBounds() override;
 
   // |FlutterWindowBindingHandler|
+  int32_t GetFrameRate() override;
+
+  // |FlutterWindowBindingHandler|
   void UpdateFlutterCursor(const std::string& cursor_name) override;
 
   // |FlutterWindowBindingHandler|
@@ -146,7 +149,7 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
   wp_presentation* wp_presentation_;
   uint32_t wp_presentation_clk_id_;
   uint64_t last_frame_time_nanos_;
-  int32_t refresh_rate_;
+  int32_t frame_rate_;
 
   CursorInfo cursor_info_;
 
