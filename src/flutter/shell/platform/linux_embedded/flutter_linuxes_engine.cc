@@ -224,6 +224,15 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
     args.custom_dart_entrypoint = entrypoint;
   }
 
+  args.log_message_callback = [](const char* tag, const char* message,
+                                 void* user_data) {
+    std::string str_tag(tag);
+    if (str_tag.size() > 0) {
+      std::cout << str_tag << ": ";
+    }
+    std::cout << message << std::endl;
+  };
+
   auto renderer_config = GetRendererConfig();
   auto result = embedder_api_.Run(FLUTTER_ENGINE_VERSION, &renderer_config,
                                   &args, this, &engine_);
