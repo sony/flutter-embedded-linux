@@ -94,7 +94,8 @@ const wp_presentation_feedback_listener
                   (((static_cast<uint64_t>(tv_sec_hi) << 32) + tv_sec_lo) *
                    1000000000) +
                   tv_nsec;
-              self->frame_rate_ = static_cast<int32_t>(std::trunc(1000000000000.0 / refresh);
+              self->frame_rate_ =
+                  static_cast<int32_t>(std::round(1000000000000.0 / refresh));
             },
         .discarded =
             [](void* data,
