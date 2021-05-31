@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.h"
+#include "flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.h"
 
 #include <linux/input-event-codes.h>
 #include <xkbcommon/xkbcommon.h>

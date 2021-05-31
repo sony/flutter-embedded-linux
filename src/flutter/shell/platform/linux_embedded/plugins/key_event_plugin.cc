@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/plugin//key_event_plugin.h"
+#include "flutter/shell/platform/linux_embedded/plugins/key_event_plugin.h"
 
 #include <sys/mman.h>
 #include <unistd.h>
