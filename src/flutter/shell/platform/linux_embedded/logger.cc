@@ -13,6 +13,7 @@ namespace {
 
 constexpr char kFlutterLogLevelsEnvironmentKey[] = "FLUTTER_LOG_LEVELS";
 constexpr char kFlutterLogLevelTrace[] = "TRACE";
+constexpr char kFlutterLogLevelDebug[] = "DEBUG";
 constexpr char kFlutterLogLevelInfo[] = "INFO";
 constexpr char kFlutterLogLevelWarning[] = "WARNING";
 constexpr char kFlutterLogLevelError[] = "ERROR";
@@ -20,11 +21,12 @@ constexpr char kFlutterLogLevelFatal[] = "FATAL";
 constexpr char kFlutterLogLevelUnknown[] = "UNKNOWN";
 
 const char* const kLogLevelNames[LINUXES_LOG_NUM] = {
-    kFlutterLogLevelTrace, kFlutterLogLevelInfo, kFlutterLogLevelWarning,
-    kFlutterLogLevelError, kFlutterLogLevelFatal};
+    kFlutterLogLevelTrace,   kFlutterLogLevelDebug, kFlutterLogLevelInfo,
+    kFlutterLogLevelWarning, kFlutterLogLevelError, kFlutterLogLevelFatal};
 
 const std::unordered_map<std::string, int> gLogLevelsMap{
     {kFlutterLogLevelTrace, LINUXES_LOG_TRACE},
+    {kFlutterLogLevelDebug, LINUXES_LOG_DEBUG},
     {kFlutterLogLevelInfo, LINUXES_LOG_INFO},
     {kFlutterLogLevelWarning, LINUXES_LOG_WARNING},
     {kFlutterLogLevelError, LINUXES_LOG_ERROR},
