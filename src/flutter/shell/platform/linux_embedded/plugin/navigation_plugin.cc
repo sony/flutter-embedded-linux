@@ -44,7 +44,7 @@ void NavigationPlugin::PushRoute(std::string route) const {
     LINUXES_LOG(ERROR) << "Failed to parse the route: " << route;
     return ;
   }
-  channel_->InvokeMethod(kSetInitialRouteMethod, std::move(args));
+  channel_->InvokeMethod(kPushRouteMethod, std::move(args));
 }
 
 void NavigationPlugin::PopRoute() const {
