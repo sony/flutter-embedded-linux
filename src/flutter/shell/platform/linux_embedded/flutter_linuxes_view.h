@@ -16,6 +16,7 @@
 #include "flutter/shell/platform/linux_embedded/plugin/key_event_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugin/lifecycle_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.h"
+#include "flutter/shell/platform/linux_embedded/plugin/navigation_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugin/platform_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugin/text_input_plugin.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
@@ -240,6 +241,9 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
 
   // Handler for app lifecycle events.
   std::unique_ptr<flutter::LifecyclePlugin> lifecycle_handler_;
+
+  // Handler for flutter/navigation channel.
+  std::unique_ptr<flutter::NavigationPlugin> navigation_handler_;
 
   // Currently configured WindowBindingHandler for view.
   std::unique_ptr<flutter::WindowBindingHandler> binding_handler_;
