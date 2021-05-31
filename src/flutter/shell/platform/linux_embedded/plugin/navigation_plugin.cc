@@ -25,7 +25,6 @@ void NavigationPlugin::SetInitialRoute(std::string route) const {
   LINUXES_LOG(DEBUG) << "SetInitialRoute = " << route;
 
   auto args = std::make_unique<rapidjson::Document>(rapidjson::kObjectType);
-  auto& allocator = args->GetAllocator();
   args->Parse("\"" + route + "\"");
   if (args->HasParseError()) {
     LINUXES_LOG(ERROR) << "Failed to parse the initial route: " << route;
@@ -38,7 +37,6 @@ void NavigationPlugin::PushRoute(std::string route) const {
   LINUXES_LOG(DEBUG) << "PushRoute = " << route;
 
   auto args = std::make_unique<rapidjson::Document>(rapidjson::kObjectType);
-  auto& allocator = args->GetAllocator();
   args->Parse("\"" + route + "\"");
   if (args->HasParseError()) {
     LINUXES_LOG(ERROR) << "Failed to parse the route: " << route;
