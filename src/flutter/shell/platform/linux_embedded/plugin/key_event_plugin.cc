@@ -13,7 +13,6 @@
 #include <unordered_map>
 
 #include "flutter/shell/platform/common/json_message_codec.h"
-#include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
