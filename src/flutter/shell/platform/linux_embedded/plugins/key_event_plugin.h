@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGIN_KEY_EVENT_PLUGIN_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGIN_KEY_EVENT_PLUGIN_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGINS_KEY_EVENT_PLUGIN_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGINS_KEY_EVENT_PLUGIN_H_
 
 #include <rapidjson/document.h>
 #include <xkbcommon/xkbcommon.h>
@@ -49,4 +49,4 @@ class KeyeventPlugin {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGIN_KEY_EVENT_PLUGIN_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PLUGINS_KEY_EVENT_PLUGIN_H_

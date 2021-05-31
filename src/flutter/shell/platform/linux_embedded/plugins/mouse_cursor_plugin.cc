@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.h"
+#include "flutter/shell/platform/linux_embedded/plugins/mouse_cursor_plugin.h"
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/standard_method_codec.h"
 
