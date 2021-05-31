@@ -113,12 +113,13 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
   src/flutter/shell/platform/linux_embedded/vsync_waiter.cc
   src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
-  src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/keyboard_glfw_util.cc
+  src/flutter/shell/platform/linux_embedded/plugin/key_event_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/lifecycle_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugin/text_input_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugin/platform_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugin/mouse_cursor_plugin.cc
+  src/flutter/shell/platform/linux_embedded/plugin/navigation_plugin.cc
+  src/flutter/shell/platform/linux_embedded/plugin/platform_plugin.cc
+  src/flutter/shell/platform/linux_embedded/plugin/text_input_plugin.cc
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
   src/flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.cc
