@@ -13,11 +13,12 @@
 namespace flutter {
 
 constexpr int LINUXES_LOG_TRACE = 0;
-constexpr int LINUXES_LOG_INFO = 1;
-constexpr int LINUXES_LOG_WARNING = 2;
-constexpr int LINUXES_LOG_ERROR = 3;
-constexpr int LINUXES_LOG_FATAL = 4;
-constexpr int LINUXES_LOG_NUM = 5;
+constexpr int LINUXES_LOG_DEBUG = 1;
+constexpr int LINUXES_LOG_INFO = 2;
+constexpr int LINUXES_LOG_WARNING = 3;
+constexpr int LINUXES_LOG_ERROR = 4;
+constexpr int LINUXES_LOG_FATAL = 5;
+constexpr int LINUXES_LOG_NUM = 6;
 
 #define __LOG_FILE_NAME__ \
   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
