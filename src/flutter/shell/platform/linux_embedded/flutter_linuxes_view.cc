@@ -52,6 +52,8 @@ void FlutterLinuxesView::SetEngine(
       std::make_unique<flutter::LifecyclePlugin>(internal_plugin_messenger);
   navigation_handler_ =
       std::make_unique<flutter::NavigationPlugin>(internal_plugin_messenger);
+  platform_views_handler_ =
+      std::make_unique<flutter::PlatformViewsPlugin>(internal_plugin_messenger);
 
   PhysicalWindowBounds bounds = binding_handler_->GetPhysicalWindowBounds();
   SendWindowMetrics(bounds.width, bounds.height,

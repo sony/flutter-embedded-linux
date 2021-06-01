@@ -18,6 +18,7 @@
 #include "flutter/shell/platform/linux_embedded/plugins/mouse_cursor_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/navigation_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/platform_plugin.h"
+#include "flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/text_input_plugin.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
@@ -244,6 +245,9 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
 
   // Handler for flutter/navigation channel.
   std::unique_ptr<flutter::NavigationPlugin> navigation_handler_;
+
+  // Handler for flutter/platform_views channel.
+  std::unique_ptr<flutter::PlatformViewsPlugin> platform_views_handler_;
 
   // Currently configured WindowBindingHandler for view.
   std::unique_ptr<flutter::WindowBindingHandler> binding_handler_;
