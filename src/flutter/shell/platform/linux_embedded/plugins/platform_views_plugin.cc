@@ -28,17 +28,6 @@ constexpr char kIdKey[] = "id";
 constexpr char kWidthKey[] = "width";
 constexpr char kHeightKey[] = "height";
 constexpr char kParamsKey[] = "params";
-
-template <typename T>
-T LookupEncodableMap(const flutter::EncodableValue& map, const char* key) {
-  auto values = std::get<flutter::EncodableMap>(map);
-  auto value = values[flutter::EncodableValue(key)];
-  if (!std::holds_alternative<T>(value)) {
-    return T();
-  }
-  return std::get<T>(value);
-}
-
 }  // namespace
 
 PlatformViewsPlugin::PlatformViewsPlugin(BinaryMessenger* messenger)

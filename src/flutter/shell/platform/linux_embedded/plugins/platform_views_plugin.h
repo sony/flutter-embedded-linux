@@ -30,6 +30,17 @@ class PlatformViewsPlugin {
       const flutter::MethodCall<flutter::EncodableValue>& method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+  // Decodes and gets a value from an argument of MethodCall.
+  template <typename T>
+  T LookupEncodableMap(const flutter::EncodableValue& map, const char* key) {
+    auto values = std::get<flutter::EncodableMap>(map);
+    auto value = values[flutter::EncodableValue(key)];
+    if (!std::holds_alternative<T>(value)) {
+      return T();
+    }
+    return std::get<T>(value);
+  }
+
   // Called when "create" method is called
   void PlatformViewsCreate(
       const flutter::EncodableValue& arguments,
