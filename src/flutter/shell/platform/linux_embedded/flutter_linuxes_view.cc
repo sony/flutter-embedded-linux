@@ -60,6 +60,12 @@ void FlutterLinuxesView::SetEngine(
                     binding_handler_->GetDpiScale());
 }
 
+void FlutterLinuxesView::RegisterPlatformViewFactory(
+    const char* view_type,
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> factory) {
+  platform_views_handler_->RegisterViewFactory(view_type, std::move(factory));
+}
+
 void FlutterLinuxesView::OnWindowSizeChanged(size_t width,
                                              size_t height) const {
   if (!GetRenderSurfaceTarget()->OnScreenSurfaceResize(width, height)) {

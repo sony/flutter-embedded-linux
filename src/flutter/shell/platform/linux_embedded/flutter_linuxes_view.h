@@ -21,6 +21,7 @@
 #include "flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/text_input_plugin.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_platform_views.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
@@ -44,6 +45,11 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   // Configures the window instance with an instance of a running Flutter
   // engine.
   void SetEngine(std::unique_ptr<FlutterLinuxesEngine> engine);
+
+  // Registers a factory of the platform view.
+  void RegisterPlatformViewFactory(
+      const char* view_type,
+      std::unique_ptr<FlutterDesktopPlatformViewFactory> factory);
 
   // Creates rendering surface for Flutter engine to draw into.
   // Should be called before calling FlutterEngineRun using this view.

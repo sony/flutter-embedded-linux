@@ -62,4 +62,16 @@ class FlutterDesktopPlatformViewFactory {
   flutter::PluginRegistrar* registrar_;
 };
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+void FlutterDesktopRegisterPlatformViewFactory(
+    FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory)
+
+#if defined(__cplusplus)
+}  // extern "C"
+#endif
+
 #endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_PUBLIC_FLUTTER_PLATFORM_VIEWS_H_

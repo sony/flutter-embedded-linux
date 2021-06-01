@@ -258,3 +258,10 @@ bool FlutterDesktopTextureRegistrarMarkExternalTextureFrameAvailable(
   return TextureRegistrarFromHandle(texture_registrar)
       ->MarkTextureFrameAvailable(texture_id);
 }
+
+void FlutterDesktopRegisterPlatformViewFactory(
+    FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory) {
+  registrar->engine->view()->RegisterPlatformViewFactory(
+      view_type, std::move(view_factory));
+}
