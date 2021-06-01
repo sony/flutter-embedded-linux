@@ -48,7 +48,7 @@ class PlatformViewsPlugin {
                      std::unique_ptr<FlutterDesktopPlatformViewFactory>>
       platform_view_factories_;
 
-  // Platform views (instances).
+  // Instances of platform views.
   std::unordered_map<int, FlutterDesktopPlatformView*> platform_views_;
 
   // Shows the id of current view.

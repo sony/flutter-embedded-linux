@@ -23,11 +23,11 @@ constexpr char kRejectGestureMethod[] = "rejectGesture";
 constexpr char kEnterMethod[] = "enter";
 constexpr char kExitMethod[] = "exit";
 
-constexpr char kViewType[] = "viewType";
-constexpr char kId[] = "id";
-constexpr char kWidth[] = "width";
-constexpr char kHeight[] = "height";
-constexpr char kParams[] = "params";
+constexpr char kViewTypeKey[] = "viewType";
+constexpr char kIdKey[] = "id";
+constexpr char kWidthKey[] = "width";
+constexpr char kHeightKey[] = "height";
+constexpr char kParamsKey[] = "params";
 
 template <typename T>
 T LookupEncodableMap(const flutter::EncodableValue& map, const char* key) {
@@ -105,6 +105,8 @@ void PlatformViewsPlugin::HandleMethodCall(
   } else if (method.compare(kExitMethod) == 0) {
     result->NotImplemented();
   } else {
+    LINUXES_LOG(WARNING) << "Platform Views unexpected method is called: "
+                         << method;
     result->NotImplemented();
   }
 }
@@ -112,22 +114,22 @@ void PlatformViewsPlugin::HandleMethodCall(
 void PlatformViewsPlugin::PlatformViewsCreate(
     const flutter::EncodableValue& arguments,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  auto view_type = LookupEncodableMap<std::string>(arguments, kViewType);
+  auto view_type = LookupEncodableMap<std::string>(arguments, kViewTypeKey);
   if (view_type.empty()) {
     result->Error("Couldn't find the view type in the arguments");
     return;
   }
-  auto view_id = LookupEncodableMap<int>(arguments, kId);
+  auto view_id = LookupEncodableMap<int>(arguments, kIdKey);
   if (!view_id) {
     result->Error("Couldn't find the view id in the arguments");
     return;
   }
-  auto view_width = LookupEncodableMap<double>(arguments, kWidth);
+  auto view_width = LookupEncodableMap<double>(arguments, kWidthKey);
   if (!view_width) {
     result->Error("Couldn't find width in the arguments");
     return;
   }
-  auto view_height = LookupEncodableMap<double>(arguments, kHeight);
+  auto view_height = LookupEncodableMap<double>(arguments, kHeightKey);
   if (!view_height) {
     result->Error("Couldn't find height in the arguments");
     return;
@@ -142,7 +144,7 @@ void PlatformViewsPlugin::PlatformViewsCreate(
     return;
   }
 
-  auto params = LookupEncodableMap<std::vector<uint8_t>>(arguments, kParams);
+  auto params = LookupEncodableMap<std::vector<uint8_t>>(arguments, kParamsKey);
   auto view = platform_view_factories_[view_type]->Create(view_id, view_width,
                                                           view_height, params);
   if (view) {
@@ -161,7 +163,7 @@ void PlatformViewsPlugin::PlatformViewsCreate(
 void PlatformViewsPlugin::PlatformViewsDispose(
     const flutter::EncodableValue& arguments,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  auto view_id = LookupEncodableMap<int>(arguments, kId);
+  auto view_id = LookupEncodableMap<int>(arguments, kIdKey);
   if (!view_id) {
     result->Error("Couldn't find the view id in the arguments");
     return;
