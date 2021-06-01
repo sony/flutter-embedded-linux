@@ -68,7 +68,7 @@ extern "C" {
 
 void FlutterDesktopRegisterPlatformViewFactory(
     FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
-    std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory)
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory);
 
 #if defined(__cplusplus)
 }  // extern "C"
