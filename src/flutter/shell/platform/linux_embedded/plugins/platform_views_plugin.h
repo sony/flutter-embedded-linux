@@ -21,7 +21,7 @@ class PlatformViewsPlugin {
 
   // Registers a factory of the platform view.
   void RegisterViewFactory(const char* view_type,
-                           std::unique_ptr<PlatformViewFactory> factory);
+                           std::unique_ptr<FlutterPlatformViewFactory> factory);
 
  private:
   // Called when a method is called on |channel_|;
