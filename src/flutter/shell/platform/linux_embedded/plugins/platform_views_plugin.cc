@@ -67,7 +67,7 @@ PlatformViewsPlugin::~PlatformViewsPlugin() {
 
 void PlatformViewsPlugin::RegisterViewFactory(
     const char* view_type,
-    std::unique_ptr<FlutterPlatformViewFactory> factory) {
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> factory) {
   if (platform_view_factories_.find(view_type) !=
       platform_view_factories_.end()) {
     LINUXES_LOG(ERROR) << "Platform Views factory is already registered: "

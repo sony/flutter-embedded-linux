@@ -11,7 +11,6 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
 #include "flutter/shell/platform/common/incoming_message_dispatcher.h"
-#include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_state.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"

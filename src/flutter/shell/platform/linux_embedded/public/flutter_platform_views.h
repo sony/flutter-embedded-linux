@@ -14,14 +14,14 @@
 #include "flutter_messenger.h"
 #include "plugin_registrar.h"
 
-class FlutterPlatformView {
+class FlutterDesktopPlatformView {
  public:
-  FlutterPlatformView(flutter::PluginRegistrar* registrar, int view_id)
+  FlutterDesktopPlatformView(flutter::PluginRegistrar* registrar, int view_id)
       : registrar_(registrar),
         view_id_(view_id),
         texture_id_(-1),
         focused_(false) {}
-  virtual ~FlutterPlatformView() {}
+  virtual ~FlutterDesktopPlatformView() {}
 
   flutter::PluginRegistrar* GetPluginRegistrar() { return registrar_; }
 
@@ -44,16 +44,17 @@ class FlutterPlatformView {
   bool focused_;
 };
 
-class FlutterPlatformViewFactory {
+class FlutterDesktopPlatformViewFactory {
  public:
-  FlutterPlatformViewFactory(flutter::PluginRegistrar* registrar)
+  FlutterDesktopPlatformViewFactory(flutter::PluginRegistrar* registrar)
       : registrar_(registrar) {}
-  virtual ~FlutterPlatformViewFactory() {}
+  virtual ~FlutterDesktopPlatformViewFactory() {}
 
   flutter::PluginRegistrar* GetPluginRegistrar() const { return registrar_; }
 
-  virtual FlutterPlatformView* Create(int view_id, double width, double height,
-                                      const std::vector<uint8_t>& params) = 0;
+  virtual FlutterDesktopPlatformView* Create(
+      int view_id, double width, double height,
+      const std::vector<uint8_t>& params) = 0;
 
   virtual void Dispose() = 0;
 

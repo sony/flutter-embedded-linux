@@ -20,8 +20,9 @@ class PlatformViewsPlugin {
   ~PlatformViewsPlugin();
 
   // Registers a factory of the platform view.
-  void RegisterViewFactory(const char* view_type,
-                           std::unique_ptr<FlutterPlatformViewFactory> factory);
+  void RegisterViewFactory(
+      const char* view_type,
+      std::unique_ptr<FlutterDesktopPlatformViewFactory> factory);
 
  private:
   // Called when a method is called on |channel_|;
@@ -43,11 +44,12 @@ class PlatformViewsPlugin {
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
 
   // Factory of PlatformView class.
-  std::unordered_map<std::string, std::unique_ptr<FlutterPlatformViewFactory>>
+  std::unordered_map<std::string,
+                     std::unique_ptr<FlutterDesktopPlatformViewFactory>>
       platform_view_factories_;
 
   // Platform views (instances).
-  std::unordered_map<int, FlutterPlatformView*> platform_views_;
+  std::unordered_map<int, FlutterDesktopPlatformView*> platform_views_;
 
   // Shows the id of current view.
   int current_view_id_;
