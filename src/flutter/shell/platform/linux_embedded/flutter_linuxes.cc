@@ -11,7 +11,6 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
 #include "flutter/shell/platform/common/incoming_message_dispatcher.h"
-#include "flutter/shell/platform/embedder/embedder.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_state.h"
 #include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
@@ -258,4 +257,11 @@ bool FlutterDesktopTextureRegistrarMarkExternalTextureFrameAvailable(
     FlutterDesktopTextureRegistrarRef texture_registrar, int64_t texture_id) {
   return TextureRegistrarFromHandle(texture_registrar)
       ->MarkTextureFrameAvailable(texture_id);
+}
+
+void FlutterDesktopRegisterPlatformViewFactory(
+    FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
+    std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory) {
+  registrar->engine->view()->RegisterPlatformViewFactory(
+      view_type, std::move(view_factory));
 }
