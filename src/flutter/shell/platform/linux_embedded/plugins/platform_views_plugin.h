@@ -10,6 +10,7 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/binary_messenger.h"
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/method_channel.h"
+#include "flutter/shell/platform/common/client_wrapper/include/flutter/standard_method_codec.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_platform_views.h"
 
 namespace flutter {
