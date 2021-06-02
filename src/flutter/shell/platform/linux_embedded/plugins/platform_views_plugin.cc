@@ -137,15 +137,15 @@ void PlatformViewsPlugin::PlatformViewsCreate(
                                                           view_height, params);
   if (view) {
     platform_views_[view_id] = view;
+    if (platform_views_.find(current_view_id_) != platform_views_.end()) {
+      platform_views_[current_view_id_]->SetFocus(false);
+    }
+    current_view_id_ = view_id;
+
     result->Success(flutter::EncodableValue(view->GetTextureId()));
   } else {
     result->Error("Failed to create a platform view");
   }
-
-  if (platform_views_.find(current_view_id_) != platform_views_.end()) {
-    platform_views_[current_view_id_]->SetFocus(false);
-  }
-  current_view_id_ = view_id;
 }
 
 void PlatformViewsPlugin::PlatformViewsDispose(
