@@ -22,12 +22,16 @@ jobs:
       run: cmake -E make_directory ${{github.workspace}}/build
 
     - name: Install Flutter Engine library
+      #run: |
+      #  echo `curl https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version` > embedder.version
+      #  export FLUTTER_ENGINE=`cat embedder.version`
+      #  curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
+      #  ls
+      #  unzip linux-x64-embedder
+      #  mv libflutter_engine.so ${{github.workspace}}/build
       run: |
-        echo `curl https://raw.githubusercontent.com/flutter/flutter/master/bin/internal/engine.version` > embedder.version
-        export FLUTTER_ENGINE=`cat embedder.version`
-        curl -O https://storage.googleapis.com/flutter_infra/flutter/${FLUTTER_ENGINE}/linux-x64/linux-x64-embedder
-        ls
-        unzip linux-x64-embedder
+        curl -O https://github.com/sony/flutter-embedded-linux/releases/download/939fb62b30/linux-x64-release.zip
+        unzip linux-x64-release.zip
         mv libflutter_engine.so ${{github.workspace}}/build
 
     - name: Configure CMake for wayland client
