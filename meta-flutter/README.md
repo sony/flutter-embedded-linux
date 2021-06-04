@@ -110,4 +110,4 @@ $ export CC=${CLANGCC}
 $ export CXX=${CLANGCXX}
 ```
 
-After doing that, you can build the embedder as normal like self-building on hosts. It means you don't need to be aware of cross-building. See: [3.1. Self-build](../doc/README.md)
+After doing that, you can build the embedder as normal like self-building on hosts. It means you don't need to be aware of cross-building. See: [self-build](https://github.com/sony/flutter-embedded-linux/wiki/Building-Embedded-Linux-embedding-for-Flutter#self-build)
