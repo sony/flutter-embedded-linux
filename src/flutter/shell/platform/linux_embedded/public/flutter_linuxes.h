@@ -55,7 +55,7 @@ typedef struct {
 } FlutterDesktopEngineProperties;
 
 // The View display mode.
-enum FlutterViewMode {
+enum FlutterDesktopViewMode {
   // Shows the Flutter view by user specific size.
   kNormal = 0,
   // Shows always the Flutter view by fullscreen.
@@ -72,14 +72,14 @@ typedef struct {
 
   // View display mode. If you set kFullscreen, the parameters of both `width`
   // and `height` will be ignored.
-  FlutterViewMode view_mode;
+  FlutterDesktopViewMode view_mode;
 
   // Uses mouse cursor.
   bool use_mouse_cursor;
 
   // Uses the on-screen keyboard.
   bool use_onscreen_keyboard;
-} FlutterViewProperties;
+} FlutterDesktopViewProperties;
 
 // ========== View Controller ==========
 
@@ -97,8 +97,9 @@ typedef struct {
 // FlutterDesktopViewControllerDestroy. Returns a null pointer in the event of
 // an error.
 FLUTTER_EXPORT FlutterDesktopViewControllerRef
-FlutterDesktopViewControllerCreate(const FlutterViewProperties& view_properties,
-                                   FlutterDesktopEngineRef engine);
+FlutterDesktopViewControllerCreate(
+    const FlutterDesktopViewProperties& view_properties,
+    FlutterDesktopEngineRef engine);
 
 // Shuts down the engine instance associated with |controller|, and cleans up
 // associated state.

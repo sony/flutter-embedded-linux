@@ -126,10 +126,10 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       return false;
     }
 
-    if (view_properties_.view_mode != FlutterViewMode::kFullscreen) {
+    if (view_properties_.view_mode != FlutterDesktopViewMode::kFullscreen) {
       LINUXES_LOG(WARNING)
           << "Normal mode is not supported, use fullscreen mode.";
-      view_properties_.view_mode = FlutterViewMode::kFullscreen;
+      view_properties_.view_mode = FlutterDesktopViewMode::kFullscreen;
     }
     view_properties.width = native_window_->Width();
     view_properties.height = native_window_->Height();

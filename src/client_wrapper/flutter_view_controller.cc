@@ -13,13 +13,13 @@ FlutterViewController::FlutterViewController(
     const ViewProperties& view_properties, const DartProject& project) {
   engine_ = std::make_unique<FlutterEngine>(project);
 
-  FlutterViewProperties c_view_properties = {};
+  FlutterDesktopViewProperties c_view_properties = {};
   c_view_properties.width = view_properties.width;
   c_view_properties.height = view_properties.height;
   c_view_properties.view_mode =
       (view_properties.view_mode == ViewMode::kFullscreen)
-          ? FlutterViewMode::kFullscreen
-          : FlutterViewMode::kNormal;
+          ? FlutterDesktopViewMode::kFullscreen
+          : FlutterDesktopViewMode::kNormal;
   c_view_properties.use_mouse_cursor = view_properties.use_mouse_cursor;
   c_view_properties.use_onscreen_keyboard =
       view_properties.use_onscreen_keyboard;

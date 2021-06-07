@@ -338,7 +338,8 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
           self->frame_rate_ = refresh;
         }
 
-        if (self->view_properties_.view_mode == FlutterViewMode::kFullscreen) {
+        if (self->view_properties_.view_mode ==
+            FlutterDesktopViewMode::kFullscreen) {
           self->view_properties.width = width;
           self->view_properties.height = height;
           if (self->binding_handler_delegate_) {
@@ -832,7 +833,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     return false;
   }
 
-  if (view_properties_.view_mode == FlutterViewMode::kFullscreen) {
+  if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
     width = view_properties.width;
     height = view_properties.height;
   }
