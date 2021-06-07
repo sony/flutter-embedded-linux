@@ -21,7 +21,7 @@ class LinuxesWindow {
 
   uint32_t GetCurrentHeight() const { return view_properties_.height; }
 
-  FlutterViewProperties view_properties_;
+  FlutterDesktopViewProperties view_properties_;
   double current_scale_ = 1.0;
   double pointer_x_ = 0;
   double pointer_y_ = 0;
