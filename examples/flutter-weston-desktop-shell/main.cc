@@ -54,10 +54,17 @@ int main(int argc, char** argv) {
   auto command_line_arguments = std::vector<std::string>();
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
+  flutter::FlutterViewController::ViewProperties view_properties = {};
+  view_properties.width = width;
+  view_properties.height = height;
+  view_properties.view_mode =
+      flutter::FlutterViewController::ViewMode::kFullscreen;
+  view_properties.use_mouse_cursor = show_cursor;
+  view_properties.use_onscreen_keyboard = true;
+
   // The Flutter instance hosted by this window.
-  FlutterWindow window(project);
-  if (!window.OnCreate(flutter::FlutterViewController::ViewMode::kFullscreen,
-                       width, height, show_cursor)) {
+  FlutterWindow window(view_properties, project);
+  if (!window.OnCreate()) {
     std::cerr << "Failed to create a Flutter window." << std::endl;
     return 0;
   }

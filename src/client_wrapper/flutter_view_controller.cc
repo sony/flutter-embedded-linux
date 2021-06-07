@@ -9,18 +9,21 @@
 
 namespace flutter {
 
-FlutterViewController::FlutterViewController(ViewMode view_mode, int width,
-                                             int height, bool show_cursor,
-                                             const DartProject& project) {
+FlutterViewController::FlutterViewController(
+    const ViewProperties& view_properties, const DartProject& project) {
   engine_ = std::make_unique<FlutterEngine>(project);
 
-  FlutterDesktopViewProperties c_view_properties = {};
-  c_view_properties.width = width;
-  c_view_properties.height = height;
-  c_view_properties.windw_display_mode = (view_mode == ViewMode::kFullscreen)
-                                             ? FlutterWindowMode::kFullscreen
-                                             : FlutterWindowMode::kNormal;
-  c_view_properties.show_cursor = show_cursor;
+  FlutterViewProperties c_view_properties = {};
+  c_view_properties.width = view_properties.width;
+  c_view_properties.height = view_properties.height;
+  c_view_properties.view_mode =
+      (view_properties.view_mode == ViewMode::kFullscreen)
+          ? FlutterViewMode::kFullscreen
+          : FlutterViewMode::kNormal;
+  c_view_properties.use_mouse_cursor = view_properties.use_mouse_cursor;
+  c_view_properties.use_onscreen_keyboard =
+      view_properties.use_onscreen_keyboard;
+
   controller_ = FlutterDesktopViewControllerCreate(c_view_properties,
                                                    engine_->RelinquishEngine());
   if (!controller_) {

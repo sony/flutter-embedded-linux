@@ -25,18 +25,38 @@ namespace flutter {
 // methods in the C API directly, as this class will do that internally.
 class FlutterViewController {
  public:
-  // The View screen size mode.
   enum ViewMode {
+    // Shows the Flutter view by user specific size.
     kNormal = 0,
+    // Shows always the Flutter view by fullscreen.
     kFullscreen = 1,
   };
+
+  // Properties for configuring a Flutter view instance.
+  typedef struct {
+    // View width.
+    int width;
+
+    // View height.
+    int height;
+
+    // View display mode. If you set kFullscreen, the parameters of both `width`
+    // and `height` will be ignored.
+    ViewMode view_mode;
+
+    // Uses mouse cursor.
+    bool use_mouse_cursor;
+
+    // Uses the on-screen keyboard.
+    bool use_onscreen_keyboard;
+  } ViewProperties;
 
   // Creates a FlutterView that can be parented into a Windows View hierarchy
   // either using HWNDs or in the future into a CoreWindow, or using compositor.
   //
   // |dart_project| will be used to configure the engine backing this view.
-  explicit FlutterViewController(ViewMode view_mode, int width, int height,
-                                 bool show_cursor, const DartProject& project);
+  explicit FlutterViewController(const ViewProperties& view_properties,
+                                 const DartProject& project);
 
   virtual ~FlutterViewController();
 
