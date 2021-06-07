@@ -12,19 +12,21 @@
 
 class FlutterWindow {
  public:
-  explicit FlutterWindow(const flutter::DartProject project);
+  explicit FlutterWindow(
+      const flutter::FlutterViewController::ViewProperties view_properties,
+      const flutter::DartProject project);
   ~FlutterWindow() = default;
 
   // Prevent copying.
   FlutterWindow(FlutterWindow const&) = delete;
   FlutterWindow& operator=(FlutterWindow const&) = delete;
 
-  bool OnCreate(flutter::FlutterViewController::ViewMode view_mode, int width,
-                int height, bool show_cursor);
+  bool OnCreate();
   void OnDestroy();
   void Run();
 
  private:
+  flutter::FlutterViewController::ViewProperties view_properties_;
   flutter::DartProject project_;
   std::unique_ptr<flutter::FlutterViewController> flutter_view_controller_;
 };

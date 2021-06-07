@@ -78,21 +78,15 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
       std::make_unique<flutter::LinuxesWindowDrm<flutter::NativeWindowDrmGbm>>(
-          view_properties.windw_display_mode, view_properties.width,
-          view_properties.height, view_properties.show_cursor);
+          view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
       std::make_unique<
           flutter::LinuxesWindowDrm<flutter::NativeWindowDrmEglstream>>(
-          view_properties.windw_display_mode, view_properties.width,
-          view_properties.height, view_properties.show_cursor);
+          view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
-      std::make_unique<flutter::LinuxesWindowX11>(
-          view_properties.windw_display_mode, view_properties.width,
-          view_properties.height, view_properties.show_cursor);
+      std::make_unique<flutter::LinuxesWindowX11>(view_properties);
 #else
-      std::make_unique<flutter::LinuxesWindowWayland>(
-          view_properties.windw_display_mode, view_properties.width,
-          view_properties.height, view_properties.show_cursor);
+      std::make_unique<flutter::LinuxesWindowWayland>(view_properties);
 #endif
 
   auto state = std::make_unique<FlutterDesktopViewControllerState>();

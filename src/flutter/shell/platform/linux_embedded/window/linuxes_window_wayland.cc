@@ -157,7 +157,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
                 wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       self->serial_ = serial;
-      if (self->show_cursor_) {
+      if (self->view_properties_.use_mouse_cursor) {
         self->cursor_info_.pointer = wl_pointer;
         self->cursor_info_.serial = serial;
       }
@@ -338,9 +338,10 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
           self->frame_rate_ = refresh;
         }
 
-        if (self->window_mode_ == FlutterWindowMode::kFullscreen) {
-          self->current_width_ = width;
-          self->current_height_ = height;
+        if (self->view_properties_.view_mode ==
+            FlutterDesktopViewMode::kFullscreen) {
+          self->view_properties_.width = width;
+          self->view_properties_.height = height;
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
           }
@@ -544,9 +545,8 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
                  uint32_t dnd_action) -> void {},
 };
 
-LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
-                                           int32_t width, int32_t height,
-                                           bool show_cursor)
+LinuxesWindowWayland::LinuxesWindowWayland(
+    FlutterDesktopViewProperties view_properties)
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
       is_requested_show_virtual_keyboard_(false),
@@ -568,10 +568,7 @@ LinuxesWindowWayland::LinuxesWindowWayland(FlutterWindowMode window_mode,
       wp_presentation_(nullptr),
       wp_presentation_clk_id_(UINT32_MAX),
       frame_rate_(60000) {
-  window_mode_ = window_mode;
-  current_width_ = width;
-  current_height_ = height;
-  show_cursor_ = show_cursor;
+  view_properties_ = view_properties;
 
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
@@ -836,14 +833,14 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     return false;
   }
 
-  if (window_mode_ == FlutterWindowMode::kFullscreen) {
-    width = current_width_;
-    height = current_height_;
+  if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
+    width = view_properties_.width;
+    height = view_properties_.height;
   }
 
   LINUXES_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
                      << height;
-  if (show_cursor_) {
+  if (view_properties_.use_mouse_cursor) {
     wl_cursor_surface_ = wl_compositor_create_surface(wl_compositor_);
     if (!wl_cursor_surface_) {
       LINUXES_LOG(ERROR)
@@ -909,7 +906,7 @@ void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
 }
 
 void LinuxesWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
-  if (show_cursor_) {
+  if (view_properties_.use_mouse_cursor) {
     if (cursor_name.compare(cursor_info_.cursor_name) == 0) {
       return;
     }
@@ -1039,7 +1036,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
   }
 
   if (!strcmp(interface, wl_shm_interface.name)) {
-    if (show_cursor_) {
+    if (view_properties_.use_mouse_cursor) {
       wl_shm_ = static_cast<decltype(wl_shm_)>(
           wl_registry_bind(wl_registry, name, &wl_shm_interface, 1));
       wl_cursor_theme_ = wl_cursor_theme_load(nullptr, 32, wl_shm_);
@@ -1052,21 +1049,23 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     return;
   }
 
-#ifdef USE_VIRTUAL_KEYBOARD
   if (!strcmp(interface, kZwpTextInputManagerV1)) {
-    zwp_text_input_manager_v1_ =
-        static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
-            wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
+    if (view_properties_.use_onscreen_keyboard) {
+      zwp_text_input_manager_v1_ =
+          static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
+              wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
+    }
     return;
   }
 
   if (!strcmp(interface, kZwpTextInputManagerV3)) {
-    zwp_text_input_manager_v3_ =
-        static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
-            wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
+    if (view_properties_.use_onscreen_keyboard) {
+      zwp_text_input_manager_v3_ =
+          static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
+              wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
+    }
     return;
   }
-#endif
 
   if (!strcmp(interface, wl_data_device_manager_interface.name)) {
     // Save the version of wl_data_device_manager because the release method of

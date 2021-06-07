@@ -19,6 +19,8 @@ int main(int argc, char** argv) {
   options.AddWithoutValue("fullscreen", "f", "Always full-screen display",
                           false);
   options.AddWithoutValue("no-cursor", "n", "No mouse cursor/pointer", false);
+  options.AddWithoutValue("onscreen-keyboard", "k", "Enable on-screen keyboard",
+                          false);
   options.AddInt("width", "w", "Flutter app window width", 1280, false);
   options.AddInt("height", "h", "Flutter app window height", 720, false);
   if (!options.Parse(argc, argv)) {
@@ -30,6 +32,8 @@ int main(int argc, char** argv) {
   // The project to run.
   const auto bundle_path = options.GetValue<std::string>("bundle");
   const bool show_cursor = !options.Exist("no-cursor");
+  const bool use_onscreen_keyboard = options.Exist("onscreen-keyboard");
+
   const auto view_mode =
       options.Exist("fullscreen")
           ? flutter::FlutterViewController::ViewMode::kFullscreen
@@ -42,9 +46,16 @@ int main(int argc, char** argv) {
   auto command_line_arguments = std::vector<std::string>();
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
+  flutter::FlutterViewController::ViewProperties view_properties = {};
+  view_properties.width = width;
+  view_properties.height = height;
+  view_properties.view_mode = view_mode;
+  view_properties.use_mouse_cursor = show_cursor;
+  view_properties.use_onscreen_keyboard = use_onscreen_keyboard;
+
   // The Flutter instance hosted by this window.
-  FlutterWindow window(project);
-  if (!window.OnCreate(view_mode, width, height, show_cursor)) {
+  FlutterWindow window(view_properties, project);
+  if (!window.OnCreate()) {
     std::cerr << "Failed to create a Flutter window." << std::endl;
     return 0;
   }

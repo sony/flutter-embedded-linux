@@ -31,8 +31,7 @@ namespace flutter {
 
 class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
  public:
-  LinuxesWindowWayland(FlutterWindowMode window_mode, int32_t width,
-                       int32_t height, bool show_cursor);
+  LinuxesWindowWayland(FlutterDesktopViewProperties view_properties);
   ~LinuxesWindowWayland();
 
   // |LinuxesWindow|

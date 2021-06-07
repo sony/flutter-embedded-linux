@@ -13,12 +13,9 @@
 
 namespace flutter {
 
-LinuxesWindowX11::LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width,
-                                   int32_t height, bool show_cursor) {
-  window_mode_ = window_mode;
-  current_width_ = width;
-  current_height_ = height;
-  show_cursor_ = show_cursor;
+LinuxesWindowX11::LinuxesWindowX11(
+    FlutterDesktopViewProperties view_properties) {
+  view_properties_ = view_properties;
 
   display_ = XOpenDisplay(NULL);
   if (!display_) {
@@ -85,13 +82,13 @@ bool LinuxesWindowX11::DispatchEvent() {
         }
         break;
       case ConfigureNotify: {
-        if (((event.xconfigure.width != current_width_) ||
-             (event.xconfigure.height != current_height_))) {
-          current_width_ = event.xconfigure.width;
-          current_height_ = event.xconfigure.height;
+        if (((event.xconfigure.width != view_properties_.width) ||
+             (event.xconfigure.height != view_properties_.height))) {
+          view_properties_.width = event.xconfigure.width;
+          view_properties_.height = event.xconfigure.height;
           if (binding_handler_delegate_) {
-            binding_handler_delegate_->OnWindowSizeChanged(current_width_,
-                                                           current_height_);
+            binding_handler_delegate_->OnWindowSizeChanged(
+                view_properties_.width, view_properties_.height);
           }
         }
       } break;
