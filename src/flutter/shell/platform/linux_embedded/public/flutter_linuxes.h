@@ -97,9 +97,8 @@ typedef struct {
 // FlutterDesktopViewControllerDestroy. Returns a null pointer in the event of
 // an error.
 FLUTTER_EXPORT FlutterDesktopViewControllerRef
-FlutterDesktopViewControllerCreate(
-    const FlutterDesktopViewProperties& view_properties,
-    FlutterDesktopEngineRef engine);
+FlutterDesktopViewControllerCreate(const FlutterViewProperties& view_properties,
+                                   FlutterDesktopEngineRef engine);
 
 // Shuts down the engine instance associated with |controller|, and cleans up
 // associated state.
