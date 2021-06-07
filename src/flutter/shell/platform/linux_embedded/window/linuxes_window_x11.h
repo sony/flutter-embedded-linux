@@ -16,8 +16,7 @@ namespace flutter {
 
 class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
  public:
-  LinuxesWindowX11(FlutterWindowMode window_mode, int32_t width, int32_t height,
-                   bool show_cursor);
+  LinuxesWindowX11(FlutterDesktopViewProperties view_properties);
   ~LinuxesWindowX11();
 
   // |LinuxesWindow|

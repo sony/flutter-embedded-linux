@@ -11,13 +11,14 @@
 
 #include "generated_plugin_registrant.h"
 
-FlutterWindow::FlutterWindow(const flutter::DartProject project)
-    : project_(project) {}
+FlutterWindow::FlutterWindow(
+    const flutter::FlutterViewController::ViewProperties view_properties,
+    const flutter::DartProject project)
+    : view_properties_(view_properties), project_(project) {}
 
-bool FlutterWindow::OnCreate(flutter::FlutterViewController::ViewMode view_mode,
-                             int width, int height, bool show_cursor) {
+bool FlutterWindow::OnCreate() {
   flutter_view_controller_ = std::make_unique<flutter::FlutterViewController>(
-      view_mode, width, height, show_cursor, project_);
+      view_properties_, project_);
 
   // Ensure that basic setup of the controller was successful.
   if (!flutter_view_controller_->engine() ||

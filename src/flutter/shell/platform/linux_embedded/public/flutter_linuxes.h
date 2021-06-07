@@ -54,27 +54,31 @@ typedef struct {
   const char** dart_entrypoint_argv;
 } FlutterDesktopEngineProperties;
 
-// The Window display mode.
-enum FlutterWindowMode {
-  // Show the Flutter view by user specific size.
+// The View display mode.
+enum FlutterDesktopViewMode {
+  // Shows the Flutter view by user specific size.
   kNormal = 0,
-  // Show always the Flutter view by fullscreen.
+  // Shows always the Flutter view by fullscreen.
   kFullscreen = 1,
 };
 
 // Properties for configuring a Flutter view instance.
 typedef struct {
-  // Window display mode.
-  FlutterWindowMode windw_display_mode;
-
-  // Window width.
+  // View width.
   int width;
 
-  // Window height.
+  // View height.
   int height;
 
-  // Show mouse cursor.
-  bool show_cursor;
+  // View display mode. If you set kFullscreen, the parameters of both `width`
+  // and `height` will be ignored.
+  FlutterDesktopViewMode view_mode;
+
+  // Uses mouse cursor.
+  bool use_mouse_cursor;
+
+  // Uses the on-screen keyboard.
+  bool use_onscreen_keyboard;
 } FlutterDesktopViewProperties;
 
 // ========== View Controller ==========
@@ -117,7 +121,8 @@ FlutterDesktopViewControllerGetView(FlutterDesktopViewControllerRef controller);
 FLUTTER_EXPORT bool FlutterDesktopViewDispatchEvent(FlutterDesktopViewRef view);
 
 // Returns the display frame rate by the given controller.
-FLUTTER_EXPORT int32_t FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view);
+FLUTTER_EXPORT int32_t
+FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view);
 
 // ========== Engine ==========
 

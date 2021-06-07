@@ -79,11 +79,6 @@ if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/weston-desktop-shell-protocol.c)  
 endif()
 
-# Use virtual keybard(on-screen keyboard).
-if(USE_VIRTUAL_KEYBOARD)
-  add_definitions(-DUSE_VIRTUAL_KEYBOARD)
-endif()
-
 # OpenGL ES version.
 if(USE_GLES3)
   add_definitions(-DUSE_GLES3)
