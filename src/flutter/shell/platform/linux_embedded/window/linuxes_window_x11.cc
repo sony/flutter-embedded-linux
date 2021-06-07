@@ -82,13 +82,13 @@ bool LinuxesWindowX11::DispatchEvent() {
         }
         break;
       case ConfigureNotify: {
-        if (((event.xconfigure.width != view_properties.width) ||
-             (event.xconfigure.height != view_properties.height))) {
-          view_properties.width = event.xconfigure.width;
-          view_properties.height = event.xconfigure.height;
+        if (((event.xconfigure.width != view_properties_.width) ||
+             (event.xconfigure.height != view_properties_.height))) {
+          view_properties_.width = event.xconfigure.width;
+          view_properties_.height = event.xconfigure.height;
           if (binding_handler_delegate_) {
             binding_handler_delegate_->OnWindowSizeChanged(
-                view_properties.width, view_properties.height);
+                view_properties_.width, view_properties_.height);
           }
         }
       } break;

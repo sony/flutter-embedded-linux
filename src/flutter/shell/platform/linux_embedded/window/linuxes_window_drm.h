@@ -131,10 +131,10 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
           << "Normal mode is not supported, use fullscreen mode.";
       view_properties_.view_mode = FlutterDesktopViewMode::kFullscreen;
     }
-    view_properties.width = native_window_->Width();
-    view_properties.height = native_window_->Height();
-    LINUXES_LOG(INFO) << "Display output resolution: " << view_properties.width
-                      << "x" << view_properties.height;
+    view_properties_.width = native_window_->Width();
+    view_properties_.height = native_window_->Height();
+    LINUXES_LOG(INFO) << "Display output resolution: " << view_properties_.width
+                      << "x" << view_properties_.height;
 
     if (is_pending_cursor_add_event_) {
       native_window_->ShowCursor(pointer_x_, pointer_y_);
@@ -286,16 +286,16 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
     if (self->IsUdevEventHotplug(*device) &&
         self->native_window_->ConfigureDisplay()) {
-      if (self->view_properties.width != self->native_window_->Width() ||
-          self->view_properties.height != self->native_window_->Height()) {
-        self->view_properties.width = self->native_window_->Width();
-        self->view_properties.height = self->native_window_->Height();
+      if (self->view_properties_.width != self->native_window_->Width() ||
+          self->view_properties_.height != self->native_window_->Height()) {
+        self->view_properties_.width = self->native_window_->Width();
+        self->view_properties_.height = self->native_window_->Height();
         LINUXES_LOG(INFO) << "Display output resolution: "
-                          << self->view_properties.width << "x"
-                          << self->view_properties.height;
+                          << self->view_properties_.width << "x"
+                          << self->view_properties_.height;
         if (self->binding_handler_delegate_) {
           self->binding_handler_delegate_->OnWindowSizeChanged(
-              self->view_properties.width, self->view_properties.height);
+              self->view_properties_.width, self->view_properties_.height);
         }
       }
     }
@@ -435,11 +435,11 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
       auto new_pointer_x = pointer_x_ + dx;
       new_pointer_x = std::max(0.0, new_pointer_x);
-      new_pointer_x = std::min(static_cast<double>(view_properties.width - 1),
+      new_pointer_x = std::min(static_cast<double>(view_properties_.width - 1),
                                new_pointer_x);
       auto new_pointer_y = pointer_y_ + dy;
       new_pointer_y = std::max(0.0, new_pointer_y);
-      new_pointer_y = std::min(static_cast<double>(view_properties.height - 1),
+      new_pointer_y = std::min(static_cast<double>(view_properties_.height - 1),
                                new_pointer_y);
 
       binding_handler_delegate_->OnPointerMove(new_pointer_x, new_pointer_y);
@@ -452,9 +452,9 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
       auto x = libinput_event_pointer_get_absolute_x_transformed(
-          pointer_event, view_properties.width);
+          pointer_event, view_properties_.width);
       auto y = libinput_event_pointer_get_absolute_y_transformed(
-          pointer_event, view_properties.height);
+          pointer_event, view_properties_.height);
 
       binding_handler_delegate_->OnPointerMove(x, y);
       pointer_x_ = x;
@@ -522,9 +522,9 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       auto time = libinput_event_touch_get_time(touch_event);
       auto slot = libinput_event_touch_get_seat_slot(touch_event);
       auto x = libinput_event_touch_get_x_transformed(touch_event,
-                                                      view_properties.width);
+                                                      view_properties_.width);
       auto y = libinput_event_touch_get_y_transformed(touch_event,
-                                                      view_properties.height);
+                                                      view_properties_.height);
       binding_handler_delegate_->OnTouchDown(time, slot, x, y);
     }
   }
@@ -544,9 +544,9 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
       auto time = libinput_event_touch_get_time(touch_event);
       auto slot = libinput_event_touch_get_seat_slot(touch_event);
       auto x = libinput_event_touch_get_x_transformed(touch_event,
-                                                      view_properties.width);
+                                                      view_properties_.width);
       auto y = libinput_event_touch_get_y_transformed(touch_event,
-                                                      view_properties.height);
+                                                      view_properties_.height);
       binding_handler_delegate_->OnTouchMotion(time, slot, x, y);
     }
   }
