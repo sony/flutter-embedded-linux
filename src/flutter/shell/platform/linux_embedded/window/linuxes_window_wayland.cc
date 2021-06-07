@@ -1049,21 +1049,23 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     return;
   }
 
-#ifdef USE_VIRTUAL_KEYBOARD
   if (!strcmp(interface, kZwpTextInputManagerV1)) {
-    zwp_text_input_manager_v1_ =
-        static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
-            wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
+    if (view_properties_.use_onscreen_keyboard) {
+      zwp_text_input_manager_v1_ =
+          static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
+              wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
+    }
     return;
   }
 
   if (!strcmp(interface, kZwpTextInputManagerV3)) {
-    zwp_text_input_manager_v3_ =
-        static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
-            wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
+    if (view_properties_.use_onscreen_keyboard) {
+      zwp_text_input_manager_v3_ =
+          static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
+              wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
+    }
     return;
   }
-#endif
 
   if (!strcmp(interface, wl_data_device_manager_interface.name)) {
     // Save the version of wl_data_device_manager because the release method of
