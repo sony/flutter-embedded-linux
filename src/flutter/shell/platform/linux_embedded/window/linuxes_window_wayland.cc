@@ -340,8 +340,8 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
 
         if (self->view_properties_.view_mode ==
             FlutterDesktopViewMode::kFullscreen) {
-          self->view_properties.width = width;
-          self->view_properties.height = height;
+          self->view_properties_.width = width;
+          self->view_properties_.height = height;
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
           }
@@ -834,8 +834,8 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   }
 
   if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
-    width = view_properties.width;
-    height = view_properties.height;
+    width = view_properties_.width;
+    height = view_properties_.height;
   }
 
   LINUXES_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
