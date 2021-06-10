@@ -57,6 +57,11 @@ NativeWindowWayland::~NativeWindowWayland() {
     wl_surface_destroy(surface_);
     surface_ = nullptr;
   }
+
+  if (surface_offscreen_) {
+    wl_surface_destroy(surface_offscreen_);
+    surface_offscreen_ = nullptr;
+  }
 }
 
 bool NativeWindowWayland::Resize(const size_t width, const size_t height) {
