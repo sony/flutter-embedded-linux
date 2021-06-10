@@ -24,6 +24,7 @@ class NativeWindowWayland : public NativeWindow {
 
  private:
   wl_surface* surface_ = nullptr;
+  wl_surface* surface_offscreen_ = nullptr;
 };
 
 }  // namespace flutter
