@@ -35,12 +35,12 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
     auto udev = udev_new();
     if (!udev) {
-      LINUXES_LOG(ERROR) << "Failed to create udev instance.";
+      ELINUX_LOG(ERROR) << "Failed to create udev instance.";
       return;
     }
     libinput_ = libinput_udev_create_context(&kLibinputInterface, NULL, udev);
     if (!libinput_) {
-      LINUXES_LOG(ERROR) << "Failed to create libinput instance.";
+      ELINUX_LOG(ERROR) << "Failed to create libinput instance.";
       udev_unref(udev);
       return;
     }
@@ -49,20 +49,20 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     constexpr char kSeatId[] = "seat0";
     auto ret = libinput_udev_assign_seat(libinput_, kSeatId);
     if (ret != 0) {
-      LINUXES_LOG(ERROR) << "Failed to assign udev seat to libinput instance.";
+      ELINUX_LOG(ERROR) << "Failed to assign udev seat to libinput instance.";
       return;
     }
 
     ret = sd_event_new(&libinput_event_loop_);
     if (ret < 0) {
-      LINUXES_LOG(ERROR) << "Failed to create libinput event loop.";
+      ELINUX_LOG(ERROR) << "Failed to create libinput event loop.";
       return;
     }
     ret =
         sd_event_add_io(libinput_event_loop_, NULL, libinput_get_fd(libinput_),
                         EPOLLIN | EPOLLRDHUP | EPOLLPRI, OnLibinputEvent, this);
     if (ret < 0) {
-      LINUXES_LOG(ERROR) << "Failed to listen for user input.";
+      ELINUX_LOG(ERROR) << "Failed to listen for user input.";
       libinput_event_loop_ = sd_event_unref(libinput_event_loop_);
       return;
     }
@@ -105,18 +105,18 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   bool CreateRenderSurface(int32_t width, int32_t height) override {
     auto device_filename = std::getenv(kFlutterDrmDeviceEnvironmentKey);
     if ((!device_filename) || (device_filename[0] == '\0')) {
-      LINUXES_LOG(WARNING) << kFlutterDrmDeviceEnvironmentKey
-                           << " is not set, use " << kDrmDeviceDefaultFilename;
+      ELINUX_LOG(WARNING) << kFlutterDrmDeviceEnvironmentKey
+                          << " is not set, use " << kDrmDeviceDefaultFilename;
       device_filename = const_cast<char*>(kDrmDeviceDefaultFilename);
     }
     native_window_ = std::make_unique<T>(device_filename);
     if (!native_window_->IsValid()) {
-      LINUXES_LOG(ERROR) << "Failed to create the native window";
+      ELINUX_LOG(ERROR) << "Failed to create the native window";
       return false;
     }
 
     if (!RegisterUdevDrmEventLoop(device_filename)) {
-      LINUXES_LOG(ERROR) << "Failed to register udev drm event loop.";
+      ELINUX_LOG(ERROR) << "Failed to register udev drm event loop.";
       return false;
     }
     display_valid_ = true;
@@ -127,14 +127,14 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     }
 
     if (view_properties_.view_mode != FlutterDesktopViewMode::kFullscreen) {
-      LINUXES_LOG(WARNING)
+      ELINUX_LOG(WARNING)
           << "Normal mode is not supported, use fullscreen mode.";
       view_properties_.view_mode = FlutterDesktopViewMode::kFullscreen;
     }
     view_properties_.width = native_window_->Width();
     view_properties_.height = native_window_->Height();
-    LINUXES_LOG(INFO) << "Display output resolution: " << view_properties_.width
-                      << "x" << view_properties_.height;
+    ELINUX_LOG(INFO) << "Display output resolution: " << view_properties_.width
+                     << "x" << view_properties_.height;
 
     if (is_pending_cursor_add_event_) {
       native_window_->ShowCursor(pointer_x_, pointer_y_);
@@ -198,7 +198,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
                             void* user_data) -> int {
         auto ret = open(path, flags | O_CLOEXEC);
         if (ret == -1) {
-          LINUXES_LOG(ERROR)
+          ELINUX_LOG(ERROR)
               << "Failed to open " << path << ", error: " << strerror(errno);
         }
         return ret;
@@ -209,14 +209,14 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   bool RegisterUdevDrmEventLoop(const std::string& device_filename) {
     auto udev = udev_new();
     if (!udev) {
-      LINUXES_LOG(ERROR) << "Failed to create udev instance.";
+      ELINUX_LOG(ERROR) << "Failed to create udev instance.";
       return false;
     }
 
     constexpr char kUdevMonitorSystemUdev[] = "udev";
     udev_monitor_ = udev_monitor_new_from_netlink(udev, kUdevMonitorSystemUdev);
     if (!udev_monitor_) {
-      LINUXES_LOG(ERROR) << "Failed to create udev monitor.";
+      ELINUX_LOG(ERROR) << "Failed to create udev monitor.";
       udev_unref(udev);
       return false;
     }
@@ -224,7 +224,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     constexpr char kUdevMonitorSubsystemDrm[] = "drm";
     if (udev_monitor_filter_add_match_subsystem_devtype(
             udev_monitor_, kUdevMonitorSubsystemDrm, NULL) < 0) {
-      LINUXES_LOG(ERROR) << "Failed to filter udev monitor.";
+      ELINUX_LOG(ERROR) << "Failed to filter udev monitor.";
       udev_unref(udev);
       return false;
     }
@@ -232,7 +232,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     constexpr char kFileNameSeparator[] = "/";
     auto pos = device_filename.find_last_of(kFileNameSeparator);
     if (pos == std::string::npos) {
-      LINUXES_LOG(ERROR) << "Failed to get device name position.";
+      ELINUX_LOG(ERROR) << "Failed to get device name position.";
       udev_unref(udev);
       return false;
     }
@@ -241,14 +241,14 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     auto device = udev_device_new_from_subsystem_sysname(
         udev, kUdevMonitorSubsystemDrm, device_name.c_str());
     if (!device) {
-      LINUXES_LOG(ERROR) << "Failed to get device from " << device_name;
+      ELINUX_LOG(ERROR) << "Failed to get device from " << device_name;
       udev_unref(udev);
       return false;
     }
 
     auto sysnum = udev_device_get_sysnum(device);
     if (!sysnum) {
-      LINUXES_LOG(ERROR) << "Failed to get device id.";
+      ELINUX_LOG(ERROR) << "Failed to get device id.";
       udev_unref(udev);
       return false;
     }
@@ -256,19 +256,19 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     udev_unref(udev);
 
     if (sd_event_new(&udev_drm_event_loop_) < 0) {
-      LINUXES_LOG(ERROR) << "Failed to create udev drm event loop.";
+      ELINUX_LOG(ERROR) << "Failed to create udev drm event loop.";
       return false;
     }
 
     if (sd_event_add_io(
             udev_drm_event_loop_, NULL, udev_monitor_get_fd(udev_monitor_),
             EPOLLIN | EPOLLRDHUP | EPOLLPRI, OnUdevDrmEvent, this) < 0) {
-      LINUXES_LOG(ERROR) << "Failed to listen for udev drm event.";
+      ELINUX_LOG(ERROR) << "Failed to listen for udev drm event.";
       return false;
     }
 
     if (udev_monitor_enable_receiving(udev_monitor_) < 0) {
-      LINUXES_LOG(ERROR) << "Failed to enable udev monitor receiving.";
+      ELINUX_LOG(ERROR) << "Failed to enable udev monitor receiving.";
       return false;
     }
 
@@ -280,7 +280,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     auto self = reinterpret_cast<LinuxesWindowDrm*>(data);
     auto device = udev_monitor_receive_device(self->udev_monitor_);
     if (!device) {
-      LINUXES_LOG(ERROR) << "Failed to receive udev device.";
+      ELINUX_LOG(ERROR) << "Failed to receive udev device.";
       return -1;
     }
 
@@ -290,9 +290,9 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
           self->view_properties_.height != self->native_window_->Height()) {
         self->view_properties_.width = self->native_window_->Width();
         self->view_properties_.height = self->native_window_->Height();
-        LINUXES_LOG(INFO) << "Display output resolution: "
-                          << self->view_properties_.width << "x"
-                          << self->view_properties_.height;
+        ELINUX_LOG(INFO) << "Display output resolution: "
+                         << self->view_properties_.width << "x"
+                         << self->view_properties_.height;
         if (self->binding_handler_delegate_) {
           self->binding_handler_delegate_->OnWindowSizeChanged(
               self->view_properties_.width, self->view_properties_.height);
@@ -307,10 +307,10 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
   bool IsUdevEventHotplug(udev_device& device) {
     auto sysnum = udev_device_get_sysnum(&device);
     if (!sysnum) {
-      LINUXES_LOG(ERROR) << "Failed to get device id.";
+      ELINUX_LOG(ERROR) << "Failed to get device id.";
       return false;
     } else if (std::atoi(sysnum) != drm_device_id_) {
-      LINUXES_LOG(ERROR) << "Not expected device id.";
+      ELINUX_LOG(ERROR) << "Not expected device id.";
       return false;
     }
 
@@ -318,7 +318,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     auto value =
         udev_device_get_property_value(&device, kUdevPropertyKeyHotplug);
     if (!value) {
-      LINUXES_LOG(ERROR) << "Failed to get udev device property value.";
+      ELINUX_LOG(ERROR) << "Failed to get udev device property value.";
       return false;
     }
 
@@ -331,7 +331,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     auto self = reinterpret_cast<LinuxesWindowDrm*>(data);
     auto ret = libinput_dispatch(self->libinput_);
     if (ret < 0) {
-      LINUXES_LOG(ERROR) << "Failed to dispatch libinput events.";
+      ELINUX_LOG(ERROR) << "Failed to dispatch libinput events.";
       return -ret;
     }
 
@@ -486,7 +486,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
           flutter_button = kFlutterPointerButtonMouseForward;
           break;
         default:
-          LINUXES_LOG(ERROR) << "Not expected button input: " << button;
+          ELINUX_LOG(ERROR) << "Not expected button input: " << button;
           return;
       }
 
@@ -576,7 +576,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
         value = libinput_event_pointer_get_axis_value(pointer_event, axis);
         break;
       default:
-        LINUXES_LOG(ERROR) << "Not expected axis source: " << source;
+        ELINUX_LOG(ERROR) << "Not expected axis source: " << source;
         return;
     }
 

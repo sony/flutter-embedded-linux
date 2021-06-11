@@ -18,7 +18,7 @@ namespace flutter {
 NativeWindowDrm::NativeWindowDrm(const char* device_filename) {
   drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
   if (drm_device_ == -1) {
-    LINUXES_LOG(ERROR) << "Couldn't open " << device_filename;
+    ELINUX_LOG(ERROR) << "Couldn't open " << device_filename;
     return;
   }
 
@@ -40,7 +40,7 @@ bool NativeWindowDrm::MoveCursor(double x, double y) {
       drmModeMoveCursor(drm_device_, drm_crtc_->crtc_id,
                         x - cursor_hotspot_.first, y - cursor_hotspot_.second);
   if (result < 0) {
-    LINUXES_LOG(ERROR) << "Couldn't move the mouse cursor: " << result;
+    ELINUX_LOG(ERROR) << "Couldn't move the mouse cursor: " << result;
     return false;
   }
   return true;
@@ -49,13 +49,13 @@ bool NativeWindowDrm::MoveCursor(double x, double y) {
 bool NativeWindowDrm::ConfigureDisplay() {
   auto resources = drmModeGetResources(drm_device_);
   if (!resources) {
-    LINUXES_LOG(ERROR) << "Couldn't get resources";
+    ELINUX_LOG(ERROR) << "Couldn't get resources";
     return false;
   }
 
   auto connector = FindConnector(resources);
   if (!connector) {
-    LINUXES_LOG(ERROR) << "Couldn't find any connectors";
+    ELINUX_LOG(ERROR) << "Couldn't find any connectors";
     drmModeFreeResources(resources);
     return false;
   }
@@ -64,11 +64,11 @@ bool NativeWindowDrm::ConfigureDisplay() {
   drm_mode_info_ = connector->modes[0];
   width_ = drm_mode_info_.hdisplay;
   height_ = drm_mode_info_.vdisplay;
-  LINUXES_LOG(INFO) << "resolution: " << width_ << "x" << height_;
+  ELINUX_LOG(INFO) << "resolution: " << width_ << "x" << height_;
 
   auto* encoder = FindEncoder(resources, connector);
   if (!encoder) {
-    LINUXES_LOG(ERROR) << "Couldn't find any encoders";
+    ELINUX_LOG(ERROR) << "Couldn't find any encoders";
     drmModeFreeConnector(connector);
     drmModeFreeResources(resources);
     return false;
@@ -157,8 +157,8 @@ const uint32_t* NativeWindowDrm::GetCursorData(const std::string& cursor_name) {
 
   if (!cursor_data) {
     if (!cursor_name.empty()) {
-      LINUXES_LOG(WARNING) << "Unsupported cursor: " << cursor_name.c_str()
-                           << ", use LeftPtr cursor.";
+      ELINUX_LOG(WARNING) << "Unsupported cursor: " << cursor_name.c_str()
+                          << ", use LeftPtr cursor.";
     }
     cursor_data = kCursorDataLeftPtr;
   }

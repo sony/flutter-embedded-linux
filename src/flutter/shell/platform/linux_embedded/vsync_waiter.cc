@@ -30,7 +30,7 @@ void VsyncWaiter::NotifyVsync(FLUTTER_API_SYMBOL(FlutterEngine) engine,
     auto result = embedder_api->OnVsync(engine, baton_, frame_start_time_nanos,
                                         frame_target_time_nanos);
     if (result != kSuccess) {
-      LINUXES_LOG(ERROR) << "FlutterEngineOnVsync failed: batton = " << baton_;
+      ELINUX_LOG(ERROR) << "FlutterEngineOnVsync failed: batton = " << baton_;
     }
   }
 }

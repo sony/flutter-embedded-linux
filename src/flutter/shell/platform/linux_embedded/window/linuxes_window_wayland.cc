@@ -73,7 +73,7 @@ const wp_presentation_listener LinuxesWindowWayland::kWpPresentationListener = {
         [](void* data, wp_presentation* wp_presentation, uint32_t clk_id) {
           auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
           self->wp_presentation_clk_id_ = clk_id;
-          LINUXES_LOG(TRACE) << "presentation info: clk_id = " << clk_id;
+          ELINUX_LOG(TRACE) << "presentation info: clk_id = " << clk_id;
         },
 };
 
@@ -214,7 +214,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
             flutter_button = kFlutterPointerButtonMouseForward;
             break;
           default:
-            LINUXES_LOG(ERROR) << "Not expected button input: " << button;
+            ELINUX_LOG(ERROR) << "Not expected button input: " << button;
             return;
         }
 
@@ -330,9 +330,9 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
                int32_t height, int32_t refresh) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
-        LINUXES_LOG(INFO) << "Display output info: width = " << width
-                          << ", height = " << height
-                          << ", refresh = " << refresh;
+        ELINUX_LOG(INFO) << "Display output info: width = " << width
+                         << ", height = " << height
+                         << ", refresh = " << refresh;
         // Some composers send 0 for the refresh value.
         if (refresh != 0) {
           self->frame_rate_ = refresh;
@@ -351,7 +351,7 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
     .done = [](void* data, wl_output* wl_output) -> void {},
     .scale = [](void* data, wl_output* wl_output, int32_t scale) -> void {
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
-      LINUXES_LOG(INFO) << "Display output scale: " << scale;
+      ELINUX_LOG(INFO) << "Display output scale: " << scale;
       self->current_scale_ = scale;
     },
 };
@@ -521,7 +521,7 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
     .send = [](void* data, wl_data_source* wl_data_source,
                const char* mime_type, int32_t fd) -> void {
       if (strcmp(mime_type, kClipboardMimeTypeText)) {
-        LINUXES_LOG(ERROR) << "Not expected mime_type: " << mime_type;
+        ELINUX_LOG(ERROR) << "Not expected mime_type: " << mime_type;
         return;
       }
       auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
@@ -572,13 +572,13 @@ LinuxesWindowWayland::LinuxesWindowWayland(
 
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
-    LINUXES_LOG(ERROR) << "Failed to connect to the Wayland display.";
+    ELINUX_LOG(ERROR) << "Failed to connect to the Wayland display.";
     return;
   }
 
   wl_registry_ = wl_display_get_registry(wl_display_);
   if (!wl_registry_) {
-    LINUXES_LOG(ERROR) << "Failed to get the wayland registry.";
+    ELINUX_LOG(ERROR) << "Failed to get the wayland registry.";
     return;
   }
 
@@ -598,7 +598,7 @@ LinuxesWindowWayland::LinuxesWindowWayland(
       zwp_text_input_v3_ = zwp_text_input_manager_v3_get_text_input(
           zwp_text_input_manager_v3_, wl_seat_);
       if (!zwp_text_input_v3_) {
-        LINUXES_LOG(ERROR) << "Failed to create the text input manager v3.";
+        ELINUX_LOG(ERROR) << "Failed to create the text input manager v3.";
         return;
       }
       zwp_text_input_v3_add_listener(zwp_text_input_v3_,
@@ -607,7 +607,7 @@ LinuxesWindowWayland::LinuxesWindowWayland(
       zwp_text_input_v1_ = zwp_text_input_manager_v1_create_text_input(
           zwp_text_input_manager_v1_);
       if (!zwp_text_input_v1_) {
-        LINUXES_LOG(ERROR) << "Failed to create text input manager v1.";
+        ELINUX_LOG(ERROR) << "Failed to create text input manager v1.";
         return;
       }
       zwp_text_input_v1_add_listener(zwp_text_input_v1_,
@@ -760,7 +760,7 @@ int32_t LinuxesWindowWayland::GetFrameRate() { return frame_rate_; }
 
 bool LinuxesWindowWayland::DispatchEvent() {
   if (!IsValid()) {
-    LINUXES_LOG(ERROR) << "Wayland display is invalid.";
+    ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
   }
 
@@ -819,17 +819,17 @@ bool LinuxesWindowWayland::DispatchEvent() {
 
 bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   if (!display_valid_) {
-    LINUXES_LOG(ERROR) << "Wayland display is invalid.";
+    ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
   }
 
   if (!wl_compositor_) {
-    LINUXES_LOG(ERROR) << "Wl_compositor is invalid";
+    ELINUX_LOG(ERROR) << "Wl_compositor is invalid";
     return false;
   }
 
   if (!xdg_wm_base_) {
-    LINUXES_LOG(ERROR) << "Xdg-shell is invalid";
+    ELINUX_LOG(ERROR) << "Xdg-shell is invalid";
     return false;
   }
 
@@ -838,12 +838,12 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     height = view_properties_.height;
   }
 
-  LINUXES_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
-                     << height;
+  ELINUX_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
+                    << height;
   if (view_properties_.use_mouse_cursor) {
     wl_cursor_surface_ = wl_compositor_create_surface(wl_compositor_);
     if (!wl_cursor_surface_) {
-      LINUXES_LOG(ERROR)
+      ELINUX_LOG(ERROR)
           << "Failed to create the compositor surface for cursor.";
       return false;
     }
@@ -855,7 +855,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   xdg_surface_ =
       xdg_wm_base_get_xdg_surface(xdg_wm_base_, native_window_->Surface());
   if (!xdg_surface_) {
-    LINUXES_LOG(ERROR) << "Failed to get the xdg surface.";
+    ELINUX_LOG(ERROR) << "Failed to get the xdg surface.";
     return false;
   }
   xdg_surface_add_listener(xdg_surface_, &kXdgSurfaceListener, this);
@@ -1041,7 +1041,7 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
           wl_registry_bind(wl_registry, name, &wl_shm_interface, 1));
       wl_cursor_theme_ = wl_cursor_theme_load(nullptr, 32, wl_shm_);
       if (!wl_cursor_theme_) {
-        LINUXES_LOG(ERROR) << "Failed to load cursor theme.";
+        ELINUX_LOG(ERROR) << "Failed to load cursor theme.";
         return;
       }
       CreateSupportedWlCursorList();
@@ -1113,7 +1113,7 @@ void LinuxesWindowWayland::CreateSupportedWlCursorList() {
     auto wl_cursor =
         wl_cursor_theme_get_cursor(wl_cursor_theme_, theme.c_str());
     if (!wl_cursor) {
-      LINUXES_LOG(ERROR) << "Unsupported cursor theme: " << theme.c_str();
+      ELINUX_LOG(ERROR) << "Unsupported cursor theme: " << theme.c_str();
       continue;
     }
     supported_wl_cursor_list_[theme] = wl_cursor;
@@ -1173,7 +1173,7 @@ wl_cursor* LinuxesWindowWayland::GetWlCursor(const std::string& cursor_name) {
     }
   }
 
-  LINUXES_LOG(ERROR) << "Unsupported cursor: " << cursor_name.c_str();
+  ELINUX_LOG(ERROR) << "Unsupported cursor: " << cursor_name.c_str();
   return supported_wl_cursor_list_[kWlCursorThemeLeftPtr];
 }
 

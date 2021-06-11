@@ -17,7 +17,7 @@ ContextEglStream::ContextEglStream(
   }
 
   if (!SetEglExtensionFunctionPointers()) {
-    LINUXES_LOG(ERROR) << "Failed to set extension function pointers";
+    ELINUX_LOG(ERROR) << "Failed to set extension function pointers";
     valid_ = false;
   }
 }
@@ -35,21 +35,21 @@ std::unique_ptr<LinuxesEGLSurface> ContextEglStream::CreateOnscreenSurface(
 
   if (eglGetOutputLayersEXT_(environment_->Display(), layer_attribs, &layer, 1,
                              &layer_count) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to get EGL output layers";
+    ELINUX_LOG(ERROR) << "Failed to get EGL output layers";
   }
   if (layer_count == 0 || layer == nullptr) {
-    LINUXES_LOG(ERROR) << "No matching layers";
+    ELINUX_LOG(ERROR) << "No matching layers";
   }
 
   EGLint stream_attribs[] = {EGL_NONE};
   auto stream = eglCreateStreamKHR_(environment_->Display(), stream_attribs);
   if (stream == EGL_NO_STREAM_KHR) {
-    LINUXES_LOG(ERROR) << "Failed to create EGL stream";
+    ELINUX_LOG(ERROR) << "Failed to create EGL stream";
   }
 
   if (eglStreamConsumerOutputEXT_(environment_->Display(), stream, layer) !=
       EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to create EGL stream consumer output";
+    ELINUX_LOG(ERROR) << "Failed to create EGL stream consumer output";
   }
 
   EGLint surface_attribs[] = {
@@ -62,7 +62,7 @@ std::unique_ptr<LinuxesEGLSurface> ContextEglStream::CreateOnscreenSurface(
   auto surface = eglCreateStreamProducerSurfaceKHR_(
       environment_->Display(), config_, stream, surface_attribs);
   if (surface == EGL_NO_SURFACE) {
-    LINUXES_LOG(ERROR) << "Failed to create EGL stream producer surface";
+    ELINUX_LOG(ERROR) << "Failed to create EGL stream producer surface";
   }
   return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
                                              context_);

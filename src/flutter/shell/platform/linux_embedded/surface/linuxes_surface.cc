@@ -31,7 +31,7 @@ bool Surface::SetNativeWindow(NativeWindow* window) {
 
 bool Surface::OnScreenSurfaceResize(const size_t width, const size_t height) {
   if (!native_window_->Resize(width, height)) {
-    LINUXES_LOG(ERROR) << "Failed to resize.";
+    ELINUX_LOG(ERROR) << "Failed to resize.";
     return false;
   }
 
@@ -39,7 +39,7 @@ bool Surface::OnScreenSurfaceResize(const size_t width, const size_t height) {
     DestroyOnScreenContext();
     onscreen_surface_ = context_->CreateOnscreenSurface(native_window_);
     if (!onscreen_surface_->IsValid()) {
-      LINUXES_LOG(WARNING) << "Failed to recreate on-screen surface.";
+      ELINUX_LOG(WARNING) << "Failed to recreate on-screen surface.";
       onscreen_surface_ = nullptr;
       return false;
     }

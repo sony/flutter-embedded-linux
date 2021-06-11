@@ -26,7 +26,7 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
   }
 
   if (!drmIsMaster(drm_device_)) {
-    LINUXES_LOG(ERROR)
+    ELINUX_LOG(ERROR)
         << "Couldn't become the DRM master. Please confirm if another display "
            "backend such as X11 and Wayland is not running.";
     valid_ = false;
@@ -35,7 +35,7 @@ NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename)
 
   gbm_device_ = gbm_create_device(drm_device_);
   if (!gbm_device_) {
-    LINUXES_LOG(ERROR) << "Couldn't create the GBM device.";
+    ELINUX_LOG(ERROR) << "Couldn't create the GBM device.";
     valid_ = false;
     return;
   }
@@ -86,7 +86,7 @@ bool NativeWindowDrmGbm::ShowCursor(double x, double y) {
                                  gbm_bo_get_handle(gbm_cursor_bo_).u32,
                                  kCursorBufferWidth, kCursorBufferHeight);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
     return false;
   }
   return true;
@@ -112,7 +112,7 @@ bool NativeWindowDrmGbm::UpdateCursor(const std::string& cursor_name, double x,
                                  gbm_bo_get_handle(gbm_cursor_bo_).u32,
                                  kCursorBufferWidth, kCursorBufferHeight);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
     return false;
   }
   return true;
@@ -121,7 +121,7 @@ bool NativeWindowDrmGbm::UpdateCursor(const std::string& cursor_name, double x,
 bool NativeWindowDrmGbm::DismissCursor() {
   auto result = drmModeSetCursor(drm_device_, drm_crtc_->crtc_id, 0, 0, 0);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to set cursor buffer. (" << result << ")";
     return false;
   }
   return true;
@@ -138,7 +138,7 @@ bool NativeWindowDrmGbm::IsNeedRecreateSurfaceAfterResize() const {
 
 bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
   if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
+    ELINUX_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
 
@@ -148,7 +148,7 @@ bool NativeWindowDrmGbm::Resize(const size_t width, const size_t height) {
     return false;
   }
 
-  LINUXES_LOG(INFO) << "resize: " << width << "x" << height;
+  ELINUX_LOG(INFO) << "resize: " << width << "x" << height;
   drmModeRmFB(drm_device_, gbm_previous_fb_);
   gbm_surface_release_buffer(static_cast<gbm_surface*>(window_),
                              gbm_previous_bo_);
@@ -171,12 +171,12 @@ void NativeWindowDrmGbm::SwapBuffers() {
   int result =
       drmModeAddFB(drm_device_, width, height, 24, 32, stride, handle, &fb);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to add a framebuffer. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to add a framebuffer. (" << result << ")";
   }
   result = drmModeSetCrtc(drm_device_, drm_crtc_->crtc_id, fb, 0, 0,
                           &drm_connector_id_, 1, &drm_mode_info_);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to set crct mode. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to set crct mode. (" << result << ")";
   }
 
   if (gbm_previous_bo_) {
@@ -193,7 +193,7 @@ bool NativeWindowDrmGbm::CreateGbmSurface() {
                                drm_mode_info_.vdisplay, GBM_FORMAT_ARGB8888,
                                GBM_BO_USE_SCANOUT | GBM_BO_USE_RENDERING);
   if (!window_) {
-    LINUXES_LOG(ERROR) << "Failed to create the gbm surface.";
+    ELINUX_LOG(ERROR) << "Failed to create the gbm surface.";
     valid_ = false;
     return false;
   }
@@ -201,7 +201,7 @@ bool NativeWindowDrmGbm::CreateGbmSurface() {
   window_offscreen_ = gbm_surface_create(gbm_device_, 1, 1, GBM_FORMAT_ARGB8888,
                                          GBM_BO_USE_RENDERING);
   if (!window_offscreen_) {
-    LINUXES_LOG(ERROR) << "Failed to create the gbm surface for offscreen.";
+    ELINUX_LOG(ERROR) << "Failed to create the gbm surface for offscreen.";
     return false;
   }
 
@@ -214,7 +214,7 @@ bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {
                                    kCursorBufferHeight, GBM_FORMAT_ARGB8888,
                                    GBM_BO_USE_CURSOR | GBM_BO_USE_WRITE);
     if (!gbm_cursor_bo_) {
-      LINUXES_LOG(ERROR) << "Failed to create cursor buffer";
+      ELINUX_LOG(ERROR) << "Failed to create cursor buffer";
       return false;
     }
   }
@@ -228,7 +228,7 @@ bool NativeWindowDrmGbm::CreateCursorBuffer(const std::string& cursor_name) {
 
   auto result = gbm_bo_write(gbm_cursor_bo_, buf, sizeof(buf));
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to write cursor data. (" << result << ")";
+    ELINUX_LOG(ERROR) << "Failed to write cursor data. (" << result << ")";
     return false;
   }
   return true;
