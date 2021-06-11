@@ -18,8 +18,8 @@ class EnvironmentEgl {
       : display_(EGL_NO_DISPLAY), valid_(false) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
-      LINUXES_LOG(ERROR) << "Failed to get the EGL display: "
-                         << get_egl_error_cause();
+      ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
+                        << get_egl_error_cause();
       return;
     }
 
@@ -31,8 +31,8 @@ class EnvironmentEgl {
   ~EnvironmentEgl() {
     if (display_ != EGL_NO_DISPLAY) {
       if (eglTerminate(display_) != EGL_TRUE) {
-        LINUXES_LOG(ERROR) << "Failed to terminate the EGL display: "
-                           << get_egl_error_cause();
+        ELINUX_LOG(ERROR) << "Failed to terminate the EGL display: "
+                          << get_egl_error_cause();
       }
       display_ = EGL_NO_DISPLAY;
     }
@@ -40,13 +40,13 @@ class EnvironmentEgl {
 
   bool InitializeEgl() const {
     if (eglInitialize(display_, nullptr, nullptr) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to initialize the EGL display: "
-                         << get_egl_error_cause();
+      ELINUX_LOG(ERROR) << "Failed to initialize the EGL display: "
+                        << get_egl_error_cause();
       return false;
     }
 
     if (eglBindAPI(EGL_OPENGL_ES_API) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
+      ELINUX_LOG(ERROR) << "Failed to bind EGL API: " << get_egl_error_cause();
       return false;
     }
 

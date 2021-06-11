@@ -28,13 +28,13 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
   };
   if (eglChooseConfig(environment_->Display(), attribs, &config_, 1,
                       &config_count) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to choose EGL surface config: "
-                       << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "Failed to choose EGL surface config: "
+                      << get_egl_error_cause();
     return;
   }
 
   if (config_count == 0 || config_ == nullptr) {
-    LINUXES_LOG(ERROR) << "No matching configs: " << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "No matching configs: " << get_egl_error_cause();
     return;
   }
 
@@ -43,16 +43,16 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     context_ = eglCreateContext(environment_->Display(), config_,
                                 EGL_NO_CONTEXT, attribs);
     if (context_ == EGL_NO_CONTEXT) {
-      LINUXES_LOG(ERROR) << "Failed to create an onscreen context: "
-                         << get_egl_error_cause();
+      ELINUX_LOG(ERROR) << "Failed to create an onscreen context: "
+                        << get_egl_error_cause();
       return;
     }
 
     resource_context_ =
         eglCreateContext(environment_->Display(), config_, context_, attribs);
     if (resource_context_ == EGL_NO_CONTEXT) {
-      LINUXES_LOG(ERROR) << "Failed to create an offscreen resouce context: "
-                         << get_egl_error_cause();
+      ELINUX_LOG(ERROR) << "Failed to create an offscreen resouce context: "
+                        << get_egl_error_cause();
       return;
     }
   }
@@ -66,8 +66,8 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOnscreenSurface(
   EGLSurface surface = eglCreateWindowSurface(environment_->Display(), config_,
                                               window->Window(), attribs);
   if (surface == EGL_NO_SURFACE) {
-    LINUXES_LOG(ERROR) << "Failed to create EGL window surface: "
-                       << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "Failed to create EGL window surface: "
+                      << get_egl_error_cause();
   }
   return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
                                              context_);
@@ -87,8 +87,8 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
   EGLSurface surface =
       eglCreatePbufferSurface(environment_->Display(), config_, attribs);
   if (surface == EGL_NO_SURFACE) {
-    LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
-                         << "(" << get_egl_error_cause() << ")";
+    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface."
+                        << "(" << get_egl_error_cause() << ")";
   }
 #else
   // eglCreatePbufferSurface isn't supported on both Wayland and GBM.
@@ -97,8 +97,8 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
   EGLSurface surface = eglCreateWindowSurface(
       environment_->Display(), config_, window->WindowOffscreen(), attribs);
   if (surface == EGL_NO_SURFACE) {
-    LINUXES_LOG(WARNING) << "Failed to create EGL off-screen surface."
-                         << "(" << get_egl_error_cause() << ")";
+    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface."
+                        << "(" << get_egl_error_cause() << ")";
   }
 #endif
   return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
@@ -113,8 +113,8 @@ bool ContextEgl::ClearCurrent() const {
   }
   if (eglMakeCurrent(environment_->Display(), EGL_NO_SURFACE, EGL_NO_SURFACE,
                      EGL_NO_CONTEXT) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to clear EGL context: "
-                       << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "Failed to clear EGL context: "
+                      << get_egl_error_cause();
     return false;
   }
   return true;
@@ -123,7 +123,7 @@ bool ContextEgl::ClearCurrent() const {
 void* ContextEgl::GlProcResolver(const char* name) const {
   auto address = eglGetProcAddress(name);
   if (!address) {
-    LINUXES_LOG(ERROR) << "Failed eglGetProcAddress: " << name;
+    ELINUX_LOG(ERROR) << "Failed eglGetProcAddress: " << name;
     return nullptr;
   }
   return reinterpret_cast<void*>(address);

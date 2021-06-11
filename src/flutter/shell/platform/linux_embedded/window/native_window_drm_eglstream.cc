@@ -55,11 +55,11 @@ NativeWindowDrmEglstream::~NativeWindowDrmEglstream() {
 
 bool NativeWindowDrmEglstream::Resize(const size_t width, const size_t height) {
   if (!valid_) {
-    LINUXES_LOG(ERROR) << "Failed to resize the window.";
+    ELINUX_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
 
-  LINUXES_LOG(ERROR) << "Not supported now.";
+  ELINUX_LOG(ERROR) << "Not supported now.";
 
   return false;
 }
@@ -96,25 +96,25 @@ std::unique_ptr<SurfaceGl> NativeWindowDrmEglstream::CreateRenderSurface() {
 
 bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
   if (!SetDrmClientCapabilities()) {
-    LINUXES_LOG(ERROR) << "Couldn't set drm client capability";
+    ELINUX_LOG(ERROR) << "Couldn't set drm client capability";
     return false;
   }
 
   auto plane_resources = drmModeGetPlaneResources(drm_device_);
   if (!plane_resources) {
-    LINUXES_LOG(ERROR) << "Couldn't get plane resources";
+    ELINUX_LOG(ERROR) << "Couldn't get plane resources";
     return false;
   }
   drm_plane_id_ = FindPrimaryPlaneId(plane_resources);
   drmModeFreePlaneResources(plane_resources);
   if (drm_plane_id_ == -1) {
-    LINUXES_LOG(ERROR) << "Couldn't find a plane.";
+    ELINUX_LOG(ERROR) << "Couldn't find a plane.";
     return false;
   }
 
   auto atomic = drmModeAtomicAlloc();
   if (!atomic) {
-    LINUXES_LOG(ERROR) << "Couldn't allocate atomic";
+    ELINUX_LOG(ERROR) << "Couldn't allocate atomic";
     return false;
   }
   int result = -1;
@@ -124,7 +124,7 @@ bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
   }
   drmModeAtomicFree(atomic);
   if (result != 0) {
-    LINUXES_LOG(ERROR) << "Failed to commit an atomic property change request";
+    ELINUX_LOG(ERROR) << "Failed to commit an atomic property change request";
     return false;
   }
 
@@ -133,11 +133,11 @@ bool NativeWindowDrmEglstream::ConfigureDisplayAdditional() {
 
 bool NativeWindowDrmEglstream::SetDrmClientCapabilities() {
   if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1) != 0) {
-    LINUXES_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_UNIVERSAL_PLANES";
+    ELINUX_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_UNIVERSAL_PLANES";
     return false;
   }
   if (drmSetClientCap(drm_device_, DRM_CLIENT_CAP_ATOMIC, 1) != 0) {
-    LINUXES_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_ATOMIC";
+    ELINUX_LOG(ERROR) << "Couldn't set DRM_CLIENT_CAP_ATOMIC";
     return false;
   }
   return true;
@@ -187,7 +187,7 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
   if (drmModeCreatePropertyBlob(drm_device_, &drm_mode_info_,
                                 sizeof(drm_mode_info_),
                                 &drm_property_blob_) != 0) {
-    LINUXES_LOG(ERROR) << "Failed to create property blob";
+    ELINUX_LOG(ERROR) << "Failed to create property blob";
     return false;
   }
 
@@ -244,7 +244,7 @@ bool NativeWindowDrmEglstream::AssignAtomicPropertyValue(
           if (std::strcmp(table[j].name, property->name) == 0) {
             if (drmModeAtomicAddProperty(atomic, id, property->prop_id,
                                          table[j].value) < 0) {
-              LINUXES_LOG(ERROR)
+              ELINUX_LOG(ERROR)
                   << "Failed to add " << table[j].name << " property";
               drmModeFreeProperty(property);
               drmModeFreeObjectProperties(properties);

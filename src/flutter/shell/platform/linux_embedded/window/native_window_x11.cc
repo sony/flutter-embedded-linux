@@ -28,7 +28,7 @@ NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
   auto* visual =
       XGetVisualInfo(display, VisualIDMask, &visualTemplate, &visualsCount);
   if (!visual) {
-    LINUXES_LOG(ERROR) << "Failed to get Visual info.";
+    ELINUX_LOG(ERROR) << "Failed to get Visual info.";
     return;
   }
 
@@ -46,7 +46,7 @@ NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
                     height, 0, visual->depth, InputOutput, visual->visual,
                     CWBorderPixel | CWColormap | CWEventMask, &windowAttribs);
   if (!window_) {
-    LINUXES_LOG(ERROR) << "Failed to the create window.";
+    ELINUX_LOG(ERROR) << "Failed to the create window.";
     return;
   }
 

@@ -19,7 +19,7 @@ LinuxesWindowX11::LinuxesWindowX11(
 
   display_ = XOpenDisplay(NULL);
   if (!display_) {
-    LINUXES_LOG(ERROR) << "Failed to open display.";
+    ELINUX_LOG(ERROR) << "Failed to open display.";
     return;
   }
 
@@ -112,7 +112,7 @@ bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
   native_window_ = std::make_unique<NativeWindowX11>(
       display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID), width, height);
   if (!native_window_->IsValid()) {
-    LINUXES_LOG(ERROR) << "Failed to create the native window";
+    ELINUX_LOG(ERROR) << "Failed to create the native window";
     return false;
   }
 
@@ -180,7 +180,7 @@ void LinuxesWindowX11::HandlePointerButtonEvent(uint32_t button,
         flutter_button = kFlutterPointerButtonMouseForward;
         break;
       default:
-        LINUXES_LOG(ERROR) << "Not expected button input: " << button;
+        ELINUX_LOG(ERROR) << "Not expected button input: " << button;
         return;
     }
     if (button_pressed) {

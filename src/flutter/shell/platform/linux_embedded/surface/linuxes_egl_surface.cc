@@ -16,7 +16,7 @@ LinuxesEGLSurface::LinuxesEGLSurface(EGLSurface surface, EGLDisplay display,
 LinuxesEGLSurface::~LinuxesEGLSurface() {
   if (surface_ != EGL_NO_SURFACE) {
     if (eglDestroySurface(display_, surface_) != EGL_TRUE) {
-      LINUXES_LOG(ERROR) << "Failed to destory surface";
+      ELINUX_LOG(ERROR) << "Failed to destory surface";
     }
     surface_ = EGL_NO_SURFACE;
   }
@@ -26,8 +26,8 @@ bool LinuxesEGLSurface::IsValid() const { return surface_ != EGL_NO_SURFACE; }
 
 bool LinuxesEGLSurface::MakeCurrent() const {
   if (eglMakeCurrent(display_, surface_, surface_, context_) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to make the EGL context current: "
-                       << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "Failed to make the EGL context current: "
+                      << get_egl_error_cause();
     return false;
   }
   return true;
@@ -35,8 +35,8 @@ bool LinuxesEGLSurface::MakeCurrent() const {
 
 bool LinuxesEGLSurface::SwapBuffers() const {
   if (eglSwapBuffers(display_, surface_) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to swap the EGL buffer: "
-                       << get_egl_error_cause();
+    ELINUX_LOG(ERROR) << "Failed to swap the EGL buffer: "
+                      << get_egl_error_cause();
     return false;
   }
   return true;
