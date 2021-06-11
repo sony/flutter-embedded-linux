@@ -20,17 +20,17 @@ constexpr char kFlutterLogLevelError[] = "ERROR";
 constexpr char kFlutterLogLevelFatal[] = "FATAL";
 constexpr char kFlutterLogLevelUnknown[] = "UNKNOWN";
 
-const char* const kLogLevelNames[LINUXES_LOG_NUM] = {
+const char* const kLogLevelNames[ELINUX_LOG_NUM] = {
     kFlutterLogLevelTrace,   kFlutterLogLevelDebug, kFlutterLogLevelInfo,
     kFlutterLogLevelWarning, kFlutterLogLevelError, kFlutterLogLevelFatal};
 
 const std::unordered_map<std::string, int> gLogLevelsMap{
-    {kFlutterLogLevelTrace, LINUXES_LOG_TRACE},
-    {kFlutterLogLevelDebug, LINUXES_LOG_DEBUG},
-    {kFlutterLogLevelInfo, LINUXES_LOG_INFO},
-    {kFlutterLogLevelWarning, LINUXES_LOG_WARNING},
-    {kFlutterLogLevelError, LINUXES_LOG_ERROR},
-    {kFlutterLogLevelFatal, LINUXES_LOG_FATAL},
+    {kFlutterLogLevelTrace, ELINUX_LOG_TRACE},
+    {kFlutterLogLevelDebug, ELINUX_LOG_DEBUG},
+    {kFlutterLogLevelInfo, ELINUX_LOG_INFO},
+    {kFlutterLogLevelWarning, ELINUX_LOG_WARNING},
+    {kFlutterLogLevelError, ELINUX_LOG_ERROR},
+    {kFlutterLogLevelFatal, ELINUX_LOG_FATAL},
 };
 
 int gFilterLogLevel = -1;
@@ -39,12 +39,12 @@ int GetCurrentLogLevel() {
   if (gFilterLogLevel == -1) {
     auto env_log_level = std::getenv(kFlutterLogLevelsEnvironmentKey);
     if (!env_log_level || (env_log_level[0] == '\0')) {
-      gFilterLogLevel = LINUXES_LOG_WARNING;
+      gFilterLogLevel = ELINUX_LOG_WARNING;
     } else {
       if (gLogLevelsMap.find(env_log_level) != gLogLevelsMap.end()) {
         gFilterLogLevel = gLogLevelsMap.at(env_log_level);
       } else {
-        gFilterLogLevel = LINUXES_LOG_WARNING;
+        gFilterLogLevel = ELINUX_LOG_WARNING;
       }
     }
   }
@@ -52,7 +52,7 @@ int GetCurrentLogLevel() {
 }
 
 const char* GetLogLevelName(int level) {
-  if (LINUXES_LOG_TRACE <= level && level < LINUXES_LOG_NUM)
+  if (ELINUX_LOG_TRACE <= level && level < ELINUX_LOG_NUM)
     return kLogLevelNames[level];
   return kFlutterLogLevelUnknown;
 }
@@ -76,7 +76,7 @@ Logger::~Logger() {
   stream_ << std::endl;
   std::cerr << stream_.str();
   std::cerr.flush();
-  if (level_ >= LINUXES_LOG_FATAL) {
+  if (level_ >= ELINUX_LOG_FATAL) {
     abort();
   }
 }

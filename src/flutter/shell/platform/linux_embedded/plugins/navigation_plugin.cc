@@ -22,31 +22,31 @@ NavigationPlugin::NavigationPlugin(BinaryMessenger* messenger)
           messenger, kChannelName, &flutter::JsonMethodCodec::GetInstance())) {}
 
 void NavigationPlugin::SetInitialRoute(std::string route) const {
-  LINUXES_LOG(DEBUG) << "SetInitialRoute = " << route;
+  ELINUX_LOG(DEBUG) << "SetInitialRoute = " << route;
 
   auto args = std::make_unique<rapidjson::Document>(rapidjson::kObjectType);
   args->Parse("\"" + route + "\"");
   if (args->HasParseError()) {
-    LINUXES_LOG(ERROR) << "Failed to parse the initial route: " << route;
-    return ;
+    ELINUX_LOG(ERROR) << "Failed to parse the initial route: " << route;
+    return;
   }
   channel_->InvokeMethod(kSetInitialRouteMethod, std::move(args));
 }
 
 void NavigationPlugin::PushRoute(std::string route) const {
-  LINUXES_LOG(DEBUG) << "PushRoute = " << route;
+  ELINUX_LOG(DEBUG) << "PushRoute = " << route;
 
   auto args = std::make_unique<rapidjson::Document>(rapidjson::kObjectType);
   args->Parse("\"" + route + "\"");
   if (args->HasParseError()) {
-    LINUXES_LOG(ERROR) << "Failed to parse the route: " << route;
-    return ;
+    ELINUX_LOG(ERROR) << "Failed to parse the route: " << route;
+    return;
   }
   channel_->InvokeMethod(kPushRouteMethod, std::move(args));
 }
 
 void NavigationPlugin::PopRoute() const {
-  LINUXES_LOG(DEBUG) << "PopRoute";
+  ELINUX_LOG(DEBUG) << "PopRoute";
   channel_->InvokeMethod(kPopRouteMethod, nullptr);
 }
 

@@ -58,8 +58,8 @@ void PlatformViewsPlugin::RegisterViewFactory(
     std::unique_ptr<FlutterDesktopPlatformViewFactory> factory) {
   if (platform_view_factories_.find(view_type) !=
       platform_view_factories_.end()) {
-    LINUXES_LOG(ERROR) << "Platform Views factory is already registered: "
-                       << view_type;
+    ELINUX_LOG(ERROR) << "Platform Views factory is already registered: "
+                      << view_type;
     return;
   }
   platform_view_factories_[view_type] = std::move(factory);
@@ -93,8 +93,8 @@ void PlatformViewsPlugin::HandleMethodCall(
   } else if (method.compare(kExitMethod) == 0) {
     result->NotImplemented();
   } else {
-    LINUXES_LOG(WARNING) << "Platform Views unexpected method is called: "
-                         << method;
+    ELINUX_LOG(WARNING) << "Platform Views unexpected method is called: "
+                        << method;
     result->NotImplemented();
   }
 }
@@ -122,9 +122,9 @@ void PlatformViewsPlugin::PlatformViewsCreate(
     result->Error("Couldn't find height in the arguments");
     return;
   }
-  LINUXES_LOG(DEBUG) << "Create the platform view: view_type = " << view_type
-                     << ", id = " << view_id << ", width = " << view_width
-                     << ", height = " << view_height;
+  ELINUX_LOG(DEBUG) << "Create the platform view: view_type = " << view_type
+                    << ", id = " << view_id << ", width = " << view_width
+                    << ", height = " << view_height;
 
   if (platform_view_factories_.find(view_type) ==
       platform_view_factories_.end()) {
@@ -157,7 +157,7 @@ void PlatformViewsPlugin::PlatformViewsDispose(
     return;
   }
 
-  LINUXES_LOG(DEBUG) << "Dispose the platform view: id = " << view_id;
+  ELINUX_LOG(DEBUG) << "Dispose the platform view: id = " << view_id;
   if (platform_views_.find(view_id) == platform_views_.end()) {
     result->Error("Couldn't find the view id in the arguments");
     return;

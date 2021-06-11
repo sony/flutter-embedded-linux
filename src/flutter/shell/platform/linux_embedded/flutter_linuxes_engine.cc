@@ -108,12 +108,12 @@ FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
       std::this_thread::get_id(), embedder_api_.GetCurrentTime,
       [this](const auto* task) {
         if (!engine_) {
-          LINUXES_LOG(ERROR)
+          ELINUX_LOG(ERROR)
               << "Cannot post an engine task when engine is not running.";
           return;
         }
         if (embedder_api_.RunTask(engine_, task) != kSuccess) {
-          LINUXES_LOG(ERROR) << "Failed to post an engine task.";
+          ELINUX_LOG(ERROR) << "Failed to post an engine task.";
         }
       });
 
@@ -143,7 +143,7 @@ FlutterLinuxesEngine::~FlutterLinuxesEngine() { Stop(); }
 
 bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
   if (!project_->HasValidPaths()) {
-    LINUXES_LOG(ERROR) << "Missing or unresolvable paths to assets.";
+    ELINUX_LOG(ERROR) << "Missing or unresolvable paths to assets.";
     return false;
   }
   std::string assets_path_string = project_->assets_path();
@@ -151,7 +151,7 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
   if (embedder_api_.RunsAOTCompiledDartCode()) {
     aot_data_ = project_->LoadAotData(embedder_api_);
     if (!aot_data_) {
-      LINUXES_LOG(ERROR) << "Unable to start engine without AOT data.";
+      ELINUX_LOG(ERROR) << "Unable to start engine without AOT data.";
       return false;
     }
   }
@@ -237,7 +237,7 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
   auto result = embedder_api_.Run(FLUTTER_ENGINE_VERSION, &renderer_config,
                                   &args, this, &engine_);
   if (result != kSuccess || engine_ == nullptr) {
-    LINUXES_LOG(ERROR) << "Failed to start Flutter engine: error " << result;
+    ELINUX_LOG(ERROR) << "Failed to start Flutter engine: error " << result;
     return false;
   }
 
@@ -292,7 +292,7 @@ bool FlutterLinuxesEngine::SendPlatformMessage(
         embedder_api_.PlatformMessageCreateResponseHandle(
             engine_, reply, user_data, &response_handle);
     if (result != kSuccess) {
-      LINUXES_LOG(ERROR) << "Failed to create response handle\n";
+      ELINUX_LOG(ERROR) << "Failed to create response handle\n";
       return false;
     }
   }
@@ -323,9 +323,9 @@ void FlutterLinuxesEngine::SendPlatformMessageResponse(
 void FlutterLinuxesEngine::HandlePlatformMessage(
     const FlutterPlatformMessage* engine_message) {
   if (engine_message->struct_size != sizeof(FlutterPlatformMessage)) {
-    LINUXES_LOG(ERROR) << "Invalid message size received. Expected: "
-                       << sizeof(FlutterPlatformMessage) << " but received "
-                       << engine_message->struct_size;
+    ELINUX_LOG(ERROR) << "Invalid message size received. Expected: "
+                      << sizeof(FlutterPlatformMessage) << " but received "
+                      << engine_message->struct_size;
     return;
   }
 
@@ -353,7 +353,7 @@ void FlutterLinuxesEngine::SendSystemSettings() {
   auto result = embedder_api_.UpdateLocales(engine_, flutter_locale_list.data(),
                                             flutter_locale_list.size());
   if (result != kSuccess) {
-    LINUXES_LOG(ERROR) << "Failed to set up Flutter locales.";
+    ELINUX_LOG(ERROR) << "Failed to set up Flutter locales.";
   }
 
   rapidjson::Document settings(rapidjson::kObjectType);

@@ -309,7 +309,7 @@ uint32_t GetGlfwKeycode(uint32_t xkb_keycode) {
       keycode_to_glfwkey_map.end()) {
     return keycode_to_glfwkey_map.at(xkb_keycode);
   }
-  LINUXES_LOG(ERROR) << "Unknown keycode: " << xkb_keycode;
+  ELINUX_LOG(ERROR) << "Unknown keycode: " << xkb_keycode;
   return xkb_keycode;
 }
 

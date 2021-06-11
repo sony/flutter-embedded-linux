@@ -12,19 +12,19 @@
 
 namespace flutter {
 
-constexpr int LINUXES_LOG_TRACE = 0;
-constexpr int LINUXES_LOG_DEBUG = 1;
-constexpr int LINUXES_LOG_INFO = 2;
-constexpr int LINUXES_LOG_WARNING = 3;
-constexpr int LINUXES_LOG_ERROR = 4;
-constexpr int LINUXES_LOG_FATAL = 5;
-constexpr int LINUXES_LOG_NUM = 6;
+constexpr int ELINUX_LOG_TRACE = 0;
+constexpr int ELINUX_LOG_DEBUG = 1;
+constexpr int ELINUX_LOG_INFO = 2;
+constexpr int ELINUX_LOG_WARNING = 3;
+constexpr int ELINUX_LOG_ERROR = 4;
+constexpr int ELINUX_LOG_FATAL = 5;
+constexpr int ELINUX_LOG_NUM = 6;
 
 #define __LOG_FILE_NAME__ \
   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#define LINUXES_LOG(level) \
-  Logger(LINUXES_LOG_##level, __LOG_FILE_NAME__, __LINE__).stream()
+#define ELINUX_LOG(level) \
+  Logger(ELINUX_LOG_##level, __LOG_FILE_NAME__, __LINE__).stream()
 
 class Logger {
  public:

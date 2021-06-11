@@ -12,19 +12,19 @@ namespace flutter {
 
 EnvironmentEglStream::EnvironmentEglStream() : EnvironmentEgl() {
   if (!SetEglExtensionFunctionPointers()) {
-    LINUXES_LOG(ERROR) << "Failed to set extension function pointers";
+    ELINUX_LOG(ERROR) << "Failed to set extension function pointers";
     return;
   }
 
   auto device = GetEglDevice();
   if (device == EGL_NO_DEVICE_EXT) {
-    LINUXES_LOG(ERROR) << "Couldn't find EGL device";
+    ELINUX_LOG(ERROR) << "Couldn't find EGL device";
     return;
   }
 
   display_ = eglGetPlatformDisplayEXT_(EGL_PLATFORM_DEVICE_EXT, device, NULL);
   if (display_ == EGL_NO_DISPLAY) {
-    LINUXES_LOG(ERROR) << "Failed to get the EGL display";
+    ELINUX_LOG(ERROR) << "Failed to get the EGL display";
     return;
   }
 
@@ -46,23 +46,23 @@ bool EnvironmentEglStream::SetEglExtensionFunctionPointers() {
 EGLDeviceEXT EnvironmentEglStream::GetEglDevice() {
   EGLint num_devices;
   if (eglQueryDevicesEXT_(0, NULL, &num_devices) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to query EGL devices";
+    ELINUX_LOG(ERROR) << "Failed to query EGL devices";
     return EGL_NO_DEVICE_EXT;
   }
   if (num_devices < 1) {
-    LINUXES_LOG(ERROR) << "No EGL devices found";
+    ELINUX_LOG(ERROR) << "No EGL devices found";
     return EGL_NO_DEVICE_EXT;
   }
 
   auto devices = static_cast<EGLDeviceEXT*>(
       std::calloc(num_devices, sizeof(EGLDeviceEXT)));
   if (!devices) {
-    LINUXES_LOG(ERROR) << "Failed to allocate memory";
+    ELINUX_LOG(ERROR) << "Failed to allocate memory";
     return EGL_NO_DEVICE_EXT;
   }
 
   if (eglQueryDevicesEXT_(num_devices, devices, &num_devices) != EGL_TRUE) {
-    LINUXES_LOG(ERROR) << "Failed to query EGL devices";
+    ELINUX_LOG(ERROR) << "Failed to query EGL devices";
     std::free(devices);
     return EGL_NO_DEVICE_EXT;
   }

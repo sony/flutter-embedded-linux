@@ -69,7 +69,7 @@ void FlutterLinuxesView::RegisterPlatformViewFactory(
 void FlutterLinuxesView::OnWindowSizeChanged(size_t width,
                                              size_t height) const {
   if (!GetRenderSurfaceTarget()->OnScreenSurfaceResize(width, height)) {
-    LINUXES_LOG(ERROR) << "Failed to change surface size.";
+    ELINUX_LOG(ERROR) << "Failed to change surface size.";
     return;
   }
   SendWindowMetrics(width, height, binding_handler_->GetDpiScale());

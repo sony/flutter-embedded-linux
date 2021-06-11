@@ -47,7 +47,7 @@ FlutterProjectBundle::FlutterProjectBundle(
        aot_library_path_.compare(0, 1, "/") != 0)) {
     auto executable_location = GetExecutableDirectory();
     if (executable_location.empty()) {
-      LINUXES_LOG(ERROR)
+      ELINUX_LOG(ERROR)
           << "Unable to find executable location to resolve resource paths.";
     } else {
       assets_path_ = executable_location + "/" + assets_path_;
@@ -68,7 +68,7 @@ bool FlutterProjectBundle::HasValidPaths() {
 UniqueAotDataPtr FlutterProjectBundle::LoadAotData(
     const FlutterEngineProcTable& engine_procs) {
   if (aot_library_path_.empty()) {
-    LINUXES_LOG(ERROR)
+    ELINUX_LOG(ERROR)
         << "Attempted to load AOT data, but no aot_library_path was provided.";
     return nullptr;
   }
@@ -79,7 +79,7 @@ UniqueAotDataPtr FlutterProjectBundle::LoadAotData(
   FlutterEngineAOTData data = nullptr;
   auto result = engine_procs.CreateAOTData(&source, &data);
   if (result != kSuccess) {
-    LINUXES_LOG(ERROR) << "Failed to load AOT data from: " << aot_library_path_;
+    ELINUX_LOG(ERROR) << "Failed to load AOT data from: " << aot_library_path_;
     return nullptr;
   }
   return UniqueAotDataPtr(data);

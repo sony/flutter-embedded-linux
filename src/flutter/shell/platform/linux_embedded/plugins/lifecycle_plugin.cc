@@ -22,22 +22,22 @@ LifecyclePlugin::LifecyclePlugin(BinaryMessenger* messenger)
           messenger, kChannelName, &StandardMessageCodec::GetInstance())) {}
 
 void LifecyclePlugin::OnInactive() const {
-  LINUXES_LOG(DEBUG) << "App lifecycle changed to inactive state.";
+  ELINUX_LOG(DEBUG) << "App lifecycle changed to inactive state.";
   channel_->Send(EncodableValue(std::string(kInactive)));
 }
 
 void LifecyclePlugin::OnResumed() const {
-  LINUXES_LOG(DEBUG) << "App lifecycle changed to resumed state.";
+  ELINUX_LOG(DEBUG) << "App lifecycle changed to resumed state.";
   channel_->Send(EncodableValue(std::string(kResumed)));
 }
 
 void LifecyclePlugin::OnPaused() const {
-  LINUXES_LOG(DEBUG) << "App lifecycle changed to paused state.";
+  ELINUX_LOG(DEBUG) << "App lifecycle changed to paused state.";
   channel_->Send(EncodableValue(std::string(kPaused)));
 }
 
 void LifecyclePlugin::OnDetached() const {
-  LINUXES_LOG(DEBUG) << "App lifecycle changed to detached state.";
+  ELINUX_LOG(DEBUG) << "App lifecycle changed to detached state.";
   channel_->Send(EncodableValue(std::string(kDetached)));
 }
 
