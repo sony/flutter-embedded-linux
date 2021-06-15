@@ -17,15 +17,15 @@
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.h"
 #elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_drm.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.h"
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_x11.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_x11.h"
 #else
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_wayland.h"
 #endif
 
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
@@ -77,16 +77,16 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
   std::unique_ptr<flutter::WindowBindingHandler> window_wrapper =
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
-      std::make_unique<flutter::LinuxesWindowDrm<flutter::NativeWindowDrmGbm>>(
+      std::make_unique<flutter::ELinuxWindowDrm<flutter::NativeWindowDrmGbm>>(
           view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
       std::make_unique<
-          flutter::LinuxesWindowDrm<flutter::NativeWindowDrmEglstream>>(
+          flutter::ELinuxWindowDrm<flutter::NativeWindowDrmEglstream>>(
           view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
-      std::make_unique<flutter::LinuxesWindowX11>(view_properties);
+      std::make_unique<flutter::ELinuxWindowX11>(view_properties);
 #else
-      std::make_unique<flutter::LinuxesWindowWayland>(view_properties);
+      std::make_unique<flutter::ELinuxWindowWayland>(view_properties);
 #endif
 
   auto state = std::make_unique<FlutterDesktopViewControllerState>();

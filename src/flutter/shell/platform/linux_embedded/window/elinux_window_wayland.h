@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_WAYLAND_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_WAYLAND_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_WAYLAND_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_WAYLAND_H_
 
 #include <wayland-client.h>
 #include <wayland-cursor.h>
@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_wayland.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
@@ -29,12 +29,12 @@ extern "C" {
 
 namespace flutter {
 
-class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
+class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
  public:
-  LinuxesWindowWayland(FlutterDesktopViewProperties view_properties);
-  ~LinuxesWindowWayland();
+  ELinuxWindowWayland(FlutterDesktopViewProperties view_properties);
+  ~ELinuxWindowWayland();
 
-  // |LinuxesWindow|
+  // |ELinuxWindow|
   bool IsValid() const override;
 
   // |FlutterWindowBindingHandler|
@@ -167,4 +167,4 @@ class LinuxesWindowWayland : public LinuxesWindow, public WindowBindingHandler {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_WAYLAND_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_WAYLAND_H_

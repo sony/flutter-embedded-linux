@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_DRM_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_DRM_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_DRM_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_DRM_H_
 
 #include <fcntl.h>
 #include <libinput.h>
@@ -15,7 +15,7 @@
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
@@ -27,9 +27,9 @@ constexpr char kDrmDeviceDefaultFilename[] = "/dev/dri/card0";
 }  // namespace
 
 template <typename T>
-class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
+class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
  public:
-  LinuxesWindowDrm(FlutterDesktopViewProperties view_properties)
+  ELinuxWindowDrm(FlutterDesktopViewProperties view_properties)
       : display_valid_(false), is_pending_cursor_add_event_(false) {
     view_properties_ = view_properties;
 
@@ -68,7 +68,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     }
   }
 
-  ~LinuxesWindowDrm() {
+  ~ELinuxWindowDrm() {
     if (udev_drm_event_loop_) {
       sd_event_unref(udev_drm_event_loop_);
     }
@@ -84,7 +84,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
     display_valid_ = false;
   }
 
-  // |LinuxesWindow|
+  // |ELinuxWindow|
   bool IsValid() const override {
     if (!display_valid_ || !native_window_ || !render_surface_ ||
         !native_window_->IsValid() || !render_surface_->IsValid()) {
@@ -277,7 +277,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
   static int OnUdevDrmEvent(sd_event_source* source, int fd, uint32_t revents,
                             void* data) {
-    auto self = reinterpret_cast<LinuxesWindowDrm*>(data);
+    auto self = reinterpret_cast<ELinuxWindowDrm*>(data);
     auto device = udev_monitor_receive_device(self->udev_monitor_);
     if (!device) {
       ELINUX_LOG(ERROR) << "Failed to receive udev device.";
@@ -328,7 +328,7 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
   static int OnLibinputEvent(sd_event_source* source, int fd, uint32_t revents,
                              void* data) {
-    auto self = reinterpret_cast<LinuxesWindowDrm*>(data);
+    auto self = reinterpret_cast<ELinuxWindowDrm*>(data);
     auto ret = libinput_dispatch(self->libinput_);
     if (ret < 0) {
       ELINUX_LOG(ERROR) << "Failed to dispatch libinput events.";
@@ -608,4 +608,4 @@ class LinuxesWindowDrm : public LinuxesWindow, public WindowBindingHandler {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_DRM_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_DRM_H_

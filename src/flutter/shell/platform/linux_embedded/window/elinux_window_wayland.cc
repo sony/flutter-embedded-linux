@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_wayland.h"
 
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
@@ -42,43 +42,43 @@ constexpr char kCursorNameNone[] = "none";
 constexpr char kClipboardMimeTypeText[] = "text/plain";
 }  // namespace
 
-const wl_registry_listener LinuxesWindowWayland::kWlRegistryListener = {
+const wl_registry_listener ELinuxWindowWayland::kWlRegistryListener = {
     .global =
         [](void* data, wl_registry* wl_registry, uint32_t name,
            const char* interface, uint32_t version) {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           self->WlRegistryHandler(wl_registry, name, interface, version);
         },
     .global_remove =
         [](void* data, wl_registry* wl_registry, uint32_t name) {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           self->WlUnRegistryHandler(wl_registry, name);
         },
 };
 
-const xdg_wm_base_listener LinuxesWindowWayland::kXdgWmBaseListener = {
+const xdg_wm_base_listener ELinuxWindowWayland::kXdgWmBaseListener = {
     .ping = [](void* data, xdg_wm_base* xdg_wm_base,
                uint32_t serial) { xdg_wm_base_pong(xdg_wm_base, serial); },
 };
 
-const xdg_surface_listener LinuxesWindowWayland::kXdgSurfaceListener = {
+const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
           xdg_surface_ack_configure(xdg_surface, serial);
         },
 };
 
-const wp_presentation_listener LinuxesWindowWayland::kWpPresentationListener = {
+const wp_presentation_listener ELinuxWindowWayland::kWpPresentationListener = {
     .clock_id =
         [](void* data, wp_presentation* wp_presentation, uint32_t clk_id) {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           self->wp_presentation_clk_id_ = clk_id;
           ELINUX_LOG(TRACE) << "presentation info: clk_id = " << clk_id;
         },
 };
 
 const wp_presentation_feedback_listener
-    LinuxesWindowWayland::kWpPresentationFeedbackListener = {
+    ELinuxWindowWayland::kWpPresentationFeedbackListener = {
         .sync_output =
             [](void* data,
                struct wp_presentation_feedback* wp_presentation_feedback,
@@ -89,7 +89,7 @@ const wp_presentation_feedback_listener
                uint32_t tv_sec_hi, uint32_t tv_sec_lo, uint32_t tv_nsec,
                uint32_t refresh, uint32_t seq_hi, uint32_t seq_lo,
                uint32_t flags) {
-              auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+              auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
               self->last_frame_time_nanos_ =
                   (((static_cast<uint64_t>(tv_sec_hi) << 32) + tv_sec_lo) *
                    1000000000) +
@@ -102,12 +102,12 @@ const wp_presentation_feedback_listener
                struct wp_presentation_feedback* wp_presentation_feedback) {},
 };
 
-const wl_callback_listener LinuxesWindowWayland::kWlSurfaceFrameListener = {
+const wl_callback_listener ELinuxWindowWayland::kWlSurfaceFrameListener = {
     .done =
         [](void* data, wl_callback* wl_callback, uint32_t time) {
           // The presentation-time is an extended protocol and isn't supported
           // by all compositors. This path is for when it wasn't supported.
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->wp_presentation_clk_id_ != UINT32_MAX) {
             return;
           }
@@ -120,9 +120,9 @@ const wl_callback_listener LinuxesWindowWayland::kWlSurfaceFrameListener = {
         },
 };
 
-const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
+const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
     .capabilities = [](void* data, wl_seat* seat, uint32_t caps) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
 
       if ((caps & WL_SEAT_CAPABILITY_POINTER) && !self->wl_pointer_) {
         self->wl_pointer_ = wl_seat_get_pointer(seat);
@@ -151,11 +151,11 @@ const wl_seat_listener LinuxesWindowWayland::kWlSeatListener = {
     },
 };
 
-const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
+const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
     .enter = [](void* data, wl_pointer* wl_pointer, uint32_t serial,
                 wl_surface* surface, wl_fixed_t surface_x,
                 wl_fixed_t surface_y) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->view_properties_.use_mouse_cursor) {
         self->cursor_info_.pointer = wl_pointer;
@@ -172,7 +172,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
     },
     .leave = [](void* data, wl_pointer* pointer, uint32_t serial,
                 wl_surface* surface) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnPointerLeave();
@@ -182,7 +182,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
     },
     .motion = [](void* data, wl_pointer* pointer, uint32_t time,
                  wl_fixed_t surface_x, wl_fixed_t surface_y) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         double x = wl_fixed_to_double(surface_x);
         double y = wl_fixed_to_double(surface_y);
@@ -193,7 +193,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
     },
     .button = [](void* data, wl_pointer* pointer, uint32_t serial,
                  uint32_t time, uint32_t button, uint32_t status) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         FlutterPointerMouseButtons flutter_button;
@@ -229,7 +229,7 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
     },
     .axis = [](void* data, wl_pointer* wl_pointer, uint32_t time, uint32_t axis,
                wl_fixed_t value) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         double delta = wl_fixed_to_double(value);
         constexpr int32_t kScrollOffsetMultiplier = 20;
@@ -242,11 +242,11 @@ const wl_pointer_listener LinuxesWindowWayland::kWlPointerListener = {
     },
 };
 
-const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
+const wl_touch_listener ELinuxWindowWayland::kWlTouchListener = {
     .down = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time,
                wl_surface* surface, int32_t id, wl_fixed_t surface_x,
                wl_fixed_t surface_y) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         double x = wl_fixed_to_double(surface_x);
@@ -256,7 +256,7 @@ const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
     },
     .up = [](void* data, wl_touch* wl_touch, uint32_t serial, uint32_t time,
              int32_t id) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnTouchUp(time, id);
@@ -264,7 +264,7 @@ const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
     },
     .motion = [](void* data, wl_touch* wl_touch, uint32_t time, int32_t id,
                  wl_fixed_t surface_x, wl_fixed_t surface_y) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         double x = wl_fixed_to_double(surface_x);
         double y = wl_fixed_to_double(surface_y);
@@ -273,17 +273,17 @@ const wl_touch_listener LinuxesWindowWayland::kWlTouchListener = {
     },
     .frame = [](void* data, wl_touch* wl_touch) -> void {},
     .cancel = [](void* data, wl_touch* wl_touch) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnTouchCancel();
       }
     },
 };
 
-const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
+const wl_keyboard_listener ELinuxWindowWayland::kWlKeyboardListener = {
     .keymap = [](void* data, wl_keyboard* wl_keyboard, uint32_t format, int fd,
                  uint32_t size) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       assert(format == WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1);
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnKeyMap(format, fd, size);
@@ -291,17 +291,17 @@ const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
     },
     .enter = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial,
                 wl_surface* surface, wl_array* keys) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
     },
     .leave = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial,
                 wl_surface* surface) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
     },
     .key = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial,
               uint32_t time, uint32_t key, uint32_t state) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnKey(
@@ -311,7 +311,7 @@ const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
     .modifiers = [](void* data, wl_keyboard* wl_keyboard, uint32_t serial,
                     uint32_t mods_depressed, uint32_t mods_latched,
                     uint32_t mods_locked, uint32_t group) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnKeyModifiers(
             mods_depressed, mods_latched, mods_locked, group);
@@ -321,14 +321,14 @@ const wl_keyboard_listener LinuxesWindowWayland::kWlKeyboardListener = {
                       int delay) -> void {},
 };
 
-const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
+const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
     .geometry = [](void* data, wl_output* wl_output, int32_t x, int32_t y,
                    int32_t physical_width, int32_t physical_height,
                    int32_t subpixel, const char* make, const char* model,
                    int32_t output_transform) -> void {},
     .mode = [](void* data, wl_output* wl_output, uint32_t flags, int32_t width,
                int32_t height, int32_t refresh) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
         ELINUX_LOG(INFO) << "Display output info: width = " << width
                          << ", height = " << height
@@ -350,17 +350,17 @@ const wl_output_listener LinuxesWindowWayland::kWlOutputListener = {
     },
     .done = [](void* data, wl_output* wl_output) -> void {},
     .scale = [](void* data, wl_output* wl_output, int32_t scale) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       ELINUX_LOG(INFO) << "Display output scale: " << scale;
       self->current_scale_ = scale;
     },
 };
 
-const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
+const zwp_text_input_v1_listener ELinuxWindowWayland::kZwpTextInputV1Listener =
     {
         .enter = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                     wl_surface* surface) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           // If there is no input data, the backspace key cannot be used,
           // so set dummy data.
           if (self->zwp_text_input_v1_) {
@@ -369,7 +369,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
           }
         },
         .leave = [](void* data, zwp_text_input_v1* zwp_text_input_v1) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->zwp_text_input_v1_) {
             zwp_text_input_v1_hide_input_panel(self->zwp_text_input_v1_);
           }
@@ -382,7 +382,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
         .preedit_string = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                              uint32_t serial, const char* text,
                              const char* commit) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
             self->binding_handler_delegate_->OnVirtualKey(text[0]);
           }
@@ -402,7 +402,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
         .commit_string = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                             uint32_t serial, const char* text) -> void {
           // commit_string is notified only when the space key is pressed.
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
             self->binding_handler_delegate_->OnVirtualKey(text[0]);
           }
@@ -418,7 +418,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
         .delete_surrounding_text = [](void* data,
                                       zwp_text_input_v1* zwp_text_input_v1,
                                       int32_t index, uint32_t length) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnVirtualSpecialKey(KEY_BACKSPACE);
           }
@@ -432,7 +432,7 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
         .keysym = [](void* data, zwp_text_input_v1* zwp_text_input_v1,
                      uint32_t serial, uint32_t time, uint32_t sym,
                      uint32_t state, uint32_t modifiers) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if ((state == WL_KEYBOARD_KEY_STATE_PRESSED) &&
               (self->binding_handler_delegate_)) {
             switch (sym) {
@@ -465,13 +465,13 @@ const zwp_text_input_v1_listener LinuxesWindowWayland::kZwpTextInputV1Listener =
                              uint32_t serial, uint32_t direction) -> void {},
 };
 
-const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
+const zwp_text_input_v3_listener ELinuxWindowWayland::kZwpTextInputV3Listener =
     {
         .enter = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
                     wl_surface* surface) -> void {
           // To appear the on-screen keyboard when the user returns to a Flutter
           // app which needs to show the on-screen keyboard.
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->is_requested_show_virtual_keyboard_) {
             self->ShowVirtualKeyboard();
           }
@@ -483,7 +483,7 @@ const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
                              int32_t cursor_end) -> void {},
         .commit_string = [](void* data, zwp_text_input_v3* zwp_text_input_v3,
                             const char* text) -> void {
-          auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
             self->binding_handler_delegate_->OnVirtualKey(text[0]);
           }
@@ -495,7 +495,7 @@ const zwp_text_input_v3_listener LinuxesWindowWayland::kZwpTextInputV3Listener =
                    uint32_t serial) -> void {},
 };
 
-const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
+const wl_data_device_listener ELinuxWindowWayland::kWlDataDeviceListener = {
     .data_offer = [](void* data, wl_data_device* wl_data_device,
                      wl_data_offer* offer) -> void {},
     .enter = [](void* data, wl_data_device* wl_data_device, uint32_t serial,
@@ -507,7 +507,7 @@ const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
     .drop = [](void* data, wl_data_device* wl_data_device) -> void {},
     .selection = [](void* data, wl_data_device* wl_data_device,
                     wl_data_offer* offer) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->wl_data_offer_) {
         wl_data_offer_destroy(self->wl_data_offer_);
       }
@@ -515,7 +515,7 @@ const wl_data_device_listener LinuxesWindowWayland::kWlDataDeviceListener = {
     },
 };
 
-const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
+const wl_data_source_listener ELinuxWindowWayland::kWlDataSourceListener = {
     .target = [](void* data, wl_data_source* wl_data_source,
                  const char* mime_type) -> void {},
     .send = [](void* data, wl_data_source* wl_data_source,
@@ -524,14 +524,14 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
         ELINUX_LOG(ERROR) << "Not expected mime_type: " << mime_type;
         return;
       }
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       // Write the copied data to the clipboard.
       write(fd, self->clipboard_data_.c_str(),
             strlen(self->clipboard_data_.c_str()));
       close(fd);
     },
     .cancelled = [](void* data, wl_data_source* wl_data_source) -> void {
-      auto self = reinterpret_cast<LinuxesWindowWayland*>(data);
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->clipboard_data_ = "";
       if (self->wl_data_source_) {
         wl_data_source_destroy(self->wl_data_source_);
@@ -545,7 +545,7 @@ const wl_data_source_listener LinuxesWindowWayland::kWlDataSourceListener = {
                  uint32_t dnd_action) -> void {},
 };
 
-LinuxesWindowWayland::LinuxesWindowWayland(
+ELinuxWindowWayland::ELinuxWindowWayland(
     FlutterDesktopViewProperties view_properties)
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
@@ -624,7 +624,7 @@ LinuxesWindowWayland::LinuxesWindowWayland(
   display_valid_ = true;
 }
 
-LinuxesWindowWayland::~LinuxesWindowWayland() {
+ELinuxWindowWayland::~ELinuxWindowWayland() {
   display_valid_ = false;
 
   if (weston_desktop_shell_) {
@@ -741,24 +741,24 @@ LinuxesWindowWayland::~LinuxesWindowWayland() {
   }
 }
 
-void LinuxesWindowWayland::SetView(WindowBindingHandlerDelegate* window) {
+void ELinuxWindowWayland::SetView(WindowBindingHandlerDelegate* window) {
   binding_handler_delegate_ = window;
 }
 
-LinuxesRenderSurfaceTarget* LinuxesWindowWayland::GetRenderSurfaceTarget()
+LinuxesRenderSurfaceTarget* ELinuxWindowWayland::GetRenderSurfaceTarget()
     const {
   return render_surface_.get();
 }
 
-double LinuxesWindowWayland::GetDpiScale() { return current_scale_; }
+double ELinuxWindowWayland::GetDpiScale() { return current_scale_; }
 
-PhysicalWindowBounds LinuxesWindowWayland::GetPhysicalWindowBounds() {
+PhysicalWindowBounds ELinuxWindowWayland::GetPhysicalWindowBounds() {
   return {GetCurrentWidth(), GetCurrentHeight()};
 }
 
-int32_t LinuxesWindowWayland::GetFrameRate() { return frame_rate_; }
+int32_t ELinuxWindowWayland::GetFrameRate() { return frame_rate_; }
 
-bool LinuxesWindowWayland::DispatchEvent() {
+bool ELinuxWindowWayland::DispatchEvent() {
   if (!IsValid()) {
     ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
@@ -817,7 +817,7 @@ bool LinuxesWindowWayland::DispatchEvent() {
   return true;
 }
 
-bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
+bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   if (!display_valid_) {
     ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
@@ -873,7 +873,7 @@ bool LinuxesWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   return true;
 }
 
-void LinuxesWindowWayland::DestroyRenderSurface() {
+void ELinuxWindowWayland::DestroyRenderSurface() {
   // destroy the main surface before destroying the client window on Wayland.
   {
     render_surface_ = nullptr;
@@ -891,7 +891,7 @@ void LinuxesWindowWayland::DestroyRenderSurface() {
   }
 }
 
-void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
+void ELinuxWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
   // Not supported virtual keyboard.
   if (!(zwp_text_input_v1_ || zwp_text_input_v3_) || !wl_seat_) {
     return;
@@ -905,7 +905,7 @@ void LinuxesWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
   }
 }
 
-void LinuxesWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
+void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
   if (view_properties_.use_mouse_cursor) {
     if (cursor_name.compare(cursor_info_.cursor_name) == 0) {
       return;
@@ -939,7 +939,7 @@ void LinuxesWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
   }
 }
 
-std::string LinuxesWindowWayland::GetClipboardData() {
+std::string ELinuxWindowWayland::GetClipboardData() {
   std::string str = "";
 
   if (wl_data_offer_) {
@@ -965,7 +965,7 @@ std::string LinuxesWindowWayland::GetClipboardData() {
   return str;
 }
 
-void LinuxesWindowWayland::SetClipboardData(const std::string& data) {
+void ELinuxWindowWayland::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
   if (wl_data_device_manager_) {
     if (wl_data_source_) {
@@ -985,7 +985,7 @@ void LinuxesWindowWayland::SetClipboardData(const std::string& data) {
   }
 }
 
-bool LinuxesWindowWayland::IsValid() const {
+bool ELinuxWindowWayland::IsValid() const {
   if (!display_valid_ || !native_window_ || !render_surface_ ||
       !native_window_->IsValid() || !render_surface_->IsValid()) {
     return false;
@@ -993,10 +993,10 @@ bool LinuxesWindowWayland::IsValid() const {
   return true;
 }
 
-void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
-                                             uint32_t name,
-                                             const char* interface,
-                                             uint32_t version) {
+void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
+                                            uint32_t name,
+                                            const char* interface,
+                                            uint32_t version) {
   if (!strcmp(interface, wl_compositor_interface.name)) {
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
         wl_registry_bind(wl_registry, name, &wl_compositor_interface, 1));
@@ -1089,10 +1089,10 @@ void LinuxesWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
   }
 }
 
-void LinuxesWindowWayland::WlUnRegistryHandler(wl_registry* wl_registry,
-                                               uint32_t name) {}
+void ELinuxWindowWayland::WlUnRegistryHandler(wl_registry* wl_registry,
+                                              uint32_t name) {}
 
-void LinuxesWindowWayland::CreateSupportedWlCursorList() {
+void ELinuxWindowWayland::CreateSupportedWlCursorList() {
   std::vector<std::string> wl_cursor_themes{
       kWlCursorThemeLeftPtr,
       kWlCursorThemeBottomLeftCorner,
@@ -1120,7 +1120,7 @@ void LinuxesWindowWayland::CreateSupportedWlCursorList() {
   }
 }
 
-wl_cursor* LinuxesWindowWayland::GetWlCursor(const std::string& cursor_name) {
+wl_cursor* ELinuxWindowWayland::GetWlCursor(const std::string& cursor_name) {
   // Convert the cursor theme name from Flutter's cursor value to Wayland's one.
   // However, Wayland has not all cursor themes corresponding to Flutter.
   // If there is no Wayland's cursor theme corresponding to the Flutter's cursor
@@ -1177,7 +1177,7 @@ wl_cursor* LinuxesWindowWayland::GetWlCursor(const std::string& cursor_name) {
   return supported_wl_cursor_list_[kWlCursorThemeLeftPtr];
 }
 
-void LinuxesWindowWayland::ShowVirtualKeyboard() {
+void ELinuxWindowWayland::ShowVirtualKeyboard() {
   if (zwp_text_input_v3_) {
     // I'm not sure the reason, but enable needs to be called twice.
     zwp_text_input_v3_enable(zwp_text_input_v3_);
@@ -1198,7 +1198,7 @@ void LinuxesWindowWayland::ShowVirtualKeyboard() {
   }
 }
 
-void LinuxesWindowWayland::DismissVirtualKeybaord() {
+void ELinuxWindowWayland::DismissVirtualKeybaord() {
   if (zwp_text_input_v3_) {
     zwp_text_input_v3_disable(zwp_text_input_v3_);
     zwp_text_input_v3_commit(zwp_text_input_v3_);
