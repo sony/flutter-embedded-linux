@@ -9,7 +9,7 @@
 
 #include <string>
 
-#include "flutter/shell/platform/linux_embedded/surface/elinux_surface_gl.h"
+#include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {
