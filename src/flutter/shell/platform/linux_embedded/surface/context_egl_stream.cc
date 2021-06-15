@@ -22,7 +22,7 @@ ContextEglStream::ContextEglStream(
   }
 }
 
-std::unique_ptr<LinuxesEGLSurface> ContextEglStream::CreateOnscreenSurface(
+std::unique_ptr<ELinuxEGLSurface> ContextEglStream::CreateOnscreenSurface(
     NativeWindow* window) const {
   EGLint layer_count = 0;
   EGLOutputLayerEXT layer;
@@ -64,8 +64,8 @@ std::unique_ptr<LinuxesEGLSurface> ContextEglStream::CreateOnscreenSurface(
   if (surface == EGL_NO_SURFACE) {
     ELINUX_LOG(ERROR) << "Failed to create EGL stream producer surface";
   }
-  return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
-                                             context_);
+  return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
+                                            context_);
 }
 
 bool ContextEglStream::SetEglExtensionFunctionPointers() {

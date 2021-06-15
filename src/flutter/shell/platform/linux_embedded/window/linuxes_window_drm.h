@@ -14,7 +14,7 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
+#include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_drm.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
