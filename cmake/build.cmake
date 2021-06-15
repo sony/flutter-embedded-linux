@@ -119,8 +119,8 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
   src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
   src/flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.cc
-  src/flutter/shell/platform/linux_embedded/surface/elinux_surface.cc
-  src/flutter/shell/platform/linux_embedded/surface/elinux_surface_gl.cc
+  src/flutter/shell/platform/linux_embedded/surface/surface.cc
+  src/flutter/shell/platform/linux_embedded/surface/surface_gl.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
   ## The following file were copied from:
