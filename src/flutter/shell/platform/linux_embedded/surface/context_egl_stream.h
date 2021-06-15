@@ -20,7 +20,7 @@ class ContextEglStream : public ContextEgl {
   ~ContextEglStream() = default;
 
   // |ContextEgl|
-  std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
+  std::unique_ptr<ELinuxEGLSurface> CreateOnscreenSurface(
       NativeWindow* window) const override;
 
  private:

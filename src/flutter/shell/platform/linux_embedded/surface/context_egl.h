@@ -21,10 +21,10 @@ class ContextEgl {
              EGLint egl_surface_type = EGL_WINDOW_BIT);
   ~ContextEgl() = default;
 
-  virtual std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
+  virtual std::unique_ptr<ELinuxEGLSurface> CreateOnscreenSurface(
       NativeWindow* window) const;
 
-  std::unique_ptr<LinuxesEGLSurface> CreateOffscreenSurface(
+  std::unique_ptr<ELinuxEGLSurface> CreateOffscreenSurface(
       NativeWindow* window_resource) const;
 
   bool IsValid() const;
