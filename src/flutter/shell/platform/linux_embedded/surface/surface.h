@@ -39,8 +39,8 @@ class Surface {
  protected:
   std::unique_ptr<ContextEgl> context_;
   NativeWindow* native_window_ = nullptr;
-  std::unique_ptr<LinuxesEGLSurface> onscreen_surface_ = nullptr;
-  std::unique_ptr<LinuxesEGLSurface> offscreen_surface_ = nullptr;
+  std::unique_ptr<ELinuxEGLSurface> onscreen_surface_ = nullptr;
+  std::unique_ptr<ELinuxEGLSurface> offscreen_surface_ = nullptr;
 };
 
 }  // namespace flutter
