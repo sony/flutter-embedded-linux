@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
+#include "flutter/shell/platform/linux_embedded/surface/elinux_surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_wayland.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"

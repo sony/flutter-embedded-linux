@@ -8,8 +8,8 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl_delegate.h"
+#include "flutter/shell/platform/linux_embedded/surface/elinux_surface.h"
+#include "flutter/shell/platform/linux_embedded/surface/elinux_surface_gl_delegate.h"
 
 namespace flutter {
 

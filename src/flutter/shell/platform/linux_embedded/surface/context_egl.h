@@ -9,8 +9,8 @@
 
 #include <memory>
 
+#include "flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window.h"
 
 namespace flutter {

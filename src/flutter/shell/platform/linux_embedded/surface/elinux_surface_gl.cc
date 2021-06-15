@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_surface_gl.h"
+#include "flutter/shell/platform/linux_embedded/surface/elinux_surface_gl.h"
 
 namespace flutter {
 
