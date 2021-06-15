@@ -60,7 +60,7 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
   valid_ = true;
 }
 
-std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOnscreenSurface(
+std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOnscreenSurface(
     NativeWindow* window) const {
   const EGLint attribs[] = {EGL_NONE};
   EGLSurface surface = eglCreateWindowSurface(environment_->Display(), config_,
@@ -69,11 +69,11 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOnscreenSurface(
     ELINUX_LOG(ERROR) << "Failed to create EGL window surface: "
                       << get_egl_error_cause();
   }
-  return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
-                                             context_);
+  return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
+                                            context_);
 }
 
-std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
+std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
     NativeWindow* window) const {
 #if defined(DISPLAY_BACKEND_TYPE_X11) || \
     defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
@@ -101,8 +101,8 @@ std::unique_ptr<LinuxesEGLSurface> ContextEgl::CreateOffscreenSurface(
                         << "(" << get_egl_error_cause() << ")";
   }
 #endif
-  return std::make_unique<LinuxesEGLSurface>(surface, environment_->Display(),
-                                             resource_context_);
+  return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
+                                            resource_context_);
 }
 
 bool ContextEgl::IsValid() const { return valid_; }

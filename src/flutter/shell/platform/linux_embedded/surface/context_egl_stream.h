@@ -9,8 +9,8 @@
 #include <EGL/eglext.h>
 
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
+#include "flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.h"
 #include "flutter/shell/platform/linux_embedded/surface/environment_egl_stream.h"
-#include "flutter/shell/platform/linux_embedded/surface/linuxes_egl_surface.h"
 
 namespace flutter {
 
@@ -20,7 +20,7 @@ class ContextEglStream : public ContextEgl {
   ~ContextEglStream() = default;
 
   // |ContextEgl|
-  std::unique_ptr<LinuxesEGLSurface> CreateOnscreenSurface(
+  std::unique_ptr<ELinuxEGLSurface> CreateOnscreenSurface(
       NativeWindow* window) const override;
 
  private:
