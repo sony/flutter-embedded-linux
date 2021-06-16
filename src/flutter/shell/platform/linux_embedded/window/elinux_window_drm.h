@@ -157,7 +157,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  LinuxesRenderSurfaceTarget* GetRenderSurfaceTarget() const override {
+  ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const override {
     return render_surface_.get();
   }
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_view.h"
 
 #include <chrono>
 
@@ -10,14 +10,14 @@
 
 namespace flutter {
 
-FlutterLinuxesView::FlutterLinuxesView(
+FlutterELinuxView::FlutterELinuxView(
     std::unique_ptr<WindowBindingHandler> window_binding) {
   // Take the binding handler, and give it a pointer back to self.
   binding_handler_ = std::move(window_binding);
   binding_handler_->SetView(this);
 }
 
-FlutterLinuxesView::~FlutterLinuxesView() {
+FlutterELinuxView::~FlutterELinuxView() {
   // Need to stop running the Engine before destroying surface.
   if (engine_) {
     engine_->Stop();
@@ -25,12 +25,11 @@ FlutterLinuxesView::~FlutterLinuxesView() {
   DestroyRenderSurface();
 }
 
-bool FlutterLinuxesView::DispatchEvent() {
+bool FlutterELinuxView::DispatchEvent() {
   return binding_handler_->DispatchEvent();
 }
 
-void FlutterLinuxesView::SetEngine(
-    std::unique_ptr<FlutterLinuxesEngine> engine) {
+void FlutterELinuxView::SetEngine(std::unique_ptr<FlutterELinuxEngine> engine) {
   engine_ = std::move(engine);
 
   engine_->SetView(this);
@@ -60,14 +59,13 @@ void FlutterLinuxesView::SetEngine(
                     binding_handler_->GetDpiScale());
 }
 
-void FlutterLinuxesView::RegisterPlatformViewFactory(
+void FlutterELinuxView::RegisterPlatformViewFactory(
     const char* view_type,
     std::unique_ptr<FlutterDesktopPlatformViewFactory> factory) {
   platform_views_handler_->RegisterViewFactory(view_type, std::move(factory));
 }
 
-void FlutterLinuxesView::OnWindowSizeChanged(size_t width,
-                                             size_t height) const {
+void FlutterELinuxView::OnWindowSizeChanged(size_t width, size_t height) const {
   if (!GetRenderSurfaceTarget()->OnScreenSurfaceResize(width, height)) {
     ELINUX_LOG(ERROR) << "Failed to change surface size.";
     return;
@@ -75,11 +73,11 @@ void FlutterLinuxesView::OnWindowSizeChanged(size_t width,
   SendWindowMetrics(width, height, binding_handler_->GetDpiScale());
 }
 
-void FlutterLinuxesView::OnPointerMove(double x, double y) {
+void FlutterELinuxView::OnPointerMove(double x, double y) {
   SendPointerMove(x, y);
 }
 
-void FlutterLinuxesView::OnPointerDown(
+void FlutterELinuxView::OnPointerDown(
     double x, double y, FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons | flutter_button;
@@ -88,8 +86,8 @@ void FlutterLinuxesView::OnPointerDown(
   }
 }
 
-void FlutterLinuxesView::OnPointerUp(
-    double x, double y, FlutterPointerMouseButtons flutter_button) {
+void FlutterELinuxView::OnPointerUp(double x, double y,
+                                    FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons & ~flutter_button;
     SetMouseButtons(mouse_buttons);
@@ -97,10 +95,10 @@ void FlutterLinuxesView::OnPointerUp(
   }
 }
 
-void FlutterLinuxesView::OnPointerLeave() { SendPointerLeave(); }
+void FlutterELinuxView::OnPointerLeave() { SendPointerLeave(); }
 
-void FlutterLinuxesView::OnTouchDown(uint32_t time, int32_t id, double x,
-                                     double y) {
+void FlutterELinuxView::OnTouchDown(uint32_t time, int32_t id, double x,
+                                    double y) {
   auto* point = GgeTouchPoint(id);
   if (!point) {
     return;
@@ -126,7 +124,7 @@ void FlutterLinuxesView::OnTouchDown(uint32_t time, int32_t id, double x,
   engine_->SendPointerEvent(event);
 }
 
-void FlutterLinuxesView::OnTouchUp(uint32_t time, int32_t id) {
+void FlutterELinuxView::OnTouchUp(uint32_t time, int32_t id) {
   auto* point = GgeTouchPoint(id);
   if (!point) {
     return;
@@ -149,8 +147,8 @@ void FlutterLinuxesView::OnTouchUp(uint32_t time, int32_t id) {
   engine_->SendPointerEvent(event);
 }
 
-void FlutterLinuxesView::OnTouchMotion(uint32_t time, int32_t id, double x,
-                                       double y) {
+void FlutterELinuxView::OnTouchMotion(uint32_t time, int32_t id, double x,
+                                      double y) {
   auto* point = GgeTouchPoint(id);
   if (!point) {
     return;
@@ -176,13 +174,13 @@ void FlutterLinuxesView::OnTouchMotion(uint32_t time, int32_t id, double x,
   engine_->SendPointerEvent(event);
 }
 
-void FlutterLinuxesView::OnTouchCancel() {}
+void FlutterELinuxView::OnTouchCancel() {}
 
-void FlutterLinuxesView::OnKeyMap(uint32_t format, int fd, uint32_t size) {
+void FlutterELinuxView::OnKeyMap(uint32_t format, int fd, uint32_t size) {
   keyboard_handler_->OnKeymap(format, fd, size);
 }
 
-void FlutterLinuxesView::OnKey(uint32_t key, bool pressed) {
+void FlutterELinuxView::OnKey(uint32_t key, bool pressed) {
   keyboard_handler_->OnKey(key, pressed);
   if (pressed) {
     auto code_point = keyboard_handler_->GetCodePoint(key);
@@ -192,36 +190,35 @@ void FlutterLinuxesView::OnKey(uint32_t key, bool pressed) {
   }
 }
 
-void FlutterLinuxesView::OnKeyModifiers(uint32_t mods_depressed,
-                                        uint32_t mods_latched,
-                                        uint32_t mods_locked, uint32_t group) {
+void FlutterELinuxView::OnKeyModifiers(uint32_t mods_depressed,
+                                       uint32_t mods_latched,
+                                       uint32_t mods_locked, uint32_t group) {
   keyboard_handler_->OnModifiers(mods_depressed, mods_latched, mods_locked,
                                  group);
 }
 
-void FlutterLinuxesView::OnVirtualKey(uint32_t code_point) {
+void FlutterELinuxView::OnVirtualKey(uint32_t code_point) {
   // Since the keycode cannot be specified, set an invalid value(0).
   constexpr uint32_t kCharKey = 0;
   textinput_handler_->OnKeyPressed(kCharKey, code_point);
 }
 
-void FlutterLinuxesView::OnVirtualSpecialKey(uint32_t keycode) {
+void FlutterELinuxView::OnVirtualSpecialKey(uint32_t keycode) {
   auto code_point = keyboard_handler_->GetCodePoint(keycode);
   textinput_handler_->OnKeyPressed(keycode, code_point);
 }
 
-void FlutterLinuxesView::OnScroll(double x, double y, double delta_x,
-                                  double delta_y,
-                                  int scroll_offset_multiplier) {
+void FlutterELinuxView::OnScroll(double x, double y, double delta_x,
+                                 double delta_y, int scroll_offset_multiplier) {
   SendScroll(x, y, delta_x, delta_y, scroll_offset_multiplier);
 }
 
-void FlutterLinuxesView::OnVsync(uint64_t last_frame_time_nanos,
-                                 uint64_t vsync_interval_time_nanos) {
+void FlutterELinuxView::OnVsync(uint64_t last_frame_time_nanos,
+                                uint64_t vsync_interval_time_nanos) {
   engine_->OnVsync(last_frame_time_nanos, vsync_interval_time_nanos);
 }
 
-FlutterLinuxesView::touch_point* FlutterLinuxesView::GgeTouchPoint(int32_t id) {
+FlutterELinuxView::touch_point* FlutterELinuxView::GgeTouchPoint(int32_t id) {
   const size_t nmemb = sizeof(touch_event_) / sizeof(struct touch_point);
   int invalid = -1;
   for (size_t i = 0; i < nmemb; ++i) {
@@ -241,8 +238,8 @@ FlutterLinuxesView::touch_point* FlutterLinuxesView::GgeTouchPoint(int32_t id) {
 }
 
 // Sends new size  information to FlutterEngine.
-void FlutterLinuxesView::SendWindowMetrics(size_t width, size_t height,
-                                           double dpiScale) const {
+void FlutterELinuxView::SendWindowMetrics(size_t width, size_t height,
+                                          double dpiScale) const {
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
   event.width = width;
@@ -251,7 +248,7 @@ void FlutterLinuxesView::SendWindowMetrics(size_t width, size_t height,
   engine_->SendWindowMetricsEvent(event);
 }
 
-void FlutterLinuxesView::SendInitialBounds() {
+void FlutterELinuxView::SendInitialBounds() {
   PhysicalWindowBounds bounds = binding_handler_->GetPhysicalWindowBounds();
   SendWindowMetrics(bounds.width, bounds.height,
                     binding_handler_->GetDpiScale());
@@ -259,7 +256,7 @@ void FlutterLinuxesView::SendInitialBounds() {
 
 // Set's |event_data|'s phase to either kMove or kHover depending on the current
 // primary mouse button state.
-void FlutterLinuxesView::SetEventPhaseFromCursorButtonState(
+void FlutterELinuxView::SetEventPhaseFromCursorButtonState(
     FlutterPointerEvent* event_data) const {
   // For details about this logic, see FlutterPointerPhase in the embedder.h
   // file.
@@ -271,7 +268,7 @@ void FlutterLinuxesView::SetEventPhaseFromCursorButtonState(
                                                : FlutterPointerPhase::kDown;
 }
 
-void FlutterLinuxesView::SendPointerMove(double x, double y) {
+void FlutterELinuxView::SendPointerMove(double x, double y) {
   FlutterPointerEvent event = {};
   event.x = x;
   event.y = y;
@@ -279,7 +276,7 @@ void FlutterLinuxesView::SendPointerMove(double x, double y) {
   SendPointerEventWithData(event);
 }
 
-void FlutterLinuxesView::SendPointerDown(double x, double y) {
+void FlutterELinuxView::SendPointerDown(double x, double y) {
   FlutterPointerEvent event = {};
   SetEventPhaseFromCursorButtonState(&event);
   event.x = x;
@@ -288,7 +285,7 @@ void FlutterLinuxesView::SendPointerDown(double x, double y) {
   SetMouseFlutterStateDown(true);
 }
 
-void FlutterLinuxesView::SendPointerUp(double x, double y) {
+void FlutterELinuxView::SendPointerUp(double x, double y) {
   FlutterPointerEvent event = {};
   SetEventPhaseFromCursorButtonState(&event);
   event.x = x;
@@ -299,15 +296,15 @@ void FlutterLinuxesView::SendPointerUp(double x, double y) {
   }
 }
 
-void FlutterLinuxesView::SendPointerLeave() {
+void FlutterELinuxView::SendPointerLeave() {
   FlutterPointerEvent event = {};
   event.phase = FlutterPointerPhase::kRemove;
   SendPointerEventWithData(event);
 }
 
-void FlutterLinuxesView::SendScroll(double x, double y, double delta_x,
-                                    double delta_y,
-                                    int scroll_offset_multiplier) {
+void FlutterELinuxView::SendScroll(double x, double y, double delta_x,
+                                   double delta_y,
+                                   int scroll_offset_multiplier) {
   FlutterPointerEvent event = {};
   SetEventPhaseFromCursorButtonState(&event);
   event.signal_kind = FlutterPointerSignalKind::kFlutterPointerSignalKindScroll;
@@ -318,7 +315,7 @@ void FlutterLinuxesView::SendScroll(double x, double y, double delta_x,
   SendPointerEventWithData(event);
 }
 
-void FlutterLinuxesView::SendPointerEventWithData(
+void FlutterELinuxView::SendPointerEventWithData(
     const FlutterPointerEvent& event_data) {
   // If sending anything other than an add, and the pointer isn't already added,
   // synthesize an add to satisfy Flutter's expectations about events.
@@ -359,46 +356,46 @@ void FlutterLinuxesView::SendPointerEventWithData(
   }
 }
 
-void* FlutterLinuxesView::ProcResolver(const char* name) {
+void* FlutterELinuxView::ProcResolver(const char* name) {
   return GetRenderSurfaceTarget()->GlProcResolver(name);
 }
 
-bool FlutterLinuxesView::MakeCurrent() {
+bool FlutterELinuxView::MakeCurrent() {
   return GetRenderSurfaceTarget()->GLContextMakeCurrent();
 }
 
-bool FlutterLinuxesView::ClearCurrent() {
+bool FlutterELinuxView::ClearCurrent() {
   return GetRenderSurfaceTarget()->GLContextClearCurrent();
 }
 
-bool FlutterLinuxesView::Present() {
+bool FlutterELinuxView::Present() {
   return GetRenderSurfaceTarget()->GLContextPresent(0);
 }
 
-uint32_t FlutterLinuxesView::GetOnscreenFBO() {
+uint32_t FlutterELinuxView::GetOnscreenFBO() {
   return GetRenderSurfaceTarget()->GLContextFBO();
 }
 
-bool FlutterLinuxesView::MakeResourceCurrent() {
+bool FlutterELinuxView::MakeResourceCurrent() {
   return GetRenderSurfaceTarget()->ResourceContextMakeCurrent();
 }
 
-bool FlutterLinuxesView::CreateRenderSurface() {
+bool FlutterELinuxView::CreateRenderSurface() {
   PhysicalWindowBounds bounds = binding_handler_->GetPhysicalWindowBounds();
   return binding_handler_->CreateRenderSurface(bounds.width, bounds.height);
 }
 
-void FlutterLinuxesView::DestroyRenderSurface() {
+void FlutterELinuxView::DestroyRenderSurface() {
   binding_handler_->DestroyRenderSurface();
 }
 
-LinuxesRenderSurfaceTarget* FlutterLinuxesView::GetRenderSurfaceTarget() const {
+ELinuxRenderSurfaceTarget* FlutterELinuxView::GetRenderSurfaceTarget() const {
   return binding_handler_->GetRenderSurfaceTarget();
 }
 
-FlutterLinuxesEngine* FlutterLinuxesView::GetEngine() { return engine_.get(); }
+FlutterELinuxEngine* FlutterELinuxView::GetEngine() { return engine_.get(); }
 
-int32_t FlutterLinuxesView::GetFrameRate() {
+int32_t FlutterELinuxView::GetFrameRate() {
   return binding_handler_->GetFrameRate();
 }
 
