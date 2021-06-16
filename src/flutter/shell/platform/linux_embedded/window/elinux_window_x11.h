@@ -2,24 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_X11_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_X11_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_X11_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_X11_H_
 
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window.h"
 #include "flutter/shell/platform/linux_embedded/window/native_window_x11.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 namespace flutter {
 
-class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
+class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
  public:
-  LinuxesWindowX11(FlutterDesktopViewProperties view_properties);
-  ~LinuxesWindowX11();
+  ELinuxWindowX11(FlutterDesktopViewProperties view_properties);
+  ~ELinuxWindowX11();
 
-  // |LinuxesWindow|
+  // |ELinuxWindow|
   bool IsValid() const override;
 
   // |FlutterWindowBindingHandler|
@@ -76,4 +76,4 @@ class LinuxesWindowX11 : public LinuxesWindow, public WindowBindingHandler {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_LINUXES_WINDOW_X11_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_X11_H_

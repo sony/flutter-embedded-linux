@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/window/linuxes_window_x11.h"
+#include "flutter/shell/platform/linux_embedded/window/elinux_window_x11.h"
 
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
@@ -13,8 +13,7 @@
 
 namespace flutter {
 
-LinuxesWindowX11::LinuxesWindowX11(
-    FlutterDesktopViewProperties view_properties) {
+ELinuxWindowX11::ELinuxWindowX11(FlutterDesktopViewProperties view_properties) {
   view_properties_ = view_properties;
 
   display_ = XOpenDisplay(NULL);
@@ -26,7 +25,7 @@ LinuxesWindowX11::LinuxesWindowX11(
   display_valid_ = true;
 }
 
-LinuxesWindowX11::~LinuxesWindowX11() {
+ELinuxWindowX11::~ELinuxWindowX11() {
   display_valid_ = false;
   if (display_) {
     XSetCloseDownMode(display_, DestroyAll);
@@ -34,7 +33,7 @@ LinuxesWindowX11::~LinuxesWindowX11() {
   }
 }
 
-bool LinuxesWindowX11::IsValid() const {
+bool ELinuxWindowX11::IsValid() const {
   if (!display_valid_ || !native_window_ || !render_surface_ ||
       !native_window_->IsValid() || !render_surface_->IsValid()) {
     return false;
@@ -42,7 +41,7 @@ bool LinuxesWindowX11::IsValid() const {
   return true;
 }
 
-bool LinuxesWindowX11::DispatchEvent() {
+bool ELinuxWindowX11::DispatchEvent() {
   while (XPending(display_)) {
     XEvent event;
     XNextEvent(display_, &event);
@@ -105,7 +104,7 @@ bool LinuxesWindowX11::DispatchEvent() {
   return true;
 }
 
-bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
+bool ELinuxWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
   auto context_egl =
       std::make_unique<ContextEgl>(std::make_unique<EnvironmentEgl>(display_));
 
@@ -122,45 +121,45 @@ bool LinuxesWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
   return true;
 }
 
-void LinuxesWindowX11::DestroyRenderSurface() {
+void ELinuxWindowX11::DestroyRenderSurface() {
   // destroy the main surface before destroying the client window on X11.
   render_surface_ = nullptr;
   native_window_ = nullptr;
 }
 
-void LinuxesWindowX11::SetView(WindowBindingHandlerDelegate* window) {
+void ELinuxWindowX11::SetView(WindowBindingHandlerDelegate* window) {
   binding_handler_delegate_ = window;
 }
 
-LinuxesRenderSurfaceTarget* LinuxesWindowX11::GetRenderSurfaceTarget() const {
+LinuxesRenderSurfaceTarget* ELinuxWindowX11::GetRenderSurfaceTarget() const {
   return render_surface_.get();
 }
 
-double LinuxesWindowX11::GetDpiScale() { return current_scale_; }
+double ELinuxWindowX11::GetDpiScale() { return current_scale_; }
 
-PhysicalWindowBounds LinuxesWindowX11::GetPhysicalWindowBounds() {
+PhysicalWindowBounds ELinuxWindowX11::GetPhysicalWindowBounds() {
   return {GetCurrentWidth(), GetCurrentHeight()};
 }
 
-int32_t LinuxesWindowX11::GetFrameRate() { return 60000; }
+int32_t ELinuxWindowX11::GetFrameRate() { return 60000; }
 
-void LinuxesWindowX11::UpdateFlutterCursor(const std::string& cursor_name) {
+void ELinuxWindowX11::UpdateFlutterCursor(const std::string& cursor_name) {
   // TODO: implement here
 }
 
-void LinuxesWindowX11::UpdateVirtualKeyboardStatus(const bool show) {
+void ELinuxWindowX11::UpdateVirtualKeyboardStatus(const bool show) {
   // currently not supported.
 }
 
-std::string LinuxesWindowX11::GetClipboardData() { return clipboard_data_; }
+std::string ELinuxWindowX11::GetClipboardData() { return clipboard_data_; }
 
-void LinuxesWindowX11::SetClipboardData(const std::string& data) {
+void ELinuxWindowX11::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
 }
 
-void LinuxesWindowX11::HandlePointerButtonEvent(uint32_t button,
-                                                bool button_pressed, int16_t x,
-                                                int16_t y) {
+void ELinuxWindowX11::HandlePointerButtonEvent(uint32_t button,
+                                               bool button_pressed, int16_t x,
+                                               int16_t y) {
   if (binding_handler_delegate_) {
     FlutterPointerMouseButtons flutter_button;
     switch (button) {
