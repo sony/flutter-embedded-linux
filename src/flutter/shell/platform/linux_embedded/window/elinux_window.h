@@ -5,7 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_H_
 
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 
 namespace flutter {
 

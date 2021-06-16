@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_VIEW_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_VIEW_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_VIEW_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_VIEW_H_
 
 #include <memory>
 #include <string>
@@ -11,8 +11,8 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
 #include "flutter/shell/platform/embedder/embedder.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_state.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_engine.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_state.h"
 #include "flutter/shell/platform/linux_embedded/plugins/key_event_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/lifecycle_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/mouse_cursor_plugin.h"
@@ -20,23 +20,23 @@
 #include "flutter/shell/platform/linux_embedded/plugins/platform_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/text_input_plugin.h"
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_platform_views.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
 namespace flutter {
 
-class FlutterLinuxesView : public WindowBindingHandlerDelegate {
+class FlutterELinuxView : public WindowBindingHandlerDelegate {
  public:
-  // Creates a FlutterLinuxesView with the given implementator of
+  // Creates a FlutterELinuxView with the given implementator of
   // WindowBindingHandler.
   //
   // In order for object to render Flutter content the SetEngine method must be
-  // called with a valid FlutterLinuxesEngine instance.
-  FlutterLinuxesView(std::unique_ptr<WindowBindingHandler> window_binding);
+  // called with a valid FlutterELinuxEngine instance.
+  FlutterELinuxView(std::unique_ptr<WindowBindingHandler> window_binding);
 
-  ~FlutterLinuxesView();
+  ~FlutterELinuxView();
 
   // Dispatches window events such as mouse and keyboard inputs. For Wayland,
   // you have to call this every time in the main loop.
@@ -44,7 +44,7 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
 
   // Configures the window instance with an instance of a running Flutter
   // engine.
-  void SetEngine(std::unique_ptr<FlutterLinuxesEngine> engine);
+  void SetEngine(std::unique_ptr<FlutterELinuxEngine> engine);
 
   // Registers a factory of the platform view.
   void RegisterPlatformViewFactory(
@@ -58,11 +58,11 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   // Destroys current rendering surface if one has been allocated.
   void DestroyRenderSurface();
 
-  // Return the currently configured LinuxesRenderSurfaceTarget.
-  LinuxesRenderSurfaceTarget* GetRenderSurfaceTarget() const;
+  // Return the currently configured ELinuxRenderSurfaceTarget.
+  ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const;
 
   // Returns the engine backing this view.
-  FlutterLinuxesEngine* GetEngine();
+  FlutterELinuxEngine* GetEngine();
 
   // Returns the frame rate of the display.
   int32_t GetFrameRate();
@@ -226,7 +226,7 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
   void SetMouseButtons(uint64_t buttons) { mouse_state_.buttons = buttons; }
 
   // The engine associated with this view.
-  std::unique_ptr<FlutterLinuxesEngine> engine_;
+  std::unique_ptr<FlutterELinuxEngine> engine_;
 
   // Keeps track of mouse state in relation to the window.
   MouseState mouse_state_;
@@ -264,4 +264,4 @@ class FlutterLinuxesView : public WindowBindingHandlerDelegate {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_VIEW_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_VIEW_H_

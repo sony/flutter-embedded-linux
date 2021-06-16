@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "flutter/shell/platform/embedder/embedder.h"
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 
 namespace flutter {
 

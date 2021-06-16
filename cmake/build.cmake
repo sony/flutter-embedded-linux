@@ -98,16 +98,16 @@ add_executable(${TARGET}
   ${USER_APP_SRCS}
   src/client_wrapper/flutter_engine.cc
   src/client_wrapper/flutter_view_controller.cc
-  src/flutter/shell/platform/linux_embedded/flutter_linuxes.cc
-  src/flutter/shell/platform/linux_embedded/flutter_linuxes_engine.cc
-  src/flutter/shell/platform/linux_embedded/flutter_linuxes_view.cc
+  src/flutter/shell/platform/linux_embedded/flutter_elinux.cc
+  src/flutter/shell/platform/linux_embedded/flutter_elinux_engine.cc
+  src/flutter/shell/platform/linux_embedded/flutter_elinux_view.cc
   src/flutter/shell/platform/linux_embedded/flutter_project_bundle.cc
   src/flutter/shell/platform/linux_embedded/task_runner.cc
   src/flutter/shell/platform/linux_embedded/system_utils.cc
   src/flutter/shell/platform/linux_embedded/logger.cc
   src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
   src/flutter/shell/platform/linux_embedded/vsync_waiter.cc
-  src/flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.cc
+  src/flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.cc
   src/flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.cc
   src/flutter/shell/platform/linux_embedded/plugins/key_event_plugin.cc
   src/flutter/shell/platform/linux_embedded/plugins/lifecycle_plugin.cc

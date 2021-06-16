@@ -5,7 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_ENBEDDED_CLIENT_WRAPPER_INCLUDE_FLUTTER_FLUTTER_ENGINE_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_ENBEDDED_CLIENT_WRAPPER_INCLUDE_FLUTTER_FLUTTER_ENGINE_H_
 
-#include <flutter_linuxes.h>
+#include <flutter_elinux.h>
 
 #include <chrono>
 #include <memory>

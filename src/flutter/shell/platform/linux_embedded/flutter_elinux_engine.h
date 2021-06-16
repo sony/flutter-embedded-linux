@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_ENGINE_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_ENGINE_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_ENGINE_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_ENGINE_H_
 
 #include <rapidjson/document.h>
 
@@ -16,25 +16,25 @@
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/basic_message_channel.h"
 #include "flutter/shell/platform/common/incoming_message_dispatcher.h"
 #include "flutter/shell/platform/embedder/embedder.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_state.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_state.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.h"
 #include "flutter/shell/platform/linux_embedded/flutter_project_bundle.h"
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 #include "flutter/shell/platform/linux_embedded/task_runner.h"
 #include "flutter/shell/platform/linux_embedded/vsync_waiter.h"
 
 namespace flutter {
 
-class FlutterLinuxesView;
+class FlutterELinuxView;
 
-class FlutterLinuxesEngine {
+class FlutterELinuxEngine {
  public:
-  explicit FlutterLinuxesEngine(const FlutterProjectBundle& project);
-  virtual ~FlutterLinuxesEngine();
+  explicit FlutterELinuxEngine(const FlutterProjectBundle& project);
+  virtual ~FlutterELinuxEngine();
 
   // Prevent copying.
-  FlutterLinuxesEngine(FlutterLinuxesEngine const&) = delete;
-  FlutterLinuxesEngine& operator=(FlutterLinuxesEngine const&) = delete;
+  FlutterELinuxEngine(FlutterELinuxEngine const&) = delete;
+  FlutterELinuxEngine& operator=(FlutterELinuxEngine const&) = delete;
 
   // Starts running the engine with the given entrypoint. If null, defaults to
   // main().
@@ -51,11 +51,11 @@ class FlutterLinuxesEngine {
   bool Stop();
 
   // Sets the view that is displaying this engine's content.
-  void SetView(FlutterLinuxesView* view);
+  void SetView(FlutterELinuxView* view);
 
   // The view displaying this engine's content, if any. This will be null for
   // headless engines.
-  FlutterLinuxesView* view() { return view_; }
+  FlutterELinuxView* view() { return view_; }
 
   // Returns the currently configured Plugin Registrar.
   FlutterDesktopPluginRegistrarRef GetRegistrar();
@@ -72,7 +72,7 @@ class FlutterLinuxesEngine {
 
   TaskRunner* task_runner() { return task_runner_.get(); }
 
-  FlutterLinuxesTextureRegistrar* texture_registrar() {
+  FlutterELinuxTextureRegistrar* texture_registrar() {
     return texture_registrar_.get();
   }
 
@@ -136,7 +136,7 @@ class FlutterLinuxesEngine {
   UniqueAotDataPtr aot_data_;
 
   // The view displaying the content running in this engine, if any.
-  FlutterLinuxesView* view_ = nullptr;
+  FlutterELinuxView* view_ = nullptr;
 
   // Task runner for tasks posted from the engine.
   std::unique_ptr<TaskRunner> task_runner_;
@@ -154,7 +154,7 @@ class FlutterLinuxesEngine {
   std::unique_ptr<FlutterDesktopPluginRegistrar> plugin_registrar_;
 
   // The texture registrar.
-  std::unique_ptr<FlutterLinuxesTextureRegistrar> texture_registrar_;
+  std::unique_ptr<FlutterELinuxTextureRegistrar> texture_registrar_;
 
   // The MethodChannel used for communication with the Flutter engine.
   std::unique_ptr<BasicMessageChannel<rapidjson::Document>> settings_channel_;
@@ -170,4 +170,4 @@ class FlutterLinuxesEngine {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_ENGINE_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_ENGINE_H_
