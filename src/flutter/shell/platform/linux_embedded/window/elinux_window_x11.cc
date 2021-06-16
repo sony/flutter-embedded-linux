@@ -131,7 +131,7 @@ void ELinuxWindowX11::SetView(WindowBindingHandlerDelegate* window) {
   binding_handler_delegate_ = window;
 }
 
-LinuxesRenderSurfaceTarget* ELinuxWindowX11::GetRenderSurfaceTarget() const {
+ELinuxRenderSurfaceTarget* ELinuxWindowX11::GetRenderSurfaceTarget() const {
   return render_surface_.get();
 }
 

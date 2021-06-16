@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_engine.h"
 
 #include <rapidjson/document.h>
 
@@ -12,7 +12,7 @@
 #include "flutter/shell/platform/common/client_wrapper/binary_messenger_impl.h"
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/basic_message_channel.h"
 #include "flutter/shell/platform/common/json_message_codec.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_view.h"
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/system_utils.h"
 #include "flutter/shell/platform/linux_embedded/task_runner.h"
@@ -22,35 +22,35 @@ namespace flutter {
 namespace {
 
 // Creates and returns a FlutterRendererConfig that renders to the view (if any)
-// of a FlutterLinuxesEngine, which should be the user_data received by the
+// of a FlutterELinuxEngine, which should be the user_data received by the
 // render callbacks.
 FlutterRendererConfig GetRendererConfig() {
   FlutterRendererConfig config = {};
   config.type = kOpenGL;
   config.open_gl.struct_size = sizeof(config.open_gl);
   config.open_gl.make_current = [](void* user_data) -> bool {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return false;
     }
     return host->view()->MakeCurrent();
   };
   config.open_gl.clear_current = [](void* user_data) -> bool {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return false;
     }
     return host->view()->ClearCurrent();
   };
   config.open_gl.present = [](void* user_data) -> bool {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return false;
     }
     return host->view()->Present();
   };
   config.open_gl.fbo_callback = [](void* user_data) -> uint32_t {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return false;
     }
@@ -58,14 +58,14 @@ FlutterRendererConfig GetRendererConfig() {
   };
   config.open_gl.gl_proc_resolver = [](void* user_data,
                                        const char* name) -> void* {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return nullptr;
     }
     return host->view()->ProcResolver(name);
   };
   config.open_gl.make_resource_current = [](void* user_data) -> bool {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
       return false;
     }
@@ -74,7 +74,7 @@ FlutterRendererConfig GetRendererConfig() {
   config.open_gl.gl_external_texture_frame_callback =
       [](void* user_data, int64_t texture_id, size_t width, size_t height,
          FlutterOpenGLTexture* texture) -> bool {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->texture_registrar()) {
       return false;
     }
@@ -98,7 +98,7 @@ static FlutterDesktopMessage ConvertToDesktopMessage(
 
 }  // namespace
 
-FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
+FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
     : project_(std::make_unique<FlutterProjectBundle>(project)),
       aot_data_(nullptr) {
   embedder_api_.struct_size = sizeof(FlutterEngineProcTable);
@@ -126,7 +126,7 @@ FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
   messenger_wrapper_ = std::make_unique<BinaryMessengerImpl>(messenger_.get());
   message_dispatcher_ =
       std::make_unique<IncomingMessageDispatcher>(messenger_.get());
-  texture_registrar_ = std::make_unique<FlutterLinuxesTextureRegistrar>(this);
+  texture_registrar_ = std::make_unique<FlutterELinuxTextureRegistrar>(this);
 
   // Set up internal channels.
   // TODO: Replace this with an embedder.h API. See
@@ -139,9 +139,9 @@ FlutterLinuxesEngine::FlutterLinuxesEngine(const FlutterProjectBundle& project)
   vsync_waiter_ = std::make_unique<VsyncWaiter>();
 }
 
-FlutterLinuxesEngine::~FlutterLinuxesEngine() { Stop(); }
+FlutterELinuxEngine::~FlutterELinuxEngine() { Stop(); }
 
-bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
+bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
   if (!project_->HasValidPaths()) {
     ELINUX_LOG(ERROR) << "Missing or unresolvable paths to assets.";
     return false;
@@ -203,7 +203,7 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
   args.platform_message_callback =
       [](const FlutterPlatformMessage* engine_message,
          void* user_data) -> void {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     return host->HandlePlatformMessage(engine_message);
   };
 // todo: add drm/x11 support.
@@ -211,7 +211,7 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
 // https://github.com/sony/flutter-embedded-linux/issues/137
 #if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   args.vsync_callback = [](void* user_data, intptr_t baton) -> void {
-    auto host = static_cast<FlutterLinuxesEngine*>(user_data);
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
     host->vsync_waiter_->NotifyWaitForVsync(baton);
   };
 #endif
@@ -246,7 +246,7 @@ bool FlutterLinuxesEngine::RunWithEntrypoint(const char* entrypoint) {
   return true;
 }
 
-bool FlutterLinuxesEngine::Stop() {
+bool FlutterELinuxEngine::Stop() {
   if (engine_) {
     if (plugin_registrar_destruction_callback_) {
       plugin_registrar_destruction_callback_(plugin_registrar_.get());
@@ -258,32 +258,32 @@ bool FlutterLinuxesEngine::Stop() {
   return false;
 }
 
-void FlutterLinuxesEngine::SetView(FlutterLinuxesView* view) { view_ = view; }
+void FlutterELinuxEngine::SetView(FlutterELinuxView* view) { view_ = view; }
 
 // Returns the currently configured Plugin Registrar.
-FlutterDesktopPluginRegistrarRef FlutterLinuxesEngine::GetRegistrar() {
+FlutterDesktopPluginRegistrarRef FlutterELinuxEngine::GetRegistrar() {
   return plugin_registrar_.get();
 }
 
-void FlutterLinuxesEngine::SetPluginRegistrarDestructionCallback(
+void FlutterELinuxEngine::SetPluginRegistrarDestructionCallback(
     FlutterDesktopOnPluginRegistrarDestroyed callback) {
   plugin_registrar_destruction_callback_ = callback;
 }
 
-void FlutterLinuxesEngine::SendWindowMetricsEvent(
+void FlutterELinuxEngine::SendWindowMetricsEvent(
     const FlutterWindowMetricsEvent& event) {
   if (engine_) {
     embedder_api_.SendWindowMetricsEvent(engine_, &event);
   }
 }
 
-void FlutterLinuxesEngine::SendPointerEvent(const FlutterPointerEvent& event) {
+void FlutterELinuxEngine::SendPointerEvent(const FlutterPointerEvent& event) {
   if (engine_) {
     embedder_api_.SendPointerEvent(engine_, &event, 1);
   }
 }
 
-bool FlutterLinuxesEngine::SendPlatformMessage(
+bool FlutterELinuxEngine::SendPlatformMessage(
     const char* channel, const uint8_t* message, const size_t message_size,
     const FlutterDesktopBinaryReply reply, void* user_data) {
   FlutterPlatformMessageResponseHandle* response_handle = nullptr;
@@ -314,13 +314,13 @@ bool FlutterLinuxesEngine::SendPlatformMessage(
   return message_result == kSuccess;
 }
 
-void FlutterLinuxesEngine::SendPlatformMessageResponse(
+void FlutterELinuxEngine::SendPlatformMessageResponse(
     const FlutterDesktopMessageResponseHandle* handle, const uint8_t* data,
     size_t data_length) {
   embedder_api_.SendPlatformMessageResponse(engine_, handle, data, data_length);
 }
 
-void FlutterLinuxesEngine::HandlePlatformMessage(
+void FlutterELinuxEngine::HandlePlatformMessage(
     const FlutterPlatformMessage* engine_message) {
   if (engine_message->struct_size != sizeof(FlutterPlatformMessage)) {
     ELINUX_LOG(ERROR) << "Invalid message size received. Expected: "
@@ -335,11 +335,11 @@ void FlutterLinuxesEngine::HandlePlatformMessage(
       message, [this] {}, [this] {});
 }
 
-void FlutterLinuxesEngine::ReloadSystemFonts() {
+void FlutterELinuxEngine::ReloadSystemFonts() {
   embedder_api_.ReloadSystemFonts(engine_);
 }
 
-void FlutterLinuxesEngine::SendSystemSettings() {
+void FlutterELinuxEngine::SendSystemSettings() {
   auto languages = flutter::GetPreferredLanguageInfo();
   auto flutter_locales = flutter::ConvertToFlutterLocale(languages);
 
@@ -365,23 +365,23 @@ void FlutterLinuxesEngine::SendSystemSettings() {
   settings_channel_->Send(settings);
 }
 
-bool FlutterLinuxesEngine::RegisterExternalTexture(int64_t texture_id) {
+bool FlutterELinuxEngine::RegisterExternalTexture(int64_t texture_id) {
   return (embedder_api_.RegisterExternalTexture(engine_, texture_id) ==
           kSuccess);
 }
 
-bool FlutterLinuxesEngine::UnregisterExternalTexture(int64_t texture_id) {
+bool FlutterELinuxEngine::UnregisterExternalTexture(int64_t texture_id) {
   return (embedder_api_.UnregisterExternalTexture(engine_, texture_id) ==
           kSuccess);
 }
 
-bool FlutterLinuxesEngine::MarkExternalTextureFrameAvailable(
+bool FlutterELinuxEngine::MarkExternalTextureFrameAvailable(
     int64_t texture_id) {
   return (embedder_api_.MarkExternalTextureFrameAvailable(
               engine_, texture_id) == kSuccess);
 }
 
-void FlutterLinuxesEngine::OnVsync(uint64_t last_frame_time_nanos,
+void FlutterELinuxEngine::OnVsync(uint64_t last_frame_time_nanos,
                                    uint64_t vsync_interval_time_nanos) {
   uint64_t current_time_nanos = embedder_api_.GetCurrentTime();
   uint64_t after_vsync_passed_time_nanos =

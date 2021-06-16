@@ -745,8 +745,7 @@ void ELinuxWindowWayland::SetView(WindowBindingHandlerDelegate* window) {
   binding_handler_delegate_ = window;
 }
 
-LinuxesRenderSurfaceTarget* ELinuxWindowWayland::GetRenderSurfaceTarget()
-    const {
+ELinuxRenderSurfaceTarget* ELinuxWindowWayland::GetRenderSurfaceTarget() const {
   return render_surface_.get();
 }
 

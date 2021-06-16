@@ -2,20 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_texture_registrar.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.h"
 
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_engine.h"
 
 #include <iostream>
 #include <mutex>
 
 namespace flutter {
 
-FlutterLinuxesTextureRegistrar::FlutterLinuxesTextureRegistrar(
-    FlutterLinuxesEngine* engine)
+FlutterELinuxTextureRegistrar::FlutterELinuxTextureRegistrar(
+    FlutterELinuxEngine* engine)
     : engine_(engine) {}
 
-int64_t FlutterLinuxesTextureRegistrar::RegisterTexture(
+int64_t FlutterELinuxTextureRegistrar::RegisterTexture(
     const FlutterDesktopTextureInfo* texture_info) {
   if (texture_info->type != kFlutterDesktopPixelBufferTexture) {
     std::cerr << "Attempted to register texture of unsupport type."
@@ -45,7 +45,7 @@ int64_t FlutterLinuxesTextureRegistrar::RegisterTexture(
   return texture_id;
 }
 
-bool FlutterLinuxesTextureRegistrar::UnregisterTexture(int64_t texture_id) {
+bool FlutterELinuxTextureRegistrar::UnregisterTexture(int64_t texture_id) {
   {
     std::lock_guard<std::mutex> lock(map_mutex_);
     auto it = textures_.find(texture_id);
@@ -61,7 +61,7 @@ bool FlutterLinuxesTextureRegistrar::UnregisterTexture(int64_t texture_id) {
   return true;
 }
 
-bool FlutterLinuxesTextureRegistrar::MarkTextureFrameAvailable(
+bool FlutterELinuxTextureRegistrar::MarkTextureFrameAvailable(
     int64_t texture_id) {
   engine_->task_runner()->RunNowOrPostTask([engine = engine_, texture_id]() {
     engine->MarkExternalTextureFrameAvailable(texture_id);
@@ -69,7 +69,7 @@ bool FlutterLinuxesTextureRegistrar::MarkTextureFrameAvailable(
   return true;
 }
 
-bool FlutterLinuxesTextureRegistrar::PopulateTexture(
+bool FlutterELinuxTextureRegistrar::PopulateTexture(
     int64_t texture_id,
     size_t width,
     size_t height,

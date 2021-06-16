@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_TEXTURE_REGISTRAR_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_TEXTURE_REGISTRAR_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_TEXTURE_REGISTRAR_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_TEXTURE_REGISTRAR_H_
 
 #include <memory>
 #include <mutex>
@@ -13,13 +13,13 @@
 
 namespace flutter {
 
-class FlutterLinuxesEngine;
+class FlutterELinuxEngine;
 
 // An object managing the registration of an external texture.
 // Thread safety: All member methods are thread safe.
-class FlutterLinuxesTextureRegistrar {
+class FlutterELinuxTextureRegistrar {
  public:
-  explicit FlutterLinuxesTextureRegistrar(FlutterLinuxesEngine* engine);
+  explicit FlutterELinuxTextureRegistrar(FlutterELinuxEngine* engine);
 
   // Registers a texture described by the given |texture_info| object.
   // Returns the non-zero, positive texture id or -1 on error.
@@ -36,13 +36,11 @@ class FlutterLinuxesTextureRegistrar {
   // Attempts to populate the given |texture| by copying the
   // contents of the texture identified by |texture_id|.
   // Returns true on success.
-  bool PopulateTexture(int64_t texture_id,
-                       size_t width,
-                       size_t height,
+  bool PopulateTexture(int64_t texture_id, size_t width, size_t height,
                        FlutterOpenGLTexture* texture);
 
  private:
-  FlutterLinuxesEngine* engine_ = nullptr;
+  FlutterELinuxEngine* engine_ = nullptr;
 
   // All registered textures, keyed by their IDs.
   std::unordered_map<int64_t, std::unique_ptr<flutter::ExternalTextureGL>>
@@ -52,4 +50,4 @@ class FlutterLinuxesTextureRegistrar {
 
 };  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_LINUXES_TEXTURE_REGISTRAR_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_FLUTTER_ELINUX_TEXTURE_REGISTRAR_H_

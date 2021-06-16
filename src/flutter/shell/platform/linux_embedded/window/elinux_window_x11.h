@@ -35,7 +35,7 @@ class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
   void SetView(WindowBindingHandlerDelegate* view) override;
 
   // |FlutterWindowBindingHandler|
-  LinuxesRenderSurfaceTarget* GetRenderSurfaceTarget() const override;
+  ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const override;
 
   // |FlutterWindowBindingHandler|
   double GetDpiScale() override;

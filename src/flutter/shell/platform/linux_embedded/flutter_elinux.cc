@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 
 #include <cassert>
 #include <cstdlib>
@@ -11,9 +11,9 @@
 
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
 #include "flutter/shell/platform/common/incoming_message_dispatcher.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_engine.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_state.h"
-#include "flutter/shell/platform/linux_embedded/flutter_linuxes_view.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_engine.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_state.h"
+#include "flutter/shell/platform/linux_embedded/flutter_elinux_view.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
@@ -31,36 +31,36 @@
 static_assert(FLUTTER_ENGINE_VERSION == 1, "");
 
 // Returns the engine corresponding to the given opaque API handle.
-static flutter::FlutterLinuxesEngine* EngineFromHandle(
+static flutter::FlutterELinuxEngine* EngineFromHandle(
     FlutterDesktopEngineRef ref) {
-  return reinterpret_cast<flutter::FlutterLinuxesEngine*>(ref);
+  return reinterpret_cast<flutter::FlutterELinuxEngine*>(ref);
 }
 
 // Returns the opaque API handle for the given engine instance.
 static FlutterDesktopEngineRef HandleForEngine(
-    flutter::FlutterLinuxesEngine* engine) {
+    flutter::FlutterELinuxEngine* engine) {
   return reinterpret_cast<FlutterDesktopEngineRef>(engine);
 }
 
 // Returns the view corresponding to the given opaque API handle.
-static flutter::FlutterLinuxesView* ViewFromHandle(FlutterDesktopViewRef ref) {
-  return reinterpret_cast<flutter::FlutterLinuxesView*>(ref);
+static flutter::FlutterELinuxView* ViewFromHandle(FlutterDesktopViewRef ref) {
+  return reinterpret_cast<flutter::FlutterELinuxView*>(ref);
 }
 
 // Returns the opaque API handle for the given view instance.
-static FlutterDesktopViewRef HandleForView(flutter::FlutterLinuxesView* view) {
+static FlutterDesktopViewRef HandleForView(flutter::FlutterELinuxView* view) {
   return reinterpret_cast<FlutterDesktopViewRef>(view);
 }
 
 // Returns the texture registrar corresponding to the given opaque API handle.
-static flutter::FlutterLinuxesTextureRegistrar* TextureRegistrarFromHandle(
+static flutter::FlutterELinuxTextureRegistrar* TextureRegistrarFromHandle(
     FlutterDesktopTextureRegistrarRef ref) {
-  return reinterpret_cast<flutter::FlutterLinuxesTextureRegistrar*>(ref);
+  return reinterpret_cast<flutter::FlutterELinuxTextureRegistrar*>(ref);
 }
 
 // Returns the opaque API handle for the given texture registrar instance.
 static FlutterDesktopTextureRegistrarRef HandleForTextureRegistrar(
-    flutter::FlutterLinuxesTextureRegistrar* registrar) {
+    flutter::FlutterELinuxTextureRegistrar* registrar) {
   return reinterpret_cast<FlutterDesktopTextureRegistrarRef>(registrar);
 }
 
@@ -91,14 +91,14 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
 
   auto state = std::make_unique<FlutterDesktopViewControllerState>();
   state->view =
-      std::make_unique<flutter::FlutterLinuxesView>(std::move(window_wrapper));
+      std::make_unique<flutter::FlutterELinuxView>(std::move(window_wrapper));
   if (!state->view->CreateRenderSurface()) {
     return nullptr;
   }
 
   // Take ownership of the engine, starting it if necessary.
   state->view->SetEngine(
-      std::unique_ptr<flutter::FlutterLinuxesEngine>(EngineFromHandle(engine)));
+      std::unique_ptr<flutter::FlutterELinuxEngine>(EngineFromHandle(engine)));
   if (!state->view->GetEngine()->running()) {
     if (!state->view->GetEngine()->RunWithEntrypoint(nullptr)) {
       return nullptr;
@@ -136,12 +136,12 @@ int32_t FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view) {
 FlutterDesktopEngineRef FlutterDesktopEngineCreate(
     const FlutterDesktopEngineProperties& engine_properties) {
   flutter::FlutterProjectBundle project(engine_properties);
-  auto engine = std::make_unique<flutter::FlutterLinuxesEngine>(project);
+  auto engine = std::make_unique<flutter::FlutterELinuxEngine>(project);
   return HandleForEngine(engine.release());
 }
 
 bool FlutterDesktopEngineDestroy(FlutterDesktopEngineRef engine_ref) {
-  flutter::FlutterLinuxesEngine* engine = EngineFromHandle(engine_ref);
+  flutter::FlutterELinuxEngine* engine = EngineFromHandle(engine_ref);
   bool result = true;
   if (engine->running()) {
     result = engine->Stop();

@@ -8,7 +8,7 @@
 #include <string>
 #include <variant>
 
-#include "flutter/shell/platform/linux_embedded/public/flutter_linuxes.h"
+#include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window_binding_handler_delegate.h"
 
@@ -22,7 +22,7 @@ struct PhysicalWindowBounds {
   size_t height;
 };
 
-using LinuxesRenderSurfaceTarget = SurfaceGl;
+using ELinuxRenderSurfaceTarget = SurfaceGl;
 
 // Abstract class for binding Linux embedded platform windows to Flutter views.
 class WindowBindingHandler {
@@ -39,9 +39,9 @@ class WindowBindingHandler {
   // Destroy a surface which is currently used.
   virtual void DestroyRenderSurface() = 0;
 
-  // Returns a valid LinuxesRenderSurfaceTarget representing the backing
+  // Returns a valid ELinuxRenderSurfaceTarget representing the backing
   // window.
-  virtual LinuxesRenderSurfaceTarget* GetRenderSurfaceTarget() const = 0;
+  virtual ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const = 0;
 
   // Sets the delegate used to communicate state changes from window to view
   // such as key presses, mouse position updates etc.
