@@ -31,7 +31,7 @@ elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/window/linuxes_window_x11.cc
+    src/flutter/shell/platform/linux_embedded/window/elinux_window_x11.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
 else()
   include(cmake/generate_wayland_protocols.cmake)
@@ -64,7 +64,7 @@ else()
     ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
     ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
     ${_wayland_protocols_src_dir}/presentation-time-protocol.c
-    src/flutter/shell/platform/linux_embedded/window/linuxes_window_wayland.cc
+    src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc
     src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
 endif()
 
