@@ -3,8 +3,8 @@ project("flutter_elinux" LANGUAGES CXX C)
 
 # We only support clang, so the build will be faild if you try to build with gcc compiler instead of it.
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_C_COMPILER clang)
-    set(CMAKE_CXX_COMPILER clang++)
+  set(CMAKE_C_COMPILER clang)
+  set(CMAKE_CXX_COMPILER clang++)
 endif()
 set(CMAKE_CXX_STANDARD 17)
 

@@ -9,11 +9,6 @@ add_library(${PLUGIN_NAME}
     "${PLUGIN_NAME}.cc"
 )
 
-set_target_properties(${PLUGIN_NAME}
-  PROPERTIES
-    CXX_VISIBILITY_PRESET hidden
-)
-
 target_compile_definitions(${PLUGIN_NAME}
   PRIVATE
     FLUTTER_PLUGIN_IMPL
