@@ -184,8 +184,8 @@ target_link_libraries(${TARGET}
 
 if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
 target_link_libraries(${TARGET}
-    PRIVATE
-      Threads::Threads
+  PRIVATE
+    Threads::Threads
 )
 endif()
 
@@ -193,3 +193,6 @@ target_compile_options(${TARGET}
   PUBLIC
     ${EGL_CFLAGS}
 )
+
+# Generated plugin build rules
+include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)

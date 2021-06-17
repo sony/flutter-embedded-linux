@@ -25,4 +25,4 @@ set(USER_APP_INCLUDE_DIRS
 )
 
 # link libraries for user apps.
-set(USER_APP_LIBRARIES "")
+set(USER_APP_LIBRARIES)
