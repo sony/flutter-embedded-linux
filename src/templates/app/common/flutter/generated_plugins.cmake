@@ -17,6 +17,6 @@ foreach(plugin ${FLUTTER_PLUGIN_LIST})
   )
 
   list(APPEND PLUGIN_BUNDLED_LIBRARIES 
-    ${plugin}_plugin
+    ${PROJECT_BINARY_DIR}/plugins/${plugin}/lib${plugin}_plugin.so
   )
 endforeach(plugin)
