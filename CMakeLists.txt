@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-project("flutter_elinux" LANGUAGES CXX C)
 
 # We only support clang, so the build will be faild if you try to build with gcc compiler instead of it.
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -7,6 +6,8 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
   set(CMAKE_CXX_COMPILER clang++)
 endif()
 set(CMAKE_CXX_STANDARD 17)
+
+project("flutter_elinux" LANGUAGES CXX C)
 
 # Build options.
 option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
