@@ -206,6 +206,10 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
     return host->HandlePlatformMessage(engine_message);
   };
+// todo: disable vsync temporarily because flutter apps will freeze when we use
+// this interface. See also:
+// https://github.com/sony/flutter-embedded-linux/issues/176
+#if 0
 // todo: add drm/x11 support.
 // https://github.com/sony/flutter-embedded-linux/issues/136
 // https://github.com/sony/flutter-embedded-linux/issues/137
@@ -214,6 +218,7 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
     host->vsync_waiter_->NotifyWaitForVsync(baton);
   };
+#endif
 #endif
   args.custom_task_runners = &custom_task_runners;
 
@@ -382,7 +387,7 @@ bool FlutterELinuxEngine::MarkExternalTextureFrameAvailable(
 }
 
 void FlutterELinuxEngine::OnVsync(uint64_t last_frame_time_nanos,
-                                   uint64_t vsync_interval_time_nanos) {
+                                  uint64_t vsync_interval_time_nanos) {
   uint64_t current_time_nanos = embedder_api_.GetCurrentTime();
   uint64_t after_vsync_passed_time_nanos =
       (current_time_nanos - last_frame_time_nanos) % vsync_interval_time_nanos;
