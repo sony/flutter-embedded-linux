@@ -9,7 +9,7 @@
 #include <iostream>
 #include <thread>
 
-#include "generated_plugin_registrant.h"
+#include "flutter/generated_plugin_registrant.h"
 
 FlutterWindow::FlutterWindow(
     const flutter::FlutterViewController::ViewProperties view_properties,

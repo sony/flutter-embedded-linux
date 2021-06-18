@@ -5,9 +5,8 @@ set(TARGET flutter-client)
 
 # source files for user apps.
 set(USER_APP_SRCS
-  examples/flutter-external-texture-plugin/external_texture_test_plugin.cc
+  examples/flutter-external-texture-plugin/flutter/generated_plugin_registrant.cc
   examples/flutter-external-texture-plugin/flutter_window.cc
-  examples/flutter-external-texture-plugin/generated_plugin_registrant.cc
   examples/flutter-external-texture-plugin/main.cc
 )
 
@@ -26,4 +25,4 @@ set(USER_APP_INCLUDE_DIRS
 )
 
 # link libraries for user apps.
-set(USER_APP_LIBRARIES "")
+set(USER_APP_LIBRARIES)

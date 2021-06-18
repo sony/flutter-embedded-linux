@@ -162,7 +162,7 @@ target_include_directories(${TARGET}
 )
 
 set(CMAKE_SKIP_RPATH true)
-set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
+set(FLUTTER_EMBEDDER_LIB ${PROJECT_BINARY_DIR}/libflutter_engine.so)
 target_link_libraries(${TARGET}
   PRIVATE
     ${XKBCOMMON_LIBRARIES}
@@ -184,8 +184,8 @@ target_link_libraries(${TARGET}
 
 if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
 target_link_libraries(${TARGET}
-    PRIVATE
-      Threads::Threads
+  PRIVATE
+    Threads::Threads
 )
 endif()
 
@@ -193,3 +193,6 @@ target_compile_options(${TARGET}
   PUBLIC
     ${EGL_CFLAGS}
 )
+
+# Generated plugin build rules
+include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)

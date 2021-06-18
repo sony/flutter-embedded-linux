@@ -1,4 +1,4 @@
-#include "external_texture_test_plugin.h"
+#include "include/external_texture_test/external_texture_test_plugin.h"
 
 #include <flutter/standard_method_codec.h>
 #include <unistd.h>
