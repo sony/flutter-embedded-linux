@@ -5,8 +5,8 @@ set(TARGET flutter-client)
 
 # source files for user apps.
 set(USER_APP_SRCS
+  examples/flutter-wayland-client/flutter/generated_plugin_registrant.cc
   examples/flutter-wayland-client/flutter_window.cc
-  examples/flutter-wayland-client/generated_plugin_registrant.cc
   examples/flutter-wayland-client/main.cc
 )
 
@@ -25,4 +25,4 @@ set(USER_APP_INCLUDE_DIRS
 )
 
 # link libraries for user apps.
-set(USER_APP_LIBRARIES "")
+set(USER_APP_LIBRARIES)
