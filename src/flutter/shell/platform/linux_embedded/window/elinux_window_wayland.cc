@@ -4,8 +4,13 @@
 
 #include "flutter/shell/platform/linux_embedded/window/elinux_window_wayland.h"
 
+#ifdef USE_GLES3
+#include <GLES3/gl32.h>
+#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
+#endif
+
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
 #include <poll.h>
