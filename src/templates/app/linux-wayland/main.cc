@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
   options.AddWithoutValue("no-cursor", "n", "No mouse cursor/pointer", false);
   options.AddWithoutValue("onscreen-keyboard", "k", "Enable on-screen keyboard",
                           false);
+  options.AddWithoutValue("window-decoration", "d", "Enable window decorations",
+                          false);
   options.AddInt("width", "w", "Flutter app window width", 1280, false);
   options.AddInt("height", "h", "Flutter app window height", 720, false);
   if (!options.Parse(argc, argv)) {
@@ -33,6 +35,7 @@ int main(int argc, char** argv) {
   const auto bundle_path = options.GetValue<std::string>("bundle");
   const bool show_cursor = !options.Exist("no-cursor");
   const bool use_onscreen_keyboard = options.Exist("onscreen-keyboard");
+  const bool use_window_decoration = options.Exist("window-decoration");
 
   const auto view_mode =
       options.Exist("fullscreen")
@@ -52,6 +55,7 @@ int main(int argc, char** argv) {
   view_properties.view_mode = view_mode;
   view_properties.use_mouse_cursor = show_cursor;
   view_properties.use_onscreen_keyboard = use_onscreen_keyboard;
+  view_properties.use_window_decoration = use_window_decoration;
 
   // The Flutter instance hosted by this window.
   FlutterWindow window(view_properties, project);
