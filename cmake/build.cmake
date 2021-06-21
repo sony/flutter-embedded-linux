@@ -65,7 +65,8 @@ else()
     ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
     ${_wayland_protocols_src_dir}/presentation-time-protocol.c
     src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc)
+    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc
+    src/flutter/shell/platform/linux_embedded/window/native_window_wayland_decoration.cc)
 endif()
 
 # desktop-shell for weston.
@@ -121,6 +122,7 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.cc
   src/flutter/shell/platform/linux_embedded/surface/surface.cc
   src/flutter/shell/platform/linux_embedded/surface/surface_gl.cc
+  src/flutter/shell/platform/linux_embedded/surface/surface_decoration.cc
   ${DISPLAY_BACKEND_SRC}
   ${WAYLAND_PROTOCOL_SRC}
   ## The following file were copied from:
