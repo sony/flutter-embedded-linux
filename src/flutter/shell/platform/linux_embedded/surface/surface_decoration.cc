@@ -60,6 +60,8 @@ bool SurfaceDecoration::GLContextPresent(uint32_t fbo_id) const {
   return surface_->SwapBuffers();
 }
 
+uint32_t SurfaceDecoration::GLContextFBO() const { return 0; }
+
 void* SurfaceDecoration::GlProcResolver(const char* name) const {
   return context_->GlProcResolver(name);
 }

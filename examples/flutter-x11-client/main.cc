@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
   view_properties.view_mode = view_mode;
   view_properties.use_mouse_cursor = show_cursor;
   view_properties.use_onscreen_keyboard = false;
+  view_properties.use_window_decoration = false;
 
   // The Flutter instance hosted by this window.
   FlutterWindow window(view_properties, project);

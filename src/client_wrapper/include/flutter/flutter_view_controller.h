@@ -49,6 +49,10 @@ class FlutterViewController {
 
     // Uses the on-screen keyboard.
     bool use_onscreen_keyboard;
+
+    // Uses the window decoration such as toolbar and max/min buttons.
+    // This option is only active for Wayland backend.
+    bool use_window_decoration;
   } ViewProperties;
 
   // Creates a FlutterView that can be parented into a Windows View hierarchy

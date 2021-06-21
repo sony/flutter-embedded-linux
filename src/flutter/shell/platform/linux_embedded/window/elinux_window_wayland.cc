@@ -209,8 +209,9 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
 
-      if (self->wl_current_surface_ ==
-          self->native_window_decoration_->Surface()) {
+      if (self->view_properties_.use_window_decoration &&
+          self->wl_current_surface_ ==
+              self->native_window_decoration_->Surface()) {
         if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED &&
             self->xdg_toplevel_) {
           xdg_toplevel_move(self->xdg_toplevel_, self->wl_seat_, serial);
@@ -363,12 +364,14 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
 
         if (self->view_properties_.view_mode ==
             FlutterDesktopViewMode::kFullscreen) {
-          if (self->render_surface_decoration_) {
+          self->view_properties_.width = width;
+          self->view_properties_.height = height;
+
+          if (self->view_properties_.use_window_decoration &&
+              self->render_surface_decoration_) {
             self->render_surface_decoration_->Resize(width, height);
           }
 
-          self->view_properties_.width = width;
-          self->view_properties_.height = height;
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
           }
@@ -905,8 +908,7 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
       std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
-  // decoration for titlebar.
-  {
+  if (view_properties_.use_window_decoration) {
     native_window_decoration_ = std::make_unique<NativeWindowWaylandDecoration>(
         wl_compositor_, wl_subcompositor_, native_window_->Surface(), width,
         height);
@@ -927,7 +929,9 @@ void ELinuxWindowWayland::DestroyRenderSurface() {
   {
     render_surface_ = nullptr;
     native_window_ = nullptr;
+  }
 
+  if (view_properties_.use_window_decoration) {
     render_surface_decoration_ = nullptr;
     native_window_decoration_ = nullptr;
   }
@@ -1265,7 +1269,7 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
 }
 
 void ELinuxWindowWayland::DrawWindowDecoration() {
-  if (render_surface_decoration_) {
+  if (view_properties_.use_window_decoration) {
     render_surface_decoration_->GLContextMakeCurrent();
 
     auto glClearColor = reinterpret_cast<glClearColorProc>(

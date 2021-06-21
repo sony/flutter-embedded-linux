@@ -42,6 +42,9 @@ class SurfaceDecoration : public SurfaceGlDelegate {
   bool GLContextPresent(uint32_t fbo_id) const override;
 
   // |SurfaceGlDelegate|
+  uint32_t GLContextFBO() const override;
+
+  // |SurfaceGlDelegate|
   void* GlProcResolver(const char* name) const override;
 
  protected:
