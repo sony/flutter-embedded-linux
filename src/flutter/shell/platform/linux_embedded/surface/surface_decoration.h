@@ -14,7 +14,7 @@
 
 namespace flutter {
 
-// Surface
+// Surface for window decorations such as a toolbar and max/min buttons.
 class SurfaceDecoration : public SurfaceGlDelegate {
  public:
   SurfaceDecoration(std::unique_ptr<ContextEgl> context);
