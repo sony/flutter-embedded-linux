@@ -103,8 +103,9 @@ const wp_presentation_feedback_listener
               self->frame_rate_ =
                   static_cast<int32_t>(std::round(1000000000000.0 / refresh));
 
-              // Draw window decrations sucha as window toolbar.
-              self->DrawWindowDecoration();
+              if (view_properties_.use_window_decoration) {
+                self->DrawWindowDecoration();
+              }
             },
         .discarded =
             [](void* data,
@@ -119,6 +120,10 @@ const wl_callback_listener ELinuxWindowWayland::kWlSurfaceFrameListener = {
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->wp_presentation_clk_id_ != UINT32_MAX) {
             return;
+          }
+
+          if (view_properties_.use_window_decoration) {
+            self->DrawWindowDecoration();
           }
 
           self->last_frame_time_nanos_ = static_cast<uint64_t>(time) * 1000000;
@@ -1269,19 +1274,17 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
 }
 
 void ELinuxWindowWayland::DrawWindowDecoration() {
-  if (view_properties_.use_window_decoration) {
-    render_surface_decoration_->GLContextMakeCurrent();
+  render_surface_decoration_->GLContextMakeCurrent();
 
-    auto glClearColor = reinterpret_cast<glClearColorProc>(
-        render_surface_decoration_->GlProcResolver("glClearColor"));
-    glClearColor(51 / 255.0, 51 / 255.0, 51 / 255.0, 1);
+  auto glClearColor = reinterpret_cast<glClearColorProc>(
+      render_surface_decoration_->GlProcResolver("glClearColor"));
+  glClearColor(51 / 255.0, 51 / 255.0, 51 / 255.0, 1);
 
-    auto glClear = reinterpret_cast<glClearProc>(
-        render_surface_decoration_->GlProcResolver("glClear"));
-    glClear(GL_COLOR_BUFFER_BIT);
+  auto glClear = reinterpret_cast<glClearProc>(
+      render_surface_decoration_->GlProcResolver("glClear"));
+  glClear(GL_COLOR_BUFFER_BIT);
 
-    render_surface_decoration_->GLContextPresent(0);
-  }
+  render_surface_decoration_->GLContextPresent(0);
 }
 
 }  // namespace flutter
