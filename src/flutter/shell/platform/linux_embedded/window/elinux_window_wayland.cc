@@ -4,6 +4,13 @@
 
 #include "flutter/shell/platform/linux_embedded/window/elinux_window_wayland.h"
 
+#ifdef USE_GLES3
+#include <GLES3/gl32.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
 #include <poll.h>
@@ -20,6 +27,10 @@
 namespace flutter {
 
 namespace {
+typedef void (*glClearColorProc)(GLfloat red, GLfloat green, GLfloat blue,
+                                 GLfloat alpha);
+typedef void (*glClearProc)(GLbitfield mask);
+
 constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
@@ -96,6 +107,10 @@ const wp_presentation_feedback_listener
                   tv_nsec;
               self->frame_rate_ =
                   static_cast<int32_t>(std::round(1000000000000.0 / refresh));
+
+              if (self->view_properties_.use_window_decoration) {
+                self->DrawWindowDecoration();
+              }
             },
         .discarded =
             [](void* data,
@@ -110,6 +125,10 @@ const wl_callback_listener ELinuxWindowWayland::kWlSurfaceFrameListener = {
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->wp_presentation_clk_id_ != UINT32_MAX) {
             return;
+          }
+
+          if (self->view_properties_.use_window_decoration) {
+            self->DrawWindowDecoration();
           }
 
           self->last_frame_time_nanos_ = static_cast<uint64_t>(time) * 1000000;
@@ -156,7 +175,9 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
                 wl_surface* surface, wl_fixed_t surface_x,
                 wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+      self->wl_current_surface_ = surface;
       self->serial_ = serial;
+
       if (self->view_properties_.use_mouse_cursor) {
         self->cursor_info_.pointer = wl_pointer;
         self->cursor_info_.serial = serial;
@@ -173,7 +194,9 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
     .leave = [](void* data, wl_pointer* pointer, uint32_t serial,
                 wl_surface* surface) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+      self->wl_current_surface_ = surface;
       self->serial_ = serial;
+
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnPointerLeave();
         self->pointer_x_ = -1;
@@ -195,6 +218,17 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
                  uint32_t time, uint32_t button, uint32_t status) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
+
+      if (self->view_properties_.use_window_decoration &&
+          self->wl_current_surface_ ==
+              self->native_window_decoration_->Surface()) {
+        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED &&
+            self->xdg_toplevel_) {
+          xdg_toplevel_move(self->xdg_toplevel_, self->wl_seat_, serial);
+        }
+        return;
+      }
+
       if (self->binding_handler_delegate_) {
         FlutterPointerMouseButtons flutter_button;
         switch (button) {
@@ -342,6 +376,12 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
             FlutterDesktopViewMode::kFullscreen) {
           self->view_properties_.width = width;
           self->view_properties_.height = height;
+
+          if (self->view_properties_.use_window_decoration &&
+              self->render_surface_decoration_) {
+            self->render_surface_decoration_->Resize(width, height);
+          }
+
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
           }
@@ -550,6 +590,10 @@ ELinuxWindowWayland::ELinuxWindowWayland(
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
       is_requested_show_virtual_keyboard_(false),
+      xdg_toplevel_(nullptr),
+      wl_compositor_(nullptr),
+      wl_subcompositor_(nullptr),
+      wl_current_surface_(nullptr),
       wl_seat_(nullptr),
       wl_pointer_(nullptr),
       wl_touch_(nullptr),
@@ -729,6 +773,11 @@ ELinuxWindowWayland::~ELinuxWindowWayland() {
     wl_compositor_ = nullptr;
   }
 
+  if (wl_subcompositor_) {
+    wl_subcompositor_destroy(wl_subcompositor_);
+    wl_subcompositor_ = nullptr;
+  }
+
   if (wl_registry_) {
     wl_registry_destroy(wl_registry_);
     wl_registry_ = nullptr;
@@ -869,6 +918,19 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
       std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
+  if (view_properties_.use_window_decoration) {
+    native_window_decoration_ = std::make_unique<NativeWindowWaylandDecoration>(
+        wl_compositor_, wl_subcompositor_, native_window_->Surface(), width,
+        height);
+
+    render_surface_decoration_ =
+        std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
+            std::make_unique<EnvironmentEgl>(wl_display_)));
+    render_surface_decoration_->SetNativeWindow(
+        native_window_decoration_.get());
+    render_surface_decoration_->Resize(width, height);
+  }
+
   return true;
 }
 
@@ -877,6 +939,11 @@ void ELinuxWindowWayland::DestroyRenderSurface() {
   {
     render_surface_ = nullptr;
     native_window_ = nullptr;
+  }
+
+  if (view_properties_.use_window_decoration) {
+    render_surface_decoration_ = nullptr;
+    native_window_decoration_ = nullptr;
   }
 
   if (xdg_surface_) {
@@ -1000,6 +1067,11 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
         wl_registry_bind(wl_registry, name, &wl_compositor_interface, 1));
     return;
+  }
+
+  if (!strcmp(interface, wl_subcompositor_interface.name)) {
+    wl_subcompositor_ = static_cast<wl_subcompositor*>(
+        wl_registry_bind(wl_registry, name, &wl_subcompositor_interface, 1));
   }
 
   if (!strcmp(interface, xdg_wm_base_interface.name)) {
@@ -1204,6 +1276,20 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
   } else {
     zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
   }
+}
+
+void ELinuxWindowWayland::DrawWindowDecoration() {
+  render_surface_decoration_->GLContextMakeCurrent();
+
+  auto glClearColor = reinterpret_cast<glClearColorProc>(
+      render_surface_decoration_->GlProcResolver("glClearColor"));
+  glClearColor(51 / 255.0, 51 / 255.0, 51 / 255.0, 1);
+
+  auto glClear = reinterpret_cast<glClearProc>(
+      render_surface_decoration_->GlProcResolver("glClear"));
+  glClear(GL_COLOR_BUFFER_BIT);
+
+  render_surface_decoration_->GLContextPresent(0);
 }
 
 }  // namespace flutter

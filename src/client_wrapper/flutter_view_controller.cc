@@ -23,6 +23,8 @@ FlutterViewController::FlutterViewController(
   c_view_properties.use_mouse_cursor = view_properties.use_mouse_cursor;
   c_view_properties.use_onscreen_keyboard =
       view_properties.use_onscreen_keyboard;
+  c_view_properties.use_window_decoration =
+      view_properties.use_window_decoration;
 
   controller_ = FlutterDesktopViewControllerCreate(c_view_properties,
                                                    engine_->RelinquishEngine());
