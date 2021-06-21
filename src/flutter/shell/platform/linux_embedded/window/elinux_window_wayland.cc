@@ -103,7 +103,7 @@ const wp_presentation_feedback_listener
               self->frame_rate_ =
                   static_cast<int32_t>(std::round(1000000000000.0 / refresh));
 
-              if (view_properties_.use_window_decoration) {
+              if (self->view_properties_.use_window_decoration) {
                 self->DrawWindowDecoration();
               }
             },
@@ -122,7 +122,7 @@ const wl_callback_listener ELinuxWindowWayland::kWlSurfaceFrameListener = {
             return;
           }
 
-          if (view_properties_.use_window_decoration) {
+          if (self->view_properties_.use_window_decoration) {
             self->DrawWindowDecoration();
           }
 
