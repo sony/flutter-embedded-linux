@@ -4,13 +4,6 @@
 
 #include "flutter/shell/platform/linux_embedded/window/elinux_window_wayland.h"
 
-#ifdef USE_GLES3
-#include <GLES3/gl32.h>
-#else
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#endif
-
 #include <fcntl.h>
 #include <linux/input-event-codes.h>
 #include <poll.h>
@@ -27,10 +20,6 @@
 namespace flutter {
 
 namespace {
-typedef void (*glClearColorProc)(GLfloat red, GLfloat green, GLfloat blue,
-                                 GLfloat alpha);
-typedef void (*glClearProc)(GLbitfield mask);
-
 constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
@@ -108,8 +97,8 @@ const wp_presentation_feedback_listener
               self->frame_rate_ =
                   static_cast<int32_t>(std::round(1000000000000.0 / refresh));
 
-              if (self->view_properties_.use_window_decoration) {
-                self->DrawWindowDecoration();
+              if (self->window_decorations_) {
+                self->window_decorations_->Draw();
               }
             },
         .discarded =
@@ -127,8 +116,8 @@ const wl_callback_listener ELinuxWindowWayland::kWlSurfaceFrameListener = {
             return;
           }
 
-          if (self->view_properties_.use_window_decoration) {
-            self->DrawWindowDecoration();
+          if (self->window_decorations_) {
+            self->window_decorations_->Draw();
           }
 
           self->last_frame_time_nanos_ = static_cast<uint64_t>(time) * 1000000;
@@ -219,12 +208,23 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
 
-      if (self->view_properties_.use_window_decoration &&
-          self->wl_current_surface_ ==
-              self->native_window_decoration_->Surface()) {
+      if (self->window_decorations_ &&
+          self->window_decorations_->IsMatched(
+              self->wl_current_surface_,
+              flutter::WindowDecoration::DecorationType::TITLE_BAR)) {
         if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED &&
             self->xdg_toplevel_) {
           xdg_toplevel_move(self->xdg_toplevel_, self->wl_seat_, serial);
+        }
+        return;
+      }
+
+      if (self->window_decorations_ &&
+          self->window_decorations_->IsMatched(
+              self->wl_current_surface_,
+              flutter::WindowDecoration::DecorationType::CLOSE_BUTTON)) {
+        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED) {
+          self->running_ = false;
         }
         return;
       }
@@ -377,9 +377,8 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
           self->view_properties_.width = width;
           self->view_properties_.height = height;
 
-          if (self->view_properties_.use_window_decoration &&
-              self->render_surface_decoration_) {
-            self->render_surface_decoration_->Resize(width, height);
+          if (self->window_decorations_) {
+            self->window_decorations_->Resize(width, height);
           }
 
           if (self->binding_handler_delegate_) {
@@ -589,6 +588,7 @@ ELinuxWindowWayland::ELinuxWindowWayland(
     FlutterDesktopViewProperties view_properties)
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
+      running_(false),
       is_requested_show_virtual_keyboard_(false),
       xdg_toplevel_(nullptr),
       wl_compositor_(nullptr),
@@ -611,7 +611,8 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       zwp_text_input_v3_(nullptr),
       wp_presentation_(nullptr),
       wp_presentation_clk_id_(UINT32_MAX),
-      frame_rate_(60000) {
+      frame_rate_(60000),
+      window_decorations_(nullptr) {
   view_properties_ = view_properties;
 
   wl_display_ = wl_display_connect(nullptr);
@@ -666,10 +667,12 @@ ELinuxWindowWayland::ELinuxWindowWayland(
   }
 
   display_valid_ = true;
+  running_ = true;
 }
 
 ELinuxWindowWayland::~ELinuxWindowWayland() {
   display_valid_ = false;
+  running_ = false;
 
   if (weston_desktop_shell_) {
     weston_desktop_shell_destroy(weston_desktop_shell_);
@@ -812,6 +815,10 @@ bool ELinuxWindowWayland::DispatchEvent() {
     return false;
   }
 
+  if (!running_) {
+    return false;
+  }
+
   // Prepare to call wl_display_read_events.
   while (wl_display_prepare_read(wl_display_) != 0) {
     // If Wayland compositor terminates, -1 is returned.
@@ -919,16 +926,9 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   render_surface_->SetNativeWindow(native_window_.get());
 
   if (view_properties_.use_window_decoration) {
-    native_window_decoration_ = std::make_unique<NativeWindowWaylandDecoration>(
-        wl_compositor_, wl_subcompositor_, native_window_->Surface(), width,
-        height);
-
-    render_surface_decoration_ =
-        std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-            std::make_unique<EnvironmentEgl>(wl_display_)));
-    render_surface_decoration_->SetNativeWindow(
-        native_window_decoration_.get());
-    render_surface_decoration_->Resize(width, height);
+    window_decorations_ = std::make_unique<WindowDecorationsWayland>(
+        wl_display_, wl_compositor_, wl_subcompositor_,
+        native_window_->Surface(), width, height);
   }
 
   return true;
@@ -941,9 +941,8 @@ void ELinuxWindowWayland::DestroyRenderSurface() {
     native_window_ = nullptr;
   }
 
-  if (view_properties_.use_window_decoration) {
-    render_surface_decoration_ = nullptr;
-    native_window_decoration_ = nullptr;
+  if (window_decorations_) {
+    window_decorations_ = nullptr;
   }
 
   if (xdg_surface_) {
@@ -1276,20 +1275,6 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
   } else {
     zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
   }
-}
-
-void ELinuxWindowWayland::DrawWindowDecoration() {
-  render_surface_decoration_->GLContextMakeCurrent();
-
-  auto glClearColor = reinterpret_cast<glClearColorProc>(
-      render_surface_decoration_->GlProcResolver("glClearColor"));
-  glClearColor(51 / 255.0, 51 / 255.0, 51 / 255.0, 1);
-
-  auto glClear = reinterpret_cast<glClearProc>(
-      render_surface_decoration_->GlProcResolver("glClear"));
-  glClear(GL_COLOR_BUFFER_BIT);
-
-  render_surface_decoration_->GLContextPresent(0);
 }
 
 }  // namespace flutter
