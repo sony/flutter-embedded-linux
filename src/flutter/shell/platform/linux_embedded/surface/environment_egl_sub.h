@@ -16,10 +16,9 @@ namespace flutter {
 // EnvironmentEglSub is used for window decorations such as toolbar and buttons.
 // The difference between EnvironmentEgl and EnvironmentEglSub is that
 // EnvironmentEglSub doesn't initialize and finalize processes.
-class EnvironmentEglSub {
+class EnvironmentEglSub : public EnvironmentEgl {
  public:
-  EnvironmentEglSub(EGLNativeDisplayType platform_display)
-      : public EnvironmentEgl {
+  EnvironmentEglSub(EGLNativeDisplayType platform_display) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
       ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
