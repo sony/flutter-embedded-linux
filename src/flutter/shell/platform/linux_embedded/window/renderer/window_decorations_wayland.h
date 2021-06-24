@@ -40,6 +40,8 @@ class WindowDecorationsWayland {
                  WindowDecoration::DecorationType decoration_type) const;
 
  private:
+  void DestroyContext();
+
   std::unique_ptr<WindowDecorationTitlebar> titlebar_;
   std::vector<std::unique_ptr<WindowDecorationButton>> buttons_;
 };

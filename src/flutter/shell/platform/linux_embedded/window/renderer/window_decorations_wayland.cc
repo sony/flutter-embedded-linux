@@ -66,6 +66,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
 }
 
 WindowDecorationsWayland::~WindowDecorationsWayland() {
+  DestroyContext();
   titlebar_ = nullptr;
   for (auto& b : buttons_) {
     buttons_.pop_back();
@@ -100,6 +101,13 @@ bool WindowDecorationsWayland::IsMatched(
       return titlebar_->Surface() == surface;
     default:
       return buttons_[decoration_type]->Surface() == surface;
+  }
+}
+
+void WindowDecorationsWayland::DestroyContext() {
+  titlebar_->DestroyContext();
+  for (auto& b : buttons_) {
+    b->DestroyContext();
   }
 }
 
