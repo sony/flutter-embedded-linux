@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_H_
-#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_H_
+#ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_BASE_H_
+#define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_BASE_H_
 
 #include <memory>
 
@@ -13,8 +13,11 @@
 
 namespace flutter {
 
-class Surface {
+class SurfaceBase {
  public:
+  SurfaceBase() = default;
+  virtual ~SurfaceBase() = default;
+
   // Shows a surface is valid or not.
   bool IsValid() const;
 
@@ -45,4 +48,4 @@ class Surface {
 
 }  // namespace flutter
 
-#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_H_
+#endif  // FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_SURFACE_BASE_H_
