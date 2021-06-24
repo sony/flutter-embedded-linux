@@ -71,6 +71,8 @@ static const GlProcs& GlProcs() {
   return procs;
 }
 
+constexpr char kGlVertexPositionVar[] = "Position";
+constexpr char kGlFragmentColorVar[] = "SourceColor";
 constexpr char kGlVertexShader[] =
     "attribute vec4 Position;            \n"
     "attribute vec4 SourceColor;         \n"
@@ -79,7 +81,6 @@ constexpr char kGlVertexShader[] =
     "  gl_Position = Position;           \n"
     "  DestinationColor = SourceColor;   \n"
     "}                                   \n";
-
 constexpr char kGlFragmentShader[] =
     "varying lowp vec4 DestinationColor; \n"
     "void main() {                       \n"
@@ -124,16 +125,15 @@ void WindowDecorationButton::Draw() {
       gl.glEnableVertexAttribArray(ATTRIB_COLOR);
       gl.glLineWidth(2);
       if (decoration_type_ == DecorationType::CLOSE_BUTTON) {
-        GLfloat vertices[] = {
+        constexpr GLfloat vertices[] = {
             // clang-format off
             -0.5f, -0.5f,
              0.5f,  0.5f,
-
              0.5f, -0.5f,
             -0.5f,  0.5f,
             // clang-format on
         };
-        GLfloat colors[] = {
+        constexpr GLfloat colors[] = {
             // clang-format off
             1.0f, 1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f, 1.0f,
@@ -148,27 +148,16 @@ void WindowDecorationButton::Draw() {
                                  colors);
         gl.glDrawArrays(GL_LINES, 0, 4);
       } else if (decoration_type_ == DecorationType::MAXIMISE_BUTTON) {
-        GLfloat vertices[] = {
+        constexpr GLfloat vertices[] = {
             // clang-format off
-            -0.4f,  -0.4f,
-             0.4f,  -0.4f,
-
-            -0.4f,   0.4f,
-             0.4f,   0.4f,
-
-            -0.4f,  -0.4f,
-            -0.4f,   0.4f,
-
-             0.4f,  -0.4f,
-             0.4f,   0.4f,
+            -0.5f,  -0.5f,
+             0.5f,  -0.5f,
+             0.5f,   0.5f,
+            -0.5f,   0.5f,
             // clang-format on
         };
-        GLfloat colors[] = {
+        constexpr GLfloat colors[] = {
             // clang-format off
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f, 1.0f,
@@ -180,15 +169,15 @@ void WindowDecorationButton::Draw() {
                                  vertices);
         gl.glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0,
                                  colors);
-        gl.glDrawArrays(GL_LINES, 0, 8);
+        gl.glDrawArrays(GL_LINE_LOOP, 0, 4);
       } else {
-        GLfloat vertices[] = {
+        constexpr GLfloat vertices[] = {
             // clang-format off
-            -0.7f,  -0.4f,
-             0.7f,  -0.4f,
+            -0.5f,  -0.4f,
+             0.5f,  -0.4f,
             // clang-format on
         };
-        GLfloat colors[] = {
+        constexpr GLfloat colors[] = {
             // clang-format off
             1.0f, 1.0f, 1.0f, 1.0f,
             1.0f, 1.0f, 1.0f, 1.0f,
@@ -226,8 +215,10 @@ void WindowDecorationButton::LoadShader() {
   shader_->LoadProgram(kGlVertexShader, kGlFragmentShader);
 
   const auto& gl = GlProcs();
-  gl.glBindAttribLocation(shader_->Program(), ATTRIB_VERTEC, "Position");
-  gl.glBindAttribLocation(shader_->Program(), ATTRIB_COLOR, "SourceColor");
+  gl.glBindAttribLocation(shader_->Program(), ATTRIB_VERTEC,
+                          kGlVertexPositionVar);
+  gl.glBindAttribLocation(shader_->Program(), ATTRIB_COLOR,
+                          kGlFragmentColorVar);
 }
 
 }  // namespace flutter
