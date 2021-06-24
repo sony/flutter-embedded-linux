@@ -981,14 +981,11 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
 
 void ELinuxWindowWayland::DestroyRenderSurface() {
   // destroy the main surface before destroying the client window on Wayland.
-  {
-    render_surface_ = nullptr;
-    native_window_ = nullptr;
-  }
-
   if (window_decorations_) {
     window_decorations_ = nullptr;
   }
+  render_surface_ = nullptr;
+  native_window_ = nullptr;
 
   if (xdg_surface_) {
     xdg_surface_destroy(xdg_surface_);
