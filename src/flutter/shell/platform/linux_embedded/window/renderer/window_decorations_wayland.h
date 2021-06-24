@@ -14,6 +14,7 @@
 #include <wayland-client.h>
 
 #include <memory>
+#include <vector>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_decoration.h"
@@ -40,7 +41,7 @@ class WindowDecorationsWayland {
 
  private:
   std::unique_ptr<WindowDecorationTitlebar> titlebar_;
-  std::unique_ptr<WindowDecorationButton> button_;
+  std::vector<std::unique_ptr<WindowDecorationButton>> buttons_;
 };
 
 }  // namespace flutter

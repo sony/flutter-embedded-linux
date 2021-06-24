@@ -17,10 +17,10 @@ namespace flutter {
 class WindowDecoration {
  public:
   enum DecorationType {
-    TITLE_BAR = 0,
-    CLOSE_BUTTON,
-    MINIMISE_BUTTON,
+    CLOSE_BUTTON = 0,
     MAXIMISE_BUTTON,
+    MINIMISE_BUTTON,
+    TITLE_BAR,
   };
 
   WindowDecoration() = default;

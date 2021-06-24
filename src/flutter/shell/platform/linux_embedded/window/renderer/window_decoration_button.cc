@@ -12,8 +12,6 @@
 #endif
 #include <EGL/egl.h>
 
-#include "flutter/shell/platform/linux_embedded/logger.h"
-
 namespace flutter {
 
 namespace {
@@ -122,31 +120,89 @@ void WindowDecorationButton::Draw() {
         LoadShader();
       }
       shader_->Bind();
+      gl.glEnableVertexAttribArray(ATTRIB_VERTEC);
+      gl.glEnableVertexAttribArray(ATTRIB_COLOR);
+      gl.glLineWidth(2);
       if (decoration_type_ == DecorationType::CLOSE_BUTTON) {
         GLfloat vertices[] = {
-            -0.9f, -0.9f, 0.9f, 0.9f, 0.9f, -0.9f, -0.9f, 0.9f,
-        };
+            // clang-format off
+            -0.5f, -0.5f,
+             0.5f,  0.5f,
 
+             0.5f, -0.5f,
+            -0.5f,  0.5f,
+            // clang-format on
+        };
         GLfloat colors[] = {
-            1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-            1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            // clang-format off
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            // clang-format on
         };
 
-        gl.glEnableVertexAttribArray(ATTRIB_VERTEC);
-        gl.glEnableVertexAttribArray(ATTRIB_COLOR);
-
-        gl.glLineWidth(2);
         gl.glVertexAttribPointer(ATTRIB_VERTEC, 2, GL_FLOAT, GL_FALSE, 0,
                                  vertices);
         gl.glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0,
                                  colors);
         gl.glDrawArrays(GL_LINES, 0, 4);
-
-        gl.glDisableVertexAttribArray(ATTRIB_VERTEC);
-        gl.glDisableVertexAttribArray(ATTRIB_COLOR);
       } else if (decoration_type_ == DecorationType::MAXIMISE_BUTTON) {
+        GLfloat vertices[] = {
+            // clang-format off
+            -0.4f,  -0.4f,
+             0.4f,  -0.4f,
+
+            -0.4f,   0.4f,
+             0.4f,   0.4f,
+
+            -0.4f,  -0.4f,
+            -0.4f,   0.4f,
+
+             0.4f,  -0.4f,
+             0.4f,   0.4f,
+            // clang-format on
+        };
+        GLfloat colors[] = {
+            // clang-format off
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            // clang-format on
+        };
+
+        gl.glVertexAttribPointer(ATTRIB_VERTEC, 2, GL_FLOAT, GL_FALSE, 0,
+                                 vertices);
+        gl.glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0,
+                                 colors);
+        gl.glDrawArrays(GL_LINES, 0, 8);
       } else {
+        GLfloat vertices[] = {
+            // clang-format off
+            -0.7f,  -0.4f,
+             0.7f,  -0.4f,
+            // clang-format on
+        };
+        GLfloat colors[] = {
+            // clang-format off
+            1.0f, 1.0f, 1.0f, 1.0f,
+            1.0f, 1.0f, 1.0f, 1.0f,
+            // clang-format on
+        };
+
+        gl.glVertexAttribPointer(ATTRIB_VERTEC, 2, GL_FLOAT, GL_FALSE, 0,
+                                 vertices);
+        gl.glVertexAttribPointer(ATTRIB_COLOR, 4, GL_FLOAT, GL_FALSE, 0,
+                                 colors);
+        gl.glDrawArrays(GL_LINES, 0, 2);
       }
+      gl.glDisableVertexAttribArray(ATTRIB_VERTEC);
+      gl.glDisableVertexAttribArray(ATTRIB_COLOR);
       shader_->Unbind();
     }
   }

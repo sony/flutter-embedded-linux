@@ -97,6 +97,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   static const wl_registry_listener kWlRegistryListener;
   static const xdg_wm_base_listener kXdgWmBaseListener;
   static const xdg_surface_listener kXdgSurfaceListener;
+  static const xdg_toplevel_listener kXdgToplevelListener;
   static const wl_seat_listener kWlSeatListener;
   static const wl_pointer_listener kWlPointerListener;
   static const wl_touch_listener kWlTouchListener;

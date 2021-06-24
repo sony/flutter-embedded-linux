@@ -12,8 +12,6 @@
 #endif
 #include <EGL/egl.h>
 
-#include "flutter/shell/platform/linux_embedded/logger.h"
-
 namespace flutter {
 
 namespace {

@@ -4,7 +4,6 @@
 
 #include "flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.h"
 
-#include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 
 namespace flutter {
@@ -21,6 +20,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
     wl_display* display, wl_compositor* compositor,
     wl_subcompositor* subcompositor, wl_surface* root_surface, int32_t width,
     int32_t height) {
+  // title-bar.
   titlebar_ = std::make_unique<WindowDecorationTitlebar>(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, width, kTitleBarHeight),
@@ -28,25 +28,55 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           std::make_unique<EnvironmentEgl>(display))));
   titlebar_->SetPosition(0, -kTitleBarHeight);
 
-  button_ = std::make_unique<WindowDecorationButton>(
-      WindowDecorationButton::DecorationType::CLOSE_BUTTON,
+  // close button.
+  auto type = WindowDecorationButton::DecorationType::CLOSE_BUTTON;
+  buttons_.push_back(std::make_unique<WindowDecorationButton>(
+      type,
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display))));
-  button_->SetPosition(
+          std::make_unique<EnvironmentEgl>(display)))));
+  buttons_[type]->SetPosition(
       width - kButtonWidth - kButtonMargin,
+      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+
+  // maximise button.
+  type = WindowDecorationButton::DecorationType::MAXIMISE_BUTTON;
+  buttons_.push_back(std::make_unique<WindowDecorationButton>(
+      type,
+      std::make_unique<NativeWindowWaylandDecoration>(
+          compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
+      std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
+          std::make_unique<EnvironmentEgl>(display)))));
+  buttons_[type]->SetPosition(
+      width - kButtonWidth * 2 - kButtonMargin * 2,
+      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+
+  // minimise button.
+  type = WindowDecorationButton::DecorationType::MINIMISE_BUTTON;
+  buttons_.push_back(std::make_unique<WindowDecorationButton>(
+      type,
+      std::make_unique<NativeWindowWaylandDecoration>(
+          compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
+      std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
+          std::make_unique<EnvironmentEgl>(display)))));
+  buttons_[type]->SetPosition(
+      width - kButtonWidth * 3 - kButtonMargin * 3,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
 }
 
 WindowDecorationsWayland::~WindowDecorationsWayland() {
   titlebar_ = nullptr;
-  button_ = nullptr;
+  for (auto& b : buttons_) {
+    buttons_.pop_back();
+  }
 }
 
 void WindowDecorationsWayland::Draw() {
   titlebar_->Draw();
-  button_->Draw();
+  for (auto& b : buttons_) {
+    b->Draw();
+  }
 }
 
 void WindowDecorationsWayland::Resize(const int32_t width,
@@ -54,10 +84,12 @@ void WindowDecorationsWayland::Resize(const int32_t width,
   titlebar_->SetPosition(0, -kTitleBarHeight);
   titlebar_->Resize(width, kTitleBarHeight);
 
-  button_->SetPosition(
-      width - kButtonWidth - kButtonMargin,
-      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
-  button_->Resize(kButtonWidth, -kButtonHeight);
+  for (auto i = 0; i < buttons_.size(); i++) {
+    buttons_[i]->SetPosition(
+        width - kButtonWidth * (i + 1) - kButtonMargin * (i + 1),
+        -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+    buttons_[i]->Resize(kButtonWidth, -kButtonHeight);
+  }
 }
 
 bool WindowDecorationsWayland::IsMatched(
@@ -66,13 +98,8 @@ bool WindowDecorationsWayland::IsMatched(
   switch (decoration_type) {
     case WindowDecoration::DecorationType::TITLE_BAR:
       return titlebar_->Surface() == surface;
-    case WindowDecoration::DecorationType::CLOSE_BUTTON:
-      return button_->Surface() == surface;
-    case WindowDecoration::DecorationType::MAXIMISE_BUTTON:
-    case WindowDecoration::DecorationType::MINIMISE_BUTTON:
     default:
-      return false;
-      break;
+      return buttons_[decoration_type]->Surface() == surface;
   }
 }
 
