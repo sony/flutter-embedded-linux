@@ -232,46 +232,43 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       self->serial_ = serial;
 
-      if (self->window_decorations_ &&
-          self->window_decorations_->IsMatched(
-              self->wl_current_surface_,
-              flutter::WindowDecoration::DecorationType::TITLE_BAR)) {
-        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED &&
-            self->xdg_toplevel_) {
+      if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED) {
+        if (self->window_decorations_ &&
+            self->window_decorations_->IsMatched(
+                self->wl_current_surface_,
+                WindowDecoration::DecorationType::TITLE_BAR)) {
           xdg_toplevel_move(self->xdg_toplevel_, self->wl_seat_, serial);
+          return;
         }
-        return;
-      }
 
-      if (self->window_decorations_ &&
-          self->window_decorations_->IsMatched(
-              self->wl_current_surface_,
-              flutter::WindowDecoration::DecorationType::CLOSE_BUTTON)) {
-        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED) {
+        if (self->window_decorations_ &&
+            self->window_decorations_->IsMatched(
+                self->wl_current_surface_,
+                WindowDecoration::DecorationType::CLOSE_BUTTON)) {
           self->running_ = false;
+          return;
         }
-        return;
-      }
 
-      if (self->window_decorations_ &&
-          self->window_decorations_->IsMatched(
-              self->wl_current_surface_,
-              flutter::WindowDecoration::DecorationType::MAXIMISE_BUTTON)) {
-        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED) {
-          xdg_toplevel_set_maximized(self->xdg_toplevel_);
-          // xdg_toplevel_unset_maximized(self->xdg_toplevel_);
+        if (self->window_decorations_ &&
+            self->window_decorations_->IsMatched(
+                self->wl_current_surface_,
+                WindowDecoration::DecorationType::MAXIMISE_BUTTON)) {
+          if (self->maximised_) {
+            xdg_toplevel_unset_maximized(self->xdg_toplevel_);
+          } else {
+            xdg_toplevel_set_maximized(self->xdg_toplevel_);
+          }
+          self->maximised_ = !self->maximised_;
+          return;
         }
-        return;
-      }
 
-      if (self->window_decorations_ &&
-          self->window_decorations_->IsMatched(
-              self->wl_current_surface_,
-              flutter::WindowDecoration::DecorationType::MINIMISE_BUTTON)) {
-        if (button == BTN_LEFT && status == WL_POINTER_BUTTON_STATE_PRESSED) {
+        if (self->window_decorations_ &&
+            self->window_decorations_->IsMatched(
+                self->wl_current_surface_,
+                flutter::WindowDecoration::DecorationType::MINIMISE_BUTTON)) {
           xdg_toplevel_set_minimized(self->xdg_toplevel_);
+          return;
         }
-        return;
       }
 
       if (self->binding_handler_delegate_) {
@@ -634,6 +631,7 @@ ELinuxWindowWayland::ELinuxWindowWayland(
     : cursor_info_({"", 0, nullptr}),
       display_valid_(false),
       running_(false),
+      maximised_(false),
       is_requested_show_virtual_keyboard_(false),
       xdg_toplevel_(nullptr),
       wl_compositor_(nullptr),

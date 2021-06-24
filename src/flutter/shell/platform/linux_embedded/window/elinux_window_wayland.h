@@ -126,6 +126,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
 
   bool display_valid_;
   bool running_;
+  bool maximised_;
   uint32_t last_frame_time_;
 
   // Indicates that exists a keyboard show request from Flutter Engine.
