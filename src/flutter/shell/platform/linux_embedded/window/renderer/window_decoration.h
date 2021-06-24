@@ -32,6 +32,8 @@ class WindowDecoration {
 
   virtual void Resize(const int32_t width, const int32_t height) = 0;
 
+  void DestroyContext() const { render_surface_->DestroyContext(); };
+
   wl_surface* Surface() const { return native_window_->Surface(); };
 
   DecorationType Type() const { return decoration_type_; };
