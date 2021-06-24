@@ -8,12 +8,12 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/surface/context_egl.h"
-#include "flutter/shell/platform/linux_embedded/surface/surface.h"
+#include "flutter/shell/platform/linux_embedded/surface/surface_base.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl_delegate.h"
 
 namespace flutter {
 
-class SurfaceGl final : public Surface, public SurfaceGlDelegate {
+class SurfaceGl final : public SurfaceBase, public SurfaceGlDelegate {
  public:
   SurfaceGl(std::unique_ptr<ContextEgl> context);
   ~SurfaceGl() = default;
