@@ -4,6 +4,7 @@
 
 #include "flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.h"
 
+#include "flutter/shell/platform/linux_embedded/surface/environment_egl_sub.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 
 namespace flutter {
@@ -25,7 +26,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, width, kTitleBarHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display))));
+          std::make_unique<EnvironmentEglSub>(display))));
   titlebar_->SetPosition(0, -kTitleBarHeight);
 
   // close button.
@@ -35,7 +36,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display)))));
+          std::make_unique<EnvironmentEglSub>(display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth - kButtonMargin,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
@@ -47,7 +48,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display)))));
+          std::make_unique<EnvironmentEglSub>(display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth * 2 - kButtonMargin * 2,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
@@ -59,7 +60,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display)))));
+          std::make_unique<EnvironmentEglSub>(display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth * 3 - kButtonMargin * 3,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
