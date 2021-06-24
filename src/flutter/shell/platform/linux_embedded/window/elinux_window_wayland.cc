@@ -987,7 +987,6 @@ void ELinuxWindowWayland::DestroyRenderSurface() {
   }
 
   if (window_decorations_) {
-    window_decorations_->DestroyContext();
     window_decorations_ = nullptr;
   }
 
