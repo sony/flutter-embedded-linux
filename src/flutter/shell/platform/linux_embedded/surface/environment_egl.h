@@ -15,7 +15,7 @@ namespace flutter {
 class EnvironmentEgl {
  public:
   EnvironmentEgl(EGLNativeDisplayType platform_display)
-      : display_(EGL_NO_DISPLAY), valid_(false) {
+      : display_(EGL_NO_DISPLAY), sub_environment_(false), valid_(false) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
       ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
@@ -28,8 +28,8 @@ class EnvironmentEgl {
 
   EnvironmentEgl() : display_(EGL_NO_DISPLAY), valid_(false) {}
 
-  ~EnvironmentEgl() {
-    if (display_ != EGL_NO_DISPLAY) {
+  virtual ~EnvironmentEgl() {
+    if (display_ != EGL_NO_DISPLAY && !sub_environment_) {
       if (eglTerminate(display_) != EGL_TRUE) {
         ELINUX_LOG(ERROR) << "Failed to terminate the EGL display: "
                           << get_egl_error_cause();
@@ -59,6 +59,7 @@ class EnvironmentEgl {
 
  protected:
   EGLDisplay display_;
+  bool sub_environment_;
   bool valid_;
 };
 

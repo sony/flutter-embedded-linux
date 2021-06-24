@@ -28,6 +28,7 @@ EnvironmentEglStream::EnvironmentEglStream() : EnvironmentEgl() {
     return;
   }
 
+  sub_environment_ = false;
   valid_ = InitializeEgl();
 }
 
