@@ -18,7 +18,8 @@ namespace flutter {
 // EnvironmentEglSub doesn't initialize and finalize processes.
 class EnvironmentEglSub {
  public:
-  EnvironmentEglSub(EGLNativeDisplayType platform_display) {
+  EnvironmentEglSub(EGLNativeDisplayType platform_display)
+      : public EnvironmentEgl {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
       ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
