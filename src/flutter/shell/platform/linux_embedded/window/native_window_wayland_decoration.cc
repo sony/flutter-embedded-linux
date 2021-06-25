@@ -8,10 +8,6 @@
 
 namespace flutter {
 
-namespace {
-constexpr uint kWindowDecorationTitleBarSize = 40;
-}  // namespace
-
 NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
     wl_compositor* compositor, wl_subcompositor* subcompositor,
     wl_surface* parent_surface, const size_t width, const size_t height) {
@@ -60,12 +56,22 @@ bool NativeWindowWaylandDecoration::Resize(const size_t width,
     return false;
   }
 
-  wl_subsurface_set_position(subsurface_, 0, -kWindowDecorationTitleBarSize);
-  wl_egl_window_resize(window_, width, kWindowDecorationTitleBarSize, 0, 0);
-
   width_ = width;
   height_ = height;
+  wl_egl_window_resize(window_, width, height, 0, 0);
   return true;
+}
+
+void NativeWindowWaylandDecoration::SetPosition(const int32_t x,
+                                                const int32_t y) {
+  if (!valid_) {
+    ELINUX_LOG(ERROR) << "Failed to set the position of the window.";
+    return;
+  }
+
+  x_ = x;
+  y_ = y;
+  wl_subsurface_set_position(subsurface_, x, y);
 }
 
 }  // namespace flutter
