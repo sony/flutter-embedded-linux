@@ -37,6 +37,13 @@ class NativeWindow {
 
   virtual bool IsNeedRecreateSurfaceAfterResize() const { return false; }
 
+  // Sets a window position. Basically, this API is used for window decorations
+  // such as titlebar.
+  virtual void SetPosition(const int32_t x, const int32_t y) {
+    x_ = x;
+    y_ = y;
+  };
+
   virtual bool Resize(const size_t width, const size_t height) = 0;
 
   // Swaps frame buffers. This API performs processing only for the DRM-GBM
@@ -48,6 +55,8 @@ class NativeWindow {
   EGLNativeWindowType window_offscreen_;
   int32_t width_;
   int32_t height_;
+  int32_t x_;
+  int32_t y_;
   bool valid_ = false;
 };
 

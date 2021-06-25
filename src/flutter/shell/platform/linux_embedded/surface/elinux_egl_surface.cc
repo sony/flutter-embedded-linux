@@ -16,7 +16,8 @@ ELinuxEGLSurface::ELinuxEGLSurface(EGLSurface surface, EGLDisplay display,
 ELinuxEGLSurface::~ELinuxEGLSurface() {
   if (surface_ != EGL_NO_SURFACE) {
     if (eglDestroySurface(display_, surface_) != EGL_TRUE) {
-      ELINUX_LOG(ERROR) << "Failed to destory surface";
+      ELINUX_LOG(ERROR) << "Failed to destory surface: "
+                        << get_egl_error_cause();
     }
     surface_ = EGL_NO_SURFACE;
   }

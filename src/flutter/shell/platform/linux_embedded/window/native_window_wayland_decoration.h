@@ -23,6 +23,9 @@ class NativeWindowWaylandDecoration : public NativeWindow {
   // |NativeWindow|
   bool Resize(const size_t width, const size_t height) override;
 
+  // |NativeWindow|
+  void SetPosition(const int32_t x, const int32_t y) override;
+
   wl_surface* Surface() const { return surface_; }
 
  private:

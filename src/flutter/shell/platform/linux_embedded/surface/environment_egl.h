@@ -14,8 +14,9 @@ namespace flutter {
 
 class EnvironmentEgl {
  public:
-  EnvironmentEgl(EGLNativeDisplayType platform_display)
-      : display_(EGL_NO_DISPLAY), valid_(false) {
+  EnvironmentEgl(EGLNativeDisplayType platform_display,
+                 bool sub_environment = false)
+      : display_(EGL_NO_DISPLAY), sub_environment_(sub_environment) {
     display_ = eglGetDisplay(platform_display);
     if (display_ == EGL_NO_DISPLAY) {
       ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
@@ -23,13 +24,21 @@ class EnvironmentEgl {
       return;
     }
 
-    valid_ = InitializeEgl();
+    // sub_environment flag is used for window decorations such as toolbar and
+    // buttons. When this flag is active, EGLDisplay doesn't be initialized and
+    // finalized.
+    if (!sub_environment_) {
+      valid_ = InitializeEgl();
+    } else {
+      valid_ = true;
+    }
   }
 
-  EnvironmentEgl() : display_(EGL_NO_DISPLAY), valid_(false) {}
+  EnvironmentEgl(bool sub_environment = false)
+      : display_(EGL_NO_DISPLAY), sub_environment_(sub_environment) {}
 
   ~EnvironmentEgl() {
-    if (display_ != EGL_NO_DISPLAY) {
+    if (display_ != EGL_NO_DISPLAY && !sub_environment_) {
       if (eglTerminate(display_) != EGL_TRUE) {
         ELINUX_LOG(ERROR) << "Failed to terminate the EGL display: "
                           << get_egl_error_cause();
@@ -59,7 +68,8 @@ class EnvironmentEgl {
 
  protected:
   EGLDisplay display_;
-  bool valid_;
+  bool valid_ = false;
+  bool sub_environment_;
 };
 
 }  // namespace flutter

@@ -14,7 +14,7 @@ namespace flutter {
 
 class EnvironmentEglStream : public EnvironmentEgl {
  public:
-  EnvironmentEglStream();
+  EnvironmentEglStream(bool sub_environment = false);
   ~EnvironmentEglStream() = default;
 
  private:
