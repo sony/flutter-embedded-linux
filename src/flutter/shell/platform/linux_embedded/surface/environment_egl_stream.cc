@@ -10,7 +10,8 @@
 
 namespace flutter {
 
-EnvironmentEglStream::EnvironmentEglStream() : EnvironmentEgl() {
+EnvironmentEglStream::EnvironmentEglStream(bool sub_environment = false)
+    : EnvironmentEgl(sub_environment) {
   if (!SetEglExtensionFunctionPointers()) {
     ELINUX_LOG(ERROR) << "Failed to set extension function pointers";
     return;
@@ -28,7 +29,6 @@ EnvironmentEglStream::EnvironmentEglStream() : EnvironmentEgl() {
     return;
   }
 
-  sub_environment_ = false;
   valid_ = InitializeEgl();
 }
 

@@ -4,7 +4,7 @@
 
 #include "flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.h"
 
-#include "flutter/shell/platform/linux_embedded/surface/environment_egl_sub.h"
+#include "flutter/shell/platform/linux_embedded/surface/environment_egl.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 
 namespace flutter {
@@ -21,12 +21,14 @@ WindowDecorationsWayland::WindowDecorationsWayland(
     wl_display* display, wl_compositor* compositor,
     wl_subcompositor* subcompositor, wl_surface* root_surface, int32_t width,
     int32_t height) {
+  constexpr bool sub_egl_display = true;
+
   // title-bar.
   titlebar_ = std::make_unique<WindowDecorationTitlebar>(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, width, kTitleBarHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEglSub>(display))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display))));
   titlebar_->SetPosition(0, -kTitleBarHeight);
 
   // close button.
@@ -36,7 +38,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEglSub>(display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth - kButtonMargin,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
@@ -48,7 +50,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEglSub>(display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth * 2 - kButtonMargin * 2,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
@@ -60,7 +62,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEglSub>(display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
       width - kButtonWidth * 3 - kButtonMargin * 3,
       -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
