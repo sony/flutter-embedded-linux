@@ -37,11 +37,8 @@ target_include_directories(${PLUGIN_NAME}
 
 target_include_directories(${PLUGIN_NAME}
   PRIVATE
-    ${GLIB_INCLUDE_DIR}
-    ${GSTREAMER_INCLUDE_DIR}
-    /usr/include/gstreamer-1.0
-    /usr/include/glib-2.0
-    /usr/lib/x86_64-linux-gnu/glib-2.0/include
+    ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
