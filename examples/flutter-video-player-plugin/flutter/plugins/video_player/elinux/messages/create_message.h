@@ -37,17 +37,8 @@ class CreateMessage {
 
   std::string GetFormatHint() const { return format_hint_; }
 
-#if 0
-    public HashMap getHttpHeaders() {
-      return httpHeaders;
-    }
-
-    public void setHttpHeaders(HashMap setterArg) {
-      this.httpHeaders = setterArg;
-    }
-#endif
-
   flutter::EncodableValue ToMap() {
+    // todo: Add httpHeaders.
     flutter::EncodableMap map = {
         {flutter::EncodableValue("asset"), flutter::EncodableValue(asset_)},
         {flutter::EncodableValue("uri"), flutter::EncodableValue(uri_)},

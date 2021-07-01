@@ -17,7 +17,7 @@ class VolumeMessage {
   VolumeMessage(VolumeMessage const&) = default;
   VolumeMessage& operator=(VolumeMessage const&) = default;
 
-  void SetTextureId(int64_t textureId) { texture_id_ = textureId; }
+  void SetTextureId(int64_t texture_id) { texture_id_ = texture_id; }
 
   int64_t GetTextureId() const { return texture_id_; }
 

@@ -14,8 +14,8 @@ class MixWithOthersMessage {
   ~MixWithOthersMessage() = default;
 
   // Prevent copying.
-  MixWithOthersMessage(MixWithOthersMessage const &) = default;
-  MixWithOthersMessage &operator=(MixWithOthersMessage const &) = default;
+  MixWithOthersMessage(MixWithOthersMessage const&) = default;
+  MixWithOthersMessage& operator=(MixWithOthersMessage const&) = default;
 
   void SetMixWithOthers(bool mixWithOthers) {
     mix_with_others_ = mixWithOthers;
@@ -35,7 +35,7 @@ class MixWithOthersMessage {
     if (std::holds_alternative<flutter::EncodableMap>(value)) {
       auto map = std::get<flutter::EncodableMap>(value);
 
-      flutter::EncodableValue &mixWithOthers =
+      flutter::EncodableValue& mixWithOthers =
           map[flutter::EncodableValue("mixWithOthers")];
       if (std::holds_alternative<bool>(mixWithOthers)) {
         message.SetMixWithOthers(std::get<bool>(mixWithOthers));
