@@ -46,7 +46,8 @@ constexpr char kVideoPlayerApiChannelSeekToName[] =
 constexpr char kVideoPlayerVideoEventsChannelName[] =
     "flutter.io/videoPlayer/videoEvents";
 
-constexpr char kEncodableValuekeyResult[] = "result";
+constexpr char kEncodableMapkeyResult[] = "result";
+constexpr char kEncodableMapkeyError[] = "error";
 
 class VideoPlayerPlugin : public flutter::Plugin {
  public:
@@ -60,7 +61,23 @@ class VideoPlayerPlugin : public flutter::Plugin {
     // using it.
     GstVideoPlayer::GstLibraryLoad();
   }
-  virtual ~VideoPlayerPlugin() { GstVideoPlayer::GstLibraryUnload(); }
+  virtual ~VideoPlayerPlugin() {
+    for (auto itr = players_.begin(); itr != players_.end(); itr++) {
+      auto texture_id = itr->first;
+      auto* player = itr->second.get();
+      player->event_sink = nullptr;
+      if (player->event_channel) {
+        player->event_channel->SetStreamHandler(nullptr);
+      }
+      player->player = nullptr;
+      player->buffer = nullptr;
+      player->texture = nullptr;
+      texture_registrar_->UnregisterTexture(texture_id);
+    }
+    players_.clear();
+
+    GstVideoPlayer::GstLibraryUnload();
+  }
 
  private:
   struct FlutterVideoPlayer {
@@ -109,6 +126,10 @@ class VideoPlayerPlugin : public flutter::Plugin {
 
   void SendInitializedEventMessage(int64_t texture_id);
   void SendPlayCompletedEventMessage(int64_t texture_id);
+
+  flutter::EncodableValue WrapError(const std::string& message,
+                                    const std::string& code = std::string(),
+                                    const std::string& details = std::string());
 
   flutter::PluginRegistrar* plugin_registrar_;
   flutter::TextureRegistrar* texture_registrar_;
@@ -248,10 +269,11 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
 void VideoPlayerPlugin::HandleInitializeMethodCall(
     const flutter::EncodableValue& message,
     flutter::MessageReply<flutter::EncodableValue> reply) {
-  flutter::EncodableMap value;
-  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                flutter::EncodableValue());
-  reply(flutter::EncodableValue(value));
+  flutter::EncodableMap result;
+
+  result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                 flutter::EncodableValue());
+  reply(flutter::EncodableValue(result));
 }
 
 void VideoPlayerPlugin::HandleCreateMethodCall(
@@ -330,7 +352,7 @@ void VideoPlayerPlugin::HandleCreateMethodCall(
   result.SetTextureId(texture_id);
 
   flutter::EncodableMap value;
-  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
+  value.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
                 result.ToMap());
   reply(flutter::EncodableValue(value));
 }
@@ -340,6 +362,8 @@ void VideoPlayerPlugin::HandleDisposeMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = TextureMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     auto* player = players_[texture_id].get();
     player->event_sink = nullptr;
@@ -349,15 +373,16 @@ void VideoPlayerPlugin::HandleDisposeMethodCall(
     player->texture = nullptr;
     players_.erase(texture_id);
     texture_registrar_->UnregisterTexture(texture_id);
-  } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
-  }
 
-  flutter::EncodableMap value;
-  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                flutter::EncodableValue());
-  reply(flutter::EncodableValue(value));
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
+  } else {
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
+  }
+  reply(flutter::EncodableValue(result));
 }
 
 void VideoPlayerPlugin::HandlePauseMethodCall(
@@ -365,16 +390,18 @@ void VideoPlayerPlugin::HandlePauseMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = TextureMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->Pause();
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -383,16 +410,18 @@ void VideoPlayerPlugin::HandlePlayMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = TextureMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->Play();
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -401,16 +430,18 @@ void VideoPlayerPlugin::HandleSetLoopingMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = LoopingMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->SetAutoRepeat(parameter.GetIsLooping());
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -419,16 +450,18 @@ void VideoPlayerPlugin::HandleSetVolumeMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = VolumeMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->SetVolume(parameter.GetVolume());
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -437,10 +470,10 @@ void VideoPlayerPlugin::HandleSetMixWithOthersMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   // todo: implements here.
 
-  flutter::EncodableMap value;
-  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                flutter::EncodableValue());
-  reply(flutter::EncodableValue(value));
+  flutter::EncodableMap result;
+  result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                 flutter::EncodableValue());
+  reply(flutter::EncodableValue(result));
 }
 
 void VideoPlayerPlugin::HandlePositionMethodCall(
@@ -448,19 +481,21 @@ void VideoPlayerPlugin::HandlePositionMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = TextureMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
-  PositionMessage send_message;
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
+    PositionMessage send_message;
     send_message.SetTextureId(texture_id);
     send_message.SetPosition(
         players_[texture_id]->player->GetCurrentPosition());
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   send_message.ToMap());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 send_message.ToMap());
   reply(flutter::EncodableValue(result));
 }
 
@@ -469,16 +504,18 @@ void VideoPlayerPlugin::HandleSetPlaybackSpeedMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = PlaybackSpeedMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->SetPlaybackRate(parameter.GetSpeed());
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -487,16 +524,18 @@ void VideoPlayerPlugin::HandleSeekToMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto parameter = PositionMessage::FromMap(message);
   const auto texture_id = parameter.GetTextureId();
+  flutter::EncodableMap result;
+
   if (players_.find(texture_id) != players_.end()) {
     players_[texture_id]->player->SetSeek(parameter.GetPosition());
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
+                   flutter::EncodableValue());
   } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
+    auto error_message = "Couldn't find the player with texture id: " +
+                         std::to_string(texture_id);
+    result.emplace(flutter::EncodableValue(kEncodableMapkeyError),
+                   flutter::EncodableValue(WrapError(error_message)));
   }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
   reply(flutter::EncodableValue(result));
 }
 
@@ -529,6 +568,16 @@ void VideoPlayerPlugin::SendPlayCompletedEventMessage(int64_t texture_id) {
       {flutter::EncodableValue("event"), flutter::EncodableValue("completed")}};
   flutter::EncodableValue event(encodables);
   players_[texture_id]->event_sink->Success(event);
+}
+
+flutter::EncodableValue VideoPlayerPlugin::WrapError(
+    const std::string& message, const std::string& code,
+    const std::string& details) {
+  flutter::EncodableMap map = {
+      {flutter::EncodableValue("message"), flutter::EncodableValue(message)},
+      {flutter::EncodableValue("code"), flutter::EncodableValue(code)},
+      {flutter::EncodableValue("details"), flutter::EncodableValue(details)}};
+  return flutter::EncodableValue(map);
 }
 
 }  // namespace
