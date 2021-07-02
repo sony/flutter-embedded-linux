@@ -281,26 +281,28 @@ void VideoPlayerPlugin::HandleCreateMethodCall(
     flutter::MessageReply<flutter::EncodableValue> reply) {
   auto meta = CreateMessage::FromMap(message);
   std::string uri;
-  if (meta.GetAsset().empty()) {
-    uri = meta.GetUri();
+  if (!meta.GetAsset().empty()) {
+    // todo: gets propery path of the Flutter project.
+    std::string flutter_project_path = "./bundle/data/";
+    uri = flutter_project_path + "flutter_assets/" + meta.GetAsset();
   } else {
-    // todo:
+    uri = meta.GetUri();
   }
 
-  auto player = std::make_unique<FlutterVideoPlayer>();
-  player->buffer = std::make_unique<FlutterDesktopPixelBuffer>();
-  player->texture =
+  auto instance = std::make_unique<FlutterVideoPlayer>();
+  instance->buffer = std::make_unique<FlutterDesktopPixelBuffer>();
+  instance->texture =
       std::make_unique<flutter::TextureVariant>(flutter::PixelBufferTexture(
-          [player = player.get()](
+          [instance = instance.get()](
               size_t width, size_t height) -> const FlutterDesktopPixelBuffer* {
-            player->buffer->width = player->player->GetWidth();
-            player->buffer->height = player->player->GetHeight();
-            player->buffer->buffer = player->player->GetFrameBuffer();
-            return player->buffer.get();
+            instance->buffer->width = instance->player->GetWidth();
+            instance->buffer->height = instance->player->GetHeight();
+            instance->buffer->buffer = instance->player->GetFrameBuffer();
+            return instance->buffer.get();
           }));
   const auto texture_id =
-      texture_registrar_->RegisterTexture(player->texture.get());
-  player->texture_id = texture_id;
+      texture_registrar_->RegisterTexture(instance->texture.get());
+  instance->texture_id = texture_id;
   {
     auto event_channel =
         std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
@@ -309,24 +311,24 @@ void VideoPlayerPlugin::HandleCreateMethodCall(
             &flutter::StandardMethodCodec::GetInstance());
     auto event_channel_handler = std::make_unique<
         flutter::StreamHandlerFunctions<flutter::EncodableValue>>(
-        [player = player.get(), host = this](
+        [instance = instance.get(), host = this](
             const flutter::EncodableValue* arguments,
             std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&&
                 events)
             -> std::unique_ptr<
                 flutter::StreamHandlerError<flutter::EncodableValue>> {
-          player->event_sink = std::move(events);
-          host->SendInitializedEventMessage(player->texture_id);
+          instance->event_sink = std::move(events);
+          host->SendInitializedEventMessage(instance->texture_id);
           return nullptr;
         },
-        [player = player.get()](const flutter::EncodableValue* arguments)
+        [instance = instance.get()](const flutter::EncodableValue* arguments)
             -> std::unique_ptr<
                 flutter::StreamHandlerError<flutter::EncodableValue>> {
-          player->event_sink = nullptr;
+          instance->event_sink = nullptr;
           return nullptr;
         });
     event_channel->SetStreamHandler(std::move(event_channel_handler));
-    player->event_channel = std::move(event_channel);
+    instance->event_channel = std::move(event_channel);
   }
   {
     auto player_handler = std::make_unique<VideoPlayerStreamHandlerImpl>(
@@ -342,16 +344,14 @@ void VideoPlayerPlugin::HandleCreateMethodCall(
         [texture_id, host = this]() {
           host->SendPlayCompletedEventMessage(texture_id);
         });
-
-    player->player =
+    instance->player =
         std::make_unique<GstVideoPlayer>(uri, std::move(player_handler));
-    players_[texture_id] = std::move(player);
+    players_[texture_id] = std::move(instance);
   }
 
+  flutter::EncodableMap value;
   TextureMessage result;
   result.SetTextureId(texture_id);
-
-  flutter::EncodableMap value;
   value.emplace(flutter::EncodableValue(kEncodableMapkeyResult),
                 result.ToMap());
   reply(flutter::EncodableValue(value));
