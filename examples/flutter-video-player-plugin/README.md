@@ -11,7 +11,9 @@ The procedure described here is a provisional step until you build a flutter app
 This plugin uses GStreamer internally.
 
 ```Shell
-$ sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
+$ sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-0 \
+    gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav
 ```
 
 ### Building the embedder
