@@ -22,7 +22,6 @@ GstVideoPlayer::GstVideoPlayer(
   gst_.buffer = nullptr;
 
   uri_ = ParseUri(uri);
-  uri_ = ParseUri("./big_buck_bunny_480p_h264.mov");
   if (!CreatePipeline()) {
     std::cerr << "Failed to create a pipeline" << std::endl;
     DestroyPipeline();

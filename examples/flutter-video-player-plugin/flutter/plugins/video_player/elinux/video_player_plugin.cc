@@ -12,7 +12,6 @@
 #include <flutter/plugin_registrar.h>
 #include <flutter/standard_message_codec.h>
 #include <flutter/standard_method_codec.h>
-#include <unistd.h>
 
 #include <unordered_map>
 
@@ -56,8 +55,12 @@ class VideoPlayerPlugin : public flutter::Plugin {
   VideoPlayerPlugin(flutter::PluginRegistrar* plugin_registrar,
                     flutter::TextureRegistrar* texture_registrar)
       : plugin_registrar_(plugin_registrar),
-        texture_registrar_(texture_registrar) {}
-  virtual ~VideoPlayerPlugin() {}
+        texture_registrar_(texture_registrar) {
+    // Needs to call 'gst_init' that initializing the GStreamer library before
+    // using it.
+    GstVideoPlayer::GstLibraryLoad();
+  }
+  virtual ~VideoPlayerPlugin() { GstVideoPlayer::GstLibraryUnload(); }
 
  private:
   struct FlutterVideoPlayer {
@@ -73,19 +76,10 @@ class VideoPlayerPlugin : public flutter::Plugin {
   void HandleInitializeMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
-  void HandleSetMixWithOthersMethodCall(
-      const flutter::EncodableValue& message,
-      flutter::MessageReply<flutter::EncodableValue> reply);
   void HandleCreateMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
   void HandleDisposeMethodCall(
-      const flutter::EncodableValue& message,
-      flutter::MessageReply<flutter::EncodableValue> reply);
-  void HandleSetLoopingMethodCall(
-      const flutter::EncodableValue& message,
-      flutter::MessageReply<flutter::EncodableValue> reply);
-  void HandleSetVolumeMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
   void HandlePauseMethodCall(
@@ -94,13 +88,22 @@ class VideoPlayerPlugin : public flutter::Plugin {
   void HandlePlayMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
-  void HandlePositionMethodCall(
+  void HandleSetLoopingMethodCall(
+      const flutter::EncodableValue& message,
+      flutter::MessageReply<flutter::EncodableValue> reply);
+  void HandleSetVolumeMethodCall(
+      const flutter::EncodableValue& message,
+      flutter::MessageReply<flutter::EncodableValue> reply);
+  void HandleSetMixWithOthersMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
   void HandleSetPlaybackSpeedMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
   void HandleSeekToMethodCall(
+      const flutter::EncodableValue& message,
+      flutter::MessageReply<flutter::EncodableValue> reply);
+  void HandlePositionMethodCall(
       const flutter::EncodableValue& message,
       flutter::MessageReply<flutter::EncodableValue> reply);
 
@@ -132,17 +135,6 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
   {
     auto channel =
         std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            registrar->messenger(), kVideoPlayerApiChannelSetMixWithOthersName,
-            &flutter::StandardMessageCodec::GetInstance());
-    channel->SetMessageHandler(
-        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
-          plugin_pointer->HandleSetMixWithOthersMethodCall(message, reply);
-        });
-  }
-
-  {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
             registrar->messenger(), kVideoPlayerApiChannelCreateName,
             &flutter::StandardMessageCodec::GetInstance());
     channel->SetMessageHandler(
@@ -159,28 +151,6 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
     channel->SetMessageHandler(
         [plugin_pointer = plugin.get()](const auto& message, auto reply) {
           plugin_pointer->HandleDisposeMethodCall(message, reply);
-        });
-  }
-
-  {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            registrar->messenger(), kVideoPlayerApiChannelSetLoopingName,
-            &flutter::StandardMessageCodec::GetInstance());
-    channel->SetMessageHandler(
-        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
-          plugin_pointer->HandleSetLoopingMethodCall(message, reply);
-        });
-  }
-
-  {
-    auto channel =
-        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            registrar->messenger(), kVideoPlayerApiChannelSetVolumeName,
-            &flutter::StandardMessageCodec::GetInstance());
-    channel->SetMessageHandler(
-        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
-          plugin_pointer->HandleSetVolumeMethodCall(message, reply);
         });
   }
 
@@ -209,11 +179,33 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
   {
     auto channel =
         std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
-            registrar->messenger(), kVideoPlayerApiChannelPositionName,
+            registrar->messenger(), kVideoPlayerApiChannelSetLoopingName,
             &flutter::StandardMessageCodec::GetInstance());
     channel->SetMessageHandler(
         [plugin_pointer = plugin.get()](const auto& message, auto reply) {
-          plugin_pointer->HandlePositionMethodCall(message, reply);
+          plugin_pointer->HandleSetLoopingMethodCall(message, reply);
+        });
+  }
+
+  {
+    auto channel =
+        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
+            registrar->messenger(), kVideoPlayerApiChannelSetVolumeName,
+            &flutter::StandardMessageCodec::GetInstance());
+    channel->SetMessageHandler(
+        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
+          plugin_pointer->HandleSetVolumeMethodCall(message, reply);
+        });
+  }
+
+  {
+    auto channel =
+        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
+            registrar->messenger(), kVideoPlayerApiChannelSetMixWithOthersName,
+            &flutter::StandardMessageCodec::GetInstance());
+    channel->SetMessageHandler(
+        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
+          plugin_pointer->HandleSetMixWithOthersMethodCall(message, reply);
         });
   }
 
@@ -239,23 +231,23 @@ void VideoPlayerPlugin::RegisterWithRegistrar(
         });
   }
 
+  {
+    auto channel =
+        std::make_unique<flutter::BasicMessageChannel<flutter::EncodableValue>>(
+            registrar->messenger(), kVideoPlayerApiChannelPositionName,
+            &flutter::StandardMessageCodec::GetInstance());
+    channel->SetMessageHandler(
+        [plugin_pointer = plugin.get()](const auto& message, auto reply) {
+          plugin_pointer->HandlePositionMethodCall(message, reply);
+        });
+  }
+
   registrar->AddPlugin(std::move(plugin));
 }
 
 void VideoPlayerPlugin::HandleInitializeMethodCall(
     const flutter::EncodableValue& message,
     flutter::MessageReply<flutter::EncodableValue> reply) {
-  flutter::EncodableMap value;
-  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                flutter::EncodableValue());
-  reply(flutter::EncodableValue(value));
-}
-
-void VideoPlayerPlugin::HandleSetMixWithOthersMethodCall(
-    const flutter::EncodableValue& message,
-    flutter::MessageReply<flutter::EncodableValue> reply) {
-  // todo: implements here.
-
   flutter::EncodableMap value;
   value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
                 flutter::EncodableValue());
@@ -329,9 +321,6 @@ void VideoPlayerPlugin::HandleCreateMethodCall(
           host->SendPlayCompletedEventMessage(texture_id);
         });
 
-    if (players_.size() == 0) {
-      GstVideoPlayer::GstLibraryLoad();
-    }
     player->player =
         std::make_unique<GstVideoPlayer>(uri, std::move(player_handler));
     players_[texture_id] = std::move(player);
@@ -360,9 +349,6 @@ void VideoPlayerPlugin::HandleDisposeMethodCall(
     player->texture = nullptr;
     players_.erase(texture_id);
     texture_registrar_->UnregisterTexture(texture_id);
-    if (players_.size() == 0) {
-      GstVideoPlayer::GstLibraryUnload();
-    }
   } else {
     std::cerr << "Couldn't find the player with texture id: " << texture_id
               << std::endl;
@@ -372,6 +358,42 @@ void VideoPlayerPlugin::HandleDisposeMethodCall(
   value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
                 flutter::EncodableValue());
   reply(flutter::EncodableValue(value));
+}
+
+void VideoPlayerPlugin::HandlePauseMethodCall(
+    const flutter::EncodableValue& message,
+    flutter::MessageReply<flutter::EncodableValue> reply) {
+  auto parameter = TextureMessage::FromMap(message);
+  const auto texture_id = parameter.GetTextureId();
+  if (players_.find(texture_id) != players_.end()) {
+    players_[texture_id]->player->Pause();
+  } else {
+    std::cerr << "Couldn't find the player with texture id: " << texture_id
+              << std::endl;
+  }
+
+  flutter::EncodableMap result;
+  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
+                 flutter::EncodableValue());
+  reply(flutter::EncodableValue(result));
+}
+
+void VideoPlayerPlugin::HandlePlayMethodCall(
+    const flutter::EncodableValue& message,
+    flutter::MessageReply<flutter::EncodableValue> reply) {
+  auto parameter = TextureMessage::FromMap(message);
+  const auto texture_id = parameter.GetTextureId();
+  if (players_.find(texture_id) != players_.end()) {
+    players_[texture_id]->player->Play();
+  } else {
+    std::cerr << "Couldn't find the player with texture id: " << texture_id
+              << std::endl;
+  }
+
+  flutter::EncodableMap result;
+  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
+                 flutter::EncodableValue());
+  reply(flutter::EncodableValue(result));
 }
 
 void VideoPlayerPlugin::HandleSetLoopingMethodCall(
@@ -410,40 +432,15 @@ void VideoPlayerPlugin::HandleSetVolumeMethodCall(
   reply(flutter::EncodableValue(result));
 }
 
-void VideoPlayerPlugin::HandlePauseMethodCall(
+void VideoPlayerPlugin::HandleSetMixWithOthersMethodCall(
     const flutter::EncodableValue& message,
     flutter::MessageReply<flutter::EncodableValue> reply) {
-  auto parameter = TextureMessage::FromMap(message);
-  const auto texture_id = parameter.GetTextureId();
-  if (players_.find(texture_id) != players_.end()) {
-    players_[texture_id]->player->Pause();
-  } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
-  }
+  // todo: implements here.
 
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
-  reply(flutter::EncodableValue(result));
-}
-
-void VideoPlayerPlugin::HandlePlayMethodCall(
-    const flutter::EncodableValue& message,
-    flutter::MessageReply<flutter::EncodableValue> reply) {
-  auto parameter = TextureMessage::FromMap(message);
-  const auto texture_id = parameter.GetTextureId();
-  if (players_.find(texture_id) != players_.end()) {
-    players_[texture_id]->player->Play();
-  } else {
-    std::cerr << "Couldn't find the player with texture id: " << texture_id
-              << std::endl;
-  }
-
-  flutter::EncodableMap result;
-  result.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
-                 flutter::EncodableValue());
-  reply(flutter::EncodableValue(result));
+  flutter::EncodableMap value;
+  value.emplace(flutter::EncodableValue(kEncodableValuekeyResult),
+                flutter::EncodableValue());
+  reply(flutter::EncodableValue(value));
 }
 
 void VideoPlayerPlugin::HandlePositionMethodCall(
