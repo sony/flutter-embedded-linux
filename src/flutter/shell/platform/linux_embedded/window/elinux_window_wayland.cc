@@ -124,6 +124,11 @@ const wp_presentation_feedback_listener
               if (self->window_decorations_) {
                 self->window_decorations_->Draw();
               }
+
+              wp_presentation_feedback_add_listener(
+                  ::wp_presentation_feedback(self->wp_presentation_,
+                                             self->native_window_->Surface()),
+                  &kWpPresentationFeedbackListener, data);
             },
         .discarded =
             [](void* data,
@@ -873,25 +878,10 @@ bool ELinuxWindowWayland::DispatchEvent() {
   wl_display_flush(wl_display_);
 
   // Handle Vsync.
-  {
-    if (wp_presentation_clk_id_ != UINT32_MAX) {
-      // This path is used if the presentation-time protocol is supported by the
-      // compositor.
-      wp_presentation_feedback_add_listener(
-          ::wp_presentation_feedback(wp_presentation_,
-                                     native_window_->Surface()),
-          &kWpPresentationFeedbackListener, this);
-      auto result = wl_display_dispatch_pending(wl_display_);
-      if (result == -1) {
-        return false;
-      }
-    }
-
-    if (binding_handler_delegate_) {
-      const uint64_t vsync_interval_time_nanos = 1000000000000 / frame_rate_;
-      binding_handler_delegate_->OnVsync(last_frame_time_nanos_,
-                                         vsync_interval_time_nanos);
-    }
+  if (binding_handler_delegate_) {
+    const uint64_t vsync_interval_time_nanos = 1000000000000 / frame_rate_;
+    binding_handler_delegate_->OnVsync(last_frame_time_nanos_,
+                                       vsync_interval_time_nanos);
   }
 
   // Handle Wayland events.
@@ -963,8 +953,14 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   xdg_toplevel_add_listener(xdg_toplevel_, &kXdgToplevelListener, this);
   wl_surface_commit(native_window_->Surface());
 
-  auto* callback = wl_surface_frame(native_window_->Surface());
-  wl_callback_add_listener(callback, &kWlSurfaceFrameListener, this);
+  {
+    auto* callback = wl_surface_frame(native_window_->Surface());
+    wl_callback_add_listener(callback, &kWlSurfaceFrameListener, this);
+
+    wp_presentation_feedback_add_listener(
+        ::wp_presentation_feedback(wp_presentation_, native_window_->Surface()),
+        &kWpPresentationFeedbackListener, this);
+  }
 
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
       std::make_unique<EnvironmentEgl>(wl_display_)));
