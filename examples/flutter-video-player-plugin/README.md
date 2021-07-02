@@ -1,5 +1,5 @@
 # Overview
-Flutter video player example using video player plugin for Embedded Linux. The interface of the plugin is compatible with [the Flutter official video player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player/video_player). Also, This plugin is temporarily putting here and there are still some bugs. It will be moved to another new repo soon.
+Flutter video player example using video player plugin for Embedded Linux. The interface of the plugin is compatible with [the Flutter official video player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player/video_player). Also, this plugin is temporarily putting here and there are still some bugs. It will be moved to another new repo soon.
 
 The procedure described here is a provisional step until you build a flutter app for Embedded Linux using this embedder with another tool.
 
