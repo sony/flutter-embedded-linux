@@ -363,7 +363,6 @@ gboolean GstVideoPlayer::HandleGstMessage(GstBus* bus, GstMessage* message,
       auto* self = reinterpret_cast<GstVideoPlayer*>(user_data);
       self->stream_handler_->OnNotifyCompleted();
       if (self->auto_repeat_) {
-        std::cout << "Auto repeat" << std::endl;
         self->SetSeek(0);
       }
       break;
