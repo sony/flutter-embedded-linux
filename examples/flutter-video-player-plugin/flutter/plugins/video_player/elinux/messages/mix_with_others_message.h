@@ -30,7 +30,7 @@ class MixWithOthersMessage {
     return flutter::EncodableValue(map);
   }
 
-  static MixWithOthersMessage FromMap(const flutter::EncodableValue &value) {
+  static MixWithOthersMessage FromMap(const flutter::EncodableValue& value) {
     MixWithOthersMessage message;
     if (std::holds_alternative<flutter::EncodableMap>(value)) {
       auto map = std::get<flutter::EncodableMap>(value);
