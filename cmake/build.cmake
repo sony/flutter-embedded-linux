@@ -146,13 +146,13 @@ add_executable(${TARGET}
   src/flutter/shell/platform/common/incoming_message_dispatcher.cc
 )
 
-set(THIRD_PARTY_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
+set(RAPIDJSON_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/rapidjson/include/)
 target_include_directories(${TARGET}
   PRIVATE
     src
     ## third-party libraries.
+    ${RAPIDJSON_INCLUDE_DIRS}
     ${XKBCOMMON_INCLUDE_DIRS}
-    ${THIRD_PARTY_INCLUDE_DIR}
     ${WAYLAND_CLIENT_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
     ${WAYLAND_EGL_INCLUDE_DIRS}
