@@ -36,7 +36,7 @@ elseif(${BACKEND_TYPE} STREQUAL "X11")
 else()
   include(cmake/generate_wayland_protocols.cmake)
   set(_wayland_protocols_xml_dir $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols)
-  set(_wayland_protocols_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/wayland/protocol)
+  set(_wayland_protocols_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/wayland/protocols)
 
   generate_wayland_client_protocol(
     PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml
@@ -83,7 +83,7 @@ endif()
 # weston private protocols.
 set(WAYLAND_PROTOCOL_SRC "")
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/wayland/protocol/weston-desktop-shell-protocol.c)  
+  set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/third_party/wayland/protocols/weston-desktop-shell-protocol.c)
 endif()
 
 # OpenGL ES version.
