@@ -30,8 +30,8 @@ jobs:
       #  unzip linux-x64-embedder
       #  mv libflutter_engine.so ${{github.workspace}}/build
       run: |
-        curl -L https://github.com/sony/flutter-embedded-linux/releases/download/939fb62b30/linux-x64-release.zip > linux-x64-release.zip
-        unzip linux-x64-release.zip
+        curl -L https://github.com/sony/flutter-embedded-linux/releases/latest/download/elinux-x64-release.zip > elinux-x64-release.zip
+        unzip elinux-x64-release.zip
         mv libflutter_engine.so ${{github.workspace}}/build
 
     - name: Configure CMake for wayland client
