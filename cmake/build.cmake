@@ -16,7 +16,6 @@ endif()
 
 # display backend type.
 set(DISPLAY_BACKEND_SRC "")
-set(WAYLAND_PROTOCOLS_INCLUDE_DIRS "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
   set(DISPLAY_BACKEND_SRC
@@ -74,7 +73,6 @@ else()
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc)
-  set(WAYLAND_PROTOCOLS_INCLUDE_DIRS ${_wayland_protocols_src_dir})
 endif()
 
 # desktop-shell for weston.
@@ -146,17 +144,18 @@ add_executable(${TARGET}
   src/flutter/shell/platform/common/incoming_message_dispatcher.cc
 )
 
-set(RAPIDJSON_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/rapidjson/include/)
+set(THIRD_PARTY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
+set(RAPIDJSON_INCLUDE_DIRS THIRD_PARTY_DIRS/rapidjson/include/)
 target_include_directories(${TARGET}
   PRIVATE
     src
     ## third-party libraries.
+    ${THIRD_PARTY_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${XKBCOMMON_INCLUDE_DIRS}
     ${WAYLAND_CLIENT_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
     ${WAYLAND_EGL_INCLUDE_DIRS}
-    ${WAYLAND_PROTOCOLS_INCLUDE_DIRS}
     ${EGL_INCLUDE_DIRS}
     ${GLES_INCLUDE_DIRS}
     ${DRM_INCLUDE_DIRS}
