@@ -145,7 +145,7 @@ add_executable(${TARGET}
 )
 
 set(THIRD_PARTY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
-set(RAPIDJSON_INCLUDE_DIRS THIRD_PARTY_DIRS/rapidjson/include/)
+set(RAPIDJSON_INCLUDE_DIRS ${THIRD_PARTY_DIRS}/rapidjson/include/)
 target_include_directories(${TARGET}
   PRIVATE
     src
