@@ -16,6 +16,7 @@ endif()
 
 # display backend type.
 set(DISPLAY_BACKEND_SRC "")
+set(WAYLAND_PROTOCOLS_INCLUDE_DIRS "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
   set(DISPLAY_BACKEND_SRC
@@ -56,7 +57,7 @@ else()
   generate_wayland_client_protocol(
     PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/presentation-time/presentation-time.xml
     CODE_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.c
-    HEADER_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.h)    
+    HEADER_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.h)
 
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
@@ -73,6 +74,7 @@ else()
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc
     src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc)
+  set(WAYLAND_PROTOCOLS_INCLUDE_DIRS ${_wayland_protocols_src_dir})
 endif()
 
 # desktop-shell for weston.
@@ -81,9 +83,8 @@ if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
 endif()
 
 # weston private protocols.
-set(WAYLAND_PROTOCOL_SRC "")
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  set(WAYLAND_PROTOCOL_SRC ${WAYLAND_PROTOCOL_SRC} src/third_party/wayland/protocols/weston-desktop-shell-protocol.c)
+  set(DISPLAY_BACKEND_SRC ${DISPLAY_BACKEND_SRC} src/third_party/wayland/protocols/weston-desktop-shell-protocol.c)
 endif()
 
 # OpenGL ES version.
@@ -130,7 +131,6 @@ add_executable(${TARGET}
   src/flutter/shell/platform/linux_embedded/surface/surface_gl.cc
   src/flutter/shell/platform/linux_embedded/surface/surface_decoration.cc
   ${DISPLAY_BACKEND_SRC}
-  ${WAYLAND_PROTOCOL_SRC}
   ## The following file were copied from:
   ## https://github.com/flutter/engine/blob/master/shell/platform/glfw/
   src/flutter/shell/platform/linux_embedded/system_utils.cc
@@ -156,6 +156,7 @@ target_include_directories(${TARGET}
     ${WAYLAND_CLIENT_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
     ${WAYLAND_EGL_INCLUDE_DIRS}
+    ${WAYLAND_PROTOCOLS_INCLUDE_DIRS}
     ${EGL_INCLUDE_DIRS}
     ${GLES_INCLUDE_DIRS}
     ${DRM_INCLUDE_DIRS}
