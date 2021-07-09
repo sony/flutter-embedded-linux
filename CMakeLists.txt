@@ -21,7 +21,8 @@ if(NOT BUILD_ELINUX_SO)
   message("User project: ${USER_PROJECT_PATH}")
   include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
 else()
-  set(TARGET "flutter_elinux")
+  string(TOLOWER ${BACKEND_TYPE} TARGET_SUFFIX)
+  set(TARGET "flutter_elinux_${TARGET_SUFFIX}")
 endif()
 
 # System level dependent library.

@@ -83,7 +83,7 @@ endif()
 # weston private protocols.
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
   set(DISPLAY_BACKEND_SRC
-    "${DISPLAY_BACKEND_SRC}"
+    ${DISPLAY_BACKEND_SRC}
     "src/third_party/wayland/protocols/weston-desktop-shell-protocol.c"
   )
 endif()
@@ -101,7 +101,7 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
 endif()
 
 set(CPP_WRAPPER_SOURCES_CORE
-  "src/flutter/shell/platform/common/client_wrapper/core_implementations.cc"
+  "src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc"
   "src/flutter/shell/platform/common/client_wrapper/standard_codec.cc"
 )
 set(CPP_WRAPPER_SOURCES_PLUGIN
@@ -155,16 +155,16 @@ if(NOT BUILD_ELINUX_SO)
   include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
 
   add_executable(${TARGET}
-    "${ELINUX_COMMON_SRC}"
-    "${CPP_WRAPPER_SOURCES_CORE}"
-    "${CPP_WRAPPER_SOURCES_PLUGIN}"
-    "${CPP_WRAPPER_SOURCES_APP}"
-    "${USER_APP_SRCS}"
+    ${ELINUX_COMMON_SRC}
+    ${CPP_WRAPPER_SOURCES_CORE}
+    ${CPP_WRAPPER_SOURCES_PLUGIN}
+    ${CPP_WRAPPER_SOURCES_APP}
+    ${USER_APP_SRCS}
   )
 else()
   add_library(${TARGET}
     SHARED
-      "${ELINUX_COMMON_SRC}"
+      ${ELINUX_COMMON_SRC}
   )
 
   target_include_directories(${TARGET}
@@ -188,42 +188,42 @@ target_include_directories(${TARGET}
   PRIVATE
     "src"
     ## third-party libraries.
-    "${THIRD_PARTY_DIRS}"
-    "${RAPIDJSON_INCLUDE_DIRS}"
-    "${XKBCOMMON_INCLUDE_DIRS}"
-    "${WAYLAND_CLIENT_INCLUDE_DIRS}"
-    "${WAYLAND_CURSOR_INCLUDE_DIRS}"
-    "${WAYLAND_EGL_INCLUDE_DIRS}"
-    "${EGL_INCLUDE_DIRS}"
-    "${GLES_INCLUDE_DIRS}"
-    "${DRM_INCLUDE_DIRS}"
-    "${GBM_INCLUDE_DIRS}"
-    "${LIBINPUT_INCLUDE_DIRS}"
-    "${LIBUDEV_INCLUDE_DIRS}"
-    "${LIBSYSTEMD_INCLUDE_DIRS}"
-    "${X11_INCLUDE_DIRS}"
-    "${LIBWESTON_INCLUDE_DIRS}"
+    ${THIRD_PARTY_DIRS}
+    ${RAPIDJSON_INCLUDE_DIRS}
+    ${XKBCOMMON_INCLUDE_DIRS}
+    ${WAYLAND_CLIENT_INCLUDE_DIRS}
+    ${WAYLAND_CURSOR_INCLUDE_DIRS}
+    ${WAYLAND_EGL_INCLUDE_DIRS}
+    ${EGL_INCLUDE_DIRS}
+    ${GLES_INCLUDE_DIRS}
+    ${DRM_INCLUDE_DIRS}
+    ${GBM_INCLUDE_DIRS}
+    ${LIBINPUT_INCLUDE_DIRS}
+    ${LIBUDEV_INCLUDE_DIRS}
+    ${LIBSYSTEMD_INCLUDE_DIRS}
+    ${X11_INCLUDE_DIRS}
+    ${LIBWESTON_INCLUDE_DIRS}
     ## User libraries
-    "${USER_APP_INCLUDE_DIRS}"
+    ${USER_APP_INCLUDE_DIRS}
 )
 
 target_link_libraries(${TARGET}
   PRIVATE
-    "${XKBCOMMON_LIBRARIES}"
-    "${WAYLAND_CLIENT_LIBRARIES}"
-    "${WAYLAND_CURSOR_LIBRARIES}"
-    "${WAYLAND_EGL_LIBRARIES}"
-    "${EGL_LIBRARIES}"
-    "${DRM_LIBRARIES}"
-    "${GBM_LIBRARIES}"
-    "${LIBINPUT_LIBRARIES}"
-    "${LIBUDEV_LIBRARIES}"
-    "${LIBSYSTEMD_LIBRARIES}"
-    "${X11_LIBRARIES}"
-    "${LIBWESTON_LIBRARIES}"
-    "${FLUTTER_EMBEDDER_LIB}"
+    ${XKBCOMMON_LIBRARIES}
+    ${WAYLAND_CLIENT_LIBRARIES}
+    ${WAYLAND_CURSOR_LIBRARIES}
+    ${WAYLAND_EGL_LIBRARIES}
+    ${EGL_LIBRARIES}
+    ${DRM_LIBRARIES}
+    ${GBM_LIBRARIES}
+    ${LIBINPUT_LIBRARIES}
+    ${LIBUDEV_LIBRARIES}
+    ${LIBSYSTEMD_LIBRARIES}
+    ${X11_LIBRARIES}
+    ${LIBWESTON_LIBRARIES}
+    ${FLUTTER_EMBEDDER_LIB}
     ## User libraries
-    "${USER_APP_LIBRARIES}"
+    ${USER_APP_LIBRARIES}
 )
 
 if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
@@ -237,12 +237,12 @@ set(FLUTTER_EMBEDDER_LIB "${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so
 set(CMAKE_SKIP_RPATH true)
 target_link_libraries(${TARGET}
   PRIVATE
-    "${FLUTTER_EMBEDDER_LIB}"
+    ${FLUTTER_EMBEDDER_LIB}
 )
 
 target_compile_options(${TARGET}
   PUBLIC
-    "${EGL_CFLAGS}"
+    ${EGL_CFLAGS}
 )
 
 if(NOT BUILD_ELINUX_SO)
