@@ -19,60 +19,60 @@ set(DISPLAY_BACKEND_SRC "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc)
+    "src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc")
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc
-    src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc)
+    "src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc"
+    "src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc")
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
   set(DISPLAY_BACKEND_SRC
-    src/flutter/shell/platform/linux_embedded/window/elinux_window_x11.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc)
+    "src/flutter/shell/platform/linux_embedded/window/elinux_window_x11.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc")
 else()
   include(cmake/generate_wayland_protocols.cmake)
-  set(_wayland_protocols_xml_dir $ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols)
-  set(_wayland_protocols_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/wayland/protocols)
+  set(_wayland_protocols_xml_dir "$ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols")
+  set(_wayland_protocols_src_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/wayland/protocols")
 
   generate_wayland_client_protocol(
-    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml
-    CODE_FILE ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
-    HEADER_FILE ${_wayland_protocols_src_dir}/xdg-shell-client-protocol.h)
+    PROTOCOL_FILE "${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml"
+    CODE_FILE "${_wayland_protocols_src_dir}/xdg-shell-protocol.c"
+    HEADER_FILE "${_wayland_protocols_src_dir}/xdg-shell-client-protocol.h")
 
   generate_wayland_client_protocol(
-    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v1.xml
-    CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
-    HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v1-client-protocol.h)
+    PROTOCOL_FILE "${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v1.xml"
+    CODE_FILE "${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c"
+    HEADER_FILE "${_wayland_protocols_src_dir}/text-input-unstable-v1-client-protocol.h")
 
   generate_wayland_client_protocol(
-    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v3.xml
-    CODE_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
-    HEADER_FILE ${_wayland_protocols_src_dir}/text-input-unstable-v3-client-protocol.h)
+    PROTOCOL_FILE "${_wayland_protocols_xml_dir}/unstable/text-input/text-input-unstable-v3.xml"
+    CODE_FILE "${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c"
+    HEADER_FILE "${_wayland_protocols_src_dir}/text-input-unstable-v3-client-protocol.h")
 
   generate_wayland_client_protocol(
-    PROTOCOL_FILE ${_wayland_protocols_xml_dir}/stable/presentation-time/presentation-time.xml
-    CODE_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.c
-    HEADER_FILE ${_wayland_protocols_src_dir}/presentation-time-protocol.h)
+    PROTOCOL_FILE "${_wayland_protocols_xml_dir}/stable/presentation-time/presentation-time.xml"
+    CODE_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.c"
+    HEADER_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.h")
 
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
-    ${_wayland_protocols_src_dir}/xdg-shell-protocol.c
-    ${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c
-    ${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c
-    ${_wayland_protocols_src_dir}/presentation-time-protocol.c
-    src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc
-    src/flutter/shell/platform/linux_embedded/window/native_window_wayland_decoration.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/shader.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/shader_context.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/shader_program.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc
-    src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc)
+    "${_wayland_protocols_src_dir}/xdg-shell-protocol.c"
+    "${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c"
+    "${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c"
+    "${_wayland_protocols_src_dir}/presentation-time-protocol.c"
+    "src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc"
+    "src/flutter/shell/platform/linux_embedded/window/native_window_wayland_decoration.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/shader.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/shader_context.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/shader_program.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc")
 endif()
 
 # desktop-shell for weston.
@@ -82,7 +82,10 @@ endif()
 
 # weston private protocols.
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  set(DISPLAY_BACKEND_SRC ${DISPLAY_BACKEND_SRC} src/third_party/wayland/protocols/weston-desktop-shell-protocol.c)
+  set(DISPLAY_BACKEND_SRC
+    ${DISPLAY_BACKEND_SRC}
+    "src/third_party/wayland/protocols/weston-desktop-shell-protocol.c"
+  )
 endif()
 
 # OpenGL ES version.
@@ -97,58 +100,93 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
   )
 endif()
 
-# cmake script for developers.
-include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
-
-add_executable(${TARGET}
-  ${USER_APP_SRCS}
-  src/client_wrapper/flutter_engine.cc
-  src/client_wrapper/flutter_view_controller.cc
-  src/flutter/shell/platform/linux_embedded/flutter_elinux.cc
-  src/flutter/shell/platform/linux_embedded/flutter_elinux_engine.cc
-  src/flutter/shell/platform/linux_embedded/flutter_elinux_view.cc
-  src/flutter/shell/platform/linux_embedded/flutter_project_bundle.cc
-  src/flutter/shell/platform/linux_embedded/task_runner.cc
-  src/flutter/shell/platform/linux_embedded/system_utils.cc
-  src/flutter/shell/platform/linux_embedded/logger.cc
-  src/flutter/shell/platform/linux_embedded/external_texture_gl.cc
-  src/flutter/shell/platform/linux_embedded/vsync_waiter.cc
-  src/flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.cc
-  src/flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.cc
-  src/flutter/shell/platform/linux_embedded/plugins/key_event_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/lifecycle_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/mouse_cursor_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/navigation_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/platform_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.cc
-  src/flutter/shell/platform/linux_embedded/plugins/text_input_plugin.cc
-  src/flutter/shell/platform/linux_embedded/surface/context_egl.cc
-  src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc
-  src/flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.cc
-  src/flutter/shell/platform/linux_embedded/surface/surface_base.cc
-  src/flutter/shell/platform/linux_embedded/surface/surface_gl.cc
-  src/flutter/shell/platform/linux_embedded/surface/surface_decoration.cc
-  ${DISPLAY_BACKEND_SRC}
-  ## The following file were copied from:
-  ## https://github.com/flutter/engine/blob/master/shell/platform/glfw/
-  src/flutter/shell/platform/linux_embedded/system_utils.cc
-  ## Following files were imported from:
-  ## https://github.com/flutter/engine/tree/master/shell/platform/common
-  src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc
-  src/flutter/shell/platform/common/client_wrapper/standard_codec.cc
-  src/flutter/shell/platform/common/client_wrapper/plugin_registrar.cc
-  src/flutter/shell/platform/common/text_input_model.cc
-  src/flutter/shell/platform/common/json_message_codec.cc
-  src/flutter/shell/platform/common/json_method_codec.cc
-  src/flutter/shell/platform/common/engine_switches.cc
-  src/flutter/shell/platform/common/incoming_message_dispatcher.cc
+set(CPP_WRAPPER_SOURCES_CORE
+  "src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc"
+  "src/flutter/shell/platform/common/client_wrapper/standard_codec.cc"
+)
+set(CPP_WRAPPER_SOURCES_PLUGIN
+  "src/flutter/shell/platform/common/client_wrapper/plugin_registrar.cc"
+)
+set(CPP_WRAPPER_SOURCES_APP
+  "src/client_wrapper/flutter_engine.cc"
+  "src/client_wrapper/flutter_view_controller.cc"
 )
 
-set(THIRD_PARTY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
-set(RAPIDJSON_INCLUDE_DIRS ${THIRD_PARTY_DIRS}/rapidjson/include/)
+set(ELINUX_COMMON_SRC
+  "src/flutter/shell/platform/linux_embedded/flutter_elinux.cc"
+  "src/flutter/shell/platform/linux_embedded/flutter_elinux_engine.cc"
+  "src/flutter/shell/platform/linux_embedded/flutter_elinux_view.cc"
+  "src/flutter/shell/platform/linux_embedded/flutter_project_bundle.cc"
+  "src/flutter/shell/platform/linux_embedded/task_runner.cc"
+  "src/flutter/shell/platform/linux_embedded/system_utils.cc"
+  "src/flutter/shell/platform/linux_embedded/logger.cc"
+  "src/flutter/shell/platform/linux_embedded/external_texture_gl.cc"
+  "src/flutter/shell/platform/linux_embedded/vsync_waiter.cc"
+  "src/flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/key_event_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/lifecycle_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/mouse_cursor_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/navigation_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/platform_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/text_input_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/context_egl.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/elinux_egl_surface.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/surface_base.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/surface_gl.cc"
+  "src/flutter/shell/platform/linux_embedded/surface/surface_decoration.cc"
+  "${DISPLAY_BACKEND_SRC}"
+  ## The following file were copied from:
+  ## https://github.com/flutter/engine/blob/master/shell/platform/glfw/
+  "src/flutter/shell/platform/linux_embedded/system_utils.cc"
+  ## Following files were imported from:
+  ## https://github.com/flutter/engine/tree/master/shell/platform/common
+  "src/flutter/shell/platform/common/text_input_model.cc"
+  "src/flutter/shell/platform/common/json_message_codec.cc"
+  "src/flutter/shell/platform/common/json_method_codec.cc"
+  "src/flutter/shell/platform/common/engine_switches.cc"
+  "src/flutter/shell/platform/common/incoming_message_dispatcher.cc"
+)
+
+if(NOT BUILD_ELINUX_SO)
+  # cmake script for developers.
+  include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
+
+  add_executable(${TARGET}
+    ${ELINUX_COMMON_SRC}
+    ${CPP_WRAPPER_SOURCES_CORE}
+    ${CPP_WRAPPER_SOURCES_PLUGIN}
+    ${CPP_WRAPPER_SOURCES_APP}
+    ${USER_APP_SRCS}
+  )
+else()
+  add_library(${TARGET}
+    SHARED
+      ${ELINUX_COMMON_SRC}
+  )
+
+  target_include_directories(${TARGET}
+    PUBLIC
+      "src/flutter/shell/platform/linux_embedded/public"
+  )
+
+  target_include_directories(${TARGET}
+    PRIVATE
+      "src/client_wrapper/include"
+      "src/flutter/shell/platform/common/client_wrapper"
+      "src/flutter/shell/platform/common/client_wrapper/include"
+      "src/flutter/shell/platform/common/client_wrapper/include/flutter"
+      "src/flutter/shell/platform/common/public"
+  )
+endif()
+
+set(THIRD_PARTY_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party")
+set(RAPIDJSON_INCLUDE_DIRS "${THIRD_PARTY_DIRS}/rapidjson/include/")
 target_include_directories(${TARGET}
   PRIVATE
-    src
+    "src"
     ## third-party libraries.
     ${THIRD_PARTY_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
@@ -169,8 +207,6 @@ target_include_directories(${TARGET}
     ${USER_APP_INCLUDE_DIRS}
 )
 
-set(CMAKE_SKIP_RPATH true)
-set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
 target_link_libraries(${TARGET}
   PRIVATE
     ${XKBCOMMON_LIBRARIES}
@@ -197,10 +233,19 @@ target_link_libraries(${TARGET}
 )
 endif()
 
+set(FLUTTER_EMBEDDER_LIB "${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so")
+set(CMAKE_SKIP_RPATH true)
+target_link_libraries(${TARGET}
+  PRIVATE
+    ${FLUTTER_EMBEDDER_LIB}
+)
+
 target_compile_options(${TARGET}
   PUBLIC
     ${EGL_CFLAGS}
 )
 
-# Generated plugin build rules
-include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)
+if(NOT BUILD_ELINUX_SO)
+  # Generated plugin build rules
+  include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)
+endif()
