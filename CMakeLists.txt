@@ -13,11 +13,17 @@ project("flutter_elinux" LANGUAGES CXX C)
 option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
 option(DESKTOP_SHELL "Work as weston desktop-shell" OFF)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)
+option(BUILD_ELINUX_SO "Build .so file of elinux embedder" OFF)
 
 # Load the user project.
-set(USER_PROJECT_PATH "examples/flutter-wayland-client" CACHE STRING "")
-message("User project: ${USER_PROJECT_PATH}")
-include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
+if(NOT BUILD_ELINUX_SO)
+  set(USER_PROJECT_PATH "examples/flutter-wayland-client" CACHE STRING "")
+  message("User project: ${USER_PROJECT_PATH}")
+  include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
+else()
+  string(TOLOWER ${BACKEND_TYPE} TARGET_SUFFIX)
+  set(TARGET "flutter_elinux_${TARGET_SUFFIX}")
+endif()
 
 # System level dependent library.
 include(cmake/package.cmake)
