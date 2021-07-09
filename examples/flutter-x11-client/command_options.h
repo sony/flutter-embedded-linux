@@ -145,7 +145,7 @@ class CommandOptions {
       // short options: e.g. -f /foo/file.txt -h 640 -abc
       else if (arg.length() > 1 &&
                arg.substr(0, 1).compare(kOptionStyleShort) == 0) {
-        for (int j = 1; j < arg.length(); j++) {
+        for (size_t j = 1; j < arg.length(); j++) {
           const std::string option_name{argv[i][j]};
 
           if (lut_short_options_.find(option_name) ==
@@ -170,7 +170,7 @@ class CommandOptions {
       }
     }
 
-    for (auto i = 0; i < registration_order_options_.size(); i++) {
+    for (size_t i = 0; i < registration_order_options_.size(); i++) {
       if (registration_order_options_[i]->IsRequired() &&
           !registration_order_options_[i]->HasValue()) {
         errors_.push_back(
@@ -190,7 +190,7 @@ class CommandOptions {
     std::ostringstream ostream;
 
     ostream << "Usage: " << command_name_ << " ";
-    for (auto i = 0; i < registration_order_options_.size(); i++) {
+    for (size_t i = 0; i < registration_order_options_.size(); i++) {
       if (registration_order_options_[i]->IsRequired()) {
         ostream << registration_order_options_[i]->GetHelpShortMessage() << " ";
       }
@@ -199,12 +199,12 @@ class CommandOptions {
 
     ostream << "Global options:" << std::endl;
     size_t max_name_len = 0;
-    for (auto i = 0; i < registration_order_options_.size(); i++) {
+    for (size_t i = 0; i < registration_order_options_.size(); i++) {
       max_name_len = std::max(
           max_name_len, registration_order_options_[i]->GetName().length());
     }
 
-    for (auto i = 0; i < registration_order_options_.size(); i++) {
+    for (size_t i = 0; i < registration_order_options_.size(); i++) {
       if (!registration_order_options_[i]->GetShortName().empty()) {
         ostream << kOptionStyleShort
                 << registration_order_options_[i]->GetShortName() << ", ";
@@ -277,11 +277,11 @@ class CommandOptions {
     virtual bool HasValue() const = 0;
 
    protected:
-    bool is_required_;
-    bool is_required_value_;
     std::string name_;
     std::string short_name_;
     std::string description_;
+    bool is_required_;
+    bool is_required_value_;
     bool value_set_;
   };
 
