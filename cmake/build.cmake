@@ -82,7 +82,10 @@ endif()
 
 # weston private protocols.
 if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  set(DISPLAY_BACKEND_SRC "${DISPLAY_BACKEND_SRC} src/third_party/wayland/protocols/weston-desktop-shell-protocol.c")
+  set(DISPLAY_BACKEND_SRC
+    "${DISPLAY_BACKEND_SRC}"
+    "src/third_party/wayland/protocols/weston-desktop-shell-protocol.c"
+  )
 endif()
 
 # OpenGL ES version.
