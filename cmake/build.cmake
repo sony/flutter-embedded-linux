@@ -97,11 +97,7 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
   )
 endif()
 
-# cmake script for developers.
-include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
-
-add_executable(${TARGET}
-  ${USER_APP_SRCS}
+set(ELINUX_COMMON_SRC
   src/client_wrapper/flutter_engine.cc
   src/client_wrapper/flutter_view_controller.cc
   src/flutter/shell/platform/linux_embedded/flutter_elinux.cc
@@ -144,6 +140,35 @@ add_executable(${TARGET}
   src/flutter/shell/platform/common/incoming_message_dispatcher.cc
 )
 
+if(NOT BUILD_ELINUX_SO)
+  # cmake script for developers.
+  include(${USER_PROJECT_PATH}/cmake/user_build.cmake)
+
+  add_executable(${TARGET}
+    ${ELINUX_COMMON_SRC}
+    ${USER_APP_SRCS}
+  )
+else()
+  add_library(${TARGET}
+    SHARED
+      ${ELINUX_COMMON_SRC}
+  )
+
+  target_include_directories(${TARGET}
+    PUBLIC
+      src/flutter/shell/platform/linux_embedded/public
+  )
+
+  target_include_directories(${TARGET}
+    PRIVATE
+      src/client_wrapper/include
+      src/flutter/shell/platform/common/client_wrapper
+      src/flutter/shell/platform/common/client_wrapper/include
+      src/flutter/shell/platform/common/client_wrapper/include/flutter
+      src/flutter/shell/platform/common/public
+  )
+endif()
+
 set(THIRD_PARTY_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/src/third_party)
 set(RAPIDJSON_INCLUDE_DIRS ${THIRD_PARTY_DIRS}/rapidjson/include/)
 target_include_directories(${TARGET}
@@ -169,8 +194,6 @@ target_include_directories(${TARGET}
     ${USER_APP_INCLUDE_DIRS}
 )
 
-set(CMAKE_SKIP_RPATH true)
-set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
 target_link_libraries(${TARGET}
   PRIVATE
     ${XKBCOMMON_LIBRARIES}
@@ -197,10 +220,19 @@ target_link_libraries(${TARGET}
 )
 endif()
 
+set(FLUTTER_EMBEDDER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so)
+set(CMAKE_SKIP_RPATH true)
+target_link_libraries(${TARGET}
+  PRIVATE
+    ${FLUTTER_EMBEDDER_LIB}
+)
+
 target_compile_options(${TARGET}
   PUBLIC
     ${EGL_CFLAGS}
 )
 
-# Generated plugin build rules
-include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)
+if(NOT BUILD_ELINUX_SO)
+  # Generated plugin build rules
+  include(${USER_PROJECT_PATH}/flutter/generated_plugins.cmake)
+endif()
