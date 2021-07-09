@@ -19,7 +19,6 @@ set(USER_APP_INCLUDE_DIRS
   src/flutter/shell/platform/common/client_wrapper/include/flutter
   src/flutter/shell/platform/common/public
   src/flutter/shell/platform/linux_embedded/public
-  src/public/include
   ## header file include path for user apps.
   examples/flutter-video-player-plugin
 )
