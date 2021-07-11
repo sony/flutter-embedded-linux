@@ -15,12 +15,13 @@ option(DESKTOP_SHELL "Work as weston desktop-shell" OFF)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)
 option(BUILD_ELINUX_SO "Build .so file of elinux embedder" OFF)
 
-# Load the user project.
 if(NOT BUILD_ELINUX_SO)
+  # Load the user project.
   set(USER_PROJECT_PATH "examples/flutter-wayland-client" CACHE STRING "")
   message("User project: ${USER_PROJECT_PATH}")
   include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
 else()
+  # Set the filename of elinux .so file
   if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
     set(TARGET_SUFFIX "gbm")
   elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
