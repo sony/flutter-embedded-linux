@@ -165,6 +165,8 @@ else()
   add_library(${TARGET}
     SHARED
       ${ELINUX_COMMON_SRC}
+      ${CPP_WRAPPER_SOURCES_CORE}
+      ${CPP_WRAPPER_SOURCES_PLUGIN}
   )
 
   target_include_directories(${TARGET}
