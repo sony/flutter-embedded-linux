@@ -20,11 +20,15 @@ constexpr int ELINUX_LOG_ERROR = 4;
 constexpr int ELINUX_LOG_FATAL = 5;
 constexpr int ELINUX_LOG_NUM = 6;
 
+#if defined(NDEBUG)
+#define ELINUX_LOG(level) ((void)0)
+#else
 #define __LOG_FILE_NAME__ \
   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
 #define ELINUX_LOG(level) \
   Logger(ELINUX_LOG_##level, __LOG_FILE_NAME__, __LINE__).stream()
+#endif
 
 class Logger {
  public:
