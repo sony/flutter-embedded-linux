@@ -21,7 +21,7 @@ constexpr int ELINUX_LOG_FATAL = 5;
 constexpr int ELINUX_LOG_NUM = 6;
 
 #if defined(NDEBUG)
-#define ELINUX_LOG(level) ((void)0)
+#define ELINUX_LOG(level) Logger(-1, "", 0).stream()
 #else
 #define __LOG_FILE_NAME__ \
   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
