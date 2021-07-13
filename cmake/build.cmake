@@ -94,7 +94,7 @@ if(USE_GLES3)
 endif()
 
 # Flutter embedder runtime mode.
-if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
+if(FLUTTER_RELEASE)
   add_definitions(
     -DFLUTTER_RELEASE # release mode
   )
