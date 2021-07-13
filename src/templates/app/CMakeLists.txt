@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-# set(BINARY_NAME "{{projectName}}")
-set(BINARY_NAME "sample")
+set(BINARY_NAME "{{projectName}}")
 
 cmake_policy(SET CMP0063 NEW)
 
