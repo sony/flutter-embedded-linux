@@ -100,6 +100,13 @@ if(NOT CMAKE_BUILD_TYPE MATCHES Debug)
   )
 endif()
 
+# Enable logger of eLinux embedder.
+if(ENABLE_ELINUX_EMBEDDER_LOG)
+  add_definitions(
+    -DENABLE_ELINUX_EMBEDDER_LOG
+  )
+endif()
+
 set(CPP_WRAPPER_SOURCES_CORE
   "src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc"
   "src/flutter/shell/platform/common/client_wrapper/standard_codec.cc"
