@@ -27,8 +27,8 @@ set(FLUTTER_LIBRARY
 # Published to parent scope for install step.
 set(FLUTTER_LIBRARY ${FLUTTER_LIBRARY} PARENT_SCOPE)
 set(FLUTTER_ICU_DATA_FILE "${EPHEMERAL_DIR}/icudtl.dat" PARENT_SCOPE)
-set(PROJECT_BUILD_DIR "${PROJECT_DIR}/build/" PARENT_SCOPE)
-set(AOT_LIBRARY "${PROJECT_DIR}/build/lib/libapp.so" PARENT_SCOPE)
+set(PROJECT_BUILD_DIR "${PROJECT_DIR}/build/elinux/" PARENT_SCOPE)
+set(AOT_LIBRARY "${EPHEMERAL_DIR}/libapp.so" PARENT_SCOPE)
 
 list(APPEND FLUTTER_LIBRARY_HEADERS
   "flutter_export.h"
