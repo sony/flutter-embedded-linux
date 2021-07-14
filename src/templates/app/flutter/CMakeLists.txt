@@ -19,13 +19,12 @@ endfunction()
 
 # === Flutter Library ===
 # System-level dependencies.
-set(FLUTTER_LIBRARY
-  "${EPHEMERAL_DIR}/libflutter_engine.so"
-  "${EPHEMERAL_DIR}/libflutter_elinux_wayland.so"
-)
+set(FLUTTER_LIBRARY "${EPHEMERAL_DIR}/libflutter_engine.so")
+set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_wayland.so")
 
 # Published to parent scope for install step.
 set(FLUTTER_LIBRARY ${FLUTTER_LIBRARY} PARENT_SCOPE)
+set(FLUTTER_EMBEDDER_LIBRARY ${FLUTTER_EMBEDDER_LIBRARY} PARENT_SCOPE)
 set(FLUTTER_ICU_DATA_FILE "${EPHEMERAL_DIR}/icudtl.dat" PARENT_SCOPE)
 set(PROJECT_BUILD_DIR "${PROJECT_DIR}/build/elinux/" PARENT_SCOPE)
 set(AOT_LIBRARY "${EPHEMERAL_DIR}/libapp.so" PARENT_SCOPE)
@@ -44,6 +43,7 @@ target_include_directories(flutter INTERFACE
   "${EPHEMERAL_DIR}"
 )
 target_link_libraries(flutter INTERFACE "${FLUTTER_LIBRARY}")
+target_link_libraries(flutter INTERFACE "${FLUTTER_EMBEDDER_LIBRARY}")
 add_dependencies(flutter flutter_assemble)
 
 # === Wrapper ===
@@ -92,6 +92,7 @@ add_dependencies(flutter_wrapper_app flutter_assemble)
 
 add_custom_target(flutter_assemble DEPENDS
   "${FLUTTER_LIBRARY}"
+  "${FLUTTER_EMBEDDER_LIBRARY}"
   ${FLUTTER_LIBRARY_HEADERS}
   ${CPP_WRAPPER_SOURCES_CORE}
   ${CPP_WRAPPER_SOURCES_PLUGIN}
