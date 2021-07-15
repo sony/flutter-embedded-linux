@@ -25,6 +25,14 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     "Debug" "Profile" "Release")
 endif()
 
+# Configure build option to target backend.
+if (NOT FLUTTER_TARGET_BACKEND_TYPE)
+  set(FLUTTER_TARGET_BACKEND_TYPE "wayland" CACHE
+    STRING "Flutter target backend type" FORCE)
+  set_property(CACHE FLUTTER_TARGET_BACKEND_TYPE PROPERTY STRINGS
+    "wayland" "gbm" "eglstream" "x11")
+endif()
+
 # Compilation settings that should be applied to most targets.
 function(APPLY_STANDARD_SETTINGS TARGET)
   target_compile_features(${TARGET} PUBLIC cxx_std_17)

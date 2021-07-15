@@ -20,7 +20,15 @@ endfunction()
 # === Flutter Library ===
 # System-level dependencies.
 set(FLUTTER_LIBRARY "${EPHEMERAL_DIR}/libflutter_engine.so")
-set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_wayland.so")
+if(FLUTTER_TARGET_BACKEND_TYPE MATCHES "gbm")
+  set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_gbm.so")
+elseif(FLUTTER_TARGET_BACKEND_TYPE MATCHES "eglstream")
+  set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_eglstream.so")
+elseif(FLUTTER_TARGET_BACKEND_TYPE MATCHES "x11")
+  set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_x11.so")
+else()
+  set(FLUTTER_EMBEDDER_LIBRARY "${EPHEMERAL_DIR}/libflutter_elinux_wayland.so")
+endif()
 
 # Published to parent scope for install step.
 set(FLUTTER_LIBRARY ${FLUTTER_LIBRARY} PARENT_SCOPE)
