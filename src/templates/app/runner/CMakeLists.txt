@@ -1,6 +1,16 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
+if(FLUTTER_TARGET_BACKEND_TYPE MATCHES "gbm")
+  add_definitions(-DFLUTTER_TARGET_BACKEND_GBM)
+elseif(FLUTTER_TARGET_BACKEND_TYPE MATCHES "eglstream")
+  add_definitions(-DFLUTTER_TARGET_BACKEND_EGLSTREAM)
+elseif(FLUTTER_TARGET_BACKEND_TYPE MATCHES "x11")
+  add_definitions(-DFLUTTER_TARGET_BACKEND_X11)
+else()
+  add_definitions(-DFLUTTER_TARGET_BACKEND_WAYLAND)
+endif()
+
 add_executable(${BINARY_NAME}
   "flutter_window.cc"
   "main.cc"

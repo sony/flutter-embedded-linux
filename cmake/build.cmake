@@ -18,11 +18,13 @@ endif()
 set(DISPLAY_BACKEND_SRC "")
 if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_GBM)
+  add_definitions(-DFLUTTER_TARGET_BACKEND_GBM)
   set(DISPLAY_BACKEND_SRC
     "src/flutter/shell/platform/linux_embedded/window/native_window_drm.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_drm_gbm.cc")
 elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
   add_definitions(-DDISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
+  add_definitions(-DFLUTTER_TARGET_BACKEND_EGLSTREAM)
   set(DISPLAY_BACKEND_SRC
     "src/flutter/shell/platform/linux_embedded/surface/context_egl_stream.cc"
     "src/flutter/shell/platform/linux_embedded/surface/environment_egl_stream.cc"
@@ -30,6 +32,7 @@ elseif(${BACKEND_TYPE} STREQUAL "DRM-EGLSTREAM")
     "src/flutter/shell/platform/linux_embedded/window/native_window_drm_eglstream.cc")
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   add_definitions(-DDISPLAY_BACKEND_TYPE_X11)
+  add_definitions(-DFLUTTER_TARGET_BACKEND_X11)
   set(DISPLAY_BACKEND_SRC
     "src/flutter/shell/platform/linux_embedded/window/elinux_window_x11.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_x11.cc")
@@ -58,6 +61,7 @@ else()
     CODE_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.c"
     HEADER_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.h")
 
+  add_definitions(-DFLUTTER_TARGET_BACKEND_WAYLAND)
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
     "${_wayland_protocols_src_dir}/xdg-shell-protocol.c"
