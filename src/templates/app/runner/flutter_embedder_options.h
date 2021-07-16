@@ -5,7 +5,6 @@
 #ifndef FLUTTER_EMBEDDER_OPTIONS_
 #define FLUTTER_EMBEDDER_OPTIONS_
 
-#include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
 
 #include <string>
