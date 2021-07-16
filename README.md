@@ -1,4 +1,4 @@
-# Embedded Linux embedding for Flutter
+# Embedded Linux (eLinux) embedding for Flutter
 [![build-test](https://github.com/sony/flutter-embedded-linux/actions/workflows/build-test.yml/badge.svg)](https://github.com/sony/flutter-embedded-linux/actions/workflows/build-test.yml)
 
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
@@ -24,6 +24,14 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
   - APIs such as MethodChannel and EventChannel are completely the same with them
+
+## Companion repos
+| Repo | Purpose |
+| ------------- | ------------- |
+| [flutter-elinux](https://github.com/sony/flutter-elinux-plugins) | Flutter tools for eLinux |
+| [flutter-elinux-plugins](https://github.com/sony/flutter-elinux-plugins) | Flutter plugins for eLinux |
+| [flutter-embedded-linux](https://github.com/sony/flutter-embedded-linux) | eLinux embedding for Flutter |
+| [meta-flutter](https://github.com/sony/meta-flutter) | Yocto recipes of eLinux embedding for Flutter |
 
 ## Documentation
 Documentation for this software is summarised on the [Wiki](https://github.com/sony/flutter-embedded-linux/wiki).
