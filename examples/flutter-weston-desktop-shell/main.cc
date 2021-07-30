@@ -66,7 +66,6 @@ int main(int argc, char** argv) {
   // The Flutter instance hosted by this window.
   FlutterWindow window(view_properties, project);
   if (!window.OnCreate()) {
-    std::cerr << "Failed to create a Flutter window." << std::endl;
     return 0;
   }
   window.Run();
