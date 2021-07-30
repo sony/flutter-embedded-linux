@@ -151,7 +151,6 @@ const uint8_t* GstVideoPlayer::GetFrameBuffer() {
   }
 
   const uint32_t pixel_bytes = width_ * height_ * 4;
-  const gsize buf_size = gst_buffer_get_size(gst_.buffer);
   gst_buffer_extract(gst_.buffer, 0, pixels_.get(), pixel_bytes);
   return reinterpret_cast<const uint8_t*>(pixels_.get());
 }
