@@ -64,16 +64,7 @@ const xdg_wm_base_listener ELinuxWindowWayland::kXdgWmBaseListener = {
 const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
-          ELINUX_LOG(ERROR) << "xdg_surface_listener.configure";
           xdg_surface_ack_configure(xdg_surface, serial);
-
-          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-          if (self->window_decorations_) {
-            self->window_decorations_->Resize(self->view_properties_.width , self->view_properties_.height);
-          }
-          if (self->binding_handler_delegate_) {
-            self->binding_handler_delegate_->OnWindowSizeChanged(self->view_properties_.width, self->view_properties_.height);
-          }
         },
 };
 
@@ -85,10 +76,15 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
             return;
           }
 
-          ELINUX_LOG(ERROR) << width << ", " << height;
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           self->view_properties_.width = width;
           self->view_properties_.height = height;
+          if (self->window_decorations_) {
+            self->window_decorations_->Resize(width, height);
+          }
+          if (self->binding_handler_delegate_) {
+            self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
+          }
         },
     .close =
         [](void* data, xdg_toplevel* xdg_toplevel) {
