@@ -14,6 +14,7 @@
 namespace flutter {
 
 namespace {
+// Only Button1 - Button5 are defined in X11/X.h
 constexpr int kButton6 = 6;
 constexpr int kButton7 = 7;
 constexpr int kButton8 = 8;
@@ -189,7 +190,8 @@ void ELinuxWindowX11::HandlePointerButtonEvent(uint32_t button,
         binding_handler_delegate_->OnScroll(x, y, vertical_scroll ? 0 : delta,
                                             vertical_scroll ? delta : 0,
                                             kScrollOffsetMultiplier);
-      } return;
+        return;
+      }
       case kButton8:
         flutter_button = kFlutterPointerButtonMouseBack;
         break;
