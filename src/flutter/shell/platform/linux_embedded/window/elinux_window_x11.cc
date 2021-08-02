@@ -13,6 +13,13 @@
 
 namespace flutter {
 
+namespace {
+constexpr int kButton6 = 6;
+constexpr int kButton7 = 7;
+constexpr int kButton8 = 8;
+constexpr int kButton9 = 9;
+}  // namespace
+
 ELinuxWindowX11::ELinuxWindowX11(FlutterDesktopViewProperties view_properties) {
   view_properties_ = view_properties;
 
@@ -173,9 +180,20 @@ void ELinuxWindowX11::HandlePointerButtonEvent(uint32_t button,
         flutter_button = kFlutterPointerButtonMouseSecondary;
         break;
       case Button4:
+      case Button5:
+      case kButton6:
+      case kButton7: {
+        const bool vertical_scroll = (button == Button4 || button == Button5);
+        const double delta = button == Button5 ? 1 : -1;
+        constexpr int32_t kScrollOffsetMultiplier = 20;
+        binding_handler_delegate_->OnScroll(x, y, vertical_scroll ? 0 : delta,
+                                            vertical_scroll ? delta : 0,
+                                            kScrollOffsetMultiplier);
+      } return;
+      case kButton8:
         flutter_button = kFlutterPointerButtonMouseBack;
         break;
-      case Button5:
+      case kButton9:
         flutter_button = kFlutterPointerButtonMouseForward;
         break;
       default:
