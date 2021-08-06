@@ -5,7 +5,6 @@
 #include "flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.h"
 
 #include <linux/input-event-codes.h>
-#include <xkbcommon/xkbcommon.h>
 
 #include <unordered_map>
 
