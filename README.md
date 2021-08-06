@@ -3,6 +3,10 @@
 
 This project was created to develop **non-official** embedded Linux embeddings of [Flutter](https://flutter.dev/). This embedder is focusing on embedded Linux system use cases. It is also implemented based on Flutter desktop for Windows and has some unique features to use it in embedded systems.
 
+![image](https://user-images.githubusercontent.com/62131389/128468439-1d7250b2-0462-43d2-878d-5c48e70f5ef3.png)
+
+Note that this project is the source code of the embedder, so flutter app developers should use [flutter-elinux](https://github.com/sony/flutter-elinux), which is a non-official extension to the [Flutter SDK](https://github.com/flutter/flutter) to build and debug Flutter apps for embedded Linux devices.
+
 ## Objective & Goal
 Our objective is to use Flutter in embedded systems. We're developing this embedder to use Flutter in embedded products. Ultimately we would like to propose and contribute this software to the mainline of [Flutter Engine](https://github.com/flutter/engine), which means we would like to add an embedded systems version into the Flutter repo for all embedded developers. Please note that this is just our ideal, not the official opinion of the Flutter community.
 
