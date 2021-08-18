@@ -40,6 +40,7 @@ else()
   include(cmake/generate_wayland_protocols.cmake)
   set(_wayland_protocols_xml_dir "$ENV{PKG_CONFIG_SYSROOT_DIR}/usr/share/wayland-protocols")
   set(_wayland_protocols_src_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/third_party/wayland/protocols")
+  file(MAKE_DIRECTORY "${_wayland_protocols_src_dir}")
 
   generate_wayland_client_protocol(
     PROTOCOL_FILE "${_wayland_protocols_xml_dir}/stable/xdg-shell/xdg-shell.xml"
@@ -77,19 +78,6 @@ else()
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc"
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc"
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc")
-endif()
-
-# desktop-shell for weston.
-if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  add_definitions(-DDESKTOP_SHELL)
-endif()
-
-# weston private protocols.
-if((${BACKEND_TYPE} STREQUAL "WAYLAND") AND DESKTOP_SHELL)
-  set(DISPLAY_BACKEND_SRC
-    ${DISPLAY_BACKEND_SRC}
-    "src/third_party/wayland/protocols/weston-desktop-shell-protocol.c"
-  )
 endif()
 
 # OpenGL ES version.

@@ -20,7 +20,6 @@
 namespace flutter {
 
 namespace {
-constexpr char kWestonDesktopShell[] = "weston_desktop_shell";
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
 
@@ -710,10 +709,6 @@ ELinuxWindowWayland::ELinuxWindowWayland(
     }
   }
 
-  if (weston_desktop_shell_) {
-    weston_desktop_shell_desktop_ready(weston_desktop_shell_);
-  }
-
   display_valid_ = true;
   running_ = true;
 }
@@ -721,11 +716,6 @@ ELinuxWindowWayland::ELinuxWindowWayland(
 ELinuxWindowWayland::~ELinuxWindowWayland() {
   display_valid_ = false;
   running_ = false;
-
-  if (weston_desktop_shell_) {
-    weston_desktop_shell_destroy(weston_desktop_shell_);
-    weston_desktop_shell_ = nullptr;
-  }
 
   if (wl_cursor_theme_) {
     wl_cursor_theme_destroy(wl_cursor_theme_);
@@ -1124,17 +1114,6 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
     wl_seat_add_listener(wl_seat_, &kWlSeatListener, this);
     return;
   }
-
-#ifdef DESKTOP_SHELL
-  if (!strcmp(interface, kWestonDesktopShell)) {
-    weston_desktop_shell_ =
-        static_cast<decltype(weston_desktop_shell_)>(wl_registry_bind(
-            wl_registry, name, &weston_desktop_shell_interface, 1));
-    return;
-  }
-#else
-  weston_desktop_shell_ = nullptr;
-#endif
 
   if (!strcmp(interface, wl_output_interface.name)) {
     wl_output_ = static_cast<decltype(wl_output_)>(
