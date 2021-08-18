@@ -11,7 +11,6 @@ project("flutter_elinux" LANGUAGES CXX C)
 
 # Build options.
 option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
-option(DESKTOP_SHELL "Work as weston desktop-shell" OFF)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)
 option(BUILD_ELINUX_SO "Build .so file of elinux embedder" OFF)
 option(ENABLE_ELINUX_EMBEDDER_LOG "Enable logger of eLinux embedder" ON)

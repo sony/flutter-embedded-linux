@@ -24,7 +24,6 @@ extern "C" {
 #include "wayland/protocols/presentation-time-protocol.h"
 #include "wayland/protocols/text-input-unstable-v1-client-protocol.h"
 #include "wayland/protocols/text-input-unstable-v3-client-protocol.h"
-#include "wayland/protocols/weston-desktop-shell-client-protocol.h"
 #include "wayland/protocols/xdg-shell-client-protocol.h"
 }
 
@@ -170,8 +169,6 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   wl_data_source* wl_data_source_;
   uint32_t wl_data_device_manager_version_;
   uint32_t serial_;
-
-  weston_desktop_shell* weston_desktop_shell_;
 };
 
 }  // namespace flutter

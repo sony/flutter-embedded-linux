@@ -28,13 +28,6 @@ else()
   pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client>=1.16.0)
   pkg_check_modules(WAYLAND_CURSOR REQUIRED wayland-cursor>=1.16.0)
   pkg_check_modules(WAYLAND_EGL REQUIRED wayland-egl>=1.16.0)
-
-  if(DESKTOP_SHELL)
-    pkg_check_modules(WESTON REQUIRED weston>=8.0.0)
-    string(REPLACE "." ";" WESTON_VERSION_LIST ${WESTON_VERSION})
-    list(GET WESTON_VERSION_LIST 0 WESTON_VERSION_MAJOR)
-    pkg_check_modules(LIBWESTON REQUIRED libweston-${WESTON_VERSION_MAJOR})
-  endif()
 endif()
 
 # requires for supporting external texture plugin.
