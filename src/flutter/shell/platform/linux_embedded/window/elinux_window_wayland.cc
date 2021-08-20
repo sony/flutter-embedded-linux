@@ -947,9 +947,12 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     auto* callback = wl_surface_frame(native_window_->Surface());
     wl_callback_add_listener(callback, &kWlSurfaceFrameListener, this);
 
-    wp_presentation_feedback_add_listener(
-        ::wp_presentation_feedback(wp_presentation_, native_window_->Surface()),
-        &kWpPresentationFeedbackListener, this);
+    if (wp_presentation_) {
+      wp_presentation_feedback_add_listener(
+          ::wp_presentation_feedback(wp_presentation_,
+                                     native_window_->Surface()),
+          &kWpPresentationFeedbackListener, this);
+    }
   }
 
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
