@@ -13,7 +13,7 @@
 #include <string>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/window/renderer/shader_program.h"
+#include "flutter/shell/platform/linux_embedded/window/renderer/elinux_shader_program.h"
 
 namespace flutter {
 
@@ -58,8 +58,9 @@ static const GlProcs& GlProcs() {
 
 }  // namespace
 
-ShaderProgram::ShaderProgram(std::unique_ptr<ShaderContext> vertex_shader,
-                             std::unique_ptr<ShaderContext> fragment_shader)
+ELinuxShaderProgram::ELinuxShaderProgram(
+    std::unique_ptr<ELinuxShaderContext> vertex_shader,
+    std::unique_ptr<ELinuxShaderContext> fragment_shader)
     : vertex_shader_(std::move(vertex_shader)),
       fragment_shader_(std::move(fragment_shader)),
       program_(0) {
@@ -91,7 +92,7 @@ ShaderProgram::ShaderProgram(std::unique_ptr<ShaderContext> vertex_shader,
   }
 }
 
-ShaderProgram::~ShaderProgram() {
+ELinuxShaderProgram::~ELinuxShaderProgram() {
   const auto& gl = GlProcs();
   if (!gl.valid) {
     return;

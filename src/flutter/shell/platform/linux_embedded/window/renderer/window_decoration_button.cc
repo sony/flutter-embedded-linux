@@ -211,7 +211,7 @@ void WindowDecorationButton::LoadShader() {
     return;
   }
 
-  shader_ = std::make_unique<Shader>();
+  shader_ = std::make_unique<ELinuxShader>();
   shader_->LoadProgram(kGlVertexShader, kGlFragmentShader);
 
   const auto& gl = GlProcs();

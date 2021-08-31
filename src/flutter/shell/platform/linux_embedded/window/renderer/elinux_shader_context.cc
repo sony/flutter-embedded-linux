@@ -13,7 +13,7 @@
 #include <string>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/window/renderer/shader_context.h"
+#include "flutter/shell/platform/linux_embedded/window/renderer/elinux_shader_context.h"
 
 namespace flutter {
 
@@ -58,7 +58,8 @@ static const GlProcs& GlProcs() {
 
 }  // namespace
 
-ShaderContext::ShaderContext(std::string code, GLenum type) : shader_(0) {
+ELinuxShaderContext::ELinuxShaderContext(std::string code, GLenum type)
+    : shader_(0) {
   const auto& gl = GlProcs();
   if (!gl.valid) {
     return;
@@ -87,7 +88,7 @@ ShaderContext::ShaderContext(std::string code, GLenum type) : shader_(0) {
   }
 }
 
-ShaderContext::~ShaderContext() {
+ELinuxShaderContext::~ELinuxShaderContext() {
   const auto& gl = GlProcs();
   if (!gl.valid) {
     return;

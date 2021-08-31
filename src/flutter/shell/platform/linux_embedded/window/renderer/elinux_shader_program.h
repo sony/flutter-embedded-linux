@@ -14,22 +14,22 @@
 #include <memory>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/window/renderer/shader_context.h"
+#include "flutter/shell/platform/linux_embedded/window/renderer/elinux_shader_context.h"
 
 namespace flutter {
 
-class ShaderProgram {
+class ELinuxShaderProgram {
  public:
-  ShaderProgram(std::unique_ptr<ShaderContext> vertex_shader,
-                std::unique_ptr<ShaderContext> fragment_shader);
-  ~ShaderProgram();
+  ELinuxShaderProgram(std::unique_ptr<ELinuxShaderContext> vertex_shader,
+                      std::unique_ptr<ELinuxShaderContext> fragment_shader);
+  ~ELinuxShaderProgram();
 
   GLuint Program() const { return program_; }
 
  private:
   GLuint program_;
-  std::unique_ptr<ShaderContext> vertex_shader_;
-  std::unique_ptr<ShaderContext> fragment_shader_;
+  std::unique_ptr<ELinuxShaderContext> vertex_shader_;
+  std::unique_ptr<ELinuxShaderContext> fragment_shader_;
 };
 
 }  // namespace flutter

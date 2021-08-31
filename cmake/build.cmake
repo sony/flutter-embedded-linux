@@ -72,9 +72,9 @@ else()
     "src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_wayland_decoration.cc"
-    "src/flutter/shell/platform/linux_embedded/window/renderer/shader.cc"
-    "src/flutter/shell/platform/linux_embedded/window/renderer/shader_context.cc"
-    "src/flutter/shell/platform/linux_embedded/window/renderer/shader_program.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/elinux_shader.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/elinux_shader_context.cc"
+    "src/flutter/shell/platform/linux_embedded/window/renderer/elinux_shader_program.cc"
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_button.cc"
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decoration_titlebar.cc"
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc")
