@@ -13,7 +13,7 @@
 #include <string>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
-#include "flutter/shell/platform/linux_embedded/window/renderer/shader.h"
+#include "flutter/shell/platform/linux_embedded/window/renderer/elinux_shader.h"
 
 namespace flutter {
 
@@ -41,15 +41,17 @@ static const GlProcs& GlProcs() {
 
 }  // namespace
 
-void Shader::LoadProgram(std::string vertex_code, std::string fragment_code) {
-  auto vertex = std::make_unique<ShaderContext>(vertex_code, GL_VERTEX_SHADER);
+void ELinuxShader::LoadProgram(std::string vertex_code,
+                               std::string fragment_code) {
+  auto vertex =
+      std::make_unique<ELinuxShaderContext>(vertex_code, GL_VERTEX_SHADER);
   auto fragment =
-      std::make_unique<ShaderContext>(fragment_code, GL_FRAGMENT_SHADER);
-  program_ =
-      std::make_unique<ShaderProgram>(std::move(vertex), std::move(fragment));
+      std::make_unique<ELinuxShaderContext>(fragment_code, GL_FRAGMENT_SHADER);
+  program_ = std::make_unique<ELinuxShaderProgram>(std::move(vertex),
+                                                   std::move(fragment));
 }
 
-void Shader::Bind() {
+void ELinuxShader::Bind() {
   const auto& gl = GlProcs();
   if (!gl.valid) {
     return;
@@ -57,7 +59,7 @@ void Shader::Bind() {
   gl.glUseProgram(program_->Program());
 }
 
-void Shader::Unbind() {
+void ELinuxShader::Unbind() {
   const auto& gl = GlProcs();
   if (!gl.valid) {
     return;

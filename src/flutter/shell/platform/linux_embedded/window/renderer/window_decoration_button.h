@@ -5,7 +5,7 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_RENDERER_WINDOW_DECORATION_BUTTON_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_RENDERER_WINDOW_DECORATION_BUTTON_H_
 
-#include "flutter/shell/platform/linux_embedded/window/renderer/shader.h"
+#include "flutter/shell/platform/linux_embedded/window/renderer/elinux_shader.h"
 #include "flutter/shell/platform/linux_embedded/window/renderer/window_decoration.h"
 
 namespace flutter {
@@ -29,7 +29,7 @@ class WindowDecorationButton : public WindowDecoration {
  private:
   void LoadShader();
 
-  std::unique_ptr<Shader> shader_;
+  std::unique_ptr<ELinuxShader> shader_;
 };
 
 }  // namespace flutter
