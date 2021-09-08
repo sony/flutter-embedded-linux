@@ -36,23 +36,23 @@ class WindowBindingHandlerDelegate {
   // Notifies delegate that backing window touch pointer has been pressed.
   // Typically called by currently configured WindowBindingHandler
   // @param[in]  time    Monotonically increasing timestamp in milliseconds.
-  // @param[in]  id      The unique ID of this touch point.
+  // @param[in]  id      The unique id of this touch point.
   // @param[in]  x       The Surface local x coordinate.
-  // @param[in]  y       The Surface local x coordinate.
+  // @param[in]  y       The Surface local y coordinate.
   virtual void OnTouchDown(uint32_t time, int32_t id, double x, double y) = 0;
 
   // Notifies delegate that backing window touch pointer has been released.
   // Typically called by currently configured WindowBindingHandler
   // @param[in]  time    Monotonically increasing timestamp in milliseconds.
-  // @param[in]  id      The unique ID of this touch point.
+  // @param[in]  id      The unique id of this touch point.
   virtual void OnTouchUp(uint32_t time, int32_t id) = 0;
 
   // Notifies delegate that backing window touch pointer has moved.
   // Typically called by currently configured WindowBindingHandler
   // @param[in]  time    Monotonically increasing timestamp in milliseconds.
-  // @param[in]  id      The unique ID of this touch point.
+  // @param[in]  id      The unique id of this touch point.
   // @param[in]  x       The Surface local x coordinate.
-  // @param[in]  y       The Surface local x coordinate.
+  // @param[in]  y       The Surface local y coordinate.
   virtual void OnTouchMotion(uint32_t time, int32_t id, double x, double y) = 0;
 
   // Notifies delegate that backing window touch pointer has been canceled.
