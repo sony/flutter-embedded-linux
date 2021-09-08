@@ -10,6 +10,10 @@
 
 namespace flutter {
 
+namespace {
+constexpr int kMicrosecondsPerMillisecond = 1000;
+}  // namespace
+
 FlutterELinuxView::FlutterELinuxView(
     std::unique_ptr<WindowBindingHandler> window_binding) {
   // Take the binding handler, and give it a pointer back to self.
@@ -106,12 +110,11 @@ void FlutterELinuxView::OnTouchDown(uint32_t time, int32_t id, double x,
   point->event_mask = TouchEvent::kDown;
   point->x = x;
   point->y = y;
-  touch_event_.time = time;
 
   FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = FlutterPointerPhase::kDown,
-      .timestamp = time,
+      .timestamp = time * kMicrosecondsPerMillisecond,
       .x = x,
       .y = y,
       .device = id,
@@ -134,7 +137,7 @@ void FlutterELinuxView::OnTouchUp(uint32_t time, int32_t id) {
   FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = FlutterPointerPhase::kUp,
-      .timestamp = time,
+      .timestamp = time * kMicrosecondsPerMillisecond,
       .x = point->x,
       .y = point->y,
       .device = id,
@@ -156,12 +159,11 @@ void FlutterELinuxView::OnTouchMotion(uint32_t time, int32_t id, double x,
   point->event_mask = TouchEvent::kMotion;
   point->x = x;
   point->y = y;
-  touch_event_.time = time;
 
   FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = FlutterPointerPhase::kMove,
-      .timestamp = time,
+      .timestamp = time * kMicrosecondsPerMillisecond,
       .x = x,
       .y = y,
       .device = id,
