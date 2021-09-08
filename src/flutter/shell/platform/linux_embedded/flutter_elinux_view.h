@@ -166,7 +166,6 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   };
 
   struct touch_event {
-    uint32_t time;
     touch_point points[10];
   };
 
