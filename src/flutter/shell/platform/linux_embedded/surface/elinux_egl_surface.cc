@@ -31,6 +31,15 @@ bool ELinuxEGLSurface::MakeCurrent() const {
                       << get_egl_error_cause();
     return false;
   }
+
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+  // Non-blocking when swappipping buffers on Wayland.
+  if (eglSwapInterval(display_, 0) != EGL_TRUE) {
+    ELINUX_LOG(ERROR) << "Failed to eglSwapInterval(Free): "
+                      << get_egl_error_cause();
+  }
+#endif
+
   return true;
 }
 
