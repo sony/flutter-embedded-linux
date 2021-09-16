@@ -63,6 +63,10 @@ const xdg_wm_base_listener ELinuxWindowWayland::kXdgWmBaseListener = {
 const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+          xdg_surface_set_window_geometry(xdg_surface, 0, 0,
+                                          self->view_properties_.width,
+                                          self->view_properties_.height);
           xdg_surface_ack_configure(xdg_surface, serial);
         },
 };
