@@ -310,7 +310,7 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
           } else {
             // Stores original window size.
             self->restore_window_width_ = self->view_properties_.width;
-            self->restore_window_height_ = self->view_properties_.width;
+            self->restore_window_height_ = self->view_properties_.height;
             self->restore_window_required_ = false;
 
             xdg_toplevel_set_maximized(self->xdg_toplevel_);
