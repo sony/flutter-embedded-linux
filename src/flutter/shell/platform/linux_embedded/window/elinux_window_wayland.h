@@ -122,7 +122,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   std::unique_ptr<WindowDecorationsWayland> window_decorations_;
   wl_surface* wl_current_surface_;
   wl_subcompositor* wl_subcompositor_;
-  bool    restore_window_required_ = false;
+  bool restore_window_required_ = false;
   int32_t restore_window_width_;
   int32_t restore_window_height_;
 
