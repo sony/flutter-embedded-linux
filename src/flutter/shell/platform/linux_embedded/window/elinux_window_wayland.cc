@@ -64,7 +64,15 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-          xdg_surface_set_window_geometry(xdg_surface, 0, 0,
+          constexpr int32_t x = 0;
+          int32_t y = 0;
+          if (self->view_properties_.use_window_decoration) {
+            // Moves the window to the bottom to show the window decorations,
+            // but the bottom area of the window will be hidden by the amount of
+            // shift.
+            y = -self->window_decorations_->Height();
+          }
+          xdg_surface_set_window_geometry(xdg_surface, x, y,
                                           self->view_properties_.width,
                                           self->view_properties_.height);
           xdg_surface_ack_configure(xdg_surface, serial);
