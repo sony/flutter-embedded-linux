@@ -114,4 +114,6 @@ void WindowDecorationsWayland::DestroyContext() {
   }
 }
 
+int32_t WindowDecorationsWayland::Height() const { return kTitleBarHeight; }
+
 }  // namespace flutter

@@ -39,6 +39,8 @@ class WindowDecorationsWayland {
   bool IsMatched(wl_surface* surface,
                  WindowDecoration::DecorationType decoration_type) const;
 
+  int32_t Height() const;
+
  private:
   void DestroyContext();
 

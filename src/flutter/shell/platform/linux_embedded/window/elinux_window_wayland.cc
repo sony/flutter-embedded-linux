@@ -64,7 +64,15 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-          xdg_surface_set_window_geometry(xdg_surface, 0, 0,
+          constexpr int32_t x = 0;
+          int32_t y = 0;
+          if (self->view_properties_.use_window_decoration) {
+            // TODO: Moves the window to the bottom to show the window
+            // decorations, but the bottom area of the window will be hidden
+            // because of this shifting.
+            y = -self->window_decorations_->Height();
+          }
+          xdg_surface_set_window_geometry(xdg_surface, x, y,
                                           self->view_properties_.width,
                                           self->view_properties_.height);
           xdg_surface_ack_configure(xdg_surface, serial);
@@ -75,18 +83,51 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
     .configure =
         [](void* data, xdg_toplevel* xdg_toplevel, int32_t width,
            int32_t height, wl_array* states) {
-          if (!width || !height) {
-            return;
+          auto is_maximized = false;
+          auto is_resizing = false;
+          uint32_t* state = static_cast<uint32_t*>(states->data);
+          for (auto i = 0; i < states->size; i++) {
+            switch (*state) {
+              case XDG_TOPLEVEL_STATE_MAXIMIZED:
+                is_maximized = true;
+                break;
+              case XDG_TOPLEVEL_STATE_RESIZING:
+                is_resizing = true;
+                break;
+              case XDG_TOPLEVEL_STATE_ACTIVATED:
+              case XDG_TOPLEVEL_STATE_FULLSCREEN:
+              default:
+                break;
+            }
+            state++;
           }
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-          self->view_properties_.width = width;
-          self->view_properties_.height = height;
+          int32_t next_width = 0;
+          int32_t next_height = 0;
+          if (is_maximized || is_resizing) {
+            next_width = width;
+            next_height = height;
+          } else if (self->restore_window_required_) {
+            self->restore_window_required_ = false;
+            next_width = self->restore_window_width_;
+            next_height = self->restore_window_height_;
+          }
+
+          if (!next_width || !next_height ||
+              (self->view_properties_.width == next_width &&
+               self->view_properties_.height == next_height)) {
+            return;
+          }
+
+          self->view_properties_.width = next_width;
+          self->view_properties_.height = next_height;
           if (self->window_decorations_) {
-            self->window_decorations_->Resize(width, height);
+            self->window_decorations_->Resize(next_width, next_height);
           }
           if (self->binding_handler_delegate_) {
-            self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
+            self->binding_handler_delegate_->OnWindowSizeChanged(next_width,
+                                                                 next_height);
           }
         },
     .close =
@@ -263,7 +304,15 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
                 WindowDecoration::DecorationType::MAXIMISE_BUTTON)) {
           if (self->maximised_) {
             xdg_toplevel_unset_maximized(self->xdg_toplevel_);
+
+            // Requests to return to the original window size before maximizing.
+            self->restore_window_required_ = true;
           } else {
+            // Stores original window size.
+            self->restore_window_width_ = self->view_properties_.width;
+            self->restore_window_height_ = self->view_properties_.height;
+            self->restore_window_required_ = false;
+
             xdg_toplevel_set_maximized(self->xdg_toplevel_);
           }
           self->maximised_ = !self->maximised_;
