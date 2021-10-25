@@ -7,6 +7,17 @@
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
 
+// The parameter interval specifies the minimum number of video frames 
+//  that are displayed before a buffer swap will occur
+// If interval is set to a value of 0, buffer swaps are not synchronized 
+//   to a video frame, and the swap happens as soon as all rendering 
+//   commands outstanding for the current context are complete.
+#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+#ifndef BUF_NUM_SWAP_INTERVAL
+#define BUF_NUM_SWAP_INTERVAL 0
+#endif
+#endif
+
 namespace flutter {
 
 ELinuxEGLSurface::ELinuxEGLSurface(EGLSurface surface, EGLDisplay display,
@@ -34,7 +45,7 @@ bool ELinuxEGLSurface::MakeCurrent() const {
 
 #if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   // Non-blocking when swappipping buffers on Wayland.
-  if (eglSwapInterval(display_, 0) != EGL_TRUE) {
+  if (eglSwapInterval(display_, BUF_NUM_SWAP_INTERVAL) != EGL_TRUE) {
     ELINUX_LOG(ERROR) << "Failed to eglSwapInterval(Free): "
                       << get_egl_error_cause();
   }
