@@ -21,8 +21,8 @@ jobs:
 
     - name: Verify formatting
       run: |
-        find src/flutter/shell/platform/linux_embedded/ -iname *.h -o -iname *.cc | xargs clang-format --dry-run
-        find src/client_wrapper -iname *.h -o -iname *.cc | xargs clang-format --dry-run
+        find src/flutter/shell/platform/linux_embedded/ -iname *.h -o -iname *.cc | xargs clang-format --dry-run --Werror
+        find src/client_wrapper -iname *.h -o -iname *.cc | xargs clang-format --dry-run --Werror
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
