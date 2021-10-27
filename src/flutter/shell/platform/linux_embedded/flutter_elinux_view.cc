@@ -82,7 +82,9 @@ void FlutterELinuxView::OnPointerMove(double x, double y) {
 }
 
 void FlutterELinuxView::OnPointerDown(
-    double x, double y, FlutterPointerMouseButtons flutter_button) {
+    double x,
+    double y,
+    FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons | flutter_button;
     SetMouseButtons(mouse_buttons);
@@ -90,7 +92,8 @@ void FlutterELinuxView::OnPointerDown(
   }
 }
 
-void FlutterELinuxView::OnPointerUp(double x, double y,
+void FlutterELinuxView::OnPointerUp(double x,
+                                    double y,
                                     FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons & ~flutter_button;
@@ -99,9 +102,13 @@ void FlutterELinuxView::OnPointerUp(double x, double y,
   }
 }
 
-void FlutterELinuxView::OnPointerLeave() { SendPointerLeave(); }
+void FlutterELinuxView::OnPointerLeave() {
+  SendPointerLeave();
+}
 
-void FlutterELinuxView::OnTouchDown(uint32_t time, int32_t id, double x,
+void FlutterELinuxView::OnTouchDown(uint32_t time,
+                                    int32_t id,
+                                    double x,
                                     double y) {
   auto* point = GgeTouchPoint(id);
   if (!point) {
@@ -150,7 +157,9 @@ void FlutterELinuxView::OnTouchUp(uint32_t time, int32_t id) {
   engine_->SendPointerEvent(event);
 }
 
-void FlutterELinuxView::OnTouchMotion(uint32_t time, int32_t id, double x,
+void FlutterELinuxView::OnTouchMotion(uint32_t time,
+                                      int32_t id,
+                                      double x,
                                       double y) {
   auto* point = GgeTouchPoint(id);
   if (!point) {
@@ -194,7 +203,8 @@ void FlutterELinuxView::OnKey(uint32_t key, bool pressed) {
 
 void FlutterELinuxView::OnKeyModifiers(uint32_t mods_depressed,
                                        uint32_t mods_latched,
-                                       uint32_t mods_locked, uint32_t group) {
+                                       uint32_t mods_locked,
+                                       uint32_t group) {
   keyboard_handler_->OnModifiers(mods_depressed, mods_latched, mods_locked,
                                  group);
 }
@@ -210,8 +220,11 @@ void FlutterELinuxView::OnVirtualSpecialKey(uint32_t keycode) {
   textinput_handler_->OnKeyPressed(keycode, code_point);
 }
 
-void FlutterELinuxView::OnScroll(double x, double y, double delta_x,
-                                 double delta_y, int scroll_offset_multiplier) {
+void FlutterELinuxView::OnScroll(double x,
+                                 double y,
+                                 double delta_x,
+                                 double delta_y,
+                                 int scroll_offset_multiplier) {
   SendScroll(x, y, delta_x, delta_y, scroll_offset_multiplier);
 }
 
@@ -240,7 +253,8 @@ FlutterELinuxView::touch_point* FlutterELinuxView::GgeTouchPoint(int32_t id) {
 }
 
 // Sends new size  information to FlutterEngine.
-void FlutterELinuxView::SendWindowMetrics(size_t width, size_t height,
+void FlutterELinuxView::SendWindowMetrics(size_t width,
+                                          size_t height,
                                           double dpiScale) const {
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
@@ -304,7 +318,9 @@ void FlutterELinuxView::SendPointerLeave() {
   SendPointerEventWithData(event);
 }
 
-void FlutterELinuxView::SendScroll(double x, double y, double delta_x,
+void FlutterELinuxView::SendScroll(double x,
+                                   double y,
+                                   double delta_x,
                                    double delta_y,
                                    int scroll_offset_multiplier) {
   FlutterPointerEvent event = {};
@@ -395,7 +411,9 @@ ELinuxRenderSurfaceTarget* FlutterELinuxView::GetRenderSurfaceTarget() const {
   return binding_handler_->GetRenderSurfaceTarget();
 }
 
-FlutterELinuxEngine* FlutterELinuxView::GetEngine() { return engine_.get(); }
+FlutterELinuxEngine* FlutterELinuxView::GetEngine() {
+  return engine_.get();
+}
 
 int32_t FlutterELinuxView::GetFrameRate() {
   return binding_handler_->GetFrameRate();

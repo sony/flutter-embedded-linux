@@ -160,7 +160,8 @@ void FlutterDesktopEngineReloadSystemFonts(FlutterDesktopEngineRef engine) {
 }
 
 FlutterDesktopPluginRegistrarRef FlutterDesktopEngineGetPluginRegistrar(
-    FlutterDesktopEngineRef engine, const char* plugin_name) {
+    FlutterDesktopEngineRef engine,
+    const char* plugin_name) {
   // Currently, one registrar acts as the registrar for all plugins, so the
   // name is ignored. It is part of the API to reduce churn in the future when
   // aligning more closely with the Flutter registrar system.
@@ -208,7 +209,8 @@ bool FlutterDesktopMessengerSendWithReply(FlutterDesktopMessengerRef messenger,
 }
 
 bool FlutterDesktopMessengerSend(FlutterDesktopMessengerRef messenger,
-                                 const char* channel, const uint8_t* message,
+                                 const char* channel,
+                                 const uint8_t* message,
                                  const size_t message_size) {
   return FlutterDesktopMessengerSendWithReply(messenger, channel, message,
                                               message_size, nullptr, nullptr);
@@ -216,7 +218,8 @@ bool FlutterDesktopMessengerSend(FlutterDesktopMessengerRef messenger,
 
 void FlutterDesktopMessengerSendResponse(
     FlutterDesktopMessengerRef messenger,
-    const FlutterDesktopMessageResponseHandle* handle, const uint8_t* data,
+    const FlutterDesktopMessageResponseHandle* handle,
+    const uint8_t* data,
     size_t data_length) {
   messenger->engine->SendPlatformMessageResponse(handle, data, data_length);
 }
@@ -242,19 +245,22 @@ int64_t FlutterDesktopTextureRegistrarRegisterExternalTexture(
 }
 
 bool FlutterDesktopTextureRegistrarUnregisterExternalTexture(
-    FlutterDesktopTextureRegistrarRef texture_registrar, int64_t texture_id) {
+    FlutterDesktopTextureRegistrarRef texture_registrar,
+    int64_t texture_id) {
   return TextureRegistrarFromHandle(texture_registrar)
       ->UnregisterTexture(texture_id);
 }
 
 bool FlutterDesktopTextureRegistrarMarkExternalTextureFrameAvailable(
-    FlutterDesktopTextureRegistrarRef texture_registrar, int64_t texture_id) {
+    FlutterDesktopTextureRegistrarRef texture_registrar,
+    int64_t texture_id) {
   return TextureRegistrarFromHandle(texture_registrar)
       ->MarkTextureFrameAvailable(texture_id);
 }
 
 void FlutterDesktopRegisterPlatformViewFactory(
-    FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
+    FlutterDesktopPluginRegistrarRef registrar,
+    const char* view_type,
     std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory) {
   registrar->engine->view()->RegisterPlatformViewFactory(
       view_type, std::move(view_factory));
