@@ -16,7 +16,11 @@ jobs:
     - name: Install libraries
       run: |
         sudo apt update
+        sudo apt install clang-format
         sudo apt install libgles2-mesa-dev libegl1-mesa-dev libxkbcommon-dev libwayland-dev libdrm-dev libgbm-dev libinput-dev libudev-dev libsystemd-dev wayland-protocols libx11-dev
+
+    - name: Verify formatting
+      run: clang-format --dry-run -i src/flutter/shell/platform/linux_embedded/*
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build
