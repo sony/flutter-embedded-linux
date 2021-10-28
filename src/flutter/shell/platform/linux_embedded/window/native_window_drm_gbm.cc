@@ -92,7 +92,8 @@ bool NativeWindowDrmGbm::ShowCursor(double x, double y) {
   return true;
 }
 
-bool NativeWindowDrmGbm::UpdateCursor(const std::string& cursor_name, double x,
+bool NativeWindowDrmGbm::UpdateCursor(const std::string& cursor_name,
+                                      double x,
                                       double y) {
   if (cursor_name.compare(cursor_name_) == 0) {
     return true;

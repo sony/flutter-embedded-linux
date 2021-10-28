@@ -105,7 +105,9 @@ std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
                                             resource_context_);
 }
 
-bool ContextEgl::IsValid() const { return valid_; }
+bool ContextEgl::IsValid() const {
+  return valid_;
+}
 
 bool ContextEgl::ClearCurrent() const {
   if (eglGetCurrentContext() != context_) {

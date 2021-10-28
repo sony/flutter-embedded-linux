@@ -18,8 +18,11 @@ constexpr uint kButtonMargin = 10;
 }  // namespace
 
 WindowDecorationsWayland::WindowDecorationsWayland(
-    wl_display* display, wl_compositor* compositor,
-    wl_subcompositor* subcompositor, wl_surface* root_surface, int32_t width,
+    wl_display* display,
+    wl_compositor* compositor,
+    wl_subcompositor* subcompositor,
+    wl_surface* root_surface,
+    int32_t width,
     int32_t height) {
   constexpr bool sub_egl_display = true;
 
@@ -114,6 +117,8 @@ void WindowDecorationsWayland::DestroyContext() {
   }
 }
 
-int32_t WindowDecorationsWayland::Height() const { return kTitleBarHeight; }
+int32_t WindowDecorationsWayland::Height() const {
+  return kTitleBarHeight;
+}
 
 }  // namespace flutter

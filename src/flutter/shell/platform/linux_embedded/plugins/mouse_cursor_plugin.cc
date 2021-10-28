@@ -31,7 +31,9 @@ constexpr char kKindKey[] = "kind";
 MouseCursorPlugin::MouseCursorPlugin(BinaryMessenger* messenger,
                                      WindowBindingHandler* delegate)
     : channel_(std::make_unique<MethodChannel<EncodableValue>>(
-          messenger, kChannelName, &StandardMethodCodec::GetInstance())),
+          messenger,
+          kChannelName,
+          &StandardMethodCodec::GetInstance())),
       delegate_(delegate) {
   channel_->SetMethodCallHandler(
       [this](const MethodCall<EncodableValue>& call,

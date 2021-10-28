@@ -84,14 +84,16 @@ class FlutterELinuxEngine {
 
   // Sends the given message to the engine, calling |reply| with |user_data|
   // when a reponse is received from the engine if they are non-null.
-  bool SendPlatformMessage(const char* channel, const uint8_t* message,
+  bool SendPlatformMessage(const char* channel,
+                           const uint8_t* message,
                            const size_t message_size,
                            const FlutterDesktopBinaryReply reply,
                            void* user_data);
 
   // Sends the given data as the response to an earlier platform message.
   void SendPlatformMessageResponse(
-      const FlutterDesktopMessageResponseHandle* handle, const uint8_t* data,
+      const FlutterDesktopMessageResponseHandle* handle,
+      const uint8_t* data,
       size_t data_length);
 
   // Callback passed to Flutter engine for notifying window of platform

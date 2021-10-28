@@ -194,8 +194,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
  protected:
   static constexpr libinput_interface kLibinputInterface = {
-      .open_restricted = [](const char* path, int flags,
-                            void* user_data) -> int {
+      .open_restricted =
+          [](const char* path, int flags, void* user_data) -> int {
         auto ret = open(path, flags | O_CLOEXEC);
         if (ret == -1) {
           ELINUX_LOG(ERROR)
@@ -275,7 +275,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     return true;
   }
 
-  static int OnUdevDrmEvent(sd_event_source* source, int fd, uint32_t revents,
+  static int OnUdevDrmEvent(sd_event_source* source,
+                            int fd,
+                            uint32_t revents,
                             void* data) {
     auto self = reinterpret_cast<ELinuxWindowDrm*>(data);
     auto device = udev_monitor_receive_device(self->udev_monitor_);
@@ -326,7 +328,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     return std::strcmp(value, kPropertyOn) == 0;
   }
 
-  static int OnLibinputEvent(sd_event_source* source, int fd, uint32_t revents,
+  static int OnLibinputEvent(sd_event_source* source,
+                             int fd,
+                             uint32_t revents,
                              void* data) {
     auto self = reinterpret_cast<ELinuxWindowDrm*>(data);
     auto ret = libinput_dispatch(self->libinput_);

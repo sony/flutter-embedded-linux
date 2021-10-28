@@ -70,7 +70,8 @@ bool NativeWindowDrmEglstream::ShowCursor(double x, double y) {
 }
 
 bool NativeWindowDrmEglstream::UpdateCursor(const std::string& cursor_name,
-                                            double x, double y) {
+                                            double x,
+                                            double y) {
   if (cursor_name.compare(cursor_name_) == 0) {
     return true;
   }
@@ -162,7 +163,8 @@ uint32_t NativeWindowDrmEglstream::FindPrimaryPlaneId(
   return -1;
 }
 
-uint64_t NativeWindowDrmEglstream::GetPropertyValue(uint32_t id, uint32_t type,
+uint64_t NativeWindowDrmEglstream::GetPropertyValue(uint32_t id,
+                                                    uint32_t type,
                                                     const char* prop_name) {
   uint64_t value = -1;
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
@@ -233,7 +235,9 @@ bool NativeWindowDrmEglstream::AssignAtomicRequest(drmModeAtomicReqPtr atomic) {
 
 template <size_t N>
 bool NativeWindowDrmEglstream::AssignAtomicPropertyValue(
-    drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
+    drmModeAtomicReqPtr atomic,
+    uint32_t id,
+    uint32_t type,
     NativeWindowDrmEglstream::DrmProperty (&table)[N]) {
   auto properties = drmModeObjectGetProperties(drm_device_, id, type);
   if (properties) {

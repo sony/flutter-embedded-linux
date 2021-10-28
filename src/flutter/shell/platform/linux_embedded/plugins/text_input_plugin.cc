@@ -98,7 +98,9 @@ void TextInputPlugin::OnKeyPressed(uint32_t keycode, uint32_t code_point) {
 TextInputPlugin::TextInputPlugin(BinaryMessenger* messenger,
                                  WindowBindingHandler* delegate)
     : channel_(std::make_unique<flutter::MethodChannel<rapidjson::Document>>(
-          messenger, kChannelName, &flutter::JsonMethodCodec::GetInstance())),
+          messenger,
+          kChannelName,
+          &flutter::JsonMethodCodec::GetInstance())),
       delegate_(delegate),
       active_model_(nullptr) {
   channel_->SetMethodCallHandler(

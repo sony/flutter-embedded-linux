@@ -32,7 +32,8 @@ constexpr char kParamsKey[] = "params";
 PlatformViewsPlugin::PlatformViewsPlugin(BinaryMessenger* messenger)
     : channel_(
           std::make_unique<flutter::MethodChannel<flutter::EncodableValue>>(
-              messenger, kChannelName,
+              messenger,
+              kChannelName,
               &flutter::StandardMethodCodec::GetInstance())),
       current_view_id_(-1) {
   channel_->SetMethodCallHandler(

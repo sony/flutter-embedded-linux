@@ -139,7 +139,9 @@ FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
   vsync_waiter_ = std::make_unique<VsyncWaiter>();
 }
 
-FlutterELinuxEngine::~FlutterELinuxEngine() { Stop(); }
+FlutterELinuxEngine::~FlutterELinuxEngine() {
+  Stop();
+}
 
 bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
   if (!project_->HasValidPaths()) {
@@ -263,7 +265,9 @@ bool FlutterELinuxEngine::Stop() {
   return false;
 }
 
-void FlutterELinuxEngine::SetView(FlutterELinuxView* view) { view_ = view; }
+void FlutterELinuxEngine::SetView(FlutterELinuxView* view) {
+  view_ = view;
+}
 
 // Returns the currently configured Plugin Registrar.
 FlutterDesktopPluginRegistrarRef FlutterELinuxEngine::GetRegistrar() {
@@ -289,8 +293,11 @@ void FlutterELinuxEngine::SendPointerEvent(const FlutterPointerEvent& event) {
 }
 
 bool FlutterELinuxEngine::SendPlatformMessage(
-    const char* channel, const uint8_t* message, const size_t message_size,
-    const FlutterDesktopBinaryReply reply, void* user_data) {
+    const char* channel,
+    const uint8_t* message,
+    const size_t message_size,
+    const FlutterDesktopBinaryReply reply,
+    void* user_data) {
   FlutterPlatformMessageResponseHandle* response_handle = nullptr;
   if (reply != nullptr && user_data != nullptr) {
     FlutterEngineResult result =
@@ -320,7 +327,8 @@ bool FlutterELinuxEngine::SendPlatformMessage(
 }
 
 void FlutterELinuxEngine::SendPlatformMessageResponse(
-    const FlutterDesktopMessageResponseHandle* handle, const uint8_t* data,
+    const FlutterDesktopMessageResponseHandle* handle,
+    const uint8_t* data,
     size_t data_length) {
   embedder_api_.SendPlatformMessageResponse(engine_, handle, data, data_length);
 }

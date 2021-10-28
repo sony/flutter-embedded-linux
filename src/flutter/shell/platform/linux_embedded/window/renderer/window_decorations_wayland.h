@@ -26,9 +26,11 @@ namespace flutter {
 
 class WindowDecorationsWayland {
  public:
-  WindowDecorationsWayland(wl_display* display, wl_compositor* compositor,
+  WindowDecorationsWayland(wl_display* display,
+                           wl_compositor* compositor,
                            wl_subcompositor* subcompositor,
-                           wl_surface* root_surface, int32_t width,
+                           wl_surface* root_surface,
+                           int32_t width,
                            int32_t height);
   ~WindowDecorationsWayland();
 

@@ -21,12 +21,14 @@ class WindowBindingHandlerDelegate {
 
   // Notifies delegate that backing window mouse pointer button has been
   // pressed. Typically called by currently configured WindowBindingHandler
-  virtual void OnPointerDown(double x, double y,
+  virtual void OnPointerDown(double x,
+                             double y,
                              FlutterPointerMouseButtons button) = 0;
 
   // Notifies delegate that backing window mouse pointer button has been
   // released. Typically called by currently configured WindowBindingHandler
-  virtual void OnPointerUp(double x, double y,
+  virtual void OnPointerUp(double x,
+                           double y,
                            FlutterPointerMouseButtons button) = 0;
 
   // Notifies delegate that backing window mouse pointer has left the window.
@@ -65,8 +67,10 @@ class WindowBindingHandlerDelegate {
 
   // Notifies delegate that backing window key has been modifired.
   // Typically called by currently configured WindowBindingHandler
-  virtual void OnKeyModifiers(uint32_t mods_depressed, uint32_t mods_latched,
-                              uint32_t mods_locked, uint32_t group) = 0;
+  virtual void OnKeyModifiers(uint32_t mods_depressed,
+                              uint32_t mods_latched,
+                              uint32_t mods_locked,
+                              uint32_t group) = 0;
 
   // Notifies delegate that backing window key has been pressed.
   // Typically called by currently configured WindowBindingHandler
@@ -82,7 +86,10 @@ class WindowBindingHandlerDelegate {
 
   // Notifies delegate that backing window size has recevied scroll.
   // Typically called by currently configured WindowBindingHandler
-  virtual void OnScroll(double x, double y, double delta_x, double delta_y,
+  virtual void OnScroll(double x,
+                        double y,
+                        double delta_x,
+                        double delta_y,
                         int scroll_offset_multiplier) = 0;
 
   // Notifies delegate that backing window vsync has happened.

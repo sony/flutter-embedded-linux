@@ -24,7 +24,8 @@ class NativeWindowDrmGbm : public NativeWindowDrm {
   bool ShowCursor(double x, double y) override;
 
   // |NativeWindowDrm|
-  bool UpdateCursor(const std::string& cursor_name, double x,
+  bool UpdateCursor(const std::string& cursor_name,
+                    double x,
                     double y) override;
 
   // |NativeWindowDrm|

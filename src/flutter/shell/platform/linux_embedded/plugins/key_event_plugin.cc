@@ -41,7 +41,9 @@ constexpr char kXkboptionsKey[] = "XKBOPTIONS";
 
 KeyeventPlugin::KeyeventPlugin(BinaryMessenger* messenger)
     : channel_(std::make_unique<BasicMessageChannel<rapidjson::Document>>(
-          messenger, kChannelName, &flutter::JsonMessageCodec::GetInstance())),
+          messenger,
+          kChannelName,
+          &flutter::JsonMessageCodec::GetInstance())),
       xkb_context_(xkb_context_new(XKB_CONTEXT_NO_FLAGS)) {
 #if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
   xkb_keymap_ = nullptr;
@@ -105,16 +107,20 @@ void KeyeventPlugin::OnKey(uint32_t keycode, bool pressed) {
   SendKeyEvent(keyscancode, unicode, mods, pressed);
 }
 
-void KeyeventPlugin::OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
-                                 uint32_t mods_locked, uint32_t group) {
+void KeyeventPlugin::OnModifiers(uint32_t mods_depressed,
+                                 uint32_t mods_latched,
+                                 uint32_t mods_locked,
+                                 uint32_t group) {
   xkb_state_update_mask(xkb_state_, mods_depressed, mods_latched, mods_locked,
                         0, 0, group);
   xkb_mods_mask_ =
       xkb_state_serialize_mods(xkb_state_, XKB_STATE_MODS_EFFECTIVE);
 }
 
-void KeyeventPlugin::SendKeyEvent(uint32_t keycode, uint32_t unicode,
-                                  uint32_t modifiers, bool pressed) {
+void KeyeventPlugin::SendKeyEvent(uint32_t keycode,
+                                  uint32_t unicode,
+                                  uint32_t modifiers,
+                                  bool pressed) {
   rapidjson::Document event(rapidjson::kObjectType);
   auto& allocator = event.GetAllocator();
   event.AddMember(kKeyCodeKey, keycode, allocator);

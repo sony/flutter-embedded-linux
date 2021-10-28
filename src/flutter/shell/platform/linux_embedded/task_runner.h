@@ -26,7 +26,8 @@ class TaskRunner {
   using TaskExpiredCallback = std::function<void(const FlutterTask*)>;
   using TaskClosure = std::function<void()>;
 
-  TaskRunner(std::thread::id main_thread_id, CurrentTimeProc get_current_time,
+  TaskRunner(std::thread::id main_thread_id,
+             CurrentTimeProc get_current_time,
              const TaskExpiredCallback& on_task_expired);
   ~TaskRunner() = default;
 

@@ -13,7 +13,8 @@ namespace flutter {
 
 class NativeWindowWayland : public NativeWindow {
  public:
-  NativeWindowWayland(wl_compositor* compositor, const size_t width,
+  NativeWindowWayland(wl_compositor* compositor,
+                      const size_t width,
                       const size_t height);
   ~NativeWindowWayland();
 

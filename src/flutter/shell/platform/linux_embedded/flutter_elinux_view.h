@@ -85,11 +85,13 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void OnPointerMove(double x, double y) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnPointerDown(double x, double y,
+  void OnPointerDown(double x,
+                     double y,
                      FlutterPointerMouseButtons button) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnPointerUp(double x, double y,
+  void OnPointerUp(double x,
+                   double y,
                    FlutterPointerMouseButtons button) override;
 
   // |WindowBindingHandlerDelegate|
@@ -111,8 +113,10 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void OnKeyMap(uint32_t format, int fd, uint32_t size) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnKeyModifiers(uint32_t mods_depressed, uint32_t mods_latched,
-                      uint32_t mods_locked, uint32_t group) override;
+  void OnKeyModifiers(uint32_t mods_depressed,
+                      uint32_t mods_latched,
+                      uint32_t mods_locked,
+                      uint32_t group) override;
 
   // |WindowBindingHandlerDelegate|
   void OnKey(uint32_t key, bool pressed) override;
@@ -124,7 +128,10 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void OnVirtualSpecialKey(uint32_t keycode) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnScroll(double x, double y, double delta_x, double delta_y,
+  void OnScroll(double x,
+                double y,
+                double delta_x,
+                double delta_y,
                 int scroll_offset_multiplier) override;
 
   // |WindowBindingHandlerDelegate|
@@ -193,7 +200,10 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void SendPointerLeave();
 
   // Reports scroll wheel events to Flutter engine.
-  void SendScroll(double x, double y, double delta_x, double delta_y,
+  void SendScroll(double x,
+                  double y,
+                  double delta_x,
+                  double delta_y,
                   int scroll_offset_multiplier);
 
   // Sets |event_data|'s phase to either kMove or kHover depending on the

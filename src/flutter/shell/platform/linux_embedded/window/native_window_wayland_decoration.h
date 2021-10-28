@@ -16,7 +16,8 @@ class NativeWindowWaylandDecoration : public NativeWindow {
  public:
   NativeWindowWaylandDecoration(wl_compositor* compositor,
                                 wl_subcompositor* subcompositor,
-                                wl_surface* parent_surface, const size_t width,
+                                wl_surface* parent_surface,
+                                const size_t width,
                                 const size_t height);
   ~NativeWindowWaylandDecoration();
 

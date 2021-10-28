@@ -12,7 +12,9 @@ SurfaceDecoration::SurfaceDecoration(std::unique_ptr<ContextEgl> context) {
   context_ = std::move(context);
 }
 
-bool SurfaceDecoration::IsValid() const { return context_->IsValid(); };
+bool SurfaceDecoration::IsValid() const {
+  return context_->IsValid();
+};
 
 bool SurfaceDecoration::SetNativeWindow(NativeWindow* window) {
   native_window_ = window;
@@ -60,7 +62,9 @@ bool SurfaceDecoration::GLContextPresent(uint32_t fbo_id) const {
   return surface_->SwapBuffers();
 }
 
-uint32_t SurfaceDecoration::GLContextFBO() const { return 0; }
+uint32_t SurfaceDecoration::GLContextFBO() const {
+  return 0;
+}
 
 void* SurfaceDecoration::GlProcResolver(const char* name) const {
   return context_->GlProcResolver(name);

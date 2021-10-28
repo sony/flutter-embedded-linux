@@ -5,8 +5,8 @@
 #include "flutter/shell/platform/linux_embedded/task_runner.h"
 
 #include <atomic>
-#include <utility>
 #include <iostream>
+#include <utility>
 
 namespace flutter {
 
@@ -22,7 +22,7 @@ bool TaskRunner::RunsTasksOnCurrentThread() const {
 }
 
 void TaskRunner::PostFlutterTask(FlutterTask flutter_task,
-                                      uint64_t flutter_target_time_nanos) {
+                                 uint64_t flutter_target_time_nanos) {
   Task task;
   task.fire_time = TimePointFromFlutterTime(flutter_target_time_nanos);
   task.variant = flutter_task;

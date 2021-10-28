@@ -10,7 +10,8 @@
 namespace flutter {
 
 FlutterViewController::FlutterViewController(
-    const ViewProperties& view_properties, const DartProject& project) {
+    const ViewProperties& view_properties,
+    const DartProject& project) {
   engine_ = std::make_unique<FlutterEngine>(project);
 
   FlutterDesktopViewProperties c_view_properties = {};

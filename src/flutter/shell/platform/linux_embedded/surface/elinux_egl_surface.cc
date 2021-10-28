@@ -9,7 +9,8 @@
 
 namespace flutter {
 
-ELinuxEGLSurface::ELinuxEGLSurface(EGLSurface surface, EGLDisplay display,
+ELinuxEGLSurface::ELinuxEGLSurface(EGLSurface surface,
+                                   EGLDisplay display,
                                    EGLContext context)
     : surface_(surface), display_(display), context_(context){};
 
@@ -23,7 +24,9 @@ ELinuxEGLSurface::~ELinuxEGLSurface() {
   }
 }
 
-bool ELinuxEGLSurface::IsValid() const { return surface_ != EGL_NO_SURFACE; }
+bool ELinuxEGLSurface::IsValid() const {
+  return surface_ != EGL_NO_SURFACE;
+}
 
 bool ELinuxEGLSurface::MakeCurrent() const {
   if (eglMakeCurrent(display_, surface_, surface_, context_) != EGL_TRUE) {
