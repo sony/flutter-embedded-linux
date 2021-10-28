@@ -23,7 +23,8 @@ class NativeWindowDrmEglstream : public NativeWindowDrm {
   bool ShowCursor(double x, double y) override;
 
   // |NativeWindowDrm|
-  bool UpdateCursor(const std::string& cursor_name, double x,
+  bool UpdateCursor(const std::string& cursor_name,
+                    double x,
                     double y) override;
 
   // |NativeWindowDrm|
@@ -55,7 +56,9 @@ class NativeWindowDrmEglstream : public NativeWindowDrm {
 
   template <size_t N>
   bool AssignAtomicPropertyValue(
-      drmModeAtomicReqPtr atomic, uint32_t id, uint32_t type,
+      drmModeAtomicReqPtr atomic,
+      uint32_t id,
+      uint32_t type,
       NativeWindowDrmEglstream::DrmProperty (&table)[N]);
 
   uint32_t drm_plane_id_;

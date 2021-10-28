@@ -26,7 +26,9 @@ bool SurfaceGl::GLContextPresent(uint32_t fbo_id) const {
   return true;
 }
 
-uint32_t SurfaceGl::GLContextFBO() const { return 0; }
+uint32_t SurfaceGl::GLContextFBO() const {
+  return 0;
+}
 
 void* SurfaceGl::GlProcResolver(const char* name) const {
   return context_->GlProcResolver(name);

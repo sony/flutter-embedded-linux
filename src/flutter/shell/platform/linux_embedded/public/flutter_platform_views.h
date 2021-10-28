@@ -53,7 +53,9 @@ class FlutterDesktopPlatformViewFactory {
   flutter::PluginRegistrar* GetPluginRegistrar() const { return registrar_; }
 
   virtual FlutterDesktopPlatformView* Create(
-      int view_id, double width, double height,
+      int view_id,
+      double width,
+      double height,
       const std::vector<uint8_t>& params) = 0;
 
   virtual void Dispose() = 0;
@@ -67,7 +69,8 @@ extern "C" {
 #endif
 
 void FlutterDesktopRegisterPlatformViewFactory(
-    FlutterDesktopPluginRegistrarRef registrar, const char* view_type,
+    FlutterDesktopPluginRegistrarRef registrar,
+    const char* view_type,
     std::unique_ptr<FlutterDesktopPlatformViewFactory> view_factory);
 
 #if defined(__cplusplus)

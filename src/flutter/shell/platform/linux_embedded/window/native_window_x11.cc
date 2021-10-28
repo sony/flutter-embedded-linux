@@ -19,8 +19,10 @@ static constexpr char kWmDeleteWindow[] = "WM_DELETE_WINDOW";
 static constexpr char kWindowTitle[] = "Flutter for Embedded Linux";
 }  // namespace
 
-NativeWindowX11::NativeWindowX11(Display* display, VisualID visual_id,
-                                 const size_t width, const size_t height) {
+NativeWindowX11::NativeWindowX11(Display* display,
+                                 VisualID visual_id,
+                                 const size_t width,
+                                 const size_t height) {
   XVisualInfo visualTemplate;
   visualTemplate.visualid = visual_id;
 

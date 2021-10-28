@@ -9,8 +9,11 @@
 namespace flutter {
 
 NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
-    wl_compositor* compositor, wl_subcompositor* subcompositor,
-    wl_surface* parent_surface, const size_t width, const size_t height) {
+    wl_compositor* compositor,
+    wl_subcompositor* subcompositor,
+    wl_surface* parent_surface,
+    const size_t width,
+    const size_t height) {
   surface_ = wl_compositor_create_surface(compositor);
   if (!surface_) {
     ELINUX_LOG(ERROR) << "Failed to create the compositor surface.";

@@ -25,15 +25,19 @@ class KeyeventPlugin {
 
   void OnKey(uint32_t keycode, bool pressed);
 
-  void OnModifiers(uint32_t mods_depressed, uint32_t mods_latched,
-                   uint32_t mods_locked, uint32_t group);
+  void OnModifiers(uint32_t mods_depressed,
+                   uint32_t mods_latched,
+                   uint32_t mods_locked,
+                   uint32_t group);
 
   uint32_t GetCodePoint(uint32_t keycode);
 
   bool IsTextInputSuppressed(uint32_t code_point);
 
  private:
-  void SendKeyEvent(uint32_t keycode, uint32_t unicode, uint32_t modifiers,
+  void SendKeyEvent(uint32_t keycode,
+                    uint32_t unicode,
+                    uint32_t modifiers,
                     bool pressed);
   void OnModifiers(uint32_t keycode, bool pressed);
   xkb_keymap* CreateKeymap(xkb_context* context);

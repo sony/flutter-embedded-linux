@@ -60,7 +60,9 @@ class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
 
  private:
   // Handles the events of the mouse button.
-  void HandlePointerButtonEvent(uint32_t button, bool button_pressed, int16_t x,
+  void HandlePointerButtonEvent(uint32_t button,
+                                bool button_pressed,
+                                int16_t x,
                                 int16_t y);
 
   // A pointer to a FlutterWindowsView that can be used to update engine

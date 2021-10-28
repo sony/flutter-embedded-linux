@@ -19,7 +19,9 @@ constexpr char kPopRouteMethod[] = "popRoute";
 
 NavigationPlugin::NavigationPlugin(BinaryMessenger* messenger)
     : channel_(std::make_unique<flutter::MethodChannel<rapidjson::Document>>(
-          messenger, kChannelName, &flutter::JsonMethodCodec::GetInstance())) {}
+          messenger,
+          kChannelName,
+          &flutter::JsonMethodCodec::GetInstance())) {}
 
 void NavigationPlugin::SetInitialRoute(std::string route) const {
   ELINUX_LOG(DEBUG) << "SetInitialRoute = " << route;

@@ -143,13 +143,17 @@ ELinuxRenderSurfaceTarget* ELinuxWindowX11::GetRenderSurfaceTarget() const {
   return render_surface_.get();
 }
 
-double ELinuxWindowX11::GetDpiScale() { return current_scale_; }
+double ELinuxWindowX11::GetDpiScale() {
+  return current_scale_;
+}
 
 PhysicalWindowBounds ELinuxWindowX11::GetPhysicalWindowBounds() {
   return {GetCurrentWidth(), GetCurrentHeight()};
 }
 
-int32_t ELinuxWindowX11::GetFrameRate() { return 60000; }
+int32_t ELinuxWindowX11::GetFrameRate() {
+  return 60000;
+}
 
 void ELinuxWindowX11::UpdateFlutterCursor(const std::string& cursor_name) {
   // TODO: implement here
@@ -159,14 +163,17 @@ void ELinuxWindowX11::UpdateVirtualKeyboardStatus(const bool show) {
   // currently not supported.
 }
 
-std::string ELinuxWindowX11::GetClipboardData() { return clipboard_data_; }
+std::string ELinuxWindowX11::GetClipboardData() {
+  return clipboard_data_;
+}
 
 void ELinuxWindowX11::SetClipboardData(const std::string& data) {
   clipboard_data_ = data;
 }
 
 void ELinuxWindowX11::HandlePointerButtonEvent(uint32_t button,
-                                               bool button_pressed, int16_t x,
+                                               bool button_pressed,
+                                               int16_t x,
                                                int16_t y) {
   if (binding_handler_delegate_) {
     FlutterPointerMouseButtons flutter_button;

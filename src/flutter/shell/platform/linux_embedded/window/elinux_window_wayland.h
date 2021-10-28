@@ -80,8 +80,10 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
     wl_pointer* pointer;
   };
 
-  void WlRegistryHandler(wl_registry* wl_registry, uint32_t name,
-                         const char* interface, uint32_t version);
+  void WlRegistryHandler(wl_registry* wl_registry,
+                         uint32_t name,
+                         const char* interface,
+                         uint32_t version);
 
   void WlUnRegistryHandler(wl_registry* wl_registry, uint32_t name);
 

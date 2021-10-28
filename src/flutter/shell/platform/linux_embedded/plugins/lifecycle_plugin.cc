@@ -19,7 +19,9 @@ constexpr char kDetached[] = "AppLifecycleState.detached";
 
 LifecyclePlugin::LifecyclePlugin(BinaryMessenger* messenger)
     : channel_(std::make_unique<BasicMessageChannel<EncodableValue>>(
-          messenger, kChannelName, &StandardMessageCodec::GetInstance())) {}
+          messenger,
+          kChannelName,
+          &StandardMessageCodec::GetInstance())) {}
 
 void LifecyclePlugin::OnInactive() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to inactive state.";

@@ -25,7 +25,8 @@ class NativeWindowDrm : public NativeWindow {
 
   virtual bool ShowCursor(double x, double y) = 0;
 
-  virtual bool UpdateCursor(const std::string& cursor_name, double x,
+  virtual bool UpdateCursor(const std::string& cursor_name,
+                            double x,
                             double y) = 0;
 
   virtual bool DismissCursor() = 0;

@@ -37,7 +37,9 @@ constexpr char kUnknownClipboardFormatError[] =
 PlatformPlugin::PlatformPlugin(BinaryMessenger* messenger,
                                WindowBindingHandler* delegate)
     : channel_(std::make_unique<MethodChannel<rapidjson::Document>>(
-          messenger, kChannelName, &flutter::JsonMethodCodec::GetInstance())),
+          messenger,
+          kChannelName,
+          &flutter::JsonMethodCodec::GetInstance())),
       delegate_(delegate) {
   channel_->SetMethodCallHandler(
       [this](
