@@ -39,7 +39,7 @@ bool ELinuxEGLSurface::MakeCurrent() const {
   // Non-blocking when swappipping buffers on Wayland.
   // However, we might encounter rendering problems on some Wayland compositors
   // (e.g. weston 9.0) when we use them.
-  // See also: 
+  // See also:
   //   - https://github.com/sony/flutter-embedded-linux/issues/230
   //   - https://github.com/sony/flutter-embedded-linux/issues/234
   //   - https://github.com/sony/flutter-embedded-linux/issues/220
