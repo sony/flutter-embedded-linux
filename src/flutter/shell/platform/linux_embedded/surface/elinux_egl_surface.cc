@@ -35,8 +35,14 @@ bool ELinuxEGLSurface::MakeCurrent() const {
     return false;
   }
 
-#if defined(DISPLAY_BACKEND_TYPE_WAYLAND)
+#if defined(ENABLE_EGL_ASYNC_BUFFER_SWAPPING)
   // Non-blocking when swappipping buffers on Wayland.
+  // However, we might encounter rendering problems on some Wayland compositors
+  // (e.g. weston 9.0) when we use them.
+  // See also:
+  //   - https://github.com/sony/flutter-embedded-linux/issues/230
+  //   - https://github.com/sony/flutter-embedded-linux/issues/234
+  //   - https://github.com/sony/flutter-embedded-linux/issues/220
   if (eglSwapInterval(display_, 0) != EGL_TRUE) {
     ELINUX_LOG(ERROR) << "Failed to eglSwapInterval(Free): "
                       << get_egl_error_cause();
