@@ -539,6 +539,20 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
   }
 
+  void DetectPointerDevice(libinput_event* event) {
+    auto device = libinput_event_get_device(event);
+    auto device_data = reinterpret_cast<LibinputDeviceData*>(
+        libinput_device_get_user_data(device));
+
+    // Shows the mouse cursor only when connecting mouse devices.
+    // The mouse cursor is not displayed by touch inputs.
+    if (device_data && !device_data->is_pointer_device) {
+      device_data->is_pointer_device = true;
+      libinput_pointer_devices_++;
+      ShowMouseCursor();
+    }
+  }
+
   void ShowMouseCursor() {
     if (view_properties_.use_mouse_cursor && libinput_pointer_devices_ == 1) {
       // When launching the application, either route will be used depending on
@@ -548,20 +562,6 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       } else {
         is_pending_cursor_add_event_ = true;
       }
-    }
-  }
-
-  void DetectPointerDevice(libinput_event* event) {
-    auto device = libinput_event_get_device(event);
-    auto device_data = reinterpret_cast<LibinputDeviceData*>(
-        libinput_device_get_user_data(device));
-
-    // Shows the mouse cursor only when connecting mouse devices.
-    // The mouse cursor is not shown with touch inputs.
-    if (device_data && !device_data->is_pointer_device) {
-      device_data->is_pointer_device = true;
-      libinput_pointer_devices_++;
-      ShowMouseCursor();
     }
   }
 
