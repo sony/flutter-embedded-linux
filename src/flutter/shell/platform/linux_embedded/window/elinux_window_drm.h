@@ -403,8 +403,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
     auto device_data = std::make_unique<LibinputDeviceData>();
     device_data->is_pointer_device = false;
-    libinput_devices_.push_back(std::move(device_data));
     libinput_device_set_user_data(device, device_data.get());
+    libinput_devices_.push_back(std::move(device_data));
   }
 
   void OnDeviceRemoved(libinput_event* event) {
@@ -414,7 +414,6 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
     if (view_properties_.use_mouse_cursor &&
         libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER)) {
-      ELINUX_LOG(ERROR) << "OnDeviceRemoved: " << libinput_pointer_devices_;
       if (device_data && device_data->is_pointer_device) {
         if (--libinput_pointer_devices_ == 0) {
           native_window_->DismissCursor();
