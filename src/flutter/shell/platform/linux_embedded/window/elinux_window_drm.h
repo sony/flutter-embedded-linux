@@ -11,7 +11,9 @@
 #include <systemd/sd-event.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <memory>
+#include <unordered_map>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
@@ -400,23 +402,36 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnDeviceAdded(libinput_event* event) {
     auto device = libinput_event_get_device(event);
-    if (view_properties_.use_mouse_cursor &&
-        libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER)) {
-      // When launching the application, either route will be used depending on
-      // the timing.
-      if (native_window_) {
-        native_window_->ShowCursor(pointer_x_, pointer_y_);
-      } else {
-        is_pending_cursor_add_event_ = true;
-      }
-    }
+    auto device_data = std::make_unique<LibinputDeviceData>();
+    size_t timestamp =
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch())
+            .count();
+
+    device_data->id = timestamp;
+    device_data->is_pointer_device = false;
+    libinput_device_set_user_data(device, device_data.get());
+    libinput_devices_[timestamp] = std::move(device_data);
   }
 
   void OnDeviceRemoved(libinput_event* event) {
     auto device = libinput_event_get_device(event);
+    auto device_data = reinterpret_cast<LibinputDeviceData*>(
+        libinput_device_get_user_data(device));
+
     if (view_properties_.use_mouse_cursor &&
         libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER)) {
-      native_window_->DismissCursor();
+      if (device_data && device_data->is_pointer_device) {
+        if (--libinput_pointer_devices_ == 0) {
+          native_window_->DismissCursor();
+        }
+      }
+    }
+
+    if (device_data) {
+      if (libinput_devices_.count(device_data->id) > 0) {
+        libinput_devices_.erase(libinput_devices_.find(device_data->id));
+      }
     }
   }
 
@@ -432,6 +447,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerMotion(libinput_event* event) {
+    DetectPointerDevice(event);
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
       auto dx = libinput_event_pointer_get_dx(pointer_event);
@@ -453,6 +469,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerMotionAbsolute(libinput_event* event) {
+    DetectPointerDevice(event);
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
       auto x = libinput_event_pointer_get_absolute_x_transformed(
@@ -467,6 +484,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerButton(libinput_event* event) {
+    DetectPointerDevice(event);
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
       auto button = libinput_event_pointer_get_button(pointer_event);
@@ -505,6 +523,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerAxis(libinput_event* event) {
+    DetectPointerDevice(event);
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
       if (libinput_event_pointer_has_axis(
@@ -516,6 +535,32 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
               pointer_event, LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL)) {
         ProcessPointerAxis(pointer_event,
                            LIBINPUT_POINTER_AXIS_SCROLL_HORIZONTAL);
+      }
+    }
+  }
+
+  void DetectPointerDevice(libinput_event* event) {
+    auto device = libinput_event_get_device(event);
+    auto device_data = reinterpret_cast<LibinputDeviceData*>(
+        libinput_device_get_user_data(device));
+
+    // Shows the mouse cursor only when connecting mouse devices.
+    // The mouse cursor is not displayed by touch inputs.
+    if (device_data && !device_data->is_pointer_device) {
+      device_data->is_pointer_device = true;
+      libinput_pointer_devices_++;
+      ShowMouseCursor();
+    }
+  }
+
+  void ShowMouseCursor() {
+    if (view_properties_.use_mouse_cursor && libinput_pointer_devices_ == 1) {
+      // When launching the application, either route will be used depending on
+      // the timing.
+      if (native_window_) {
+        native_window_->ShowCursor(pointer_x_, pointer_y_);
+      } else {
+        is_pending_cursor_add_event_ = true;
       }
     }
   }
@@ -592,6 +637,11 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
         kScrollOffsetMultiplier);
   }
 
+  struct LibinputDeviceData {
+    size_t id;
+    bool is_pointer_device;
+  };
+
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
   WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
@@ -601,9 +651,11 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   bool display_valid_;
   bool is_pending_cursor_add_event_;
-
   sd_event* libinput_event_loop_;
   libinput* libinput_;
+  std::unordered_map<size_t, std::unique_ptr<LibinputDeviceData>>
+      libinput_devices_;
+  int libinput_pointer_devices_ = 0;
 
   sd_event* udev_drm_event_loop_ = nullptr;
   udev_monitor* udev_monitor_ = nullptr;
