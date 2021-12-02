@@ -409,10 +409,12 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnDeviceRemoved(libinput_event* event) {
     auto device = libinput_event_get_device(event);
-    auto device_data = reinterpret_cast<LibinputDeviceData*>(libinput_device_get_user_data(device));
+    auto device_data = reinterpret_cast<LibinputDeviceData*>(
+        libinput_device_get_user_data(device));
 
     if (view_properties_.use_mouse_cursor &&
         libinput_device_has_capability(device, LIBINPUT_DEVICE_CAP_POINTER)) {
+      ELINUX_LOG(ERROR) << "OnDeviceRemoved: " << libinput_pointer_devices_;
       if (device_data && device_data->is_pointer_device) {
         if (--libinput_pointer_devices_ == 0) {
           native_window_->DismissCursor();
@@ -539,7 +541,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void DetectPointerDevice(libinput_event* event) {
     auto device = libinput_event_get_device(event);
-    auto device_data = reinterpret_cast<LibinputDeviceData*>(libinput_device_get_user_data(device));
+    auto device_data = reinterpret_cast<LibinputDeviceData*>(
+        libinput_device_get_user_data(device));
 
     // Shows the mouse cursor only when connecting mouse devices.
     // The mouse cursor is not shown with touch inputs.
