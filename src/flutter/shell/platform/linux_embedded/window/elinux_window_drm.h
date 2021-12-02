@@ -11,7 +11,9 @@
 #include <systemd/sd-event.h>
 #include <unistd.h>
 
+#include <chrono>
 #include <memory>
+#include <unordered_map>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
@@ -400,11 +402,16 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnDeviceAdded(libinput_event* event) {
     auto device = libinput_event_get_device(event);
-
     auto device_data = std::make_unique<LibinputDeviceData>();
+    size_t timestamp =
+        std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch())
+            .count();
+
+    device_data->id = timestamp;
     device_data->is_pointer_device = false;
     libinput_device_set_user_data(device, device_data.get());
-    libinput_devices_.push_back(std::move(device_data));
+    libinput_devices_[timestamp] = std::move(device_data);
   }
 
   void OnDeviceRemoved(libinput_event* event) {
@@ -418,6 +425,12 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
         if (--libinput_pointer_devices_ == 0) {
           native_window_->DismissCursor();
         }
+      }
+    }
+
+    if (device_data) {
+      if (libinput_devices_.count(device_data->id) > 0) {
+        libinput_devices_.erase(libinput_devices_.find(device_data->id));
       }
     }
   }
@@ -625,6 +638,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   struct LibinputDeviceData {
+    size_t id;
     bool is_pointer_device;
   };
 
@@ -639,7 +653,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   bool is_pending_cursor_add_event_;
   sd_event* libinput_event_loop_;
   libinput* libinput_;
-  std::vector<std::unique_ptr<LibinputDeviceData>> libinput_devices_;
+  std::unordered_map<size_t, std::unique_ptr<LibinputDeviceData>>
+      libinput_devices_;
   int libinput_pointer_devices_ = 0;
 
   sd_event* udev_drm_event_loop_ = nullptr;
