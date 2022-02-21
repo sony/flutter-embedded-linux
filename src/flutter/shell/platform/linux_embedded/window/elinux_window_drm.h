@@ -169,9 +169,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const override {
-    return current_rotation_;
-  }
+  uint16_t GetRotationDegree() const override { return current_rotation_; }
 
   // |FlutterWindowBindingHandler|
   double GetDpiScale() override { return current_scale_; }
@@ -302,7 +300,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
         self->native_window_->ConfigureDisplay()) {
       auto width = self->native_window_->Width();
       auto height = self->native_window_->Height();
-      if (current_rotation_ == 90 || current_rotation_ == 270) {
+      if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
         std::swap(width, height);
       }
       if (self->view_properties_.width != width ||
