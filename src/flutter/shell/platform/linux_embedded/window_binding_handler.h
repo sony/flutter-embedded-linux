@@ -47,6 +47,9 @@ class WindowBindingHandler {
   // such as key presses, mouse position updates etc.
   virtual void SetView(WindowBindingHandlerDelegate* view) = 0;
 
+  // Returns the rotation(degree) for the backing window.
+  virtual uint16_t GetRotationDegree() const = 0;
+
   // Returns the scale factor for the backing window.
   virtual double GetDpiScale() = 0;
 

@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
   view_properties.width = options.WindowWidth();
   view_properties.height = options.WindowHeight();
   view_properties.view_mode = options.WindowViewMode();
+  view_properties.view_rotation = options.WindowRotation();
   view_properties.use_mouse_cursor = options.IsUseMouseCursor();
   view_properties.use_onscreen_keyboard = options.IsUseOnscreenKeyboard();
   view_properties.use_window_decoration = options.IsUseWindowDecoraation();

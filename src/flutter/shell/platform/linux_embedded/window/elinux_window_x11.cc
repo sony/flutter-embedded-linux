@@ -23,6 +23,7 @@ constexpr int kButton9 = 9;
 
 ELinuxWindowX11::ELinuxWindowX11(FlutterDesktopViewProperties view_properties) {
   view_properties_ = view_properties;
+  SetRotation(view_properties_.view_rotation);
 
   display_ = XOpenDisplay(NULL);
   if (!display_) {
@@ -89,10 +90,16 @@ bool ELinuxWindowX11::DispatchEvent() {
         }
         break;
       case ConfigureNotify: {
-        if (((event.xconfigure.width != view_properties_.width) ||
-             (event.xconfigure.height != view_properties_.height))) {
-          view_properties_.width = event.xconfigure.width;
-          view_properties_.height = event.xconfigure.height;
+        auto width = event.xconfigure.width;
+        auto height = event.xconfigure.height;
+        if (current_rotation_ == 90 || current_rotation_ == 270) {
+          std::swap(width, height);
+        }
+
+        if (((width != view_properties_.width) ||
+             (height != view_properties_.height))) {
+          view_properties_.width = width;
+          view_properties_.height = height;
           if (binding_handler_delegate_) {
             binding_handler_delegate_->OnWindowSizeChanged(
                 view_properties_.width, view_properties_.height);
@@ -116,6 +123,9 @@ bool ELinuxWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
   auto context_egl =
       std::make_unique<ContextEgl>(std::make_unique<EnvironmentEgl>(display_));
 
+  if (current_rotation_ == 90 || current_rotation_ == 270) {
+    std::swap(width, height);
+  }
   native_window_ = std::make_unique<NativeWindowX11>(
       display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID), width, height);
   if (!native_window_->IsValid()) {
@@ -141,6 +151,10 @@ void ELinuxWindowX11::SetView(WindowBindingHandlerDelegate* window) {
 
 ELinuxRenderSurfaceTarget* ELinuxWindowX11::GetRenderSurfaceTarget() const {
   return render_surface_.get();
+}
+
+uint16_t ELinuxWindowX11::GetRotationDegree() const {
+  return current_rotation_;
 }
 
 double ELinuxWindowX11::GetDpiScale() {

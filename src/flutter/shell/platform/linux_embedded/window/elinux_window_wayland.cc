@@ -110,6 +110,10 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
           }
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+          if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
+            std::swap(width, height);
+          }
+
           int32_t next_width = 0;
           int32_t next_height = 0;
           if (is_maximized || is_resizing) {
@@ -527,6 +531,10 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
                int32_t refresh) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
+        if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
+          std::swap(width, height);
+        }
+
         ELINUX_LOG(INFO) << "Display output info: width = " << width
                          << ", height = " << height
                          << ", refresh = " << refresh;
@@ -818,6 +826,7 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       frame_rate_(60000),
       window_decorations_(nullptr) {
   view_properties_ = view_properties;
+  SetRotation(view_properties_.view_rotation);
 
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
@@ -996,6 +1005,10 @@ ELinuxRenderSurfaceTarget* ELinuxWindowWayland::GetRenderSurfaceTarget() const {
   return render_surface_.get();
 }
 
+uint16_t ELinuxWindowWayland::GetRotationDegree() const {
+  return current_rotation_;
+}
+
 double ELinuxWindowWayland::GetDpiScale() {
   return current_scale_;
 }
@@ -1088,6 +1101,9 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
     }
   }
 
+  if (current_rotation_ == 90 || current_rotation_ == 270) {
+    std::swap(width, height);
+  }
   native_window_ =
       std::make_unique<NativeWindowWayland>(wl_compositor_, width, height);
 
