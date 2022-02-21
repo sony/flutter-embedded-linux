@@ -445,23 +445,27 @@ int32_t FlutterELinuxView::GetFrameRate() {
 
 FlutterTransformation FlutterELinuxView::GetRootSurfaceTransformation() {
   auto degree = binding_handler_->GetRotationDegree();
-  auto res = FlutterTransformationMake(degree);
+  if (view_rotation_degree_ != degree) {
+    view_rotation_transformation_ = FlutterTransformationMake(degree);
+  }
+  view_rotation_degree_ = degree;
+
   auto bounds = binding_handler_->GetPhysicalWindowBounds();
   switch (degree) {
     case 90:
-      res.transX = bounds.height;
+      view_rotation_transformation_.transX = bounds.height;
       break;
     case 180:
-      res.transX = bounds.width;
-      res.transY = bounds.height;
+      view_rotation_transformation_.transX = bounds.width;
+      view_rotation_transformation_.transY = bounds.height;
       break;
     case 270:
-      res.transY = bounds.width;
+      view_rotation_transformation_.transY = bounds.width;
       break;
     default:
       break;
   }
-  return res;
+  return view_rotation_transformation_;
 }
 
 std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x,
