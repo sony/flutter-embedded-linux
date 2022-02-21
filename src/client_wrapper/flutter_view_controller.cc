@@ -17,6 +17,14 @@ FlutterViewController::FlutterViewController(
   FlutterDesktopViewProperties c_view_properties = {};
   c_view_properties.width = view_properties.width;
   c_view_properties.height = view_properties.height;
+  c_view_properties.view_rotation =
+      (view_properties.view_rotation == ViewRotation::kRotation_90)
+          ? FlutterDesktopViewRotation::kRotation_90
+          : (view_properties.view_rotation == ViewRotation::kRotation_180)
+                ? FlutterDesktopViewRotation::kRotation_180
+                : (view_properties.view_rotation == ViewRotation::kRotation_270)
+                      ? FlutterDesktopViewRotation::kRotation_270
+                      : FlutterDesktopViewRotation::kRotation_0;
   c_view_properties.view_mode =
       (view_properties.view_mode == ViewMode::kFullscreen)
           ? FlutterDesktopViewMode::kFullscreen

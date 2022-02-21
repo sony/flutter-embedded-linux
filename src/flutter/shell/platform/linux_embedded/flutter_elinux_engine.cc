@@ -81,6 +81,11 @@ FlutterRendererConfig GetRendererConfig() {
     return host->texture_registrar()->PopulateTexture(texture_id, width, height,
                                                       texture);
   };
+  config.open_gl.surface_transformation =
+      [](void* user_data) -> FlutterTransformation {
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
+    return host->view()->GetRootSurfaceTransformation();
+  };
   return config;
 }
 

@@ -38,6 +38,9 @@ class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
   ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const override;
 
   // |FlutterWindowBindingHandler|
+  uint16_t GetRotationDegree() const override;
+
+  // |FlutterWindowBindingHandler|
   double GetDpiScale() override;
 
   // |FlutterWindowBindingHandler|

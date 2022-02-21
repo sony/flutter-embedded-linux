@@ -61,6 +61,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   // Return the currently configured ELinuxRenderSurfaceTarget.
   ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const;
 
+  // Returns the FlutterTransformation of this view.
+  FlutterTransformation GetRootSurfaceTransformation();
+
   // Returns the engine backing this view.
   FlutterELinuxEngine* GetEngine();
 
@@ -234,6 +237,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   // Updates the currently pressed buttons.
   void SetMouseButtons(uint64_t buttons) { mouse_state_.buttons = buttons; }
 
+  // Returns a trimmed pointer of user inputs with the window rotation.
+  std::pair<double, double> GetPointerRotation(double x, double y);
+
   // The engine associated with this view.
   std::unique_ptr<FlutterELinuxEngine> engine_;
 
@@ -269,6 +275,13 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
 
   // Current user touch event status.
   touch_event touch_event_;
+
+  // Current view rotation (degree).
+  uint16_t view_rotation_degree_ = 0;
+
+  // Current view rotation (FlutterTransformation).
+  FlutterTransformation view_rotation_transformation_ = {
+      1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
 };
 
 }  // namespace flutter

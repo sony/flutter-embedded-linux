@@ -5,6 +5,7 @@
 #include "flutter/shell/platform/linux_embedded/flutter_elinux_view.h"
 
 #include <chrono>
+#include <cmath>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 
@@ -12,6 +13,22 @@ namespace flutter {
 
 namespace {
 constexpr int kMicrosecondsPerMillisecond = 1000;
+
+inline FlutterTransformation FlutterTransformationMake(const uint16_t& degree) {
+  double radian = degree * M_PI / 180.0;
+  FlutterTransformation transformation = {};
+  transformation.scaleX = cos(radian);
+  transformation.skewX = -sin(radian);
+  transformation.transX = 0;
+  transformation.skewY = sin(radian);
+  transformation.scaleY = cos(radian);
+  transformation.transY = 0;
+  transformation.pers0 = 0;
+  transformation.pers1 = 0;
+  transformation.pers2 = 1;
+  return transformation;
+}
+
 }  // namespace
 
 FlutterELinuxView::FlutterELinuxView(
@@ -78,7 +95,8 @@ void FlutterELinuxView::OnWindowSizeChanged(size_t width, size_t height) const {
 }
 
 void FlutterELinuxView::OnPointerMove(double x, double y) {
-  SendPointerMove(x, y);
+  auto trimmed_xy = GetPointerRotation(x, y);
+  SendPointerMove(trimmed_xy.first, trimmed_xy.second);
 }
 
 void FlutterELinuxView::OnPointerDown(
@@ -87,8 +105,9 @@ void FlutterELinuxView::OnPointerDown(
     FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons | flutter_button;
+    auto trimmed_xy = GetPointerRotation(x, y);
     SetMouseButtons(mouse_buttons);
-    SendPointerDown(x, y);
+    SendPointerDown(trimmed_xy.first, trimmed_xy.second);
   }
 }
 
@@ -96,9 +115,10 @@ void FlutterELinuxView::OnPointerUp(double x,
                                     double y,
                                     FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
+    auto trimmed_xy = GetPointerRotation(x, y);
     uint64_t mouse_buttons = mouse_state_.buttons & ~flutter_button;
     SetMouseButtons(mouse_buttons);
-    SendPointerUp(x, y);
+    SendPointerUp(trimmed_xy.first, trimmed_xy.second);
   }
 }
 
@@ -110,20 +130,21 @@ void FlutterELinuxView::OnTouchDown(uint32_t time,
                                     int32_t id,
                                     double x,
                                     double y) {
+  auto trimmed_xy = GetPointerRotation(x, y);
   auto* point = GgeTouchPoint(id);
   if (!point) {
     return;
   }
   point->event_mask = TouchEvent::kDown;
-  point->x = x;
-  point->y = y;
+  point->x = trimmed_xy.first;
+  point->y = trimmed_xy.second;
 
   FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = FlutterPointerPhase::kDown,
       .timestamp = time * kMicrosecondsPerMillisecond,
-      .x = x,
-      .y = y,
+      .x = point->x,
+      .y = point->y,
       .device = id,
       .signal_kind = kFlutterPointerSignalKindNone,
       .scroll_delta_x = 0,
@@ -161,20 +182,21 @@ void FlutterELinuxView::OnTouchMotion(uint32_t time,
                                       int32_t id,
                                       double x,
                                       double y) {
+  auto trimmed_xy = GetPointerRotation(x, y);
   auto* point = GgeTouchPoint(id);
   if (!point) {
     return;
   }
   point->event_mask = TouchEvent::kMotion;
-  point->x = x;
-  point->y = y;
+  point->x = trimmed_xy.first;
+  point->y = trimmed_xy.second;
 
   FlutterPointerEvent event = {
       .struct_size = sizeof(event),
       .phase = FlutterPointerPhase::kMove,
       .timestamp = time * kMicrosecondsPerMillisecond,
-      .x = x,
-      .y = y,
+      .x = point->x,
+      .y = point->y,
       .device = id,
       .signal_kind = kFlutterPointerSignalKindNone,
       .scroll_delta_x = 0,
@@ -225,7 +247,9 @@ void FlutterELinuxView::OnScroll(double x,
                                  double delta_x,
                                  double delta_y,
                                  int scroll_offset_multiplier) {
-  SendScroll(x, y, delta_x, delta_y, scroll_offset_multiplier);
+  auto trimmed_xy = GetPointerRotation(x, y);
+  SendScroll(trimmed_xy.first, trimmed_xy.second, delta_x, delta_y,
+             scroll_offset_multiplier);
 }
 
 void FlutterELinuxView::OnVsync(uint64_t last_frame_time_nanos,
@@ -419,4 +443,47 @@ int32_t FlutterELinuxView::GetFrameRate() {
   return binding_handler_->GetFrameRate();
 }
 
+FlutterTransformation FlutterELinuxView::GetRootSurfaceTransformation() {
+  auto degree = binding_handler_->GetRotationDegree();
+  if (view_rotation_degree_ != degree) {
+    view_rotation_transformation_ = FlutterTransformationMake(degree);
+  }
+  view_rotation_degree_ = degree;
+
+  auto bounds = binding_handler_->GetPhysicalWindowBounds();
+  switch (degree) {
+    case 90:
+      view_rotation_transformation_.transX = bounds.height;
+      break;
+    case 180:
+      view_rotation_transformation_.transX = bounds.width;
+      view_rotation_transformation_.transY = bounds.height;
+      break;
+    case 270:
+      view_rotation_transformation_.transY = bounds.width;
+      break;
+    default:
+      break;
+  }
+  return view_rotation_transformation_;
+}
+
+std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x,
+                                                                double y) {
+  auto degree = binding_handler_->GetRotationDegree();
+  auto bounds = binding_handler_->GetPhysicalWindowBounds();
+  std::pair<double, double> res = {x, y};
+
+  if (degree == 90) {
+    res.first = y;
+    res.second = bounds.height - x;
+  } else if (degree == 180) {
+    res.first = bounds.width - x;
+    res.second = bounds.height - y;
+  } else if (degree == 270) {
+    res.first = bounds.width - y;
+    res.second = x;
+  }
+  return res;
+}
 }  // namespace flutter

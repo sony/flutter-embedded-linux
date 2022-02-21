@@ -34,6 +34,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   ELinuxWindowDrm(FlutterDesktopViewProperties view_properties)
       : display_valid_(false), is_pending_cursor_add_event_(false) {
     view_properties_ = view_properties;
+    SetRotation(view_properties_.view_rotation);
 
     auto udev = udev_new();
     if (!udev) {
@@ -111,6 +112,10 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
                           << " is not set, use " << kDrmDeviceDefaultFilename;
       device_filename = const_cast<char*>(kDrmDeviceDefaultFilename);
     }
+
+    if (current_rotation_ == 90 || current_rotation_ == 270) {
+      std::swap(width, height);
+    }
     native_window_ = std::make_unique<T>(device_filename);
     if (!native_window_->IsValid()) {
       ELINUX_LOG(ERROR) << "Failed to create the native window";
@@ -162,6 +167,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   ELinuxRenderSurfaceTarget* GetRenderSurfaceTarget() const override {
     return render_surface_.get();
   }
+
+  // |FlutterWindowBindingHandler|
+  uint16_t GetRotationDegree() const override { return current_rotation_; }
 
   // |FlutterWindowBindingHandler|
   double GetDpiScale() override { return current_scale_; }
@@ -290,10 +298,15 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
     if (self->IsUdevEventHotplug(*device) &&
         self->native_window_->ConfigureDisplay()) {
-      if (self->view_properties_.width != self->native_window_->Width() ||
-          self->view_properties_.height != self->native_window_->Height()) {
-        self->view_properties_.width = self->native_window_->Width();
-        self->view_properties_.height = self->native_window_->Height();
+      auto width = self->native_window_->Width();
+      auto height = self->native_window_->Height();
+      if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
+        std::swap(width, height);
+      }
+      if (self->view_properties_.width != width ||
+          self->view_properties_.height != height) {
+        self->view_properties_.width = width;
+        self->view_properties_.height = height;
         ELINUX_LOG(INFO) << "Display output resolution: "
                          << self->view_properties_.width << "x"
                          << self->view_properties_.height;

@@ -32,6 +32,17 @@ class FlutterViewController {
     kFullscreen = 1,
   };
 
+  enum ViewRotation {
+    // Rotation constant: 0 degree rotation (natural orientation)
+    kRotation_0 = 0,
+    // Rotation constant: 90 degree rotation.
+    kRotation_90 = 1,
+    // Rotation constant: 180 degree rotation.
+    kRotation_180 = 2,
+    // Rotation constant: 270 degree rotation.
+    kRotation_270 = 3,
+  };
+
   // Properties for configuring a Flutter view instance.
   typedef struct {
     // View width.
@@ -39,6 +50,9 @@ class FlutterViewController {
 
     // View height.
     int height;
+
+    // View rotation.
+    ViewRotation view_rotation;
 
     // View display mode. If you set kFullscreen, the parameters of both `width`
     // and `height` will be ignored.

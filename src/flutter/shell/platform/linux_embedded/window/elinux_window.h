@@ -21,8 +21,21 @@ class ELinuxWindow {
 
   uint32_t GetCurrentHeight() const { return view_properties_.height; }
 
+  void SetRotation(FlutterDesktopViewRotation rotation) {
+    if (rotation == FlutterDesktopViewRotation::kRotation_90) {
+      current_rotation_ = 90;
+    } else if (rotation == FlutterDesktopViewRotation::kRotation_180) {
+      current_rotation_ = 180;
+    } else if (rotation == FlutterDesktopViewRotation::kRotation_270) {
+      current_rotation_ = 270;
+    } else {
+      current_rotation_ = 0;
+    }
+  }
+
   FlutterDesktopViewProperties view_properties_;
   double current_scale_ = 1.0;
+  uint16_t current_rotation_ = 0;
   double pointer_x_ = 0;
   double pointer_y_ = 0;
   std::string clipboard_data_ = "";
