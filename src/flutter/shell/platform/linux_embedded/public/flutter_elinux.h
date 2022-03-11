@@ -57,7 +57,7 @@ typedef struct {
 // The View display mode.
 enum FlutterDesktopViewMode {
   // Shows the Flutter view by user specific size.
-  kNormal = 0,
+  kNormalscreen = 0,
   // Shows always the Flutter view by fullscreen.
   kFullscreen = 1,
 };
