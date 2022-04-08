@@ -63,11 +63,11 @@ bool NativeWindowDrm::ConfigureDisplay(const uint16_t rotation) {
 
   drm_connector_id_ = connector->connector_id;
   drm_mode_info_ = connector->modes[0];
-  if (rotation == 90 || rotation == 270) {
-    std::swap(drm_mode_info_.hdisplay, drm_mode_info_.vdisplay);
-  }
   width_ = drm_mode_info_.hdisplay;
   height_ = drm_mode_info_.vdisplay;
+  if (rotation == 90 || rotation == 270) {
+    std::swap(width_, height_);
+  }
   ELINUX_LOG(INFO) << "resolution: " << width_ << "x" << height_;
 
   auto* encoder = FindEncoder(resources, connector);
