@@ -459,18 +459,22 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   void OnPointerMotion(libinput_event* event) {
     DetectPointerDevice(event);
     if (binding_handler_delegate_) {
+      auto width = view_properties_.width;
+      auto height = view_properties_.height;
+      if (current_rotation_ == 90 || current_rotation_ == 270) {
+        std::swap(width, height);
+      }
+
       auto pointer_event = libinput_event_get_pointer_event(event);
       auto dx = libinput_event_pointer_get_dx(pointer_event);
       auto dy = libinput_event_pointer_get_dy(pointer_event);
 
       auto new_pointer_x = pointer_x_ + dx;
       new_pointer_x = std::max(0.0, new_pointer_x);
-      new_pointer_x = std::min(static_cast<double>(view_properties_.width - 1),
-                               new_pointer_x);
+      new_pointer_x = std::min(static_cast<double>(width - 1), new_pointer_x);
       auto new_pointer_y = pointer_y_ + dy;
       new_pointer_y = std::max(0.0, new_pointer_y);
-      new_pointer_y = std::min(static_cast<double>(view_properties_.height - 1),
-                               new_pointer_y);
+      new_pointer_y = std::min(static_cast<double>(height - 1), new_pointer_y);
 
       binding_handler_delegate_->OnPointerMove(new_pointer_x, new_pointer_y);
       pointer_x_ = new_pointer_x;
@@ -479,13 +483,19 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerMotionAbsolute(libinput_event* event) {
+    auto width = view_properties_.width;
+    auto height = view_properties_.height;
+    if (current_rotation_ == 90 || current_rotation_ == 270) {
+      std::swap(width, height);
+    }
+
     DetectPointerDevice(event);
     if (binding_handler_delegate_) {
       auto pointer_event = libinput_event_get_pointer_event(event);
-      auto x = libinput_event_pointer_get_absolute_x_transformed(
-          pointer_event, view_properties_.width);
-      auto y = libinput_event_pointer_get_absolute_y_transformed(
-          pointer_event, view_properties_.height);
+      auto x = libinput_event_pointer_get_absolute_x_transformed(pointer_event,
+                                                                 width);
+      auto y = libinput_event_pointer_get_absolute_y_transformed(pointer_event,
+                                                                 height);
 
       binding_handler_delegate_->OnPointerMove(x, y);
       pointer_x_ = x;
@@ -577,13 +587,17 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnTouchDown(libinput_event* event) {
     if (binding_handler_delegate_) {
+      auto width = view_properties_.width;
+      auto height = view_properties_.height;
+      if (current_rotation_ == 90 || current_rotation_ == 270) {
+        std::swap(width, height);
+      }
+
       auto touch_event = libinput_event_get_touch_event(event);
       auto time = libinput_event_touch_get_time(touch_event);
       auto slot = libinput_event_touch_get_seat_slot(touch_event);
-      auto x = libinput_event_touch_get_x_transformed(touch_event,
-                                                      view_properties_.width);
-      auto y = libinput_event_touch_get_y_transformed(touch_event,
-                                                      view_properties_.height);
+      auto x = libinput_event_touch_get_x_transformed(touch_event, width);
+      auto y = libinput_event_touch_get_y_transformed(touch_event, height);
       binding_handler_delegate_->OnTouchDown(time, slot, x, y);
     }
   }
@@ -599,13 +613,17 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnTouchMotion(libinput_event* event) {
     if (binding_handler_delegate_) {
+      auto width = view_properties_.width;
+      auto height = view_properties_.height;
+      if (current_rotation_ == 90 || current_rotation_ == 270) {
+        std::swap(width, height);
+      }
+
       auto touch_event = libinput_event_get_touch_event(event);
       auto time = libinput_event_touch_get_time(touch_event);
       auto slot = libinput_event_touch_get_seat_slot(touch_event);
-      auto x = libinput_event_touch_get_x_transformed(touch_event,
-                                                      view_properties_.width);
-      auto y = libinput_event_touch_get_y_transformed(touch_event,
-                                                      view_properties_.height);
+      auto x = libinput_event_touch_get_x_transformed(touch_event, width);
+      auto y = libinput_event_touch_get_y_transformed(touch_event, height);
       binding_handler_delegate_->OnTouchMotion(time, slot, x, y);
     }
   }
