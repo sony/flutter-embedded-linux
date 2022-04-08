@@ -113,10 +113,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       device_filename = const_cast<char*>(kDrmDeviceDefaultFilename);
     }
 
-    if (current_rotation_ == 90 || current_rotation_ == 270) {
-      std::swap(width, height);
-    }
-    native_window_ = std::make_unique<T>(device_filename);
+    native_window_ = std::make_unique<T>(device_filename, current_rotation_);
     if (!native_window_->IsValid()) {
       ELINUX_LOG(ERROR) << "Failed to create the native window";
       return false;
@@ -297,7 +294,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
 
     if (self->IsUdevEventHotplug(*device) &&
-        self->native_window_->ConfigureDisplay()) {
+        self->native_window_->ConfigureDisplay(self->current_rotation_)) {
       auto width = self->native_window_->Width();
       auto height = self->native_window_->Height();
       if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {

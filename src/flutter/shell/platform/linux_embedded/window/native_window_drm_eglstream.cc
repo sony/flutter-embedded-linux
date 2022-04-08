@@ -18,8 +18,9 @@ namespace {
 constexpr char kCursorNameNone[] = "none";
 }  // namespace
 
-NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* device_filename)
-    : NativeWindowDrm(device_filename) {
+NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* device_filename,
+                                                   const uint16_t rotation)
+    : NativeWindowDrm(device_filename, rotation) {
   if (!valid_) {
     return;
   }
