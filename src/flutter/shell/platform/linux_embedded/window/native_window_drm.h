@@ -16,10 +16,10 @@ namespace flutter {
 
 class NativeWindowDrm : public NativeWindow {
  public:
-  NativeWindowDrm(const char* device_filename);
+  NativeWindowDrm(const char* device_filename, const uint16_t rotation);
   virtual ~NativeWindowDrm();
 
-  bool ConfigureDisplay();
+  bool ConfigureDisplay(const uint16_t rotation);
 
   bool MoveCursor(double x, double y);
 

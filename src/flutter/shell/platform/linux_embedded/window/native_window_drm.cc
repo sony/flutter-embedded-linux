@@ -15,14 +15,15 @@
 
 namespace flutter {
 
-NativeWindowDrm::NativeWindowDrm(const char* device_filename) {
+NativeWindowDrm::NativeWindowDrm(const char* device_filename,
+                                 const uint16_t rotation) {
   drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
   if (drm_device_ == -1) {
     ELINUX_LOG(ERROR) << "Couldn't open " << device_filename;
     return;
   }
 
-  if (!ConfigureDisplay()) {
+  if (!ConfigureDisplay(rotation)) {
     return;
   }
 
@@ -46,7 +47,7 @@ bool NativeWindowDrm::MoveCursor(double x, double y) {
   return true;
 }
 
-bool NativeWindowDrm::ConfigureDisplay() {
+bool NativeWindowDrm::ConfigureDisplay(const uint16_t rotation) {
   auto resources = drmModeGetResources(drm_device_);
   if (!resources) {
     ELINUX_LOG(ERROR) << "Couldn't get resources";
@@ -64,6 +65,9 @@ bool NativeWindowDrm::ConfigureDisplay() {
   drm_mode_info_ = connector->modes[0];
   width_ = drm_mode_info_.hdisplay;
   height_ = drm_mode_info_.vdisplay;
+  if (rotation == 90 || rotation == 270) {
+    std::swap(width_, height_);
+  }
   ELINUX_LOG(INFO) << "resolution: " << width_ << "x" << height_;
 
   auto* encoder = FindEncoder(resources, connector);
