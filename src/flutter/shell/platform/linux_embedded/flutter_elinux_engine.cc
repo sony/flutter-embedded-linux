@@ -131,7 +131,10 @@ FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
   messenger_wrapper_ = std::make_unique<BinaryMessengerImpl>(messenger_.get());
   message_dispatcher_ =
       std::make_unique<IncomingMessageDispatcher>(messenger_.get());
-  texture_registrar_ = std::make_unique<FlutterELinuxTextureRegistrar>(this);
+
+  FlutterELinuxTextureRegistrar::ResolveGlFunctions(gl_procs_);
+  texture_registrar_ =
+      std::make_unique<FlutterELinuxTextureRegistrar>(this, gl_procs_);
 
   // Set up internal channels.
   // TODO: Replace this with an embedder.h API. See
