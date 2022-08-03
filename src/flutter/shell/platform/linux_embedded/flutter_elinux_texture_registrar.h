@@ -38,7 +38,9 @@ class FlutterELinuxTextureRegistrar {
   // Attempts to populate the given |texture| by copying the
   // contents of the texture identified by |texture_id|.
   // Returns true on success.
-  bool PopulateTexture(int64_t texture_id, size_t width, size_t height,
+  bool PopulateTexture(int64_t texture_id,
+                       size_t width,
+                       size_t height,
                        FlutterOpenGLTexture* texture);
 
   // Populates the OpenGL function pointers in |gl_procs|.
