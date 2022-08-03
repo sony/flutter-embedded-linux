@@ -158,6 +158,9 @@ class FlutterELinuxEngine {
   // The texture registrar.
   std::unique_ptr<FlutterELinuxTextureRegistrar> texture_registrar_;
 
+  // Resolved OpenGL functions used by external texture implementations.
+  GlProcs gl_procs_ = {};
+
   // The MethodChannel used for communication with the Flutter engine.
   std::unique_ptr<BasicMessageChannel<rapidjson::Document>> settings_channel_;
 
