@@ -23,6 +23,8 @@ constexpr int kButton9 = 9;
 
 ELinuxWindowX11::ELinuxWindowX11(FlutterDesktopViewProperties view_properties) {
   view_properties_ = view_properties;
+  current_scale_ =
+      view_properties.force_scale_factor ? view_properties.scale_factor : 1.0;
   SetRotation(view_properties_.view_rotation);
 
   display_ = XOpenDisplay(NULL);
