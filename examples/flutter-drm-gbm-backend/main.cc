@@ -33,6 +33,8 @@ int main(int argc, char** argv) {
   view_properties.use_mouse_cursor = options.IsUseMouseCursor();
   view_properties.use_onscreen_keyboard = options.IsUseOnscreenKeyboard();
   view_properties.use_window_decoration = options.IsUseWindowDecoraation();
+  view_properties.force_scale_factor = options.IsForceScaleFactor();
+  view_properties.scale_factor = options.ScaleFactor();
 
   // The Flutter instance hosted by this window.
   FlutterWindow window(view_properties, project);
