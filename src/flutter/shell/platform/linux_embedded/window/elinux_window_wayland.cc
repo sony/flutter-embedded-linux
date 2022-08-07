@@ -9,6 +9,7 @@
 #include <poll.h>
 #include <unistd.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
+#include <algorithm>
 
 #include <cassert>
 #include <cmath>
@@ -245,6 +246,8 @@ const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
         self->wl_keyboard_ = nullptr;
       }
     },
+    .name = [](void* data, struct wl_seat* wl_seat, const char* name) -> void {
+    },
 };
 
 const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
@@ -259,7 +262,7 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       self->serial_ = serial;
 
       if (self->view_properties_.use_mouse_cursor) {
-        self->cursor_info_.pointer = wl_pointer;
+        self->cursor_info_.pointer = self->wl_pointer_;
         self->cursor_info_.serial = serial;
       }
 
@@ -1271,41 +1274,50 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
                                             const char* interface,
                                             uint32_t version) {
   if (!strcmp(interface, wl_compositor_interface.name)) {
+    constexpr uint32_t kMaxVersion = 5;
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
-        wl_registry_bind(wl_registry, name, &wl_compositor_interface, 1));
+        wl_registry_bind(wl_registry, name, &wl_compositor_interface,
+                         std::min(kMaxVersion, version)));
     return;
   }
 
   if (!strcmp(interface, wl_subcompositor_interface.name)) {
-    wl_subcompositor_ = static_cast<wl_subcompositor*>(
-        wl_registry_bind(wl_registry, name, &wl_subcompositor_interface, 1));
+    constexpr uint32_t kMaxVersion = 1;
+    wl_subcompositor_ = static_cast<wl_subcompositor*>(wl_registry_bind(
+        wl_registry, name, &wl_subcompositor_interface, kMaxVersion));
   }
 
   if (!strcmp(interface, xdg_wm_base_interface.name)) {
+    constexpr uint32_t kMaxVersion = 3;
     xdg_wm_base_ = static_cast<decltype(xdg_wm_base_)>(
-        wl_registry_bind(wl_registry, name, &xdg_wm_base_interface, 1));
+        wl_registry_bind(wl_registry, name, &xdg_wm_base_interface,
+                         std::min(kMaxVersion, version)));
     xdg_wm_base_add_listener(xdg_wm_base_, &kXdgWmBaseListener, this);
     return;
   }
 
   if (!strcmp(interface, wl_seat_interface.name)) {
-    wl_seat_ = static_cast<decltype(wl_seat_)>(
-        wl_registry_bind(wl_registry, name, &wl_seat_interface, 1));
+    constexpr uint32_t kMaxVersion = 4;
+    wl_seat_ = static_cast<decltype(wl_seat_)>(wl_registry_bind(
+        wl_registry, name, &wl_seat_interface, std::min(kMaxVersion, version)));
     wl_seat_add_listener(wl_seat_, &kWlSeatListener, this);
     return;
   }
 
   if (!strcmp(interface, wl_output_interface.name)) {
+    constexpr uint32_t kMaxVersion = 2;
     wl_output_ = static_cast<decltype(wl_output_)>(
-        wl_registry_bind(wl_registry, name, &wl_output_interface, 1));
+        wl_registry_bind(wl_registry, name, &wl_output_interface,
+                         std::min(kMaxVersion, version)));
     wl_output_add_listener(wl_output_, &kWlOutputListener, this);
     return;
   }
 
   if (!strcmp(interface, wl_shm_interface.name)) {
     if (view_properties_.use_mouse_cursor) {
+      constexpr uint32_t kMaxVersion = 1;
       wl_shm_ = static_cast<decltype(wl_shm_)>(
-          wl_registry_bind(wl_registry, name, &wl_shm_interface, 1));
+          wl_registry_bind(wl_registry, name, &wl_shm_interface, kMaxVersion));
       wl_cursor_theme_ = wl_cursor_theme_load(nullptr, 32, wl_shm_);
       if (!wl_cursor_theme_) {
         ELINUX_LOG(ERROR) << "Failed to load cursor theme.";
@@ -1318,18 +1330,22 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
 
   if (!strcmp(interface, kZwpTextInputManagerV1)) {
     if (view_properties_.use_onscreen_keyboard) {
+      constexpr uint32_t kMaxVersion = 1;
       zwp_text_input_manager_v1_ =
           static_cast<decltype(zwp_text_input_manager_v1_)>(wl_registry_bind(
-              wl_registry, name, &zwp_text_input_manager_v1_interface, 1));
+              wl_registry, name, &zwp_text_input_manager_v1_interface,
+              kMaxVersion));
     }
     return;
   }
 
   if (!strcmp(interface, kZwpTextInputManagerV3)) {
     if (view_properties_.use_onscreen_keyboard) {
+      constexpr uint32_t kMaxVersion = 1;
       zwp_text_input_manager_v3_ =
           static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
-              wl_registry, name, &zwp_text_input_manager_v3_interface, 1));
+              wl_registry, name, &zwp_text_input_manager_v3_interface,
+              std::min(kMaxVersion, version)));
     }
     return;
   }
