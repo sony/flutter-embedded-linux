@@ -99,6 +99,13 @@ if(ENABLE_ELINUX_EMBEDDER_LOG)
   )
 endif()
 
+# Enable alpha component of the egl color buffer.
+if(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
+  add_definitions(
+    -DENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER
+  )
+endif()
+
 set(CPP_WRAPPER_SOURCES_CORE
   "src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc"
   "src/flutter/shell/platform/common/client_wrapper/standard_codec.cc"
