@@ -20,7 +20,9 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
       EGL_RED_SIZE,        8,
       EGL_GREEN_SIZE,      8,
       EGL_BLUE_SIZE,       8,
+#if defined(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
       EGL_ALPHA_SIZE,      8,
+#endif
       EGL_DEPTH_SIZE,      0,
       EGL_STENCIL_SIZE,    0,
       EGL_NONE
