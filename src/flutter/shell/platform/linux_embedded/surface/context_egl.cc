@@ -14,19 +14,19 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     : environment_(std::move(environment)), config_(nullptr) {
   EGLint config_count = 0;
   const EGLint attribs[] = {
-      // clang-format off
-      EGL_SURFACE_TYPE,    egl_surface_type,
-      EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-      EGL_RED_SIZE,        8,
-      EGL_GREEN_SIZE,      8,
-      EGL_BLUE_SIZE,       8,
+    // clang-format off
+    EGL_SURFACE_TYPE,    egl_surface_type,
+    EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+    EGL_RED_SIZE,        8,
+    EGL_GREEN_SIZE,      8,
+    EGL_BLUE_SIZE,       8,
 #if defined(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
-      EGL_ALPHA_SIZE,      8,
+    EGL_ALPHA_SIZE,      8,
 #endif
-      EGL_DEPTH_SIZE,      0,
-      EGL_STENCIL_SIZE,    0,
-      EGL_NONE
-      // clang-format on
+    EGL_DEPTH_SIZE,      0,
+    EGL_STENCIL_SIZE,    0,
+    EGL_NONE
+    // clang-format on
   };
   if (eglChooseConfig(environment_->Display(), attribs, &config_, 1,
                       &config_count) != EGL_TRUE) {
