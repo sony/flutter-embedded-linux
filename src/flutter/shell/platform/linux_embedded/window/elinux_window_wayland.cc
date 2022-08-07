@@ -1341,7 +1341,7 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
 
   if (!strcmp(interface, kZwpTextInputManagerV3)) {
     if (view_properties_.use_onscreen_keyboard) {
-      constexpr uint32_t kMaxVersion = 3;
+      constexpr uint32_t kMaxVersion = 1;
       zwp_text_input_manager_v3_ =
           static_cast<decltype(zwp_text_input_manager_v3_)>(wl_registry_bind(
               wl_registry, name, &zwp_text_input_manager_v3_interface,
