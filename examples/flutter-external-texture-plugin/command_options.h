@@ -56,6 +56,15 @@ class CommandOptions {
                         ReaderInt(), required, true);
   }
 
+  void AddDouble(const std::string& name,
+              const std::string& short_name,
+              const std::string& description,
+              const double& default_value,
+              bool required) {
+    Add<double, ReaderDouble>(name, short_name, description, default_value,
+                        ReaderDouble(), required, true);
+  }
+
   void AddString(const std::string& name,
                  const std::string& short_name,
                  const std::string& description,
@@ -248,6 +257,10 @@ class CommandOptions {
 
   struct ReaderString {
     std::string operator()(const std::string& value) { return value; }
+  };
+
+  struct ReaderDouble {
+    double operator()(const std::string& value) { return std::stod(value); }
   };
 
   class Option {

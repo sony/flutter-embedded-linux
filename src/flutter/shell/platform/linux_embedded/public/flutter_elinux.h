@@ -98,6 +98,10 @@ typedef struct {
   // Uses the window decoration such as toolbar and max/min buttons.
   // This option is only active for Wayland backend.
   bool use_window_decoration;
+
+  // Force scale factor specified by command line argument
+  bool force_scale_factor;
+  double scale_factor;
 } FlutterDesktopViewProperties;
 
 // ========== View Controller ==========

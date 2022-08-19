@@ -34,6 +34,8 @@ FlutterViewController::FlutterViewController(
       view_properties.use_onscreen_keyboard;
   c_view_properties.use_window_decoration =
       view_properties.use_window_decoration;
+  c_view_properties.force_scale_factor = view_properties.force_scale_factor;
+  c_view_properties.scale_factor = view_properties.scale_factor;
 
   controller_ = FlutterDesktopViewControllerCreate(c_view_properties,
                                                    engine_->RelinquishEngine());

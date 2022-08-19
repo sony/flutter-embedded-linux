@@ -34,6 +34,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   ELinuxWindowDrm(FlutterDesktopViewProperties view_properties)
       : display_valid_(false), is_pending_cursor_add_event_(false) {
     view_properties_ = view_properties;
+    current_scale_ =
+        view_properties.force_scale_factor ? view_properties.scale_factor : 1.0;
     SetRotation(view_properties_.view_rotation);
 
     auto udev = udev_new();

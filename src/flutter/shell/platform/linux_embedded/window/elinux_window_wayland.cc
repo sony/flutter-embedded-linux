@@ -565,7 +565,8 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
     .scale = [](void* data, wl_output* wl_output, int32_t scale) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       ELINUX_LOG(INFO) << "Display output scale: " << scale;
-      self->current_scale_ = scale;
+      if (!self->view_properties_.force_scale_factor)
+        self->current_scale_ = scale;
     },
 };
 
@@ -829,6 +830,8 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       frame_rate_(60000),
       window_decorations_(nullptr) {
   view_properties_ = view_properties;
+  current_scale_ =
+      view_properties.force_scale_factor ? view_properties.scale_factor : 1.0;
   SetRotation(view_properties_.view_rotation);
 
   wl_display_ = wl_display_connect(nullptr);

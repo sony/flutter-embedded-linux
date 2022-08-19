@@ -67,6 +67,10 @@ class FlutterViewController {
     // Uses the window decoration such as toolbar and max/min buttons.
     // This option is only active for Wayland backend.
     bool use_window_decoration;
+
+    // Force scale factor specified by command line argument
+    bool force_scale_factor;
+    double scale_factor;
   } ViewProperties;
 
   // Creates a FlutterView that can be parented into a Windows View hierarchy

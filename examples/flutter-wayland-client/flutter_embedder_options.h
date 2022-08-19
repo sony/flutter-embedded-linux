@@ -21,6 +21,9 @@ class FlutterEmbedderOptions {
     options_.AddInt("rotation", "r",
                     "Window rotation(degree) [0(default)|90|180|270]", 0,
                     false);
+    options_.AddDouble("force-scale-factor", "s",
+                    "Force a scale factor instead using default value", 1.0,
+                    false);
 #if defined(FLUTTER_TARGET_BACKEND_GBM) || \
     defined(FLUTTER_TARGET_BACKEND_EGLSTREAM)
     // no more options.
@@ -72,6 +75,14 @@ class FlutterEmbedderOptions {
       }
     }
 
+    if (options_.Exist("force-scale-factor")) {
+      is_force_scale_factor_ = true;
+      scale_factor_ = options_.GetValue<double>("force-scale-factor");
+    } else {
+      is_force_scale_factor_ = false;
+      scale_factor_ = 1.0;
+    }
+
 #if defined(FLUTTER_TARGET_BACKEND_GBM) || \
     defined(FLUTTER_TARGET_BACKEND_EGLSTREAM)
     use_onscreen_keyboard_ = false;
@@ -112,6 +123,8 @@ class FlutterEmbedderOptions {
   flutter::FlutterViewController::ViewRotation WindowRotation() const {
     return window_view_rotation_;
   }
+  bool IsForceScaleFactor() const { return is_force_scale_factor_; }
+  double ScaleFactor() const { return scale_factor_; }
 
  private:
   commandline::CommandOptions options_;
@@ -126,6 +139,8 @@ class FlutterEmbedderOptions {
   int window_height_ = 720;
   flutter::FlutterViewController::ViewRotation window_view_rotation_ =
       flutter::FlutterViewController::ViewRotation::kRotation_0;
+  bool is_force_scale_factor_;
+  double scale_factor_;
 };
 
 #endif  // FLUTTER_EMBEDDER_OPTIONS_
