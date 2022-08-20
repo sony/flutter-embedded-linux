@@ -99,6 +99,13 @@ if(ENABLE_ELINUX_EMBEDDER_LOG)
   )
 endif()
 
+# Enable embedder vsync.
+if(ENABLE_VSYNC)
+  add_definitions(
+    -DENABLE_VSYNC
+  )
+endif()
+
 # Enable alpha component of the egl color buffer.
 if(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
   add_definitions(
