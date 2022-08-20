@@ -219,7 +219,7 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
 // todo: disable vsync temporarily because flutter apps will freeze when we use
 // this interface. See also:
 // https://github.com/sony/flutter-embedded-linux/issues/176
-#if 0
+#if defined(ENABLE_VSYNC)
 // todo: add drm/x11 support.
 // https://github.com/sony/flutter-embedded-linux/issues/136
 // https://github.com/sony/flutter-embedded-linux/issues/137
