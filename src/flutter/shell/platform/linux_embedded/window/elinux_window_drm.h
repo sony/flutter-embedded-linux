@@ -13,7 +13,9 @@
 
 #include <chrono>
 #include <memory>
+#include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
@@ -108,23 +110,42 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   // |FlutterWindowBindingHandler|
   bool CreateRenderSurface(int32_t width, int32_t height) override {
+    std::vector<std::string> devices;
     auto device_filename = std::getenv(kFlutterDrmDeviceEnvironmentKey);
-    if ((!device_filename) || (device_filename[0] == '\0')) {
+    if (device_filename && device_filename[0] != '\0') {
+      devices = split(std::string(device_filename), ':');
+    }
+    if (devices.empty()) {
       ELINUX_LOG(WARNING) << kFlutterDrmDeviceEnvironmentKey
                           << " is not set, use " << kDrmDeviceDefaultFilename;
-      device_filename = const_cast<char*>(kDrmDeviceDefaultFilename);
+      devices.push_back(const_cast<char*>(kDrmDeviceDefaultFilename));
     }
 
-    native_window_ = std::make_unique<T>(device_filename, current_rotation_);
-    if (!native_window_->IsValid()) {
-      ELINUX_LOG(ERROR) << "Failed to create the native window";
+    bool device_found = false;
+    for (auto i = 0; i < devices.size(); i++) {
+      native_window_ =
+          std::make_unique<T>(devices[i].c_str(), current_rotation_);
+      if (!native_window_->IsValid()) {
+        ELINUX_LOG(ERROR) << "Failed to create the native window ("
+                          << devices[i] << ").";
+        native_window_ = nullptr;
+        continue;
+      }
+
+      if (!RegisterUdevDrmEventLoop(devices[i].c_str())) {
+        ELINUX_LOG(ERROR) << "Failed to register udev drm event loop ("
+                          << devices[i] << ").";
+        native_window_ = nullptr;
+        continue;
+      }
+
+      device_found = true;
+      ELINUX_LOG(INFO) << devices[i] << " was selected as the DRM device.";
+    }
+    if (!device_found) {
       return false;
     }
 
-    if (!RegisterUdevDrmEventLoop(device_filename)) {
-      ELINUX_LOG(ERROR) << "Failed to register udev drm event loop.";
-      return false;
-    }
     display_valid_ = true;
 
     render_surface_ = native_window_->CreateRenderSurface();
@@ -665,6 +686,19 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
         axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL ? 0 : value,
         axis == LIBINPUT_POINTER_AXIS_SCROLL_VERTICAL ? value : 0,
         kScrollOffsetMultiplier);
+  }
+
+  std::vector<std::string> split(std::string s, char delim) {
+    std::vector<std::string> res;
+    std::string item;
+    std::stringstream ss(s);
+
+    while (getline(ss, item, delim)) {
+      if (!item.empty()) {
+        res.push_back(item);
+      }
+    }
+    return res;
   }
 
   struct LibinputDeviceData {
