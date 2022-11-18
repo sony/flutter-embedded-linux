@@ -176,7 +176,12 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   };
 
   struct touch_event {
-    touch_point points[10];
+    touch_point points[10] = {
+        {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0},
+        {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0},
+        {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0}, {false, -1, 0, 0, 0},
+        {false, -1, 0, 0, 0},
+    };
   };
 
   //
