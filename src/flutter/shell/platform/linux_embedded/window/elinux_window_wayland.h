@@ -29,6 +29,10 @@ extern "C" {
 
 namespace flutter {
 
+namespace {
+constexpr char kXcursorSizeEnvironmentKey[] = "XCURSOR_SIZE";
+}  // namespace
+
 class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
  public:
   ELinuxWindowWayland(FlutterDesktopViewProperties view_properties);
@@ -90,9 +94,9 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
 
   void WlUnRegistryHandler(wl_registry* wl_registry, uint32_t name);
 
-  void CreateSupportedWlCursorList();
+  bool LoadCursorTheme(uint32_t size);
 
-  wl_cursor* GetWlCursor(const std::string& cursor_name);
+  wl_cursor* GetWlCursor(const std::string& cursor_name, uint32_t size);
 
   void ShowVirtualKeyboard();
 
@@ -115,6 +119,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   static const wp_presentation_listener kWpPresentationListener;
   static const wp_presentation_feedback_listener
       kWpPresentationFeedbackListener;
+  static constexpr size_t kDefaultPointerSize = 24;
 
   // A pointer to a FlutterWindowsView that can be used to update engine
   // windowing and input state.
@@ -149,7 +154,6 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   wl_touch* wl_touch_;
   wl_keyboard* wl_keyboard_;
   wl_surface* wl_cursor_surface_;
-  wl_cursor_theme* wl_cursor_theme_;
   xdg_wm_base* xdg_wm_base_;
   xdg_surface* xdg_surface_;
   xdg_toplevel* xdg_toplevel_;
@@ -167,9 +171,15 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   int32_t frame_rate_;
 
   CursorInfo cursor_info_;
+  size_t cursor_size_;
 
-  // List of cursor name and wl_cursor supported by Wayland.
-  std::unordered_map<std::string, wl_cursor*> supported_wl_cursor_list_;
+  // List of cursor name and wl_cursor supported by Wayland keyed by their
+  // (scaled) size.
+  std::unordered_map<uint32_t, std::unordered_map<std::string, wl_cursor*>>
+      supported_wl_cursor_list_;
+
+  // List of loaded Wayland cursor themes keyed by their (scaled) size.
+  std::unordered_map<uint32_t, wl_cursor_theme*> wl_cursor_themes_;
 
   wl_data_device_manager* wl_data_device_manager_;
   wl_data_device* wl_data_device_;
