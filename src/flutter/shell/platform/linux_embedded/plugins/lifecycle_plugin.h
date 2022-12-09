@@ -26,7 +26,7 @@ class LifecyclePlugin {
   void OnDetached() const;
 
  private:
-  std::unique_ptr<flutter::BasicMessageChannel<EncodableValue>> channel_;
+  std::unique_ptr<flutter::BasicMessageChannel<std::string>> channel_;
 };
 
 }  // namespace flutter
