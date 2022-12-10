@@ -4,7 +4,7 @@
 
 #include "flutter/shell/platform/linux_embedded/plugins/lifecycle_plugin.h"
 
-#include "flutter/shell/platform/common/client_wrapper/include/flutter/standard_message_codec.h"
+#include "flutter/shell/platform/common/client_wrapper/include/flutter/string_message_codec.h"
 #include "flutter/shell/platform/linux_embedded/logger.h"
 
 namespace flutter {
@@ -18,29 +18,29 @@ constexpr char kDetached[] = "AppLifecycleState.detached";
 }  // namespace
 
 LifecyclePlugin::LifecyclePlugin(BinaryMessenger* messenger)
-    : channel_(std::make_unique<BasicMessageChannel<EncodableValue>>(
+    : channel_(std::make_unique<BasicMessageChannel<std::string>>(
           messenger,
           kChannelName,
-          &StandardMessageCodec::GetInstance())) {}
+          &StringMessageCodec::GetInstance())) {}
 
 void LifecyclePlugin::OnInactive() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to inactive state.";
-  channel_->Send(EncodableValue(std::string(kInactive)));
+  channel_->Send(std::string(kInactive));
 }
 
 void LifecyclePlugin::OnResumed() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to resumed state.";
-  channel_->Send(EncodableValue(std::string(kResumed)));
+  channel_->Send(std::string(kResumed));
 }
 
 void LifecyclePlugin::OnPaused() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to paused state.";
-  channel_->Send(EncodableValue(std::string(kPaused)));
+  channel_->Send(std::string(kPaused));
 }
 
 void LifecyclePlugin::OnDetached() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to detached state.";
-  channel_->Send(EncodableValue(std::string(kDetached)));
+  channel_->Send(std::string(kDetached));
 }
 
 }  // namespace flutter

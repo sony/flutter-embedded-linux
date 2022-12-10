@@ -116,6 +116,7 @@ endif()
 set(CPP_WRAPPER_SOURCES_CORE
   "src/flutter/shell/platform/common/client_wrapper/engine_method_result.cc"
   "src/flutter/shell/platform/common/client_wrapper/standard_codec.cc"
+  "src/flutter/shell/platform/common/client_wrapper/string_message_codec.cc"
 )
 set(CPP_WRAPPER_SOURCES_PLUGIN
   "src/flutter/shell/platform/common/client_wrapper/plugin_registrar.cc"
