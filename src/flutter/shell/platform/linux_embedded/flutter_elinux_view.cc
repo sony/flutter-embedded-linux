@@ -301,11 +301,11 @@ void FlutterELinuxView::SetEventPhaseFromCursorButtonState(
   // For details about this logic, see FlutterPointerPhase in the embedder.h
   // file.
   event_data->phase =
-      mouse_state_.buttons == 0
-          ? mouse_state_.flutter_state_is_down ? FlutterPointerPhase::kUp
-                                               : FlutterPointerPhase::kHover
-          : mouse_state_.flutter_state_is_down ? FlutterPointerPhase::kMove
-                                               : FlutterPointerPhase::kDown;
+      mouse_state_.buttons == 0            ? mouse_state_.flutter_state_is_down
+                                                 ? FlutterPointerPhase::kUp
+                                                 : FlutterPointerPhase::kHover
+      : mouse_state_.flutter_state_is_down ? FlutterPointerPhase::kMove
+                                           : FlutterPointerPhase::kDown;
 }
 
 void FlutterELinuxView::SendPointerMove(double x, double y) {
