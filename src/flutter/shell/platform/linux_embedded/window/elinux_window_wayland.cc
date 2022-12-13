@@ -819,7 +819,6 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       wl_data_device_(nullptr),
       wl_data_offer_(nullptr),
       wl_data_source_(nullptr),
-      wl_cursor_theme_(nullptr),
       serial_(0),
       zwp_text_input_manager_v1_(nullptr),
       zwp_text_input_manager_v3_(nullptr),
@@ -833,6 +832,13 @@ ELinuxWindowWayland::ELinuxWindowWayland(
   current_scale_ =
       view_properties.force_scale_factor ? view_properties.scale_factor : 1.0;
   SetRotation(view_properties_.view_rotation);
+
+  auto xcursor_size_string = std::getenv(kXcursorSizeEnvironmentKey);
+  cursor_size_ =
+      xcursor_size_string ? atoi(xcursor_size_string) : kDefaultPointerSize;
+  if (cursor_size_ <= 0) {
+    cursor_size_ = kDefaultPointerSize;
+  }
 
   wl_display_ = wl_display_connect(nullptr);
   if (!wl_display_) {
@@ -889,10 +895,10 @@ ELinuxWindowWayland::~ELinuxWindowWayland() {
   display_valid_ = false;
   running_ = false;
 
-  if (wl_cursor_theme_) {
-    wl_cursor_theme_destroy(wl_cursor_theme_);
-    wl_cursor_theme_ = nullptr;
+  for (auto theme : wl_cursor_themes_) {
+    wl_cursor_theme_destroy(theme.second);
   }
+  wl_cursor_themes_.clear();
 
   {
     if (zwp_text_input_v1_) {
@@ -1201,7 +1207,7 @@ void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
       return;
     }
 
-    auto wl_cursor = GetWlCursor(cursor_name);
+    auto wl_cursor = GetWlCursor(cursor_name, cursor_size_ * current_scale_);
     if (!wl_cursor) {
       return;
     }
@@ -1213,6 +1219,7 @@ void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
                             image->hotspot_y);
       wl_surface_attach(wl_cursor_surface_, buffer, 0, 0);
       wl_surface_damage(wl_cursor_surface_, 0, 0, image->width, image->height);
+      wl_surface_set_buffer_scale(wl_cursor_surface_, current_scale_);
       wl_surface_commit(wl_cursor_surface_);
     }
   }
@@ -1321,12 +1328,6 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
       constexpr uint32_t kMaxVersion = 1;
       wl_shm_ = static_cast<decltype(wl_shm_)>(
           wl_registry_bind(wl_registry, name, &wl_shm_interface, kMaxVersion));
-      wl_cursor_theme_ = wl_cursor_theme_load(nullptr, 32, wl_shm_);
-      if (!wl_cursor_theme_) {
-        ELINUX_LOG(ERROR) << "Failed to load cursor theme.";
-        return;
-      }
-      CreateSupportedWlCursorList();
     }
     return;
   }
@@ -1378,8 +1379,22 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
 void ELinuxWindowWayland::WlUnRegistryHandler(wl_registry* wl_registry,
                                               uint32_t name) {}
 
-void ELinuxWindowWayland::CreateSupportedWlCursorList() {
-  std::vector<std::string> wl_cursor_themes{
+bool ELinuxWindowWayland::LoadCursorTheme(uint32_t size) {
+  if (!wl_shm_) {
+    ELINUX_LOG(ERROR) << "Failed to load cursor theme because shared memory "
+                         "buffers are not available.";
+    return false;
+  }
+
+  auto theme = wl_cursor_theme_load(nullptr, size, wl_shm_);
+  if (!theme) {
+    ELINUX_LOG(ERROR) << "Failed to load cursor theme for size: " << size;
+    return false;
+  }
+
+  wl_cursor_themes_[size] = theme;
+
+  std::vector<std::string> wl_cursor_names{
       kWlCursorThemeLeftPtr,
       kWlCursorThemeBottomLeftCorner,
       kWlCursorThemeBottomRightCorner,
@@ -1395,18 +1410,24 @@ void ELinuxWindowWayland::CreateSupportedWlCursorList() {
       kWlCursorThemeWatch,
   };
 
-  for (const auto& theme : wl_cursor_themes) {
-    auto wl_cursor =
-        wl_cursor_theme_get_cursor(wl_cursor_theme_, theme.c_str());
+  std::unordered_map<std::string, wl_cursor*> cursor_list;
+
+  for (const auto& cursor_name : wl_cursor_names) {
+    auto wl_cursor = wl_cursor_theme_get_cursor(theme, cursor_name.c_str());
     if (!wl_cursor) {
-      ELINUX_LOG(ERROR) << "Unsupported cursor theme: " << theme.c_str();
+      ELINUX_LOG(ERROR) << "Unsupported cursor theme: " << cursor_name.c_str();
       continue;
     }
-    supported_wl_cursor_list_[theme] = wl_cursor;
+    cursor_list[cursor_name] = wl_cursor;
   }
+
+  supported_wl_cursor_list_.insert(std::make_pair(size, cursor_list));
+
+  return true;
 }
 
-wl_cursor* ELinuxWindowWayland::GetWlCursor(const std::string& cursor_name) {
+wl_cursor* ELinuxWindowWayland::GetWlCursor(const std::string& cursor_name,
+                                            uint32_t size) {
   // Convert the cursor theme name from Flutter's cursor value to Wayland's one.
   // However, Wayland has not all cursor themes corresponding to Flutter.
   // If there is no Wayland's cursor theme corresponding to the Flutter's cursor
@@ -1450,17 +1471,24 @@ wl_cursor* ELinuxWindowWayland::GetWlCursor(const std::string& cursor_name) {
           {"zoomOut", ""},
       };
 
+  if (supported_wl_cursor_list_.find(size) == supported_wl_cursor_list_.end()) {
+    if (!LoadCursorTheme(size)) {
+      return nullptr;
+    }
+  }
+
+  auto cursor_list = supported_wl_cursor_list_.at(size);
+
   if (flutter_to_wayland_cursor_map.find(cursor_name) !=
       flutter_to_wayland_cursor_map.end()) {
     auto theme = flutter_to_wayland_cursor_map.at(cursor_name);
-    if (!theme.empty() && supported_wl_cursor_list_.find(theme) !=
-                              supported_wl_cursor_list_.end()) {
-      return supported_wl_cursor_list_[theme];
+    if (!theme.empty() && cursor_list.find(theme) != cursor_list.end()) {
+      return cursor_list[theme];
     }
   }
 
   ELINUX_LOG(ERROR) << "Unsupported cursor: " << cursor_name.c_str();
-  return supported_wl_cursor_list_[kWlCursorThemeLeftPtr];
+  return cursor_list[kWlCursorThemeLeftPtr];
 }
 
 void ELinuxWindowWayland::ShowVirtualKeyboard() {
