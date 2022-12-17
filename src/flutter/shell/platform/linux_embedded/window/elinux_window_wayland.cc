@@ -282,6 +282,12 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       self->wl_current_surface_ = surface;
       self->serial_ = serial;
 
+      if (self->view_properties_.use_mouse_cursor) {
+        // Clear the cursor name in order to make sure it gets redrawn next time
+        // it enters the surface.
+        self->cursor_info_.cursor_name.clear();
+      }
+
       if (self->binding_handler_delegate_) {
         self->binding_handler_delegate_->OnPointerLeave();
         self->pointer_x_ = -1;
