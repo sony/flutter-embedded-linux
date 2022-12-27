@@ -148,6 +148,40 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
           self->running_ = false;
         }};
 
+const wl_surface_listener ELinuxWindowWayland::kWlSurfaceListener = {
+    .enter =
+        [](void* data, wl_surface* wl_surface, wl_output* output) {
+          // The compositor can send a null output: crbug.com/1332540
+          if (!output) {
+            ELINUX_LOG(ERROR) << "cannot enter a NULL output";
+            return;
+          }
+
+          const uint32_t output_id =
+              wl_proxy_get_id(reinterpret_cast<wl_proxy*>(output));
+          ELINUX_LOG(TRACE) << "window entered output " << output_id;
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+
+          self->entered_outputs_.insert(output_id);
+          self->UpdateWindowScale();
+        },
+    .leave =
+        [](void* data, wl_surface* wl_surface, wl_output* output) {
+          // The compositor can send a null output: crbug.com/1332540
+          if (!output) {
+            ELINUX_LOG(ERROR) << "cannot leave a NULL output";
+            return;
+          }
+
+          const uint32_t output_id =
+              wl_proxy_get_id(reinterpret_cast<wl_proxy*>(output));
+          ELINUX_LOG(TRACE) << "window left output " << output_id;
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+
+          self->entered_outputs_.erase(output_id);
+          self->UpdateWindowScale();
+        }};
+
 const wp_presentation_listener ELinuxWindowWayland::kWpPresentationListener = {
     .clock_id =
         [](void* data, wp_presentation* wp_presentation, uint32_t clk_id) {
@@ -570,9 +604,16 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
     .done = [](void* data, wl_output* wl_output) -> void {},
     .scale = [](void* data, wl_output* wl_output, int32_t scale) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-      ELINUX_LOG(INFO) << "Display output scale: " << scale;
-      if (!self->view_properties_.force_scale_factor)
-        self->current_scale_ = scale;
+
+      const uint32_t output_id =
+          wl_proxy_get_id(reinterpret_cast<wl_proxy*>(wl_output));
+
+      ELINUX_LOG(INFO) << "Display scale for output(" << output_id
+                       << "): " << scale;
+
+      self->wl_output_scale_factors_[output_id] = scale;
+
+      self->UpdateWindowScale();
     },
 };
 
@@ -1125,6 +1166,8 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   native_window_ =
       std::make_unique<NativeWindowWayland>(wl_compositor_, width, height);
 
+  wl_surface_add_listener(native_window_->Surface(), &kWlSurfaceListener, this);
+
   xdg_surface_ =
       xdg_wm_base_get_xdg_surface(xdg_wm_base_, native_window_->Surface());
   if (!xdg_surface_) {
@@ -1524,6 +1567,33 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
     zwp_text_input_v3_commit(zwp_text_input_v3_);
   } else {
     zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
+  }
+}
+
+void ELinuxWindowWayland::UpdateWindowScale() {
+  if (this->view_properties_.force_scale_factor)
+    return;
+
+  double scale_factor = 1.0;
+  for (auto output_id : entered_outputs_) {
+    if (wl_output_scale_factors_.find(output_id) ==
+        wl_output_scale_factors_.end())
+      continue;
+
+    auto output_scale_factor = wl_output_scale_factors_.at(output_id);
+    if (output_scale_factor > scale_factor)
+      scale_factor = output_scale_factor;
+  }
+
+  if (this->current_scale_ == scale_factor)
+    return;
+
+  ELINUX_LOG(TRACE) << "Window scale has changed: " << scale_factor;
+  this->current_scale_ = scale_factor;
+
+  if (this->binding_handler_delegate_) {
+    this->binding_handler_delegate_->OnWindowSizeChanged(
+        this->view_properties_.width, this->view_properties_.height);
   }
 }
 

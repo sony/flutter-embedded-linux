@@ -10,7 +10,7 @@
 
 #include <memory>
 #include <unordered_map>
-#include <vector>
+#include <unordered_set>
 
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"
 #include "flutter/shell/platform/linux_embedded/window/elinux_window.h"
@@ -102,10 +102,14 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
 
   void DismissVirtualKeybaord();
 
+  // Updates the surface scale of the window from the list of entered outputs.
+  void UpdateWindowScale();
+
   static const wl_registry_listener kWlRegistryListener;
   static const xdg_wm_base_listener kXdgWmBaseListener;
   static const xdg_surface_listener kXdgSurfaceListener;
   static const xdg_toplevel_listener kXdgToplevelListener;
+  static const wl_surface_listener kWlSurfaceListener;
   static const wl_seat_listener kWlSeatListener;
   static const wl_pointer_listener kWlPointerListener;
   static const wl_touch_listener kWlTouchListener;
@@ -180,6 +184,12 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
 
   // List of loaded Wayland cursor themes keyed by their (scaled) size.
   std::unordered_map<uint32_t, wl_cursor_theme*> wl_cursor_themes_;
+
+  // List of outputs that the window is currently rendered on.
+  std::unordered_set<uint32_t> entered_outputs_;
+
+  // List of output scale factors keyed by their ids.
+  std::unordered_map<uint32_t, int32_t> wl_output_scale_factors_;
 
   wl_data_device_manager* wl_data_device_manager_;
   wl_data_device* wl_data_device_;
