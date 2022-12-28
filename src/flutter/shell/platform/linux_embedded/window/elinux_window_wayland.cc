@@ -1274,9 +1274,9 @@ void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
     auto image = wl_cursor->images[0];
     auto buffer = wl_cursor_image_get_buffer(image);
     if (buffer) {
-      wl_pointer_set_cursor(cursor_info_.pointer, cursor_info_.serial,
-                            wl_cursor_surface_, image->hotspot_x,
-                            image->hotspot_y);
+      wl_pointer_set_cursor(
+          cursor_info_.pointer, cursor_info_.serial, wl_cursor_surface_,
+          image->hotspot_x / current_scale_, image->hotspot_y / current_scale_);
       wl_surface_attach(wl_cursor_surface_, buffer, 0, 0);
       wl_surface_damage(wl_cursor_surface_, 0, 0, image->width, image->height);
       wl_surface_set_buffer_scale(wl_cursor_surface_, current_scale_);
