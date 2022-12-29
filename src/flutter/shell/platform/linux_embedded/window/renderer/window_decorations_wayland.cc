@@ -95,7 +95,7 @@ void WindowDecorationsWayland::Resize(const int32_t width,
     buttons_[i]->SetPosition(
         width - kButtonWidth * (i + 1) - kButtonMargin * (i + 1),
         -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
-    buttons_[i]->Resize(kButtonWidth, -kButtonHeight);
+    buttons_[i]->Resize(kButtonWidth, kButtonHeight);
   }
 }
 
