@@ -77,4 +77,13 @@ void NativeWindowWaylandDecoration::SetPosition(const int32_t x_dip,
   wl_subsurface_set_position(subsurface_, x_dip, y_dip);
 }
 
+void NativeWindowWaylandDecoration::SetScaleFactor(float scale_factor) {
+  if (!valid_) {
+    ELINUX_LOG(ERROR) << "Failed to set the scale factor of the window.";
+    return;
+  }
+
+  wl_surface_set_buffer_scale(surface_, scale_factor);
+}
+
 }  // namespace flutter

@@ -28,19 +28,24 @@ class WindowDecorationsWayland {
  public:
   // @param[in] width_dip   Logical width of the window (i.e. surface width).
   // @param[in] height_dip  Logical height of the window (i.e. surface height).
+  // @param[in] pixel_ratio Physical / logical pixels ratio.
   WindowDecorationsWayland(wl_display* display,
                            wl_compositor* compositor,
                            wl_subcompositor* subcompositor,
                            wl_surface* root_surface,
                            int32_t width_dip,
-                           int32_t height_dip);
+                           int32_t height_dip,
+                           double pixel_ratio);
   ~WindowDecorationsWayland();
 
   void Draw();
 
   // @param[in] width_dip   Logical width of the window (i.e. surface width).
   // @param[in] height_dip  Logical height of the window (i.e. surface height).
-  void Resize(const int32_t width_dip, const int32_t height_dip);
+  // @param[in] pixel_ratio Physical / logical pixels ratio.
+  void Resize(const int32_t width_dip,
+              const int32_t height_dip,
+              double pixel_ratio);
 
   bool IsMatched(wl_surface* surface,
                  WindowDecoration::DecorationType decoration_type) const;

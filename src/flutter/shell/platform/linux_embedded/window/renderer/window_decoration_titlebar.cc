@@ -79,4 +79,8 @@ void WindowDecorationTitlebar::Resize(const size_t width_px,
   render_surface_->Resize(width_px, height_px);
 }
 
+void WindowDecorationTitlebar::SetScaleFactor(float scale_factor) {
+  native_window_->SetScaleFactor(scale_factor);
+}
+
 }  // namespace flutter

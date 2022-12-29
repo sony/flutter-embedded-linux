@@ -18,10 +18,14 @@ class ELinuxWindow {
   virtual bool IsValid() const = 0;
 
   // Get current window width in physical pixels.
-  uint32_t GetCurrentWidth() const { return view_properties_.width; }
+  uint32_t GetCurrentWidth() const {
+    return view_properties_.width * current_scale_;
+  }
 
   // Get current window height in physical pixels.
-  uint32_t GetCurrentHeight() const { return view_properties_.height; }
+  uint32_t GetCurrentHeight() const {
+    return view_properties_.height * current_scale_;
+  }
 
   void SetRotation(FlutterDesktopViewRotation rotation) {
     if (rotation == FlutterDesktopViewRotation::kRotation_90) {
