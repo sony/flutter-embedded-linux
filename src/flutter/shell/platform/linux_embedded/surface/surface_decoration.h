@@ -26,8 +26,10 @@ class SurfaceDecoration : public SurfaceGlDelegate {
   // Sets a netive platform's window.
   bool SetNativeWindow(NativeWindow* window);
 
-  // Changes an decoration surface size.
-  bool Resize(const size_t width, const size_t height);
+  // Changes a decoration surface size.
+  // @param[in] width_px       Physical width of the surface.
+  // @param[in] height_px      Physical height of the surface.
+  bool Resize(const size_t width_px, const size_t height_px);
 
   // Clears and destroys current decoration context.
   void DestroyContext();

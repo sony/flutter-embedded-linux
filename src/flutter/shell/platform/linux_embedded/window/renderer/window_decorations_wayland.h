@@ -26,21 +26,26 @@ namespace flutter {
 
 class WindowDecorationsWayland {
  public:
+  // @param[in] width_dip   Logical width of the window (i.e. surface width).
+  // @param[in] height_dip  Logical height of the window (i.e. surface height).
   WindowDecorationsWayland(wl_display* display,
                            wl_compositor* compositor,
                            wl_subcompositor* subcompositor,
                            wl_surface* root_surface,
-                           int32_t width,
-                           int32_t height);
+                           int32_t width_dip,
+                           int32_t height_dip);
   ~WindowDecorationsWayland();
 
   void Draw();
 
-  void Resize(const int32_t width, const int32_t height);
+  // @param[in] width_dip   Logical width of the window (i.e. surface width).
+  // @param[in] height_dip  Logical height of the window (i.e. surface height).
+  void Resize(const int32_t width_dip, const int32_t height_dip);
 
   bool IsMatched(wl_surface* surface,
                  WindowDecoration::DecorationType decoration_type) const;
 
+  // Get height in logical pixels.
   int32_t Height() const;
 
  private:

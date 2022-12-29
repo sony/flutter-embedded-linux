@@ -86,36 +86,37 @@ void FlutterELinuxView::RegisterPlatformViewFactory(
   platform_views_handler_->RegisterViewFactory(view_type, std::move(factory));
 }
 
-void FlutterELinuxView::OnWindowSizeChanged(size_t width, size_t height) const {
-  if (!GetRenderSurfaceTarget()->OnScreenSurfaceResize(width, height)) {
+void FlutterELinuxView::OnWindowSizeChanged(size_t width_px,
+                                            size_t height_px) const {
+  if (!GetRenderSurfaceTarget()->OnScreenSurfaceResize(width_px, height_px)) {
     ELINUX_LOG(ERROR) << "Failed to change surface size.";
     return;
   }
-  SendWindowMetrics(width, height, binding_handler_->GetDpiScale());
+  SendWindowMetrics(width_px, height_px, binding_handler_->GetDpiScale());
 }
 
-void FlutterELinuxView::OnPointerMove(double x, double y) {
-  auto trimmed_xy = GetPointerRotation(x, y);
+void FlutterELinuxView::OnPointerMove(double x_px, double y_px) {
+  auto trimmed_xy = GetPointerRotation(x_px, y_px);
   SendPointerMove(trimmed_xy.first, trimmed_xy.second);
 }
 
 void FlutterELinuxView::OnPointerDown(
-    double x,
-    double y,
+    double x_px,
+    double y_px,
     FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
     uint64_t mouse_buttons = mouse_state_.buttons | flutter_button;
-    auto trimmed_xy = GetPointerRotation(x, y);
+    auto trimmed_xy = GetPointerRotation(x_px, y_px);
     SetMouseButtons(mouse_buttons);
     SendPointerDown(trimmed_xy.first, trimmed_xy.second);
   }
 }
 
-void FlutterELinuxView::OnPointerUp(double x,
-                                    double y,
+void FlutterELinuxView::OnPointerUp(double x_px,
+                                    double y_px,
                                     FlutterPointerMouseButtons flutter_button) {
   if (flutter_button != 0) {
-    auto trimmed_xy = GetPointerRotation(x, y);
+    auto trimmed_xy = GetPointerRotation(x_px, y_px);
     uint64_t mouse_buttons = mouse_state_.buttons & ~flutter_button;
     SetMouseButtons(mouse_buttons);
     SendPointerUp(trimmed_xy.first, trimmed_xy.second);
@@ -277,13 +278,13 @@ FlutterELinuxView::touch_point* FlutterELinuxView::GgeTouchPoint(int32_t id) {
 }
 
 // Sends new size  information to FlutterEngine.
-void FlutterELinuxView::SendWindowMetrics(size_t width,
-                                          size_t height,
+void FlutterELinuxView::SendWindowMetrics(size_t width_px,
+                                          size_t height_px,
                                           double dpiScale) const {
   FlutterWindowMetricsEvent event = {};
   event.struct_size = sizeof(event);
-  event.width = width;
-  event.height = height;
+  event.width = width_px;
+  event.height = height_px;
   event.pixel_ratio = dpiScale;
   engine_->SendWindowMetricsEvent(event);
 }
@@ -308,28 +309,28 @@ void FlutterELinuxView::SetEventPhaseFromCursorButtonState(
                                            : FlutterPointerPhase::kDown;
 }
 
-void FlutterELinuxView::SendPointerMove(double x, double y) {
+void FlutterELinuxView::SendPointerMove(double x_px, double y_px) {
   FlutterPointerEvent event = {};
-  event.x = x;
-  event.y = y;
+  event.x = x_px;
+  event.y = y_px;
   SetEventPhaseFromCursorButtonState(&event);
   SendPointerEventWithData(event);
 }
 
-void FlutterELinuxView::SendPointerDown(double x, double y) {
+void FlutterELinuxView::SendPointerDown(double x_px, double y_px) {
   FlutterPointerEvent event = {};
   SetEventPhaseFromCursorButtonState(&event);
-  event.x = x;
-  event.y = y;
+  event.x = x_px;
+  event.y = y_px;
   SendPointerEventWithData(event);
   SetMouseFlutterStateDown(true);
 }
 
-void FlutterELinuxView::SendPointerUp(double x, double y) {
+void FlutterELinuxView::SendPointerUp(double x_px, double y_px) {
   FlutterPointerEvent event = {};
   SetEventPhaseFromCursorButtonState(&event);
-  event.x = x;
-  event.y = y;
+  event.x = x_px;
+  event.y = y_px;
   SendPointerEventWithData(event);
   if (event.phase == FlutterPointerPhase::kUp) {
     SetMouseFlutterStateDown(false);
@@ -468,21 +469,21 @@ FlutterTransformation FlutterELinuxView::GetRootSurfaceTransformation() {
   return view_rotation_transformation_;
 }
 
-std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x,
-                                                                double y) {
+std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x_px,
+                                                                double y_px) {
   auto degree = binding_handler_->GetRotationDegree();
   auto bounds = binding_handler_->GetPhysicalWindowBounds();
-  std::pair<double, double> res = {x, y};
+  std::pair<double, double> res = {x_px, y_px};
 
   if (degree == 90) {
-    res.first = y;
-    res.second = bounds.height - x;
+    res.first = y_px;
+    res.second = bounds.height - x_px;
   } else if (degree == 180) {
-    res.first = bounds.width - x;
-    res.second = bounds.height - y;
+    res.first = bounds.width - x_px;
+    res.second = bounds.height - y_px;
   } else if (degree == 270) {
-    res.first = bounds.width - y;
-    res.second = x;
+    res.first = bounds.width - y_px;
+    res.second = x_px;
   }
   return res;
 }

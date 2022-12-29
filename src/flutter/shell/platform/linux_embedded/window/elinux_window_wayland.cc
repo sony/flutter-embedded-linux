@@ -1139,7 +1139,8 @@ bool ELinuxWindowWayland::DispatchEvent() {
   return true;
 }
 
-bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
+bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
+                                              int32_t height_px) {
   if (!display_valid_) {
     ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
@@ -1156,12 +1157,12 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   }
 
   if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
-    width = view_properties_.width;
-    height = view_properties_.height;
+    width_px = view_properties_.width;
+    height_px = view_properties_.height;
   }
 
-  ELINUX_LOG(TRACE) << "Created the Wayland surface: " << width << "x"
-                    << height;
+  ELINUX_LOG(TRACE) << "Created the Wayland surface: " << width_px << "x"
+                    << height_px;
   if (view_properties_.use_mouse_cursor) {
     wl_cursor_surface_ = wl_compositor_create_surface(wl_compositor_);
     if (!wl_cursor_surface_) {
@@ -1172,10 +1173,10 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   }
 
   if (current_rotation_ == 90 || current_rotation_ == 270) {
-    std::swap(width, height);
+    std::swap(width_px, height_px);
   }
-  native_window_ =
-      std::make_unique<NativeWindowWayland>(wl_compositor_, width, height);
+  native_window_ = std::make_unique<NativeWindowWayland>(wl_compositor_,
+                                                         width_px, height_px);
 
   wl_surface_add_listener(native_window_->Surface(), &kWlSurfaceListener, this);
 
@@ -1211,7 +1212,7 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width, int32_t height) {
   if (view_properties_.use_window_decoration) {
     window_decorations_ = std::make_unique<WindowDecorationsWayland>(
         wl_display_, wl_compositor_, wl_subcompositor_,
-        native_window_->Surface(), width, height);
+        native_window_->Surface(), width_px, height_px);
   }
 
   return true;

@@ -82,19 +82,19 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void SendInitialBounds();
 
   // |WindowBindingHandlerDelegate|
-  void OnWindowSizeChanged(size_t width, size_t height) const override;
+  void OnWindowSizeChanged(size_t width_px, size_t height_px) const override;
 
   // |WindowBindingHandlerDelegate|
-  void OnPointerMove(double x, double y) override;
+  void OnPointerMove(double x_px, double y_px) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnPointerDown(double x,
-                     double y,
+  void OnPointerDown(double x_px,
+                     double y_px,
                      FlutterPointerMouseButtons button) override;
 
   // |WindowBindingHandlerDelegate|
-  void OnPointerUp(double x,
-                   double y,
+  void OnPointerUp(double x_px,
+                   double y_px,
                    FlutterPointerMouseButtons button) override;
 
   // |WindowBindingHandlerDelegate|
@@ -188,17 +188,27 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   touch_point* GgeTouchPoint(int32_t id);
 
   // Sends a window metrics update to the Flutter engine using current window
-  // dimensions in physical
-  void SendWindowMetrics(size_t width, size_t height, double dpiscale) const;
+  // dimensions in physical pixels.
+  // @param[in] width_px       Physical width of the window.
+  // @param[in] height_px      Physical height of the window.
+  void SendWindowMetrics(size_t width_px,
+                         size_t height_px,
+                         double dpiscale) const;
 
   // Reports a mouse movement to Flutter engine.
-  void SendPointerMove(double x, double y);
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  void SendPointerMove(double x_px, double y_px);
 
   // Reports mouse press to Flutter engine.
-  void SendPointerDown(double x, double y);
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  void SendPointerDown(double x_px, double y_px);
 
   // Reports mouse release to Flutter engine.
-  void SendPointerUp(double x, double y);
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  void SendPointerUp(double x_px, double y_px);
 
   // Reports mouse left the window client area.
   //
@@ -243,7 +253,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   void SetMouseButtons(uint64_t buttons) { mouse_state_.buttons = buttons; }
 
   // Returns a trimmed pointer of user inputs with the window rotation.
-  std::pair<double, double> GetPointerRotation(double x, double y);
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  std::pair<double, double> GetPointerRotation(double x_px, double y_px);
 
   // The engine associated with this view.
   std::unique_ptr<FlutterELinuxEngine> engine_;

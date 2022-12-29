@@ -28,7 +28,9 @@ class SurfaceBase {
   // On-screen surface needs to be recreated after window size changed only when
   // using DRM-GBM backend. Because gbm-surface is recreated when the window
   // size changed.
-  bool OnScreenSurfaceResize(const size_t width, const size_t height);
+  // @param[in] width_px       Physical width of the surface.
+  // @param[in] height_px      Physical height of the surface.
+  bool OnScreenSurfaceResize(const size_t width_px, const size_t height_px);
 
   // Clears current on-screen context.
   bool ClearCurrentContext() const;

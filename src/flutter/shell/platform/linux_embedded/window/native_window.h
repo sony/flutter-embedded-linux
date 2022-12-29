@@ -21,6 +21,7 @@ class NativeWindow {
   // Gets a window (GBM surface) for offscreen resource.
   EGLNativeWindowType WindowOffscreen() const { return window_offscreen_; }
 
+  // Get physical width of the window.
   int32_t Width() const {
     if (!valid_) {
       return -1;
@@ -28,6 +29,7 @@ class NativeWindow {
     return width_;
   }
 
+  // Get physical height of the window.
   int32_t Height() const {
     if (!valid_) {
       return -1;
@@ -39,12 +41,16 @@ class NativeWindow {
 
   // Sets a window position. Basically, this API is used for window decorations
   // such as titlebar.
-  virtual void SetPosition(const int32_t x, const int32_t y) {
-    x_ = x;
-    y_ = y;
+  // @param[in] x_dip   The x coordinate in logical pixels.
+  // @param[in] y_dip   The y coordinate in logical pixels.
+  virtual void SetPosition(const int32_t x_dip, const int32_t y_dip) {
+    x_ = x_dip;
+    y_ = y_dip;
   };
 
-  virtual bool Resize(const size_t width, const size_t height) = 0;
+  // @param[in] width_px       Physical width of the window.
+  // @param[in] height_px      Physical height of the window.
+  virtual bool Resize(const size_t width_px, const size_t height_px) = 0;
 
   // Swaps frame buffers. This API performs processing only for the DRM-GBM
   // backend. It is prepared to make the interface common.
@@ -53,9 +59,13 @@ class NativeWindow {
  protected:
   EGLNativeWindowType window_;
   EGLNativeWindowType window_offscreen_;
+  // Physical width of the window.
   int32_t width_;
+  // Physical height of the window.
   int32_t height_;
+  // The x coordinate of the window in logical pixels.
   int32_t x_;
+  // The y coordinate of the window in logical pixels.
   int32_t y_;
   bool valid_ = false;
 };

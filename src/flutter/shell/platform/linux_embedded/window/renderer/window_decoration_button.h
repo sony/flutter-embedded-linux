@@ -21,10 +21,10 @@ class WindowDecorationButton : public WindowDecoration {
   void Draw() override;
 
   // |WindowDecoration|
-  void SetPosition(const int32_t x, const int32_t y) override;
+  void SetPosition(const int32_t x_dip, const int32_t y_dip) override;
 
   // |WindowDecoration|
-  void Resize(const int32_t width, const int32_t height) override;
+  void Resize(const size_t width_px, const size_t height_px) override;
 
  private:
   void LoadShader();

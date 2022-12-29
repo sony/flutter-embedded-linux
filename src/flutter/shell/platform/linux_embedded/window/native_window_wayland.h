@@ -13,13 +13,15 @@ namespace flutter {
 
 class NativeWindowWayland : public NativeWindow {
  public:
+  // @param[in] width_px       Physical width of the window.
+  // @param[in] height_px      Physical height of the window.
   NativeWindowWayland(wl_compositor* compositor,
-                      const size_t width,
-                      const size_t height);
+                      const size_t width_px,
+                      const size_t height_px);
   ~NativeWindowWayland();
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) override;
+  bool Resize(const size_t width_px, const size_t height_px) override;
 
   wl_surface* Surface() const { return surface_; }
 

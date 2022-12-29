@@ -28,9 +28,13 @@ class WindowDecoration {
 
   virtual void Draw() = 0;
 
-  virtual void SetPosition(const int32_t x, const int32_t y) = 0;
+  // @param[in] x_dip          The x coordinate in logical pixels.
+  // @param[in] y_dip          The y coordinate in logical pixels.
+  virtual void SetPosition(const int32_t x_dip, const int32_t y_dip) = 0;
 
-  virtual void Resize(const int32_t width, const int32_t height) = 0;
+  // @param[in] width_px   Physical width of the window.
+  // @param[in] height_px  Physical height of the window.
+  virtual void Resize(const size_t width_px, const size_t height_px) = 0;
 
   void DestroyContext() const { render_surface_->DestroyContext(); };
 
