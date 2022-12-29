@@ -105,6 +105,9 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   // Updates the surface scale of the window from the list of entered outputs.
   void UpdateWindowScale();
 
+  // Get window decorations height in physical pixels.
+  uint32_t WindowDecorationsPhysicalHeight() const;
+
   static const wl_registry_listener kWlRegistryListener;
   static const xdg_wm_base_listener kXdgWmBaseListener;
   static const xdg_surface_listener kXdgSurfaceListener;
