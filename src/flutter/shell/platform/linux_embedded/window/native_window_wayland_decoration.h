@@ -14,18 +14,20 @@ namespace flutter {
 
 class NativeWindowWaylandDecoration : public NativeWindow {
  public:
+  // @param[in] width_px       Physical width of the window.
+  // @param[in] height_px      Physical height of the window.
   NativeWindowWaylandDecoration(wl_compositor* compositor,
                                 wl_subcompositor* subcompositor,
                                 wl_surface* parent_surface,
-                                const size_t width,
-                                const size_t height);
+                                const size_t width_px,
+                                const size_t height_px);
   ~NativeWindowWaylandDecoration();
 
   // |NativeWindow|
-  bool Resize(const size_t width, const size_t height) override;
+  bool Resize(const size_t width_px, const size_t height_px) override;
 
   // |NativeWindow|
-  void SetPosition(const int32_t x, const int32_t y) override;
+  void SetPosition(const int32_t x_dip, const int32_t y_dip) override;
 
   wl_surface* Surface() const { return surface_; }
 

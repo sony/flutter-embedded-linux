@@ -17,8 +17,10 @@ class ELinuxWindow {
  protected:
   virtual bool IsValid() const = 0;
 
+  // Get current window width in physical pixels.
   uint32_t GetCurrentWidth() const { return view_properties_.width; }
 
+  // Get current window height in physical pixels.
   uint32_t GetCurrentHeight() const { return view_properties_.height; }
 
   void SetRotation(FlutterDesktopViewRotation rotation) {
@@ -36,7 +38,9 @@ class ELinuxWindow {
   FlutterDesktopViewProperties view_properties_;
   double current_scale_ = 1.0;
   uint16_t current_rotation_ = 0;
+  // The x coordinate of the pointer in physical pixels.
   double pointer_x_ = 0;
+  // The y coordinate of the pointer in physical pixels.
   double pointer_y_ = 0;
   std::string clipboard_data_ = "";
 };

@@ -12,8 +12,8 @@ NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
     wl_compositor* compositor,
     wl_subcompositor* subcompositor,
     wl_surface* parent_surface,
-    const size_t width,
-    const size_t height) {
+    const size_t width_px,
+    const size_t height_px) {
   surface_ = wl_compositor_create_surface(compositor);
   if (!surface_) {
     ELINUX_LOG(ERROR) << "Failed to create the compositor surface.";
@@ -35,8 +35,8 @@ NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
     return;
   }
 
-  width_ = width;
-  height_ = height;
+  width_ = width_px;
+  height_ = height_px;
   valid_ = true;
 }
 
@@ -52,29 +52,29 @@ NativeWindowWaylandDecoration::~NativeWindowWaylandDecoration() {
   }
 }
 
-bool NativeWindowWaylandDecoration::Resize(const size_t width,
-                                           const size_t height) {
+bool NativeWindowWaylandDecoration::Resize(const size_t width_px,
+                                           const size_t height_px) {
   if (!valid_) {
     ELINUX_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
 
-  width_ = width;
-  height_ = height;
-  wl_egl_window_resize(window_, width, height, 0, 0);
+  width_ = width_px;
+  height_ = height_px;
+  wl_egl_window_resize(window_, width_px, height_px, 0, 0);
   return true;
 }
 
-void NativeWindowWaylandDecoration::SetPosition(const int32_t x,
-                                                const int32_t y) {
+void NativeWindowWaylandDecoration::SetPosition(const int32_t x_dip,
+                                                const int32_t y_dip) {
   if (!valid_) {
     ELINUX_LOG(ERROR) << "Failed to set the position of the window.";
     return;
   }
 
-  x_ = x;
-  y_ = y;
-  wl_subsurface_set_position(subsurface_, x, y);
+  x_ = x_dip;
+  y_ = y_dip;
+  wl_subsurface_set_position(subsurface_, x_dip, y_dip);
 }
 
 }  // namespace flutter

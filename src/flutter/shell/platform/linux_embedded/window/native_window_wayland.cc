@@ -9,15 +9,15 @@
 namespace flutter {
 
 NativeWindowWayland::NativeWindowWayland(wl_compositor* compositor,
-                                         const size_t width,
-                                         const size_t height) {
+                                         const size_t width_px,
+                                         const size_t height_px) {
   surface_ = wl_compositor_create_surface(compositor);
   if (!surface_) {
     ELINUX_LOG(ERROR) << "Failed to create the compositor surface.";
     return;
   }
 
-  window_ = wl_egl_window_create(surface_, width, height);
+  window_ = wl_egl_window_create(surface_, width_px, height_px);
   if (!window_) {
     ELINUX_LOG(ERROR) << "Failed to create the EGL window.";
     return;
@@ -40,8 +40,8 @@ NativeWindowWayland::NativeWindowWayland(wl_compositor* compositor,
     }
   }
 
-  width_ = width;
-  height_ = height;
+  width_ = width_px;
+  height_ = height_px;
   valid_ = true;
 }
 
@@ -67,15 +67,16 @@ NativeWindowWayland::~NativeWindowWayland() {
   }
 }
 
-bool NativeWindowWayland::Resize(const size_t width, const size_t height) {
+bool NativeWindowWayland::Resize(const size_t width_px,
+                                 const size_t height_px) {
   if (!valid_) {
     ELINUX_LOG(ERROR) << "Failed to resize the window.";
     return false;
   }
-  wl_egl_window_resize(window_, width, height, 0, 0);
+  wl_egl_window_resize(window_, width_px, height_px, 0, 0);
 
-  width_ = width;
-  height_ = height;
+  width_ = width_px;
+  height_ = height_px;
   return true;
 }
 

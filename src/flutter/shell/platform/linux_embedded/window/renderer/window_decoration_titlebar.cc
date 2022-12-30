@@ -69,13 +69,14 @@ void WindowDecorationTitlebar::Draw() {
   render_surface_->GLContextPresent(0);
 }
 
-void WindowDecorationTitlebar::SetPosition(const int32_t x, const int32_t y) {
-  native_window_->SetPosition(x, y);
+void WindowDecorationTitlebar::SetPosition(const int32_t x_dip,
+                                           const int32_t y_dip) {
+  native_window_->SetPosition(x_dip, y_dip);
 }
 
-void WindowDecorationTitlebar::Resize(const int32_t width,
-                                      const int32_t height) {
-  render_surface_->Resize(width, height);
+void WindowDecorationTitlebar::Resize(const size_t width_px,
+                                      const size_t height_px) {
+  render_surface_->Resize(width_px, height_px);
 }
 
 }  // namespace flutter

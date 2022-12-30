@@ -10,11 +10,11 @@
 namespace flutter {
 
 namespace {
-constexpr uint kTitleBarHeight = 30;
+constexpr uint kTitleBarHeightDIP = 30;
 
-constexpr uint kButtonWidth = 15;
-constexpr uint kButtonHeight = 15;
-constexpr uint kButtonMargin = 10;
+constexpr uint kButtonWidthDIP = 15;
+constexpr uint kButtonHeightDIP = 15;
+constexpr uint kButtonMarginDIP = 10;
 }  // namespace
 
 WindowDecorationsWayland::WindowDecorationsWayland(
@@ -22,53 +22,57 @@ WindowDecorationsWayland::WindowDecorationsWayland(
     wl_compositor* compositor,
     wl_subcompositor* subcompositor,
     wl_surface* root_surface,
-    int32_t width,
-    int32_t height) {
+    int32_t width_dip,
+    int32_t height_dip) {
   constexpr bool sub_egl_display = true;
 
   // title-bar.
   titlebar_ = std::make_unique<WindowDecorationTitlebar>(
-      std::make_unique<NativeWindowWaylandDecoration>(
-          compositor, subcompositor, root_surface, width, kTitleBarHeight),
+      std::make_unique<NativeWindowWaylandDecoration>(compositor, subcompositor,
+                                                      root_surface, width_dip,
+                                                      kTitleBarHeightDIP),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display))));
-  titlebar_->SetPosition(0, -kTitleBarHeight);
+  titlebar_->SetPosition(0, -kTitleBarHeightDIP);
 
   // close button.
   auto type = WindowDecorationButton::DecorationType::CLOSE_BUTTON;
   buttons_.push_back(std::make_unique<WindowDecorationButton>(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
-          compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
+          compositor, subcompositor, root_surface, kButtonWidthDIP,
+          kButtonHeightDIP),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
-      width - kButtonWidth - kButtonMargin,
-      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+      width_dip - kButtonWidthDIP - kButtonMarginDIP,
+      -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 
   // maximise button.
   type = WindowDecorationButton::DecorationType::MAXIMISE_BUTTON;
   buttons_.push_back(std::make_unique<WindowDecorationButton>(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
-          compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
+          compositor, subcompositor, root_surface, kButtonWidthDIP,
+          kButtonHeightDIP),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
-      width - kButtonWidth * 2 - kButtonMargin * 2,
-      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+      width_dip - kButtonWidthDIP * 2 - kButtonMarginDIP * 2,
+      -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 
   // minimise button.
   type = WindowDecorationButton::DecorationType::MINIMISE_BUTTON;
   buttons_.push_back(std::make_unique<WindowDecorationButton>(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
-          compositor, subcompositor, root_surface, kButtonWidth, kButtonHeight),
+          compositor, subcompositor, root_surface, kButtonWidthDIP,
+          kButtonHeightDIP),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
   buttons_[type]->SetPosition(
-      width - kButtonWidth * 3 - kButtonMargin * 3,
-      -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
+      width_dip - kButtonWidthDIP * 3 - kButtonMarginDIP * 3,
+      -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 }
 
 WindowDecorationsWayland::~WindowDecorationsWayland() {
@@ -86,16 +90,16 @@ void WindowDecorationsWayland::Draw() {
   }
 }
 
-void WindowDecorationsWayland::Resize(const int32_t width,
-                                      const int32_t height) {
-  titlebar_->SetPosition(0, -kTitleBarHeight);
-  titlebar_->Resize(width, kTitleBarHeight);
+void WindowDecorationsWayland::Resize(const int32_t width_dip,
+                                      const int32_t height_dip) {
+  titlebar_->SetPosition(0, -kTitleBarHeightDIP);
+  titlebar_->Resize(width_dip, kTitleBarHeightDIP);
 
   for (auto i = 0; i < buttons_.size(); i++) {
     buttons_[i]->SetPosition(
-        width - kButtonWidth * (i + 1) - kButtonMargin * (i + 1),
-        -(kButtonHeight + (kTitleBarHeight - kButtonHeight) / 2));
-    buttons_[i]->Resize(kButtonWidth, kButtonHeight);
+        width_dip - kButtonWidthDIP * (i + 1) - kButtonMarginDIP * (i + 1),
+        -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
+    buttons_[i]->Resize(kButtonWidthDIP, kButtonHeightDIP);
   }
 }
 
@@ -118,7 +122,7 @@ void WindowDecorationsWayland::DestroyContext() {
 }
 
 int32_t WindowDecorationsWayland::Height() const {
-  return kTitleBarHeight;
+  return kTitleBarHeightDIP;
 }
 
 }  // namespace flutter

@@ -11,24 +11,32 @@ namespace flutter {
 
 class WindowBindingHandlerDelegate {
  public:
-  // Notifies delegate that backing window size has changed.
-  // Typically called by currently configured WindowBindingHandler
-  virtual void OnWindowSizeChanged(size_t width, size_t height) const = 0;
+  // Notifies delegate that backing window size has changed. Typically called by
+  // currently configured WindowBindingHandler
+  // @param[in] width_px       Physical width of the window.
+  // @param[in] height_px      Physical height of the window.
+  virtual void OnWindowSizeChanged(size_t width_px, size_t height_px) const = 0;
 
-  // Notifies delegate that backing window mouse has moved.
-  // Typically called by currently configured WindowBindingHandler
-  virtual void OnPointerMove(double x, double y) = 0;
+  // Notifies delegate that backing window mouse has moved. Typically called by
+  // currently configured WindowBindingHandler
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  virtual void OnPointerMove(double x_px, double y_px) = 0;
 
   // Notifies delegate that backing window mouse pointer button has been
   // pressed. Typically called by currently configured WindowBindingHandler
-  virtual void OnPointerDown(double x,
-                             double y,
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  virtual void OnPointerDown(double x_px,
+                             double y_px,
                              FlutterPointerMouseButtons button) = 0;
 
   // Notifies delegate that backing window mouse pointer button has been
   // released. Typically called by currently configured WindowBindingHandler
-  virtual void OnPointerUp(double x,
-                           double y,
+  // @param[in] x_px The x coordinate of the pointer event in physical pixels.
+  // @param[in] y_px The y coordinate of the pointer event in physical pixels.
+  virtual void OnPointerUp(double x_px,
+                           double y_px,
                            FlutterPointerMouseButtons button) = 0;
 
   // Notifies delegate that backing window mouse pointer has left the window.

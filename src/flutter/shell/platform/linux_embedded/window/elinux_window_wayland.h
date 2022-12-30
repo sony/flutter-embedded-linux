@@ -45,7 +45,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   bool DispatchEvent() override;
 
   // |FlutterWindowBindingHandler|
-  bool CreateRenderSurface(int32_t width, int32_t height) override;
+  bool CreateRenderSurface(int32_t width_px, int32_t height_px) override;
 
   // |FlutterWindowBindingHandler|
   void DestroyRenderSurface() override;

@@ -27,8 +27,8 @@ bool SurfaceDecoration::SetNativeWindow(NativeWindow* window) {
   return true;
 };
 
-bool SurfaceDecoration::Resize(const size_t width, const size_t height) {
-  if (!native_window_->Resize(width, height)) {
+bool SurfaceDecoration::Resize(const size_t width_px, const size_t height_px) {
+  if (!native_window_->Resize(width_px, height_px)) {
     ELINUX_LOG(ERROR) << "Failed to resize.";
     return false;
   }
