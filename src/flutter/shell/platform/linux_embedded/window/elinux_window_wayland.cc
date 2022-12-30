@@ -138,8 +138,9 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
             self->window_decorations_->Resize(next_width, next_height);
           }
           if (self->binding_handler_delegate_) {
-            self->binding_handler_delegate_->OnWindowSizeChanged(next_width,
-                                                                 next_height);
+            self->binding_handler_delegate_->OnWindowSizeChanged(
+                next_width,
+                next_height - self->WindowDecorationsPhysicalHeight());
           }
         },
     .close =
@@ -1604,8 +1605,17 @@ void ELinuxWindowWayland::UpdateWindowScale() {
 
   if (this->binding_handler_delegate_) {
     this->binding_handler_delegate_->OnWindowSizeChanged(
-        this->view_properties_.width, this->view_properties_.height);
+        this->view_properties_.width,
+        this->view_properties_.height -
+            this->WindowDecorationsPhysicalHeight());
   }
+}
+
+uint32_t ELinuxWindowWayland::WindowDecorationsPhysicalHeight() const {
+  if (!this->window_decorations_)
+    return 0;
+
+  return this->window_decorations_->Height() * current_scale_;
 }
 
 }  // namespace flutter
