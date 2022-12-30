@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
   auto command_line_arguments = std::vector<std::string>();
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
-  flutter::FlutterViewController::ViewProperties view_properties = {};
+  flutter::FlutterViewController::ViewProperties view_properties;
   view_properties.width = options.WindowWidth();
   view_properties.height = options.WindowHeight();
   view_properties.view_mode = options.WindowViewMode();

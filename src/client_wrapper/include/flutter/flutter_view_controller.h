@@ -44,7 +44,8 @@ class FlutterViewController {
   };
 
   // Properties for configuring a Flutter view instance.
-  typedef struct {
+  class ViewProperties {
+   public:
     // View width.
     int width;
 
@@ -71,7 +72,7 @@ class FlutterViewController {
     // Force scale factor specified by command line argument
     bool force_scale_factor;
     double scale_factor;
-  } ViewProperties;
+  };
 
   // Creates a FlutterView that can be parented into a Windows View hierarchy
   // either using HWNDs or in the future into a CoreWindow, or using compositor.
