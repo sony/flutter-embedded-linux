@@ -75,7 +75,8 @@ enum FlutterDesktopViewRotation {
 };
 
 // Properties for configuring a Flutter view instance.
-typedef struct {
+class FlutterDesktopViewProperties {
+ public:
   // View width in logical pixels.
   int width;
 
@@ -102,7 +103,7 @@ typedef struct {
   // Force scale factor specified by command line argument
   bool force_scale_factor;
   double scale_factor;
-} FlutterDesktopViewProperties;
+};
 
 // ========== View Controller ==========
 

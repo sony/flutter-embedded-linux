@@ -14,7 +14,7 @@ FlutterViewController::FlutterViewController(
     const DartProject& project) {
   engine_ = std::make_unique<FlutterEngine>(project);
 
-  FlutterDesktopViewProperties c_view_properties = {};
+  FlutterDesktopViewProperties c_view_properties;
   c_view_properties.width = view_properties.width;
   c_view_properties.height = view_properties.height;
   c_view_properties.view_rotation =
