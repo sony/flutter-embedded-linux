@@ -208,6 +208,10 @@ void WindowDecorationButton::Resize(const size_t width_px,
   render_surface_->Resize(width_px, height_px);
 }
 
+void WindowDecorationButton::SetScaleFactor(float scale_factor) {
+  native_window_->SetScaleFactor(scale_factor);
+}
+
 void WindowDecorationButton::LoadShader() {
   if (shader_) {
     return;

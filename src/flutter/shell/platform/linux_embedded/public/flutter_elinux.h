@@ -76,10 +76,10 @@ enum FlutterDesktopViewRotation {
 
 // Properties for configuring a Flutter view instance.
 typedef struct {
-  // View width.
+  // View width in logical pixels.
   int width;
 
-  // View height.
+  // View height in logical pixels.
   int height;
 
   // View rotation setting.

@@ -135,12 +135,14 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
           self->view_properties_.width = next_width;
           self->view_properties_.height = next_height;
           if (self->window_decorations_) {
-            self->window_decorations_->Resize(next_width, next_height);
+            self->window_decorations_->Resize(next_width, next_height,
+                                              self->current_scale_);
           }
           if (self->binding_handler_delegate_) {
             self->binding_handler_delegate_->OnWindowSizeChanged(
-                next_width,
-                next_height - self->WindowDecorationsPhysicalHeight());
+                next_width * self->current_scale_,
+                next_height * self->current_scale_ -
+                    self->WindowDecorationsPhysicalHeight());
           }
         },
     .close =
@@ -313,11 +315,11 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       }
 
       if (self->binding_handler_delegate_) {
-        double x = wl_fixed_to_double(surface_x);
-        double y = wl_fixed_to_double(surface_y);
-        self->binding_handler_delegate_->OnPointerMove(x, y);
-        self->pointer_x_ = x;
-        self->pointer_y_ = y;
+        double x_px = wl_fixed_to_double(surface_x) * self->current_scale_;
+        double y_px = wl_fixed_to_double(surface_y) * self->current_scale_;
+        self->binding_handler_delegate_->OnPointerMove(x_px, y_px);
+        self->pointer_x_ = x_px;
+        self->pointer_y_ = y_px;
       }
     },
     .leave = [](void* data,
@@ -347,11 +349,11 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
                  wl_fixed_t surface_y) -> void {
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (self->binding_handler_delegate_) {
-        double x = wl_fixed_to_double(surface_x);
-        double y = wl_fixed_to_double(surface_y);
-        self->binding_handler_delegate_->OnPointerMove(x, y);
-        self->pointer_x_ = x;
-        self->pointer_y_ = y;
+        double x_px = wl_fixed_to_double(surface_x) * self->current_scale_;
+        double y_px = wl_fixed_to_double(surface_y) * self->current_scale_;
+        self->binding_handler_delegate_->OnPointerMove(x_px, y_px);
+        self->pointer_x_ = x_px;
+        self->pointer_y_ = y_px;
       }
     },
     .button = [](void* data,
@@ -604,7 +606,10 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
           self->view_properties_.height = height;
 
           if (self->window_decorations_) {
-            self->window_decorations_->Resize(width, height);
+            int32_t width_dip = width / self->current_scale_;
+            int32_t height_dip = height / self->current_scale_;
+            self->window_decorations_->Resize(width_dip, height_dip,
+                                              self->current_scale_);
           }
 
           if (self->binding_handler_delegate_) {
@@ -1158,8 +1163,8 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   }
 
   if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
-    width_px = view_properties_.width;
-    height_px = view_properties_.height;
+    width_px = view_properties_.width * current_scale_;
+    height_px = view_properties_.height * current_scale_;
   }
 
   ELINUX_LOG(TRACE) << "Created the Wayland surface: " << width_px << "x"
@@ -1192,6 +1197,7 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   xdg_toplevel_ = xdg_surface_get_toplevel(xdg_surface_);
   xdg_toplevel_set_title(xdg_toplevel_, "Flutter");
   xdg_toplevel_add_listener(xdg_toplevel_, &kXdgToplevelListener, this);
+  wl_surface_set_buffer_scale(native_window_->Surface(), current_scale_);
   wl_surface_commit(native_window_->Surface());
 
   {
@@ -1211,9 +1217,11 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   render_surface_->SetNativeWindow(native_window_.get());
 
   if (view_properties_.use_window_decoration) {
+    int32_t width_dip = width_px / current_scale_;
+    int32_t height_dip = height_px / current_scale_;
     window_decorations_ = std::make_unique<WindowDecorationsWayland>(
         wl_display_, wl_compositor_, wl_subcompositor_,
-        native_window_->Surface(), width_px, height_px);
+        native_window_->Surface(), width_dip, height_dip, current_scale_);
   }
 
   return true;
@@ -1604,10 +1612,18 @@ void ELinuxWindowWayland::UpdateWindowScale() {
   ELINUX_LOG(TRACE) << "Window scale has changed: " << scale_factor;
   this->current_scale_ = scale_factor;
 
+  wl_surface_set_buffer_scale(native_window_->Surface(), current_scale_);
+
+  if (this->window_decorations_) {
+    this->window_decorations_->Resize(this->view_properties_.width,
+                                      this->view_properties_.height,
+                                      this->current_scale_);
+  }
+
   if (this->binding_handler_delegate_) {
     this->binding_handler_delegate_->OnWindowSizeChanged(
-        this->view_properties_.width,
-        this->view_properties_.height -
+        this->view_properties_.width * this->current_scale_,
+        this->view_properties_.height * this->current_scale_ -
             this->WindowDecorationsPhysicalHeight());
   }
 }

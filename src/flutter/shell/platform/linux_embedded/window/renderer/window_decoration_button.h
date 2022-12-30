@@ -26,6 +26,9 @@ class WindowDecorationButton : public WindowDecoration {
   // |WindowDecoration|
   void Resize(const size_t width_px, const size_t height_px) override;
 
+  // |WindowDecoration|
+  void SetScaleFactor(float scale_factor) override;
+
  private:
   void LoadShader();
 

@@ -29,6 +29,10 @@ class NativeWindowWaylandDecoration : public NativeWindow {
   // |NativeWindow|
   void SetPosition(const int32_t x_dip, const int32_t y_dip) override;
 
+  // Sets the scale factor for the next commit. Scale factor persists until a
+  // new one is set.
+  void SetScaleFactor(float scale_factor);
+
   wl_surface* Surface() const { return surface_; }
 
  private:

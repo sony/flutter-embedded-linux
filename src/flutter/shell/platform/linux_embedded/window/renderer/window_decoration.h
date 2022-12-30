@@ -36,6 +36,10 @@ class WindowDecoration {
   // @param[in] height_px  Physical height of the window.
   virtual void Resize(const size_t width_px, const size_t height_px) = 0;
 
+  // Sets the scale factor for the next commit. Scale factor persists until a
+  // new one is set.
+  virtual void SetScaleFactor(float scale_factor) = 0;
+
   void DestroyContext() const { render_surface_->DestroyContext(); };
 
   wl_surface* Surface() const { return native_window_->Surface(); };
