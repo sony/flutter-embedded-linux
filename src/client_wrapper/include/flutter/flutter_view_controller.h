@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <optional>
+#include <string>
 
 #include "dart_project.h"
 #include "flutter_engine.h"
@@ -57,6 +58,13 @@ class FlutterViewController {
     // View display mode. If you set kFullscreen, the parameters of both `width`
     // and `height` will be ignored.
     ViewMode view_mode;
+
+    // View title.
+    std::optional<std::string> title;
+
+    // View XDG application ID. As a best practice, it is suggested to select an
+    // app ID that matches the basename of the application's .desktop file.
+    std::optional<std::string> app_id;
 
     // Uses mouse cursor.
     bool use_mouse_cursor;

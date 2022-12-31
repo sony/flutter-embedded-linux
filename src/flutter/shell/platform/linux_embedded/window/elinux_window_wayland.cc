@@ -1195,7 +1195,12 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   xdg_surface_add_listener(xdg_surface_, &kXdgSurfaceListener, this);
 
   xdg_toplevel_ = xdg_surface_get_toplevel(xdg_surface_);
-  xdg_toplevel_set_title(xdg_toplevel_, "Flutter");
+  if (view_properties_.title != nullptr) {
+    xdg_toplevel_set_title(xdg_toplevel_, view_properties_.title);
+  }
+  if (view_properties_.app_id != nullptr) {
+    xdg_toplevel_set_app_id(xdg_toplevel_, view_properties_.app_id);
+  }
   xdg_toplevel_add_listener(xdg_toplevel_, &kXdgToplevelListener, this);
   wl_surface_set_buffer_scale(native_window_->Surface(), current_scale_);
   wl_surface_commit(native_window_->Surface());
