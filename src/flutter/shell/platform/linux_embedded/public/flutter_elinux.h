@@ -89,6 +89,13 @@ typedef struct {
   // and `height` will be ignored.
   FlutterDesktopViewMode view_mode;
 
+  // View title.
+  const char* title;
+
+  // View XDG application ID. As a best practice, it is suggested to select an
+  // app ID that matches the basename of the application's .desktop file.
+  const char* app_id;
+
   // Uses mouse cursor.
   bool use_mouse_cursor;
 

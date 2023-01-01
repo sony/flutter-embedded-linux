@@ -29,6 +29,12 @@ FlutterViewController::FlutterViewController(
       (view_properties.view_mode == ViewMode::kFullscreen)
           ? FlutterDesktopViewMode::kFullscreen
           : FlutterDesktopViewMode::kNormalscreen;
+  c_view_properties.title = view_properties.title.has_value()
+                                ? (*view_properties.title).c_str()
+                                : nullptr;
+  c_view_properties.app_id = view_properties.app_id.has_value()
+                                 ? (*view_properties.app_id).c_str()
+                                 : nullptr;
   c_view_properties.use_mouse_cursor = view_properties.use_mouse_cursor;
   c_view_properties.use_onscreen_keyboard =
       view_properties.use_onscreen_keyboard;
