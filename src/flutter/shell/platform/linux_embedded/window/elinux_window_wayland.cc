@@ -91,36 +91,14 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
            int32_t width,
            int32_t height,
            wl_array* states) {
-          auto is_maximized = false;
-          auto is_resizing = false;
-          uint32_t* state = static_cast<uint32_t*>(states->data);
-          for (auto i = 0; i < states->size; i++) {
-            switch (*state) {
-              case XDG_TOPLEVEL_STATE_MAXIMIZED:
-                is_maximized = true;
-                break;
-              case XDG_TOPLEVEL_STATE_RESIZING:
-                is_resizing = true;
-                break;
-              case XDG_TOPLEVEL_STATE_ACTIVATED:
-              case XDG_TOPLEVEL_STATE_FULLSCREEN:
-              default:
-                break;
-            }
-            state++;
-          }
-
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
             std::swap(width, height);
           }
 
-          int32_t next_width = 0;
-          int32_t next_height = 0;
-          if (is_maximized || is_resizing) {
-            next_width = width;
-            next_height = height;
-          } else if (self->restore_window_required_) {
+          int32_t next_width = width;
+          int32_t next_height = height;
+          if (self->restore_window_required_) {
             self->restore_window_required_ = false;
             next_width = self->restore_window_width_;
             next_height = self->restore_window_height_;
