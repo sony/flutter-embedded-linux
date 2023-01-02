@@ -21,6 +21,7 @@ struct GlProcs {
   PFNGLENABLEPROC glEnable;
   PFNGLCLEARCOLORPROC glClearColor;
   PFNGLCLEARPROC glClear;
+  PFNGLVIEWPORTPROC glViewport;
   PFNGLENABLEVERTEXATTRIBARRAYPROC glEnableVertexAttribArray;
   PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
   PFNGLDRAWARRAYSPROC glDrawArrays;
@@ -41,6 +42,8 @@ static const GlProcs& GlProcs() {
         eglGetProcAddress("glClearColor"));
     procs.glClear =
         reinterpret_cast<PFNGLCLEARPROC>(eglGetProcAddress("glClear"));
+    procs.glViewport =
+        reinterpret_cast<PFNGLVIEWPORTPROC>(eglGetProcAddress("glViewport"));
     procs.glEnableVertexAttribArray =
         reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC>(
             eglGetProcAddress("glEnableVertexAttribArray"));
@@ -61,7 +64,7 @@ static const GlProcs& GlProcs() {
     procs.valid = procs.glEnable && procs.glClearColor && procs.glClear &&
                   procs.glEnableVertexAttribArray && procs.glLineWidth &&
                   procs.glVertexAttribPointer && procs.glDrawArrays &&
-                  procs.glDisableVertexAttribArray &&
+                  procs.glDisableVertexAttribArray && procs.glViewport &&
                   procs.glBindAttribLocation && procs.glUseProgram;
     if (!procs.valid) {
       ELINUX_LOG(ERROR) << "Failed to load GlProcs";
@@ -116,6 +119,7 @@ void WindowDecorationButton::Draw() {
   {
     gl.glClearColor(100 / 255.0f, 100 / 255.0f, 100 / 255.0f, 1.0f);
     gl.glClear(GL_COLOR_BUFFER_BIT);
+    gl.glViewport(0, 0, native_window_->Width(), native_window_->Height());
     {
       if (!shader_) {
         LoadShader();
