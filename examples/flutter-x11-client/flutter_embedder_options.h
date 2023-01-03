@@ -28,6 +28,7 @@ class FlutterEmbedderOptions {
     defined(FLUTTER_TARGET_BACKEND_EGLSTREAM)
     // no more options.
 #elif defined(FLUTTER_TARGET_BACKEND_X11)
+    options_.AddString("title", "t", "Window title", "Flutter", false);
     options_.AddWithoutValue("fullscreen", "f", "Always full-screen display",
                              false);
     options_.AddInt("width", "w", "Window width", 1280, false);
@@ -94,6 +95,7 @@ class FlutterEmbedderOptions {
 #elif defined(FLUTTER_TARGET_BACKEND_X11)
     use_onscreen_keyboard_ = false;
     use_window_decoration_ = false;
+    window_title_ = options_.GetValue<std::string>("title");
     window_view_mode_ =
         options_.Exist("fullscreen")
             ? flutter::FlutterViewController::ViewMode::kFullscreen

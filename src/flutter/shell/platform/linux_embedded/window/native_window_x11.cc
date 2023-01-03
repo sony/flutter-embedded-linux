@@ -16,11 +16,11 @@ namespace flutter {
 
 namespace {
 static constexpr char kWmDeleteWindow[] = "WM_DELETE_WINDOW";
-static constexpr char kWindowTitle[] = "Flutter for Embedded Linux";
 }  // namespace
 
 NativeWindowX11::NativeWindowX11(Display* display,
                                  VisualID visual_id,
+                                 const char* title,
                                  const size_t width,
                                  const size_t height) {
   XVisualInfo visualTemplate;
@@ -59,11 +59,10 @@ NativeWindowX11::NativeWindowX11(Display* display,
   // Set the window title.
   {
     XTextProperty property;
-    property.value =
-        reinterpret_cast<unsigned char*>(const_cast<char*>(kWindowTitle));
+    property.value = reinterpret_cast<unsigned char*>(const_cast<char*>(title));
     property.encoding = XA_STRING;
     property.format = 8;
-    property.nitems = std::strlen(kWindowTitle);
+    property.nitems = std::strlen(title);
     XSetWMName(display, window_, &property);
   }
 
