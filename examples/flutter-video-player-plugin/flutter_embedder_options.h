@@ -56,8 +56,6 @@ class FlutterEmbedderOptions {
     }
 
     bundle_path_ = options_.GetValue<std::string>("bundle");
-    window_title_ = options_.GetValue<std::string>("title");
-    window_app_id_ = options_.GetValue<std::string>("app-id");
     use_mouse_cursor_ = !options_.Exist("no-cursor");
     if (options_.Exist("rotation")) {
       switch (options_.GetValue<int>("rotation")) {
@@ -103,6 +101,8 @@ class FlutterEmbedderOptions {
     window_width_ = options_.GetValue<int>("width");
     window_height_ = options_.GetValue<int>("height");
 #else  // FLUTTER_TARGET_BACKEND_WAYLAND
+    window_title_ = options_.GetValue<std::string>("title");
+    window_app_id_ = options_.GetValue<std::string>("app-id");
     use_onscreen_keyboard_ = options_.Exist("onscreen-keyboard");
     use_window_decoration_ = options_.Exist("window-decoration");
     window_view_mode_ =
