@@ -63,6 +63,11 @@ else()
     CODE_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.c"
     HEADER_FILE "${_wayland_protocols_src_dir}/presentation-time-protocol.h")
 
+  generate_wayland_client_protocol(
+    PROTOCOL_FILE "${_wayland_protocols_xml_dir}/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml"
+    CODE_FILE "${_wayland_protocols_src_dir}/xdg-decoration-unstable-v1-protocol.c"
+    HEADER_FILE "${_wayland_protocols_src_dir}/xdg-decoration-unstable-v1-protocol.h")
+
   add_definitions(-DFLUTTER_TARGET_BACKEND_WAYLAND)
   add_definitions(-DDISPLAY_BACKEND_TYPE_WAYLAND)
   set(DISPLAY_BACKEND_SRC
@@ -70,6 +75,7 @@ else()
     "${_wayland_protocols_src_dir}/text-input-unstable-v1-protocol.c"
     "${_wayland_protocols_src_dir}/text-input-unstable-v3-protocol.c"
     "${_wayland_protocols_src_dir}/presentation-time-protocol.c"
+    "${_wayland_protocols_src_dir}/xdg-decoration-unstable-v1-protocol.c"
     "src/flutter/shell/platform/linux_embedded/window/elinux_window_wayland.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_wayland.cc"
     "src/flutter/shell/platform/linux_embedded/window/native_window_wayland_decoration.cc"
