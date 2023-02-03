@@ -136,6 +136,7 @@ set(ELINUX_COMMON_SRC
   "src/flutter/shell/platform/linux_embedded/system_utils.cc"
   "src/flutter/shell/platform/linux_embedded/logger.cc"
   "src/flutter/shell/platform/linux_embedded/external_texture_pixelbuffer.cc"
+  "src/flutter/shell/platform/linux_embedded/external_texture_egl_image.cc"
   "src/flutter/shell/platform/linux_embedded/vsync_waiter.cc"
   "src/flutter/shell/platform/linux_embedded/flutter_elinux_texture_registrar.cc"
   "src/flutter/shell/platform/linux_embedded/plugins/keyboard_glfw_util.cc"
