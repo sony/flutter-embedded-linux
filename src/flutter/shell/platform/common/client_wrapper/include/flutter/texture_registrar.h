@@ -42,6 +42,38 @@ class PixelBufferTexture {
   const CopyBufferCallback copy_buffer_callback_;
 };
 
+// A EGLImage texture.
+class EGLImageTexture {
+ public:
+  // A callback used for retrieving pixel buffers.
+  typedef std::function<const FlutterDesktopEGLImage*(size_t width,
+                                                      size_t height,
+                                                      void* egl_display,
+                                                      void* egl_context)>
+      GetEGLImageCallback;
+
+  // Creates a EGLImage texture that uses the provided |get_egl_image_cb| to
+  // retrieve the EGLImage.
+  // As the callback is usually invoked from the render thread, the callee must
+  // take care of proper synchronization. It also needs to be ensured that the
+  // returned buffer isn't released prior to unregistering this texture.
+  explicit EGLImageTexture(GetEGLImageCallback get_egl_image_callback)
+      : get_egl_image_callback_(get_egl_image_callback) {}
+
+  // Returns the callback-provided FlutterDesktopEGLImage.
+  // The intended surface size is specified by |width| and
+  // |height|.
+  const FlutterDesktopEGLImage* GetEGLImage(size_t width,
+                                            size_t height,
+                                            void* egl_display,
+                                            void* egl_context) const {
+    return get_egl_image_callback_(width, height, egl_display, egl_context);
+  }
+
+ private:
+  const GetEGLImageCallback get_egl_image_callback_;
+};
+
 // A GPU surface-based texture.
 class GpuSurfaceTexture {
  public:
@@ -75,7 +107,7 @@ class GpuSurfaceTexture {
 // The available texture variants.
 // Only PixelBufferTexture is currently implemented.
 // Other variants are expected to be added in the future.
-typedef std::variant<PixelBufferTexture, GpuSurfaceTexture> TextureVariant;
+typedef std::variant<PixelBufferTexture, GpuSurfaceTexture, EGLImageTexture> TextureVariant;
 
 // An object keeping track of external textures.
 //

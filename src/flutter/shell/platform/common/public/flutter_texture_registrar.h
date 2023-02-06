@@ -25,7 +25,9 @@ typedef enum {
   // A Pixel buffer-based texture.
   kFlutterDesktopPixelBufferTexture,
   // A platform-specific GPU surface-backed texture.
-  kFlutterDesktopGpuSurfaceTexture
+  kFlutterDesktopGpuSurfaceTexture,
+  // An EGLImage-based texture
+  kFlutterDesktopEGLImageTexture
 } FlutterDesktopTextureType;
 
 // Supported GPU surface types.
@@ -65,6 +67,20 @@ typedef struct {
   // Opaque data passed to |release_callback|.
   void* release_context;
 } FlutterDesktopPixelBuffer;
+
+// An EGLImage object.
+typedef struct {
+  // The EGLImage object.(opaque)
+  const void* egl_image;
+  // Width of the EGLImage.
+  size_t width;
+  // Height of the EGLImage.
+  size_t height;
+  // An optional callback that gets invoked when the |egl_image| can be released.
+  void (*release_callback)(void* release_context);
+  // Opaque data passed to |release_callback|.
+  void* release_context;
+} FlutterDesktopEGLImage;
 
 // A GPU surface descriptor.
 typedef struct {
@@ -126,6 +142,13 @@ typedef const FlutterDesktopGpuSurfaceDescriptor* (
                                               size_t height,
                                               void* user_data);
 
+typedef const FlutterDesktopEGLImage* (
+    *FlutterDesktopEGLImageTextureCallback)(size_t width,
+                                            size_t height,
+                                            void* egl_display,
+                                            void* egl_context,
+                                            void* user_data);
+
 // An object used to configure pixel buffer textures.
 typedef struct {
   // The callback used by the engine to copy the pixel buffer object.
@@ -148,11 +171,20 @@ typedef struct {
   void* user_data;
 } FlutterDesktopGpuSurfaceTextureConfig;
 
+// An object used to configure EGLImage textures.
+typedef struct {
+  // The callback used by the engine to get the EGLImage object.
+  FlutterDesktopEGLImageTextureCallback callback;
+  // Opaque data that will get passed to the provided |callback|.
+  void* user_data;
+} FlutterDesktopEGLImageTextureConfig;
+
 typedef struct {
   FlutterDesktopTextureType type;
   union {
     FlutterDesktopPixelBufferTextureConfig pixel_buffer_config;
     FlutterDesktopGpuSurfaceTextureConfig gpu_surface_config;
+    FlutterDesktopEGLImageTextureConfig egl_image_config;
   };
 } FlutterDesktopTextureInfo;
 

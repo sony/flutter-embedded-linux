@@ -29,6 +29,8 @@ typedef void (*glTexImage2DProc)(GLenum target,
                                  GLenum format,
                                  GLenum type,
                                  const void* data);
+typedef void (*glEGLImageTargetTexture2DOESProc)(GLenum target,
+                                                 GLeglImageOES image);
 
 // A struct containing pointers to resolved gl* functions.
 struct GlProcs {
@@ -37,6 +39,7 @@ struct GlProcs {
   glBindTextureProc glBindTexture;
   glTexParameteriProc glTexParameteri;
   glTexImage2DProc glTexImage2D;
+  glEGLImageTargetTexture2DOESProc glEGLImageTargetTexture2DOES;
   bool valid;
 };
 
