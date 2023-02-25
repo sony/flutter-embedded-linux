@@ -75,6 +75,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   bool MakeCurrent();
   bool ClearCurrent();
   bool Present();
+  bool PresentWithInfo(const FlutterPresentInfo* info);
+  void PopulateExistingDamage(const intptr_t fbo_id,
+                              FlutterDamage* existing_damage);
   uint32_t GetOnscreenFBO();
   bool MakeResourceCurrent();
 

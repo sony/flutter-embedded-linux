@@ -415,6 +415,15 @@ bool FlutterELinuxView::Present() {
   return GetRenderSurfaceTarget()->GLContextPresent(0);
 }
 
+bool FlutterELinuxView::PresentWithInfo(const FlutterPresentInfo* info) {
+  return GetRenderSurfaceTarget()->GLContextPresentWithInfo(info);
+}
+
+void FlutterELinuxView::PopulateExistingDamage(const intptr_t fbo_id,
+                                               FlutterDamage* existing_damage) {
+  GetRenderSurfaceTarget()->PopulateExistingDamage(fbo_id, existing_damage);
+}
+
 uint32_t FlutterELinuxView::GetOnscreenFBO() {
   return GetRenderSurfaceTarget()->GLContextFBO();
 }

@@ -81,6 +81,11 @@ else()
     "src/flutter/shell/platform/linux_embedded/window/renderer/window_decorations_wayland.cc")
 endif()
 
+# Use flutter dirty region management
+if(USE_DIRTY_REGION_MANAGEMENT)
+  add_definitions(-DUSE_OPENGL_DIRTY_REGION_MANAGEMENT)
+endif()
+
 # OpenGL ES version.
 if(USE_GLES3)
   add_definitions(-DUSE_GLES3)

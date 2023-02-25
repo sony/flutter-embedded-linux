@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,6 +10,7 @@
 namespace flutter {
 
 std::string get_egl_error_cause();
+bool has_egl_extension(const char* extensions, const char* name);
 
 }  // namespace flutter
 

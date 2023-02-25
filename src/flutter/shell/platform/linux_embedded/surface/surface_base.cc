@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,6 +31,7 @@ bool SurfaceBase::SetNativeWindow(NativeWindow* window) {
 
 bool SurfaceBase::OnScreenSurfaceResize(const size_t width_px,
                                         const size_t height_px) {
+  onscreen_surface_->SurfaceResize(width_px, height_px);
   if (!native_window_->Resize(width_px, height_px)) {
     ELINUX_LOG(ERROR) << "Failed to resize.";
     return false;
@@ -44,6 +45,7 @@ bool SurfaceBase::OnScreenSurfaceResize(const size_t width_px,
       onscreen_surface_ = nullptr;
       return false;
     }
+    onscreen_surface_->SurfaceResize(width_px, height_px);
   }
   return true;
 };

@@ -11,6 +11,7 @@ project("flutter_elinux" LANGUAGES CXX C)
 
 # Build options.
 option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
+option(USE_DIRTY_REGION_MANAGEMENT "Use Flutter dirty region management" ON)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)
 option(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER "Enable alpha component of the EGL color buffer" ON)
 option(ENABLE_VSYNC "Enable embedder vsync" OFF)
