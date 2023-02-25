@@ -42,6 +42,25 @@ FlutterRendererConfig GetRendererConfig() {
     }
     return host->view()->ClearCurrent();
   };
+#if defined(USE_OPENGL_DIRTY_REGION_MANAGEMENT)
+  config.open_gl.fbo_reset_after_present = false;
+  config.open_gl.present_with_info =
+      [](void* user_data, const FlutterPresentInfo* info) -> bool {
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
+    if (!host->view()) {
+      return false;
+    }
+    return host->view()->PresentWithInfo(info);
+  };
+  config.open_gl.populate_existing_damage =
+      [](void* user_data, const intptr_t fbo_id,
+         FlutterDamage* existing_damage) -> void {
+    auto host = static_cast<FlutterELinuxEngine*>(user_data);
+    if (host->view()) {
+      host->view()->PopulateExistingDamage(fbo_id, existing_damage);
+    }
+  };
+#else
   config.open_gl.present = [](void* user_data) -> bool {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {
@@ -49,6 +68,7 @@ FlutterRendererConfig GetRendererConfig() {
     }
     return host->view()->Present();
   };
+#endif
   config.open_gl.fbo_callback = [](void* user_data) -> uint32_t {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
     if (!host->view()) {

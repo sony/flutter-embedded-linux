@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,6 +24,19 @@ bool SurfaceGl::GLContextPresent(uint32_t fbo_id) const {
   }
   native_window_->SwapBuffers();
   return true;
+}
+
+bool SurfaceGl::GLContextPresentWithInfo(const FlutterPresentInfo* info) const {
+  if (!onscreen_surface_->SwapBuffers(info)) {
+    return false;
+  }
+  native_window_->SwapBuffers();
+  return true;
+}
+
+void SurfaceGl::PopulateExistingDamage(const intptr_t fbo_id,
+                                       FlutterDamage* existing_damage) const {
+  onscreen_surface_->PopulateExistingDamage(fbo_id, existing_damage);
 }
 
 uint32_t SurfaceGl::GLContextFBO() const {

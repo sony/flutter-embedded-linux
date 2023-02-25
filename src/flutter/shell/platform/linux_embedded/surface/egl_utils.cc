@@ -1,5 +1,5 @@
 
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,6 +7,7 @@
 
 #include <EGL/egl.h>
 
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -38,6 +39,16 @@ std::string get_egl_error_cause() {
     }
   }
   return nullptr;
+}
+
+// Auxiliary function used to check if the given list of extensions contains the
+// requested extension name.
+bool has_egl_extension(const char* extensions, const char* name) {
+  const char* r = std::strstr(extensions, name);
+  auto len = std::strlen(name);
+
+  // check that the extension name is terminated by space or null terminator
+  return r != nullptr && (r[len] == ' ' || r[len] == 0);
 }
 
 }  // namespace flutter

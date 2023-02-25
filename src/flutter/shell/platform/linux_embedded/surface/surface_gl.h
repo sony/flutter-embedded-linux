@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,6 +26,13 @@ class SurfaceGl final : public SurfaceBase, public SurfaceGlDelegate {
 
   // |SurfaceGlDelegate|
   bool GLContextPresent(uint32_t fbo_id) const override;
+
+  // |SurfaceGlDelegate|
+  bool GLContextPresentWithInfo(const FlutterPresentInfo* info) const override;
+
+  // |SurfaceGlDelegate|
+  void PopulateExistingDamage(const intptr_t fbo_id,
+                              FlutterDamage* existing_damage) const override;
 
   // |SurfaceGlDelegate|
   uint32_t GLContextFBO() const override;
