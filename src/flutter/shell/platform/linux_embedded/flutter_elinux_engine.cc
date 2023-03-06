@@ -42,8 +42,8 @@ FlutterRendererConfig GetRendererConfig() {
     }
     return host->view()->ClearCurrent();
   };
+  config.open_gl.fbo_reset_after_present = true;
 #if defined(USE_OPENGL_DIRTY_REGION_MANAGEMENT)
-  config.open_gl.fbo_reset_after_present = false;
   config.open_gl.present_with_info =
       [](void* user_data, const FlutterPresentInfo* info) -> bool {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
