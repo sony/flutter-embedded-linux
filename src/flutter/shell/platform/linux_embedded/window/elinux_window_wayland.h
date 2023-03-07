@@ -25,6 +25,7 @@ extern "C" {
 #include "wayland/protocols/text-input-unstable-v1-client-protocol.h"
 #include "wayland/protocols/text-input-unstable-v3-client-protocol.h"
 #include "wayland/protocols/xdg-shell-client-protocol.h"
+#include "wayland/protocols/xdg-decoration-unstable-v1-protocol.h"
 }
 
 namespace flutter {
@@ -170,6 +171,10 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   zwp_text_input_manager_v3* zwp_text_input_manager_v3_;
   zwp_text_input_v1* zwp_text_input_v1_;
   zwp_text_input_v3* zwp_text_input_v3_;
+
+  // xdg-decoration for server-side decorations
+  zxdg_decoration_manager_v1* decoration_manager_;
+  zxdg_toplevel_decoration_v1* xdg_toplevel_decoration_;
 
   // Frame information for Vsync events.
   wp_presentation* wp_presentation_;

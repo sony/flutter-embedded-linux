@@ -23,6 +23,7 @@ namespace flutter {
 namespace {
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
+constexpr char kZxdgDecorationManagerV1[] = "zxdg_decoration_manager_v1";
 
 constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
 constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
@@ -964,6 +965,16 @@ ELinuxWindowWayland::~ELinuxWindowWayland() {
     }
   }
 
+  if (decoration_manager_) {
+    zxdg_decoration_manager_v1_destroy(decoration_manager_);
+    decoration_manager_ = nullptr;
+  }
+
+  if (xdg_toplevel_decoration_) {
+    zxdg_toplevel_decoration_v1_destroy(xdg_toplevel_decoration_);
+    xdg_toplevel_decoration_ = nullptr;
+  }
+
   if (wl_data_offer_) {
     wl_data_offer_destroy(wl_data_offer_);
     wl_data_offer_ = nullptr;
@@ -1143,6 +1154,14 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
     width_px = view_properties_.width * current_scale_;
     height_px = view_properties_.height * current_scale_;
+
+    if (decoration_manager_ && xdg_toplevel_) {
+      xdg_toplevel_decoration_ =
+          zxdg_decoration_manager_v1_get_toplevel_decoration(decoration_manager_,
+                                                            xdg_toplevel_);
+      zxdg_toplevel_decoration_v1_set_mode(
+          xdg_toplevel_decoration_, ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE);
+    }
   }
 
   ELINUX_LOG(TRACE) << "Created the Wayland surface: " << width_px << "x"
@@ -1199,7 +1218,17 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
       std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
 
-  if (view_properties_.use_window_decoration) {
+  // Setup Server Side Decorations if supported, using xdg-decoration
+  // Otherwise Fallback to Drawn Windows if flag is set
+  if (decoration_manager_ && xdg_toplevel_) {
+    if (view_properties_.view_mode != FlutterDesktopViewMode::kFullscreen) {
+      xdg_toplevel_decoration_ =
+          zxdg_decoration_manager_v1_get_toplevel_decoration(decoration_manager_,
+                                                            xdg_toplevel_);
+      zxdg_toplevel_decoration_v1_set_mode(
+          xdg_toplevel_decoration_, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+    }
+  } else if (view_properties_.use_window_decoration) {
     int32_t width_dip = width_px / current_scale_;
     int32_t height_dip = height_px / current_scale_;
     window_decorations_ = std::make_unique<WindowDecorationsWayland>(
@@ -1336,6 +1365,15 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
                                             uint32_t name,
                                             const char* interface,
                                             uint32_t version) {
+  if (!strcmp(interface, kZxdgDecorationManagerV1)) {
+    constexpr uint32_t kMaxVersion = 1;
+    decoration_manager_ =
+        static_cast<decltype(decoration_manager_)>(wl_registry_bind(
+            wl_registry, name, &zxdg_decoration_manager_v1_interface,
+            std::min(kMaxVersion, version)));
+    return;
+  }
+
   if (!strcmp(interface, wl_compositor_interface.name)) {
     constexpr uint32_t kMaxVersion = 5;
     wl_compositor_ = static_cast<decltype(wl_compositor_)>(
