@@ -9,8 +9,8 @@
 #include <poll.h>
 #include <unistd.h>
 #include <xkbcommon/xkbcommon-keysyms.h>
-#include <algorithm>
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <unordered_map>
@@ -68,6 +68,8 @@ const xdg_wm_base_listener ELinuxWindowWayland::kXdgWmBaseListener = {
 const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
     .configure =
         [](void* data, xdg_surface* xdg_surface, uint32_t serial) {
+          ELINUX_LOG(TRACE) << "xdg_surface_listener.configure";
+
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           constexpr int32_t x = 0;
           int32_t y = 0;
@@ -81,6 +83,9 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
                                           self->view_properties_.width,
                                           self->view_properties_.height);
           xdg_surface_ack_configure(xdg_surface, serial);
+          if (self->wait_for_configure_) {
+            self->wait_for_configure_ = false;
+          }
         },
 };
 
@@ -91,13 +96,17 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
            int32_t width,
            int32_t height,
            wl_array* states) {
+          ELINUX_LOG(TRACE)
+              << "xdg_toplevel_listener.configure: " << width << ", " << height;
+
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
             std::swap(width, height);
           }
 
           int32_t next_width = width;
-          int32_t next_height = height;
+          int32_t next_height =
+              height - self->WindowDecorationsPhysicalHeight();
           if (self->restore_window_required_) {
             self->restore_window_required_ = false;
             next_width = self->restore_window_width_;
@@ -112,16 +121,7 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
 
           self->view_properties_.width = next_width;
           self->view_properties_.height = next_height;
-          if (self->window_decorations_) {
-            self->window_decorations_->Resize(next_width, next_height,
-                                              self->current_scale_);
-          }
-          if (self->binding_handler_delegate_) {
-            self->binding_handler_delegate_->OnWindowSizeChanged(
-                next_width * self->current_scale_,
-                next_height * self->current_scale_ -
-                    self->WindowDecorationsPhysicalHeight());
-          }
+          self->request_redraw_ = true;
         },
     .close =
         [](void* data, xdg_toplevel* xdg_toplevel) {
@@ -582,17 +582,7 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
             FlutterDesktopViewMode::kFullscreen) {
           self->view_properties_.width = width;
           self->view_properties_.height = height;
-
-          if (self->window_decorations_) {
-            int32_t width_dip = width / self->current_scale_;
-            int32_t height_dip = height / self->current_scale_;
-            self->window_decorations_->Resize(width_dip, height_dip,
-                                              self->current_scale_);
-          }
-
-          if (self->binding_handler_delegate_) {
-            self->binding_handler_delegate_->OnWindowSizeChanged(width, height);
-          }
+          self->request_redraw_ = true;
         }
       }
     },
@@ -895,7 +885,6 @@ ELinuxWindowWayland::ELinuxWindowWayland(
   }
 
   wl_registry_add_listener(wl_registry_, &kWlRegistryListener, this);
-  wl_display_dispatch(wl_display_);
   wl_display_roundtrip(wl_display_);
 
   if (wl_data_device_manager_ && wl_seat_) {
@@ -1085,6 +1074,20 @@ bool ELinuxWindowWayland::DispatchEvent() {
     return false;
   }
 
+  if (request_redraw_) {
+    request_redraw_ = false;
+    if (window_decorations_) {
+      window_decorations_->Resize(view_properties_.width,
+                                  view_properties_.height, current_scale_);
+    }
+    if (binding_handler_delegate_) {
+      binding_handler_delegate_->OnWindowSizeChanged(
+          view_properties_.width * current_scale_,
+          view_properties_.height * current_scale_ -
+              WindowDecorationsPhysicalHeight());
+    }
+  }
+
   // Prepare to call wl_display_read_events.
   while (wl_display_prepare_read(wl_display_) != 0) {
     // If Wayland compositor terminates, -1 is returned.
@@ -1181,7 +1184,6 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   }
   xdg_toplevel_add_listener(xdg_toplevel_, &kXdgToplevelListener, this);
   wl_surface_set_buffer_scale(native_window_->Surface(), current_scale_);
-  wl_surface_commit(native_window_->Surface());
 
   {
     auto* callback = wl_surface_frame(native_window_->Surface());
@@ -1195,6 +1197,13 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
     }
   }
 
+  if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
+    xdg_toplevel_set_fullscreen(xdg_toplevel_, NULL);
+  }
+
+  wait_for_configure_ = true;
+  wl_surface_commit(native_window_->Surface());
+
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
       std::make_unique<EnvironmentEgl>(wl_display_)));
   render_surface_->SetNativeWindow(native_window_.get());
@@ -1205,6 +1214,11 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
     window_decorations_ = std::make_unique<WindowDecorationsWayland>(
         wl_display_, wl_compositor_, wl_subcompositor_,
         native_window_->Surface(), width_dip, height_dip, current_scale_);
+  }
+
+  // Wait for making sure that xdg_surface has been configured.
+  while (wait_for_configure_) {
+    wl_display_dispatch(wl_display_);
   }
 
   return true;
@@ -1575,7 +1589,7 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
 }
 
 void ELinuxWindowWayland::UpdateWindowScale() {
-  if (this->view_properties_.force_scale_factor)
+  if (view_properties_.force_scale_factor)
     return;
 
   double scale_factor = 1.0;
@@ -1589,33 +1603,23 @@ void ELinuxWindowWayland::UpdateWindowScale() {
       scale_factor = output_scale_factor;
   }
 
-  if (this->current_scale_ == scale_factor)
+  if (current_scale_ == scale_factor) {
     return;
+  }
 
   ELINUX_LOG(TRACE) << "Window scale has changed: " << scale_factor;
-  this->current_scale_ = scale_factor;
+  current_scale_ = scale_factor;
 
   wl_surface_set_buffer_scale(native_window_->Surface(), current_scale_);
-
-  if (this->window_decorations_) {
-    this->window_decorations_->Resize(this->view_properties_.width,
-                                      this->view_properties_.height,
-                                      this->current_scale_);
-  }
-
-  if (this->binding_handler_delegate_) {
-    this->binding_handler_delegate_->OnWindowSizeChanged(
-        this->view_properties_.width * this->current_scale_,
-        this->view_properties_.height * this->current_scale_ -
-            this->WindowDecorationsPhysicalHeight());
-  }
+  request_redraw_ = true;
 }
 
 uint32_t ELinuxWindowWayland::WindowDecorationsPhysicalHeight() const {
-  if (!this->window_decorations_)
+  if (!window_decorations_) {
     return 0;
+  }
 
-  return this->window_decorations_->Height() * current_scale_;
+  return window_decorations_->Height() * current_scale_;
 }
 
 }  // namespace flutter
