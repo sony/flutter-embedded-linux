@@ -145,6 +145,8 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
 
   bool display_valid_;
   bool running_;
+  bool wait_for_configure_ = false;
+  bool request_redraw_ = false;
   bool maximised_;
   uint32_t last_frame_time_;
 
