@@ -584,6 +584,25 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
           self->view_properties_.height = height;
           self->request_redraw_ = true;
         }
+
+        if (self->view_properties_.width > width) {
+          ELINUX_LOG(WARNING)
+              << "Requested width size(" << self->view_properties_.width << ") "
+              << "is larger than display size(" << width
+              << ")"
+                 ", clipping";
+          self->view_properties_.width = width;
+          self->request_redraw_ = true;
+        }
+        if (self->view_properties_.height > height) {
+          ELINUX_LOG(WARNING) << "Requested height size("
+                              << self->view_properties_.height << ") "
+                              << "is larger than display size(" << height
+                              << ")"
+                                 ", clipping";
+          self->view_properties_.height = height;
+          self->request_redraw_ = true;
+        }
       }
     },
     .done = [](void* data, wl_output* wl_output) -> void {},
