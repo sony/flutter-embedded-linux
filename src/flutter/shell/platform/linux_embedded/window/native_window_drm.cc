@@ -77,8 +77,18 @@ bool NativeWindowDrm::ConfigureDisplay(const uint16_t rotation) {
     drmModeFreeResources(resources);
     return false;
   }
-  if (encoder->crtc_id) {
-    drm_crtc_ = drmModeGetCrtc(drm_device_, encoder->crtc_id);
+  if (!encoder->crtc_id) {
+    // if there is no current CRTC, make sure to attach a suitable one
+    for (int c = 0; c < resources->count_crtcs; c++) {
+      if (encoder->possible_crtcs & (1 << c)) {
+        encoder->crtc_id = resources->crtcs[c];
+        break;
+      }
+    }
+  }
+  drm_crtc_ = drmModeGetCrtc(drm_device_, encoder->crtc_id);
+  if (!drm_crtc_) {
+    ELINUX_LOG(WARNING) << "Couldn't find a suitable crtc";
   }
 
   drmModeFreeEncoder(encoder);
@@ -103,11 +113,44 @@ drmModeConnectorPtr NativeWindowDrm::FindConnector(drmModeResPtr resources) {
 
 drmModeEncoder* NativeWindowDrm::FindEncoder(drmModeRes* resources,
                                              drmModeConnector* connector) {
-  if (connector->encoder_id) {
-    return drmModeGetEncoder(drm_device_, connector->encoder_id);
+  drmModeEncoder* encoder = nullptr;
+  // Find a suitable encoder
+  for (int e = 0; e < resources->count_encoders; e++) {
+    bool found = false;
+    encoder = drmModeGetEncoder(drm_device_, resources->encoders[e]);
+    for (int ce = 0; ce < connector->count_encoders; ce++) {
+      if (encoder && encoder->encoder_id == connector->encoders[ce]) {
+        ELINUX_LOG(DEBUG) << "Using encoder id " << encoder->encoder_id;
+        found = true;
+        break;
+      }
+    }
+    if (found)
+      break;
+    drmModeFreeEncoder(encoder);
+    encoder = nullptr;
   }
-  // no encoder found
-  return nullptr;
+
+  // If encoder is not connected to the connector,
+  // try to find a suitable one
+  if (!encoder) {
+    for (int e = 0; e < connector->count_encoders; e++) {
+      encoder = drmModeGetEncoder(drm_device_, connector->encoders[e]);
+      for (int c = 0; c < resources->count_crtcs; c++) {
+        if (encoder->possible_crtcs & (1 << c)) {
+          encoder->crtc_id = resources->crtcs[c];
+          break;
+        }
+      }
+      if (encoder->crtc_id)
+        break;
+      drmModeFreeEncoder(encoder);
+      encoder = nullptr;
+    }
+  }
+
+  // Will return nullptr if a suitable encoder is still not found
+  return encoder;
 }
 
 const uint32_t* NativeWindowDrm::GetCursorData(const std::string& cursor_name) {
