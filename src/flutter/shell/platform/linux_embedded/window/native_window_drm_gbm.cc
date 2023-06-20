@@ -175,10 +175,14 @@ void NativeWindowDrmGbm::SwapBuffers() {
   if (result != 0) {
     ELINUX_LOG(ERROR) << "Failed to add a framebuffer. (" << result << ")";
   }
-  result = drmModeSetCrtc(drm_device_, drm_crtc_->crtc_id, fb, 0, 0,
-                          &drm_connector_id_, 1, &drm_mode_info_);
-  if (result != 0) {
-    ELINUX_LOG(ERROR) << "Failed to set crct mode. (" << result << ")";
+  if (!drm_crtc_) {
+    ELINUX_LOG(ERROR) << "crtc is null, cannot set mode.";
+  } else {
+    result = drmModeSetCrtc(drm_device_, drm_crtc_->crtc_id, fb, 0, 0,
+                            &drm_connector_id_, 1, &drm_mode_info_);
+    if (result != 0) {
+      ELINUX_LOG(ERROR) << "Failed to set crct mode. (" << result << ")";
+    }
   }
 
   if (gbm_previous_bo_) {
