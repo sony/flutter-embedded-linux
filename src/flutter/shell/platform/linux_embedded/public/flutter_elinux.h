@@ -128,7 +128,7 @@ typedef struct {
 // an error.
 FLUTTER_EXPORT FlutterDesktopViewControllerRef
 FlutterDesktopViewControllerCreate(
-    const FlutterDesktopViewProperties& view_properties,
+    const FlutterDesktopViewProperties* view_properties,
     FlutterDesktopEngineRef engine);
 
 // Shuts down the engine instance associated with |controller|, and cleans up
@@ -161,7 +161,7 @@ FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view);
 // The caller owns the returned reference, and is responsible for calling
 // FlutterDesktopEngineDestroy.
 FLUTTER_EXPORT FlutterDesktopEngineRef FlutterDesktopEngineCreate(
-    const FlutterDesktopEngineProperties& engine_properties);
+    const FlutterDesktopEngineProperties* engine_properties);
 
 // Shuts down and destroys the given engine instance. Returns true if the
 // shutdown was successful, or if the engine was not running.

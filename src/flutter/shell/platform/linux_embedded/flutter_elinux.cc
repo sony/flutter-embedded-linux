@@ -72,21 +72,21 @@ uint64_t FlutterDesktopEngineProcessMessages(FlutterDesktopEngineRef engine) {
 }
 
 FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
-    const FlutterDesktopViewProperties& view_properties,
+    const FlutterDesktopViewProperties* view_properties,
     FlutterDesktopEngineRef engine) {
   std::unique_ptr<flutter::WindowBindingHandler> window_wrapper =
 
 #if defined(DISPLAY_BACKEND_TYPE_DRM_GBM)
       std::make_unique<flutter::ELinuxWindowDrm<flutter::NativeWindowDrmGbm>>(
-          view_properties);
+          *view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_DRM_EGLSTREAM)
       std::make_unique<
           flutter::ELinuxWindowDrm<flutter::NativeWindowDrmEglstream>>(
-          view_properties);
+          *view_properties);
 #elif defined(DISPLAY_BACKEND_TYPE_X11)
-      std::make_unique<flutter::ELinuxWindowX11>(view_properties);
+      std::make_unique<flutter::ELinuxWindowX11>(*view_properties);
 #else
-      std::make_unique<flutter::ELinuxWindowWayland>(view_properties);
+      std::make_unique<flutter::ELinuxWindowWayland>(*view_properties);
 #endif
 
   auto state = std::make_unique<FlutterDesktopViewControllerState>();
@@ -134,8 +134,8 @@ int32_t FlutterDesktopViewGetFrameRate(FlutterDesktopViewRef view) {
 }
 
 FlutterDesktopEngineRef FlutterDesktopEngineCreate(
-    const FlutterDesktopEngineProperties& engine_properties) {
-  flutter::FlutterProjectBundle project(engine_properties);
+    const FlutterDesktopEngineProperties* engine_properties) {
+  flutter::FlutterProjectBundle project(*engine_properties);
   auto engine = std::make_unique<flutter::FlutterELinuxEngine>(project);
   return HandleForEngine(engine.release());
 }
