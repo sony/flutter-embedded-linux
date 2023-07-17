@@ -43,7 +43,7 @@ FlutterViewController::FlutterViewController(
   c_view_properties.force_scale_factor = view_properties.force_scale_factor;
   c_view_properties.scale_factor = view_properties.scale_factor;
 
-  controller_ = FlutterDesktopViewControllerCreate(c_view_properties,
+  controller_ = FlutterDesktopViewControllerCreate(&c_view_properties,
                                                    engine_->RelinquishEngine());
   if (!controller_) {
     std::cerr << "Failed to create view controller." << std::endl;
