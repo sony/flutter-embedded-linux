@@ -27,6 +27,10 @@ namespace flutter {
 
 class FlutterELinuxView;
 
+using FlutterDesktopMessengerReferenceOwner =
+    std::unique_ptr<FlutterDesktopMessenger,
+                    decltype(&FlutterDesktopMessengerRelease)>;
+
 class FlutterELinuxEngine {
  public:
   explicit FlutterELinuxEngine(const FlutterProjectBundle& project);
@@ -144,7 +148,8 @@ class FlutterELinuxEngine {
   std::unique_ptr<TaskRunner> task_runner_;
 
   // The plugin messenger handle given to API clients.
-  std::unique_ptr<FlutterDesktopMessenger> messenger_;
+  FlutterDesktopMessengerReferenceOwner messenger_ = {
+      nullptr, [](FlutterDesktopMessengerRef ref) {}};
 
   // A wrapper around messenger_ for interacting with client_wrapper-level APIs.
   std::unique_ptr<BinaryMessengerImpl> messenger_wrapper_;
