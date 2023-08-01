@@ -904,6 +904,12 @@ ELinuxWindowWayland::ELinuxWindowWayland(
   }
 
   wl_registry_add_listener(wl_registry_, &kWlRegistryListener, this);
+  if (view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen) {
+    // Wait for wl_output_listener.mode callback before creating a new surface.
+    wl_display_dispatch(wl_display_);
+  } else {
+    wait_for_configure_ = true;
+  }
   wl_display_roundtrip(wl_display_);
 
   if (wl_data_device_manager_ && wl_seat_) {
@@ -1220,7 +1226,6 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
     xdg_toplevel_set_fullscreen(xdg_toplevel_, NULL);
   }
 
-  wait_for_configure_ = true;
   wl_surface_commit(native_window_->Surface());
 
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
