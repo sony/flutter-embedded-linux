@@ -86,6 +86,7 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
           if (self->wait_for_configure_) {
             self->wait_for_configure_ = false;
           }
+          self->request_redraw_ = true;
         },
 };
 
