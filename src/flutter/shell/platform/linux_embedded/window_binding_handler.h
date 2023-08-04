@@ -34,9 +34,12 @@ class WindowBindingHandler {
   virtual bool DispatchEvent() = 0;
 
   // Create a surface.
-  // @param[in] width_px       Physical width of the surface.
-  // @param[in] height_px      Physical height of the surface.
-  virtual bool CreateRenderSurface(int32_t width_px, int32_t height_px) = 0;
+  // @param[in] width_px         Physical width of the surface.
+  // @param[in] height_px        Physical height of the surface.
+  // @param[in] enable_impeller  Enable impeller.
+  virtual bool CreateRenderSurface(int32_t width_px,
+                                   int32_t height_px,
+                                   bool enable_impeller) = 0;
 
   // Destroy a surface which is currently used.
   virtual void DestroyRenderSurface() = 0;

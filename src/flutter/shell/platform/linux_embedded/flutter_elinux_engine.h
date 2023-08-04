@@ -68,6 +68,9 @@ class FlutterELinuxEngine {
   void SetPluginRegistrarDestructionCallback(
       FlutterDesktopOnPluginRegistrarDestroyed callback);
 
+  // Sets switches member to the given switches.
+  void SetSwitches(const std::vector<std::string>& switches);
+
   FlutterDesktopMessengerRef messenger() { return messenger_.get(); }
 
   IncomingMessageDispatcher* message_dispatcher() {
@@ -120,6 +123,9 @@ class FlutterELinuxEngine {
   // Notifies the engine about the vsync event.
   void OnVsync(uint64_t last_frame_time_nanos,
                uint64_t vsync_interval_time_nanos);
+
+  // Gets the status whether Impeller is enabled.
+  bool IsImpellerEnabled() const { return enable_impeller_; }
 
  private:
   // Allows swapping out embedder_api_ calls in tests.
@@ -176,6 +182,8 @@ class FlutterELinuxEngine {
 
   // The vsync waiter.
   std::unique_ptr<VsyncWaiter> vsync_waiter_;
+
+  bool enable_impeller_ = false;
 };
 
 }  // namespace flutter

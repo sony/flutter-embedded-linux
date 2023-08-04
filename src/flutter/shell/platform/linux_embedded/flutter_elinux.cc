@@ -92,13 +92,10 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
   auto state = std::make_unique<FlutterDesktopViewControllerState>();
   state->view =
       std::make_unique<flutter::FlutterELinuxView>(std::move(window_wrapper));
-  if (!state->view->CreateRenderSurface()) {
-    return nullptr;
-  }
-
   // Take ownership of the engine, starting it if necessary.
   state->view->SetEngine(
       std::unique_ptr<flutter::FlutterELinuxEngine>(EngineFromHandle(engine)));
+  state->view->CreateRenderSurface();
   if (!state->view->GetEngine()->running()) {
     if (!state->view->GetEngine()->RunWithEntrypoint(nullptr)) {
       return nullptr;

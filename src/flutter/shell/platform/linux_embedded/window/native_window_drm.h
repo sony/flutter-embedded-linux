@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,7 +31,8 @@ class NativeWindowDrm : public NativeWindow {
 
   virtual bool DismissCursor() = 0;
 
-  virtual std::unique_ptr<SurfaceGl> CreateRenderSurface() = 0;
+  virtual std::unique_ptr<SurfaceGl> CreateRenderSurface(
+      bool enable_impeller) = 0;
 
  protected:
   drmModeConnectorPtr FindConnector(drmModeResPtr resources);

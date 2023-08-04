@@ -10,6 +10,7 @@
 namespace flutter {
 
 ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
+                       bool enable_impeller,
                        EGLint egl_surface_type)
     : environment_(std::move(environment)), config_(nullptr) {
   EGLint config_count = 0;
@@ -28,11 +29,57 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     EGL_NONE
     // clang-format on
   };
-  if (eglChooseConfig(environment_->Display(), attribs, &config_, 1,
-                      &config_count) != EGL_TRUE) {
-    ELINUX_LOG(ERROR) << "Failed to choose EGL surface config: "
-                      << get_egl_error_cause();
-    return;
+  const EGLint impeller_config_attributes[] = {
+    // clang-format off
+    EGL_RED_SIZE,        8,
+    EGL_GREEN_SIZE,      8,
+    EGL_BLUE_SIZE,       8,
+#if defined(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
+    EGL_ALPHA_SIZE,      8,
+#endif
+    EGL_DEPTH_SIZE,      0,
+    EGL_STENCIL_SIZE,    8,
+    EGL_SAMPLE_BUFFERS,  1,
+    EGL_SAMPLES,         4,
+    EGL_NONE
+    // clang-format on
+  };
+  const EGLint impeller_config_attributes_no_msaa[] = {
+    // clang-format off
+    EGL_RED_SIZE,        8,
+    EGL_GREEN_SIZE,      8,
+    EGL_BLUE_SIZE,       8,
+#if defined(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
+    EGL_ALPHA_SIZE,      8,
+#endif
+    EGL_DEPTH_SIZE,      0,
+    EGL_STENCIL_SIZE,    8,
+    EGL_NONE
+    // clang-format on
+  };
+
+  if (enable_impeller) {
+    // First try the MSAA configuration.
+    if ((eglChooseConfig(environment_->Display(), impeller_config_attributes,
+                         &config_, 1, &config_count) == EGL_FALSE) ||
+        (config_count == 0)) {
+      // Next fall back to disabled MSAA.
+      if ((eglChooseConfig(environment_->Display(),
+                           impeller_config_attributes_no_msaa, &config_, 1,
+                           &config_count) == EGL_FALSE) ||
+          (config_count == 0)) {
+        ELINUX_LOG(ERROR) << "Failed to choose EGL surface config: "
+                          << get_egl_error_cause();
+        return;
+      }
+    }
+  } else {
+    if (eglChooseConfig(environment_->Display(), attribs, &config_, 1,
+                        &config_count) != EGL_TRUE) {
+      ELINUX_LOG(ERROR) << "Failed to choose EGL surface config: "
+                        << get_egl_error_cause();
+      return;
+    }
   }
 
   if (config_count == 0 || config_ == nullptr) {

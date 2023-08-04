@@ -142,6 +142,11 @@ FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
         }
       });
 
+  // Check for impeller support.
+  auto& switches = project_->GetSwitches();
+  enable_impeller_ = std::find(switches.begin(), switches.end(),
+                               "--enable-impeller=true") != switches.end();
+
   // Set up the legacy structs backing the API handles.
   messenger_ = FlutterDesktopMessengerReferenceOwner(
       FlutterDesktopMessengerAddRef(new FlutterDesktopMessenger()),
@@ -171,6 +176,11 @@ FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
 
 FlutterELinuxEngine::~FlutterELinuxEngine() {
   Stop();
+}
+
+void FlutterELinuxEngine::SetSwitches(
+    const std::vector<std::string>& switches) {
+  project_->SetSwitches(switches);
 }
 
 bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {

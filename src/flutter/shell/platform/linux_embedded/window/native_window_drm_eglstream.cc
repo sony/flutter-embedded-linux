@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -91,7 +91,8 @@ bool NativeWindowDrmEglstream::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGl> NativeWindowDrmEglstream::CreateRenderSurface() {
+std::unique_ptr<SurfaceGl> NativeWindowDrmEglstream::CreateRenderSurface(
+    bool enable_impeller) {
   return std::make_unique<SurfaceGl>(std::make_unique<ContextEglStream>(
       std::make_unique<EnvironmentEglStream>()));
 }

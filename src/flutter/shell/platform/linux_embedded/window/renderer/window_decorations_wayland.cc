@@ -24,7 +24,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
     wl_surface* root_surface,
     int32_t width_dip,
     int32_t height_dip,
-    double pixel_ratio) {
+    double pixel_ratio,
+    bool enable_impeller) {
   constexpr bool sub_egl_display = true;
 
   // title-bar.
@@ -33,7 +34,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           compositor, subcompositor, root_surface, width_dip * pixel_ratio,
           kTitleBarHeightDIP * pixel_ratio),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          enable_impeller)));
   titlebar_->SetPosition(0, -kTitleBarHeightDIP);
 
   // close button.
@@ -44,7 +46,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           compositor, subcompositor, root_surface,
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip - kButtonWidthDIP - kButtonMarginDIP,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
@@ -57,7 +60,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           compositor, subcompositor, root_surface,
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip - kButtonWidthDIP * 2 - kButtonMarginDIP * 2,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
@@ -70,7 +74,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           compositor, subcompositor, root_surface,
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display)))));
+          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip - kButtonWidthDIP * 3 - kButtonMarginDIP * 3,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));

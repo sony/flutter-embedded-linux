@@ -18,6 +18,7 @@ namespace flutter {
 class ContextEgl {
  public:
   ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
+             bool enable_impeller,
              EGLint egl_surface_type = EGL_WINDOW_BIT);
   ~ContextEgl() = default;
 

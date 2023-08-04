@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -109,7 +109,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  bool CreateRenderSurface(int32_t width, int32_t height) override {
+  bool CreateRenderSurface(int32_t width,
+                           int32_t height,
+                           bool enable_impeller) override {
     std::vector<std::string> devices;
     auto device_filename = std::getenv(kFlutterDrmDeviceEnvironmentKey);
     if (device_filename && device_filename[0] != '\0') {
@@ -148,7 +150,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
     display_valid_ = true;
 
-    render_surface_ = native_window_->CreateRenderSurface();
+    render_surface_ = native_window_->CreateRenderSurface(enable_impeller);
     if (!render_surface_->SetNativeWindow(native_window_.get())) {
       return false;
     }
