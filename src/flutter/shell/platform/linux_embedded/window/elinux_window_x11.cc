@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -121,9 +121,11 @@ bool ELinuxWindowX11::DispatchEvent() {
   return true;
 }
 
-bool ELinuxWindowX11::CreateRenderSurface(int32_t width, int32_t height) {
-  auto context_egl =
-      std::make_unique<ContextEgl>(std::make_unique<EnvironmentEgl>(display_));
+bool ELinuxWindowX11::CreateRenderSurface(int32_t width,
+                                          int32_t height,
+                                          bool enable_impeller) {
+  auto context_egl = std::make_unique<ContextEgl>(
+      std::make_unique<EnvironmentEgl>(display_), enable_impeller);
 
   if (current_rotation_ == 90 || current_rotation_ == 270) {
     std::swap(width, height);

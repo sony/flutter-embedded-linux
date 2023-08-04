@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,7 +26,9 @@ class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
   bool DispatchEvent() override;
 
   // |FlutterWindowBindingHandler|
-  bool CreateRenderSurface(int32_t width, int32_t height) override;
+  bool CreateRenderSurface(int32_t width,
+                           int32_t height,
+                           bool enable_impeller) override;
 
   // |FlutterWindowBindingHandler|
   void DestroyRenderSurface() override;

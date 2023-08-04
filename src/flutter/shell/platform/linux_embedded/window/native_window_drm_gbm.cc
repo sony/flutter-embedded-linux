@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -129,9 +129,10 @@ bool NativeWindowDrmGbm::DismissCursor() {
   return true;
 }
 
-std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface() {
+std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface(
+    bool enable_impeller) {
   return std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
-      std::make_unique<EnvironmentEgl>(gbm_device_)));
+      std::make_unique<EnvironmentEgl>(gbm_device_), enable_impeller));
 }
 
 bool NativeWindowDrmGbm::IsNeedRecreateSurfaceAfterResize() const {

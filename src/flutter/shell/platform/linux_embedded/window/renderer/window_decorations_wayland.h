@@ -35,7 +35,8 @@ class WindowDecorationsWayland {
                            wl_surface* root_surface,
                            int32_t width_dip,
                            int32_t height_dip,
-                           double pixel_ratio);
+                           double pixel_ratio,
+                           bool enable_impeller);
   ~WindowDecorationsWayland();
 
   void Draw();

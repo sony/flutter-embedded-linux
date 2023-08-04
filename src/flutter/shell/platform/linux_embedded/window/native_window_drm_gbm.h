@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,7 +32,7 @@ class NativeWindowDrmGbm : public NativeWindowDrm {
   bool DismissCursor() override;
 
   // |NativeWindowDrm|
-  std::unique_ptr<SurfaceGl> CreateRenderSurface() override;
+  std::unique_ptr<SurfaceGl> CreateRenderSurface(bool enable_impeller) override;
 
   // |NativeWindow|
   bool IsNeedRecreateSurfaceAfterResize() const override;

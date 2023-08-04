@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -1147,7 +1147,8 @@ bool ELinuxWindowWayland::DispatchEvent() {
 }
 
 bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
-                                              int32_t height_px) {
+                                              int32_t height_px,
+                                              bool enable_impeller) {
   if (!display_valid_) {
     ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
@@ -1225,7 +1226,7 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   wl_surface_commit(native_window_->Surface());
 
   render_surface_ = std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
-      std::make_unique<EnvironmentEgl>(wl_display_)));
+      std::make_unique<EnvironmentEgl>(wl_display_), enable_impeller));
   render_surface_->SetNativeWindow(native_window_.get());
 
   if (view_properties_.use_window_decoration) {
@@ -1233,7 +1234,8 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
     int32_t height_dip = height_px / current_scale_;
     window_decorations_ = std::make_unique<WindowDecorationsWayland>(
         wl_display_, wl_compositor_, wl_subcompositor_,
-        native_window_->Surface(), width_dip, height_dip, current_scale_);
+        native_window_->Surface(), width_dip, height_dip, current_scale_,
+        enable_impeller);
   }
 
   // Wait for making sure that xdg_surface has been configured.

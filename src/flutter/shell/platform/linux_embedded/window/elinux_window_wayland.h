@@ -1,4 +1,4 @@
-// Copyright 2021 Sony Corporation. All rights reserved.
+// Copyright 2023 Sony Corporation. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,7 +45,9 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   bool DispatchEvent() override;
 
   // |FlutterWindowBindingHandler|
-  bool CreateRenderSurface(int32_t width_px, int32_t height_px) override;
+  bool CreateRenderSurface(int32_t width_px,
+                           int32_t height_px,
+                           bool enable_impeller) override;
 
   // |FlutterWindowBindingHandler|
   void DestroyRenderSurface() override;
