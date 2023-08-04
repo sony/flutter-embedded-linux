@@ -200,6 +200,10 @@ FLUTTER_EXPORT FlutterDesktopPluginRegistrarRef
 FlutterDesktopEngineGetPluginRegistrar(FlutterDesktopEngineRef engine,
                                        const char* plugin_name);
 
+// Returns the view associated with this registrar's engine instance.
+FLUTTER_EXPORT FlutterDesktopViewRef FlutterDesktopPluginRegistrarGetView(
+    FlutterDesktopPluginRegistrarRef registrar);
+
 // Returns the messenger associated with the engine.
 FLUTTER_EXPORT FlutterDesktopMessengerRef
 FlutterDesktopEngineGetMessenger(FlutterDesktopEngineRef engine);
