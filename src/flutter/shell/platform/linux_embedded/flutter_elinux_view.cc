@@ -435,7 +435,6 @@ bool FlutterELinuxView::MakeResourceCurrent() {
 bool FlutterELinuxView::CreateRenderSurface() {
   PhysicalWindowBounds bounds = binding_handler_->GetPhysicalWindowBounds();
   auto impeller_enable = engine_.get()->IsImpellerEnabled();
-  std::cout << "impeller: " << impeller_enable << std::endl;
   return binding_handler_->CreateRenderSurface(bounds.width, bounds.height,
                                                impeller_enable);
 }
