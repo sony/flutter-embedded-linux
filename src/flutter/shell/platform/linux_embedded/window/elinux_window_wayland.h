@@ -24,6 +24,7 @@ extern "C" {
 #include "wayland/protocols/presentation-time-protocol.h"
 #include "wayland/protocols/text-input-unstable-v1-client-protocol.h"
 #include "wayland/protocols/text-input-unstable-v3-client-protocol.h"
+#include "wayland/protocols/xdg-decoration-unstable-v1-protocol.h"
 #include "wayland/protocols/xdg-shell-client-protocol.h"
 }
 
@@ -107,6 +108,8 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   // Updates the surface scale of the window from the list of entered outputs.
   void UpdateWindowScale();
 
+  void CreateDecoration(int32_t width_dip, int32_t height_dip);
+
   // Get window decorations height in physical pixels.
   uint32_t WindowDecorationsPhysicalHeight() const;
 
@@ -128,6 +131,8 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   static const wp_presentation_listener kWpPresentationListener;
   static const wp_presentation_feedback_listener
       kWpPresentationFeedbackListener;
+  static const zxdg_toplevel_decoration_v1_listener
+      kZxdgToplevelDecorationV1Listener;
   static constexpr size_t kDefaultPointerSize = 24;
 
   // A pointer to a FlutterWindowsView that can be used to update engine
@@ -151,6 +156,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   bool request_redraw_ = false;
   bool maximised_;
   uint32_t last_frame_time_;
+  bool enable_impeller_ = false;
 
   // Indicates that exists a keyboard show request from Flutter Engine.
   bool is_requested_show_virtual_keyboard_;
@@ -174,6 +180,10 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   zwp_text_input_manager_v3* zwp_text_input_manager_v3_;
   zwp_text_input_v1* zwp_text_input_v1_;
   zwp_text_input_v3* zwp_text_input_v3_;
+
+  // xdg-decoration protocol for window decoration (server-side).
+  zxdg_decoration_manager_v1* zxdg_decoration_manager_v1_ = nullptr;
+  zxdg_toplevel_decoration_v1* zxdg_toplevel_decoration_v1_ = nullptr;
 
   // Frame information for Vsync events.
   wp_presentation* wp_presentation_;
