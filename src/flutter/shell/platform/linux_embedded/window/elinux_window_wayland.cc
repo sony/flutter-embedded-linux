@@ -107,8 +107,7 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
           }
 
           int32_t next_width = width;
-          int32_t next_height =
-              height - self->WindowDecorationsPhysicalHeight();
+          int32_t next_height = height;
           if (self->restore_window_required_) {
             self->restore_window_required_ = false;
             next_width = self->restore_window_width_;
