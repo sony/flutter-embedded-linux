@@ -23,6 +23,7 @@ namespace flutter {
 namespace {
 constexpr char kZwpTextInputManagerV1[] = "zwp_text_input_manager_v1";
 constexpr char kZwpTextInputManagerV3[] = "zwp_text_input_manager_v3";
+constexpr char kZxdgDecorationManagerV1[] = "zxdg_decoration_manager_v1";
 
 constexpr char kWlCursorThemeBottomLeftCorner[] = "bottom_left_corner";
 constexpr char kWlCursorThemeBottomRightCorner[] = "bottom_right_corner";
@@ -73,7 +74,7 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           constexpr int32_t x = 0;
           int32_t y = 0;
-          if (self->view_properties_.use_window_decoration) {
+          if (self->window_decorations_) {
             // TODO: Moves the window to the bottom to show the window
             // decorations, but the bottom area of the window will be hidden
             // because of this shifting.
@@ -851,6 +852,28 @@ const wl_data_source_listener ELinuxWindowWayland::kWlDataSourceListener = {
                  uint32_t dnd_action) -> void {},
 };
 
+const zxdg_toplevel_decoration_v1_listener
+    ELinuxWindowWayland::kZxdgToplevelDecorationV1Listener = {
+        .configure =
+            [](void* data,
+               struct zxdg_toplevel_decoration_v1* zxdg_toplevel_decoration_v1,
+               uint32_t mode) -> void {
+          ELINUX_LOG(INFO)
+              << "zxdg_toplevel_decoration_v1_listener.configure: mode is "
+              << ((mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE)
+                      ? "server-side"
+                      : "client-side");
+          auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+          if (self->view_properties_.use_window_decoration &&
+              mode == ZXDG_TOPLEVEL_DECORATION_V1_MODE_CLIENT_SIDE &&
+              !self->window_decorations_) {
+            int32_t width_dip = self->view_properties_.width;
+            int32_t height_dip = self->view_properties_.height;
+            self->CreateDecoration(width_dip, height_dip);
+          }
+        },
+};
+
 ELinuxWindowWayland::ELinuxWindowWayland(
     FlutterDesktopViewProperties view_properties)
     : cursor_info_({"", 0, nullptr}),
@@ -970,6 +993,18 @@ ELinuxWindowWayland::~ELinuxWindowWayland() {
     if (zwp_text_input_manager_v3_) {
       zwp_text_input_manager_v3_destroy(zwp_text_input_manager_v3_);
       zwp_text_input_manager_v3_ = nullptr;
+    }
+  }
+
+  {
+    if (zxdg_decoration_manager_v1_) {
+      zxdg_decoration_manager_v1_destroy(zxdg_decoration_manager_v1_);
+      zxdg_decoration_manager_v1_ = nullptr;
+    }
+
+    if (zxdg_toplevel_decoration_v1_) {
+      zxdg_toplevel_decoration_v1_destroy(zxdg_toplevel_decoration_v1_);
+      zxdg_toplevel_decoration_v1_ = nullptr;
     }
   }
 
@@ -1149,6 +1184,8 @@ bool ELinuxWindowWayland::DispatchEvent() {
 bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
                                               int32_t height_px,
                                               bool enable_impeller) {
+  enable_impeller_ = enable_impeller;
+
   if (!display_valid_) {
     ELINUX_LOG(ERROR) << "Wayland display is invalid.";
     return false;
@@ -1230,12 +1267,22 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   render_surface_->SetNativeWindow(native_window_.get());
 
   if (view_properties_.use_window_decoration) {
-    int32_t width_dip = width_px / current_scale_;
-    int32_t height_dip = height_px / current_scale_;
-    window_decorations_ = std::make_unique<WindowDecorationsWayland>(
-        wl_display_, wl_compositor_, wl_subcompositor_,
-        native_window_->Surface(), width_dip, height_dip, current_scale_,
-        enable_impeller);
+    if (zxdg_decoration_manager_v1_) {
+      ELINUX_LOG(INFO) << "Use server-side xdg-decoration mode";
+      zxdg_toplevel_decoration_v1_ =
+          zxdg_decoration_manager_v1_get_toplevel_decoration(
+              zxdg_decoration_manager_v1_, xdg_toplevel_);
+      zxdg_toplevel_decoration_v1_set_mode(
+          zxdg_toplevel_decoration_v1_,
+          ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
+      zxdg_toplevel_decoration_v1_add_listener(
+          zxdg_toplevel_decoration_v1_, &kZxdgToplevelDecorationV1Listener,
+          this);
+    } else {
+      int32_t width_dip = width_px / current_scale_;
+      int32_t height_dip = height_px / current_scale_;
+      CreateDecoration(width_dip, height_dip);
+    }
   }
 
   // Wait for making sure that xdg_surface has been configured.
@@ -1244,6 +1291,18 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   }
 
   return true;
+}
+
+void ELinuxWindowWayland::CreateDecoration(int32_t width_dip,
+                                           int32_t height_dip) {
+  if (window_decorations_) {
+    ELINUX_LOG(WARNING) << "Window decoration has already created";
+    return;
+  }
+
+  window_decorations_ = std::make_unique<WindowDecorationsWayland>(
+      wl_display_, wl_compositor_, wl_subcompositor_, native_window_->Surface(),
+      width_dip, height_dip, current_scale_, enable_impeller_);
 }
 
 void ELinuxWindowWayland::DestroyRenderSurface() {
@@ -1461,6 +1520,15 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
         wl_registry, name, &wp_presentation_interface, kMaxVersion));
     wp_presentation_add_listener(wp_presentation_, &kWpPresentationListener,
                                  this);
+    return;
+  }
+
+  if (!strcmp(interface, kZxdgDecorationManagerV1)) {
+    constexpr uint32_t kMaxVersion = 1;
+    zxdg_decoration_manager_v1_ =
+        static_cast<decltype(zxdg_decoration_manager_v1_)>(wl_registry_bind(
+            wl_registry, name, &zxdg_decoration_manager_v1_interface,
+            std::min(kMaxVersion, version)));
     return;
   }
 }
