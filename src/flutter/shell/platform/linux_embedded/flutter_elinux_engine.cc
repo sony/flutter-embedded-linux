@@ -248,9 +248,6 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
     auto host = static_cast<FlutterELinuxEngine*>(user_data);
     return host->HandlePlatformMessage(engine_message);
   };
-// todo: disable vsync temporarily because flutter apps will freeze when we use
-// this interface. See also:
-// https://github.com/sony/flutter-embedded-linux/issues/176
 #if defined(ENABLE_VSYNC)
 // todo: add drm/x11 support.
 // https://github.com/sony/flutter-embedded-linux/issues/136
