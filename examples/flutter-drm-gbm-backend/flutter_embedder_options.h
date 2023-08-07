@@ -24,6 +24,10 @@ class FlutterEmbedderOptions {
     options_.AddDouble("force-scale-factor", "s",
                        "Force a scale factor instead using default value", 1.0,
                        false);
+    options_.AddWithoutValue(
+        "async-vblank", "v",
+        "Don't sync to compositor redraw/vblank (eglSwapInterval 0)", false);
+
 #if defined(FLUTTER_TARGET_BACKEND_GBM) || \
     defined(FLUTTER_TARGET_BACKEND_EGLSTREAM)
     // no more options.
@@ -87,6 +91,8 @@ class FlutterEmbedderOptions {
       scale_factor_ = 1.0;
     }
 
+    enable_vsync_ = !options_.Exist("async-vblank");
+
 #if defined(FLUTTER_TARGET_BACKEND_GBM) || \
     defined(FLUTTER_TARGET_BACKEND_EGLSTREAM)
     use_onscreen_keyboard_ = false;
@@ -118,22 +124,45 @@ class FlutterEmbedderOptions {
     return true;
   }
 
-  std::string BundlePath() const { return bundle_path_; }
-  std::string WindowTitle() const { return window_title_; }
-  std::string WindowAppID() const { return window_app_id_; }
-  bool IsUseMouseCursor() const { return use_mouse_cursor_; }
-  bool IsUseOnscreenKeyboard() const { return use_onscreen_keyboard_; }
-  bool IsUseWindowDecoraation() const { return use_window_decoration_; }
+  std::string BundlePath() const {
+    return bundle_path_;
+  }
+  std::string WindowTitle() const {
+    return window_title_;
+  }
+  std::string WindowAppID() const {
+    return window_app_id_;
+  }
+  bool IsUseMouseCursor() const {
+    return use_mouse_cursor_;
+  }
+  bool IsUseOnscreenKeyboard() const {
+    return use_onscreen_keyboard_;
+  }
+  bool IsUseWindowDecoraation() const {
+    return use_window_decoration_;
+  }
   flutter::FlutterViewController::ViewMode WindowViewMode() const {
     return window_view_mode_;
   }
-  int WindowWidth() const { return window_width_; }
-  int WindowHeight() const { return window_height_; }
+  int WindowWidth() const {
+    return window_width_;
+  }
+  int WindowHeight() const {
+    return window_height_;
+  }
   flutter::FlutterViewController::ViewRotation WindowRotation() const {
     return window_view_rotation_;
   }
-  bool IsForceScaleFactor() const { return is_force_scale_factor_; }
-  double ScaleFactor() const { return scale_factor_; }
+  bool IsForceScaleFactor() const {
+    return is_force_scale_factor_;
+  }
+  double ScaleFactor() const {
+    return scale_factor_;
+  }
+  bool EnableVsync() const {
+    return enable_vsync_;
+  }
 
  private:
   commandline::CommandOptions options_;
@@ -152,6 +181,7 @@ class FlutterEmbedderOptions {
       flutter::FlutterViewController::ViewRotation::kRotation_0;
   bool is_force_scale_factor_;
   double scale_factor_;
+  bool enable_vsync_;
 };
 
 #endif  // FLUTTER_EMBEDDER_OPTIONS_

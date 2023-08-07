@@ -16,7 +16,9 @@ namespace flutter {
 
 class NativeWindowDrm : public NativeWindow {
  public:
-  NativeWindowDrm(const char* device_filename, const uint16_t rotation);
+  NativeWindowDrm(const char* device_filename,
+                  const uint16_t rotation,
+                  bool enable_vsync);
   virtual ~NativeWindowDrm();
 
   bool ConfigureDisplay(const uint16_t rotation);

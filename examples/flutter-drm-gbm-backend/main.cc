@@ -37,6 +37,7 @@ int main(int argc, char** argv) {
   view_properties.use_window_decoration = options.IsUseWindowDecoraation();
   view_properties.force_scale_factor = options.IsForceScaleFactor();
   view_properties.scale_factor = options.ScaleFactor();
+  view_properties.enable_vsync = options.EnableVsync();
 
   // The Flutter instance hosted by this window.
   FlutterWindow window(view_properties, project);

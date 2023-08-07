@@ -19,7 +19,10 @@ namespace flutter {
 class ELinuxEGLSurface {
  public:
   // Note that EGLSurface will be destroyed in this class's destructor.
-  ELinuxEGLSurface(EGLSurface surface, EGLDisplay display, EGLContext context);
+  ELinuxEGLSurface(EGLSurface surface,
+                   EGLDisplay display,
+                   EGLContext context,
+                   bool vsync_enabled);
   ~ELinuxEGLSurface();
 
   bool IsValid() const;
@@ -43,6 +46,7 @@ class ELinuxEGLSurface {
   EGLDisplay display_;
   EGLSurface surface_;
   EGLContext context_;
+  bool vsync_enabled_;
 
   size_t width_px_;
   size_t height_px_;

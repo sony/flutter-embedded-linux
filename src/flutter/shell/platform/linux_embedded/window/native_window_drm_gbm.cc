@@ -20,11 +20,13 @@ constexpr uint32_t kCursorBufferHeight = 64;
 }  // namespace
 
 NativeWindowDrmGbm::NativeWindowDrmGbm(const char* device_filename,
-                                       const uint16_t rotation)
-    : NativeWindowDrm(device_filename, rotation) {
+                                       const uint16_t rotation,
+                                       bool enable_vsync)
+    : NativeWindowDrm(device_filename, rotation, enable_vsync) {
   if (!valid_) {
     return;
   }
+  enable_vsync_ = enable_vsync;
 
   if (!drmIsMaster(drm_device_)) {
     ELINUX_LOG(ERROR)

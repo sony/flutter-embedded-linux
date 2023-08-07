@@ -65,7 +65,7 @@ std::unique_ptr<ELinuxEGLSurface> ContextEglStream::CreateOnscreenSurface(
     ELINUX_LOG(ERROR) << "Failed to create EGL stream producer surface";
   }
   return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
-                                            context_);
+                                            context_, window->EnableVsync());
 }
 
 bool ContextEglStream::SetEglExtensionFunctionPointers() {

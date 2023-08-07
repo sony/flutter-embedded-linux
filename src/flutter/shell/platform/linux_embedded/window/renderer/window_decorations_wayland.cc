@@ -25,14 +25,15 @@ WindowDecorationsWayland::WindowDecorationsWayland(
     int32_t width_dip,
     int32_t height_dip,
     double pixel_ratio,
-    bool enable_impeller) {
+    bool enable_impeller,
+    bool enable_vsync) {
   constexpr bool sub_egl_display = true;
 
   // title-bar.
   titlebar_ = std::make_unique<WindowDecorationTitlebar>(
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface, width_dip * pixel_ratio,
-          kTitleBarHeightDIP * pixel_ratio),
+          kTitleBarHeightDIP * pixel_ratio, enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller)));
@@ -44,7 +45,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface,
-          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
+          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
+          enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));
@@ -58,7 +60,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface,
-          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
+          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
+          enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));
@@ -72,7 +75,8 @@ WindowDecorationsWayland::WindowDecorationsWayland(
       type,
       std::make_unique<NativeWindowWaylandDecoration>(
           compositor, subcompositor, root_surface,
-          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio),
+          kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
+          enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));

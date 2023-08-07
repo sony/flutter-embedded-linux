@@ -36,7 +36,8 @@ class WindowDecorationsWayland {
                            int32_t width_dip,
                            int32_t height_dip,
                            double pixel_ratio,
-                           bool enable_impeller);
+                           bool enable_impeller,
+                           bool enable_vsync);
   ~WindowDecorationsWayland();
 
   void Draw();

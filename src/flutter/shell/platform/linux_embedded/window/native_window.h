@@ -37,6 +37,8 @@ class NativeWindow {
     return height_;
   }
 
+  bool EnableVsync() const { return enable_vsync_; }
+
   virtual bool IsNeedRecreateSurfaceAfterResize() const { return false; }
 
   // Sets a window position. Basically, this API is used for window decorations
@@ -59,6 +61,7 @@ class NativeWindow {
  protected:
   EGLNativeWindowType window_;
   EGLNativeWindowType window_offscreen_;
+  bool enable_vsync_;
   // Physical width of the window.
   int32_t width_;
   // Physical height of the window.
