@@ -16,7 +16,8 @@
 namespace flutter {
 
 NativeWindowDrm::NativeWindowDrm(const char* device_filename,
-                                 const uint16_t rotation) {
+                                 const uint16_t rotation,
+                                 bool enable_vsync) {
   drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
   if (drm_device_ == -1) {
     ELINUX_LOG(ERROR) << "Couldn't open " << device_filename;
@@ -27,6 +28,7 @@ NativeWindowDrm::NativeWindowDrm(const char* device_filename,
     return;
   }
 
+  enable_vsync_ = enable_vsync;
   valid_ = true;
 }
 

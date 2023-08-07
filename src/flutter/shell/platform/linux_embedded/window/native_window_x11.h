@@ -17,7 +17,8 @@ class NativeWindowX11 : public NativeWindow {
                   VisualID visual_id,
                   const char* title,
                   const size_t width,
-                  const size_t height);
+                  const size_t height,
+                  bool enable_vsync);
   ~NativeWindowX11() = default;
 
   // |NativeWindow|

@@ -118,13 +118,6 @@ if(ENABLE_VSYNC)
   )
 endif()
 
-# Do not sync to compositor redraw (eglSwapInterval 0).
-if(ENABLE_EGL_ASYNC_BUFFER_SWAPPING)
-  add_definitions(
-    -DENABLE_EGL_ASYNC_BUFFER_SWAPPING
-  )
-endif()
-
 # Enable alpha component of the egl color buffer.
 if(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER)
   add_definitions(

@@ -119,7 +119,7 @@ std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOnscreenSurface(
                       << get_egl_error_cause();
   }
   return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
-                                            context_);
+                                            context_, window->EnableVsync());
 }
 
 std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
@@ -151,7 +151,8 @@ std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
   }
 #endif
   return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
-                                            resource_context_);
+                                            resource_context_,
+                                            window->EnableVsync());
 }
 
 bool ContextEgl::IsValid() const {

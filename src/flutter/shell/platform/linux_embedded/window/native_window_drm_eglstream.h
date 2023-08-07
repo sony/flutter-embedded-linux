@@ -17,7 +17,8 @@ namespace flutter {
 class NativeWindowDrmEglstream : public NativeWindowDrm {
  public:
   NativeWindowDrmEglstream(const char* device_filename,
-                           const uint16_t rotation);
+                           const uint16_t rotation,
+                           bool enable_vsync);
   ~NativeWindowDrmEglstream();
 
   // |NativeWindowDrm|

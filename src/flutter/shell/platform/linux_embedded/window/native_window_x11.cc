@@ -22,7 +22,8 @@ NativeWindowX11::NativeWindowX11(Display* display,
                                  VisualID visual_id,
                                  const char* title,
                                  const size_t width,
-                                 const size_t height) {
+                                 const size_t height,
+                                 bool enable_vsync) {
   XVisualInfo visualTemplate;
   visualTemplate.visualid = visual_id;
 
@@ -68,6 +69,7 @@ NativeWindowX11::NativeWindowX11(Display* display,
 
   XMapWindow(display, window_);
 
+  enable_vsync_ = enable_vsync;
   width_ = width;
   height_ = height;
   valid_ = true;

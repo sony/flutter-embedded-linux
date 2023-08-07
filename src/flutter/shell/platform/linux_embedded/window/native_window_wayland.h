@@ -17,7 +17,8 @@ class NativeWindowWayland : public NativeWindow {
   // @param[in] height_px      Physical height of the window.
   NativeWindowWayland(wl_compositor* compositor,
                       const size_t width_px,
-                      const size_t height_px);
+                      const size_t height_px,
+                      bool enable_vsync);
   ~NativeWindowWayland();
 
   // |NativeWindow|

@@ -19,12 +19,14 @@ constexpr char kCursorNameNone[] = "none";
 }  // namespace
 
 NativeWindowDrmEglstream::NativeWindowDrmEglstream(const char* device_filename,
-                                                   const uint16_t rotation)
-    : NativeWindowDrm(device_filename, rotation) {
+                                                   const uint16_t rotation,
+                                                   bool enable_vsync)
+    : NativeWindowDrm(device_filename, rotation, enable_vsync) {
   if (!valid_) {
     return;
   }
 
+  enable_vsync_ = enable_vsync;
   valid_ = ConfigureDisplayAdditional();
 
   // drmIsMaster() is a relatively new API, and the main target of EGLStream is

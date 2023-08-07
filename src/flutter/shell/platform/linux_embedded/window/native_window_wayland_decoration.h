@@ -20,7 +20,8 @@ class NativeWindowWaylandDecoration : public NativeWindow {
                                 wl_subcompositor* subcompositor,
                                 wl_surface* parent_surface,
                                 const size_t width_px,
-                                const size_t height_px);
+                                const size_t height_px,
+                                bool enable_vsync);
   ~NativeWindowWaylandDecoration();
 
   // |NativeWindow|

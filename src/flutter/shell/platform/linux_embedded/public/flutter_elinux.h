@@ -109,6 +109,11 @@ typedef struct {
   // Force scale factor specified by command line argument
   bool force_scale_factor;
   double scale_factor;
+
+  // Enable Vsync.
+  // True:  Sync to compositor redraw/v-blank  (eglSwapInterval 1)
+  // False: Do not sync to compositor redraw/v-blank (eglSwapInterval 0)
+  bool enable_vsync;
 } FlutterDesktopViewProperties;
 
 // ========== View Controller ==========

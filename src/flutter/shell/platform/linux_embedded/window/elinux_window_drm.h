@@ -125,8 +125,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
     bool device_found = false;
     for (auto i = 0; i < devices.size(); i++) {
-      native_window_ =
-          std::make_unique<T>(devices[i].c_str(), current_rotation_);
+      native_window_ = std::make_unique<T>(
+          devices[i].c_str(), current_rotation_, view_properties_.enable_vsync);
       if (!native_window_->IsValid()) {
         ELINUX_LOG(ERROR) << "Failed to create the native window ("
                           << devices[i] << ").";

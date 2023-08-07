@@ -13,7 +13,8 @@ NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
     wl_subcompositor* subcompositor,
     wl_surface* parent_surface,
     const size_t width_px,
-    const size_t height_px) {
+    const size_t height_px,
+    bool enable_vsync) {
   surface_ = wl_compositor_create_surface(compositor);
   if (!surface_) {
     ELINUX_LOG(ERROR) << "Failed to create the compositor surface.";
@@ -35,6 +36,7 @@ NativeWindowWaylandDecoration::NativeWindowWaylandDecoration(
     return;
   }
 
+  enable_vsync_ = enable_vsync;
   width_ = width_px;
   height_ = height_px;
   valid_ = true;

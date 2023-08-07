@@ -1219,8 +1219,8 @@ bool ELinuxWindowWayland::CreateRenderSurface(int32_t width_px,
   if (current_rotation_ == 90 || current_rotation_ == 270) {
     std::swap(width_px, height_px);
   }
-  native_window_ = std::make_unique<NativeWindowWayland>(wl_compositor_,
-                                                         width_px, height_px);
+  native_window_ = std::make_unique<NativeWindowWayland>(
+      wl_compositor_, width_px, height_px, view_properties_.enable_vsync);
 
   wl_surface_add_listener(native_window_->Surface(), &kWlSurfaceListener, this);
 
@@ -1301,7 +1301,8 @@ void ELinuxWindowWayland::CreateDecoration(int32_t width_dip,
 
   window_decorations_ = std::make_unique<WindowDecorationsWayland>(
       wl_display_, wl_compositor_, wl_subcompositor_, native_window_->Surface(),
-      width_dip, height_dip, current_scale_, enable_impeller_);
+      width_dip, height_dip, current_scale_, enable_impeller_,
+      view_properties_.enable_vsync);
 }
 
 void ELinuxWindowWayland::DestroyRenderSurface() {

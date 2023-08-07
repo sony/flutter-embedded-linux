@@ -42,6 +42,7 @@ FlutterViewController::FlutterViewController(
       view_properties.use_window_decoration;
   c_view_properties.force_scale_factor = view_properties.force_scale_factor;
   c_view_properties.scale_factor = view_properties.scale_factor;
+  c_view_properties.enable_vsync = view_properties.enable_vsync;
 
   controller_ = FlutterDesktopViewControllerCreate(&c_view_properties,
                                                    engine_->RelinquishEngine());

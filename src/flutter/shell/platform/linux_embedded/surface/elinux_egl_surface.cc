@@ -18,10 +18,12 @@ constexpr const int kMaxHistorySize = 10;
 
 ELinuxEGLSurface::ELinuxEGLSurface(EGLSurface surface,
                                    EGLDisplay display,
-                                   EGLContext context)
+                                   EGLContext context,
+                                   bool vsync_enabled)
     : surface_(surface),
       display_(display),
       context_(context),
+      vsync_enabled_(vsync_enabled),
       width_px_(kInitialWindowWidthPx),
       height_px_(kInitialWindowHeightPx) {
   const char* extensions = eglQueryString(display_, EGL_EXTENSIONS);
@@ -72,7 +74,6 @@ bool ELinuxEGLSurface::MakeCurrent() const {
     return false;
   }
 
-#if defined(ENABLE_EGL_ASYNC_BUFFER_SWAPPING)
   // Non-blocking when swappipping buffers on Wayland.
   // However, we might encounter rendering problems on some Wayland compositors
   // (e.g. weston 9.0) when we use them.
@@ -80,11 +81,12 @@ bool ELinuxEGLSurface::MakeCurrent() const {
   //   - https://github.com/sony/flutter-embedded-linux/issues/230
   //   - https://github.com/sony/flutter-embedded-linux/issues/234
   //   - https://github.com/sony/flutter-embedded-linux/issues/220
-  if (eglSwapInterval(display_, 0) != EGL_TRUE) {
-    ELINUX_LOG(ERROR) << "Failed to eglSwapInterval(Free): "
-                      << get_egl_error_cause();
+  if (!vsync_enabled_) {
+    if (eglSwapInterval(display_, 0) != EGL_TRUE) {
+      ELINUX_LOG(ERROR) << "Failed to eglSwapInterval(Free): "
+                        << get_egl_error_cause();
+    }
   }
-#endif
 
   return true;
 }
