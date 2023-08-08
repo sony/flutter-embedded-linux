@@ -60,6 +60,10 @@ void FlutterELinuxView::SetEngine(std::unique_ptr<FlutterELinuxEngine> engine) {
 
   // Set up the system channel handlers.
   auto internal_plugin_messenger = internal_plugin_registrar_->messenger();
+
+  // Set up internal channels.
+  // TODO: Replace this with an embedder.h API. See
+  // https://github.com/flutter/flutter/issues/71099
   keyboard_handler_ =
       std::make_unique<flutter::KeyeventPlugin>(internal_plugin_messenger);
   textinput_handler_ = std::make_unique<flutter::TextInputPlugin>(
@@ -74,6 +78,8 @@ void FlutterELinuxView::SetEngine(std::unique_ptr<FlutterELinuxEngine> engine) {
       std::make_unique<flutter::NavigationPlugin>(internal_plugin_messenger);
   platform_views_handler_ =
       std::make_unique<flutter::PlatformViewsPlugin>(internal_plugin_messenger);
+  settings_handler_ = std::make_unique<flutter::SettingsPlugin>(
+      internal_plugin_messenger, binding_handler_.get());
 
   PhysicalWindowBounds bounds = binding_handler_->GetPhysicalWindowBounds();
   SendWindowMetrics(bounds.width, bounds.height,
@@ -498,4 +504,10 @@ std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x_px,
   }
   return res;
 }
+
+void FlutterELinuxView::UpdateHighContrastEnabled(bool enabled) {
+  // TODO: add UpdateAccessibilityFeatures support
+  settings_handler_->UpdateHighContrastMode(enabled);
+}
+
 }  // namespace flutter

@@ -131,11 +131,11 @@ class FlutterELinuxEngine {
   // Allows swapping out embedder_api_ calls in tests.
   friend class EngineEmbedderApiModifier;
 
-  // Sends system settings (e.g., locale) to the engine.
+  // Sends system locales to the engine.
   //
   // Should be called just after the engine is run, and after any relevant
   // system changes.
-  void SendSystemSettings();
+  void SendSystemLocales();
 
   // The handle to the embedder.h engine instance.
   FLUTTER_API_SYMBOL(FlutterEngine) engine_ = nullptr;
@@ -171,9 +171,6 @@ class FlutterELinuxEngine {
 
   // Resolved OpenGL functions used by external texture implementations.
   GlProcs gl_procs_ = {};
-
-  // The MethodChannel used for communication with the Flutter engine.
-  std::unique_ptr<BasicMessageChannel<rapidjson::Document>> settings_channel_;
 
   // A callback to be called when the engine (and thus the plugin registrar)
   // is being destroyed.

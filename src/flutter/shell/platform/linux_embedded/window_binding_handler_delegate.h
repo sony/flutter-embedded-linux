@@ -104,6 +104,9 @@ class WindowBindingHandlerDelegate {
   // Typically called by currently configured WindowBindingHandler
   virtual void OnVsync(uint64_t last_frame_time_nanos,
                        uint64_t vsync_interval_time_nanos) = 0;
+
+  // Update the status of the high contrast feature
+  virtual void UpdateHighContrastEnabled(bool enabled) = 0;
 };
 
 }  // namespace flutter
