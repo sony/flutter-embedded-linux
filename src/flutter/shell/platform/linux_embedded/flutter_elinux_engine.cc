@@ -163,14 +163,6 @@ FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
   texture_registrar_ =
       std::make_unique<FlutterELinuxTextureRegistrar>(this, gl_procs_);
 
-  // Set up internal channels.
-  // TODO: Replace this with an embedder.h API. See
-  // https://github.com/flutter/flutter/issues/71099
-  settings_channel_ =
-      std::make_unique<BasicMessageChannel<rapidjson::Document>>(
-          messenger_wrapper_.get(), "flutter/settings",
-          &JsonMessageCodec::GetInstance());
-
   vsync_waiter_ = std::make_unique<VsyncWaiter>();
 }
 
@@ -285,7 +277,10 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
     return false;
   }
 
-  SendSystemSettings();
+  // TODO: add theme initial value support.
+  view_->UpdateHighContrastEnabled(false);
+
+  SendSystemLocales();
 
   return true;
 }
@@ -389,7 +384,7 @@ void FlutterELinuxEngine::ReloadSystemFonts() {
   embedder_api_.ReloadSystemFonts(engine_);
 }
 
-void FlutterELinuxEngine::SendSystemSettings() {
+void FlutterELinuxEngine::SendSystemLocales() {
   auto languages = flutter::GetPreferredLanguageInfo();
   auto flutter_locales = flutter::ConvertToFlutterLocale(languages);
 
@@ -405,14 +400,6 @@ void FlutterELinuxEngine::SendSystemSettings() {
   if (result != kSuccess) {
     ELINUX_LOG(ERROR) << "Failed to set up Flutter locales.";
   }
-
-  rapidjson::Document settings(rapidjson::kObjectType);
-  auto& allocator = settings.GetAllocator();
-  // todo: Use set values instead of fixed values.
-  settings.AddMember("alwaysUse24HourFormat", true, allocator);
-  settings.AddMember("textScaleFactor", 1.0, allocator);
-  settings.AddMember("platformBrightness", "light", allocator);
-  settings_channel_->Send(settings);
 }
 
 bool FlutterELinuxEngine::RegisterExternalTexture(int64_t texture_id) {

@@ -19,6 +19,7 @@
 #include "flutter/shell/platform/linux_embedded/plugins/navigation_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/platform_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.h"
+#include "flutter/shell/platform/linux_embedded/plugins/settings_plugin.h"
 #include "flutter/shell/platform/linux_embedded/plugins/text_input_plugin.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
 #include "flutter/shell/platform/linux_embedded/public/flutter_platform_views.h"
@@ -143,6 +144,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   // |WindowBindingHandlerDelegate|
   void OnVsync(uint64_t frame_start_time_nanos,
                uint64_t frame_target_time_nanos) override;
+
+  // |WindowBindingHandlerDelegate|
+  void UpdateHighContrastEnabled(bool enabled) override;
 
  private:
   // Struct holding the mouse state. The engine doesn't keep track of which
@@ -289,6 +293,9 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
 
   // Handler for flutter/platform_views channel.
   std::unique_ptr<flutter::PlatformViewsPlugin> platform_views_handler_;
+
+  // Handler for flutter/settings channel.
+  std::unique_ptr<flutter::SettingsPlugin> settings_handler_;
 
   // Currently configured WindowBindingHandler for view.
   std::unique_ptr<flutter::WindowBindingHandler> binding_handler_;

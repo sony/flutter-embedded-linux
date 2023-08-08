@@ -157,6 +157,7 @@ set(ELINUX_COMMON_SRC
   "src/flutter/shell/platform/linux_embedded/plugins/navigation_plugin.cc"
   "src/flutter/shell/platform/linux_embedded/plugins/platform_plugin.cc"
   "src/flutter/shell/platform/linux_embedded/plugins/platform_views_plugin.cc"
+  "src/flutter/shell/platform/linux_embedded/plugins/settings_plugin.cc"
   "src/flutter/shell/platform/linux_embedded/plugins/text_input_plugin.cc"
   "src/flutter/shell/platform/linux_embedded/surface/context_egl.cc"
   "src/flutter/shell/platform/linux_embedded/surface/egl_utils.cc"
