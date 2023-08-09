@@ -78,17 +78,28 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
           ELINUX_LOG(TRACE) << "xdg_surface_listener.configure";
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-          constexpr int32_t x = 0;
-          int32_t y = 0;
           if (self->window_decorations_) {
-            // TODO: Moves the window to the bottom to show the window
-            // decorations, but the bottom area of the window will be hidden
-            // because of this shifting.
+            // Shift the window position to the bottom to show decoration
+            // even when the window is displayed in the upper left corner
+            // of the screen
+            constexpr int32_t x = 0;
+            int32_t y = 0;
             y = -self->window_decorations_->Height();
+
+            auto width = self->view_properties_.width;
+            auto height = self->view_properties_.height;
+            if (!self->maximised_) {
+              height -= y;
+            }
+
+            // clip
+            if (self->display_max_height_ > 0) {
+              height = std::min(height, self->display_max_height_);
+            }
+
+            xdg_surface_set_window_geometry(xdg_surface, x, y, width, height);
           }
-          xdg_surface_set_window_geometry(xdg_surface, x, y,
-                                          self->view_properties_.width,
-                                          self->view_properties_.height);
+
           xdg_surface_ack_configure(xdg_surface, serial);
           if (self->wait_for_configure_) {
             self->wait_for_configure_ = false;
@@ -634,6 +645,9 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
         ELINUX_LOG(INFO) << "Display output info: width = " << width
                          << ", height = " << height
                          << ", refresh = " << refresh;
+        self->display_max_width_ = width;
+        self->display_max_height_ = height;
+
         // Some composers send 0 for the refresh value.
         if (refresh != 0) {
           self->frame_rate_ = refresh;
