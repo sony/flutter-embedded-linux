@@ -40,6 +40,8 @@ class ELinuxWindow {
   }
 
   FlutterDesktopViewProperties view_properties_;
+  int32_t display_max_width_ = -1;
+  int32_t display_max_height_ = -1;
   double current_scale_ = 1.0;
   uint16_t current_rotation_ = 0;
   // The x coordinate of the pointer in physical pixels.
