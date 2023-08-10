@@ -277,11 +277,6 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
     return false;
   }
 
-  // TODO: add theme initial value support.
-  view_->UpdateHighContrastEnabled(false);
-
-  SendSystemLocales();
-
   return true;
 }
 
@@ -382,6 +377,15 @@ void FlutterELinuxEngine::HandlePlatformMessage(
 
 void FlutterELinuxEngine::ReloadSystemFonts() {
   embedder_api_.ReloadSystemFonts(engine_);
+}
+
+void FlutterELinuxEngine::SetSystemSettings(float text_scaling_factor) {
+  view_->UpdateTextScaleFactor(text_scaling_factor);
+
+  // TODO: add theme initial value support.
+  view_->UpdateHighContrastEnabled(false);
+
+  SendSystemLocales();
 }
 
 void FlutterELinuxEngine::SendSystemLocales() {

@@ -100,6 +100,9 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
     if (!state->view->GetEngine()->RunWithEntrypoint(nullptr)) {
       return nullptr;
     }
+
+    const float text_scaling_factor = view_properties->text_scale_factor;
+    state->view->GetEngine()->SetSystemSettings(text_scaling_factor);
   }
 
   // Must happen after engine is running.

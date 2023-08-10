@@ -21,6 +21,8 @@ class FlutterEmbedderOptions {
     options_.AddInt("rotation", "r",
                     "Window rotation(degree) [0(default)|90|180|270]", 0,
                     false);
+    options_.AddDouble("text-scaling-factor", "x", "Text scaling factor", 1.0,
+                       false);
     options_.AddDouble("force-scale-factor", "s",
                        "Force a scale factor instead using default value", 1.0,
                        false);
@@ -82,6 +84,8 @@ class FlutterEmbedderOptions {
           break;
       }
     }
+
+    text_scale_factor_ = options_.GetValue<double>("text-scaling-factor");
 
     if (options_.Exist("force-scale-factor")) {
       is_force_scale_factor_ = true;
@@ -154,6 +158,9 @@ class FlutterEmbedderOptions {
   flutter::FlutterViewController::ViewRotation WindowRotation() const {
     return window_view_rotation_;
   }
+  double TextScaleFactor() const {
+    return text_scale_factor_;
+  }
   bool IsForceScaleFactor() const {
     return is_force_scale_factor_;
   }
@@ -181,6 +188,7 @@ class FlutterEmbedderOptions {
       flutter::FlutterViewController::ViewRotation::kRotation_0;
   bool is_force_scale_factor_;
   double scale_factor_;
+  double text_scale_factor_;
   bool enable_vsync_;
 };
 

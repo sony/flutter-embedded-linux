@@ -510,4 +510,8 @@ void FlutterELinuxView::UpdateHighContrastEnabled(bool enabled) {
   settings_handler_->UpdateHighContrastMode(enabled);
 }
 
+void FlutterELinuxView::UpdateTextScaleFactor(float factor) {
+  settings_handler_->UpdateTextScaleFactor(factor);
+}
+
 }  // namespace flutter

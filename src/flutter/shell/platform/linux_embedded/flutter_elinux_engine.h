@@ -127,6 +127,9 @@ class FlutterELinuxEngine {
   // Gets the status whether Impeller is enabled.
   bool IsImpellerEnabled() const { return enable_impeller_; }
 
+  // Sets system settings.
+  void SetSystemSettings(float text_scaling_factor);
+
  private:
   // Allows swapping out embedder_api_ calls in tests.
   friend class EngineEmbedderApiModifier;
