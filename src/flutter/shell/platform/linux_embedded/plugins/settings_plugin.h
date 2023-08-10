@@ -34,6 +34,9 @@ class SettingsPlugin {
   // Update the high contrast status of the system.
   void UpdateHighContrastMode(bool is_high_contrast);
 
+  // Update the text scale factor of the system.
+  void UpdateTextScaleFactor(float factor);
+
  private:
   // Returns `true` if the user uses 24 hour time.
   bool GetAlwaysUse24HourFormat();
@@ -44,11 +47,10 @@ class SettingsPlugin {
   // Returns the user-preferred brightness.
   PlatformBrightness GetPreferredBrightness();
 
-  bool is_high_contrast_ = false;
-
- private:
   std::unique_ptr<BasicMessageChannel<rapidjson::Document>> channel_;
   WindowBindingHandler* delegate_;
+  bool is_high_contrast_ = false;
+  float text_scaling_factor_ = 1.0;
 };
 
 }  // namespace flutter

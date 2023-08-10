@@ -107,6 +107,9 @@ class WindowBindingHandlerDelegate {
 
   // Update the status of the high contrast feature
   virtual void UpdateHighContrastEnabled(bool enabled) = 0;
+
+  // Update the status of the text scaling factor feature
+  virtual void UpdateTextScaleFactor(float factor) = 0;
 };
 
 }  // namespace flutter

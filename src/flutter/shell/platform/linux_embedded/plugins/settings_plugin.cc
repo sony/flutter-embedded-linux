@@ -50,8 +50,12 @@ bool SettingsPlugin::GetAlwaysUse24HourFormat() {
 }
 
 float SettingsPlugin::GetTextScaleFactor() {
-  // The current OS does not have text scale factor.
-  return 1.0;
+  return text_scaling_factor_;
+}
+
+void SettingsPlugin::UpdateTextScaleFactor(float factor) {
+  text_scaling_factor_ = factor;
+  SendSettings();
 }
 
 SettingsPlugin::PlatformBrightness SettingsPlugin::GetPreferredBrightness() {

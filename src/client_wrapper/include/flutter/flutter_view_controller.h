@@ -76,6 +76,9 @@ class FlutterViewController {
     // This option is only active for Wayland backend.
     bool use_window_decoration;
 
+    // Text scaling factor.
+    double text_scale_factor;
+
     // Force scale factor specified by command line argument
     bool force_scale_factor;
     double scale_factor;
