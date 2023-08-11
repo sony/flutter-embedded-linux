@@ -51,7 +51,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
-      width_dip - kButtonWidthDIP - kButtonMarginDIP,
+      width_dip * pixel_ratio - kButtonWidthDIP - kButtonMarginDIP,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 
   // maximise button.
@@ -66,7 +66,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
-      width_dip - kButtonWidthDIP * 2 - kButtonMarginDIP * 2,
+      width_dip * pixel_ratio - kButtonWidthDIP * 2 - kButtonMarginDIP * 2,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 
   // minimise button.
@@ -81,7 +81,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           std::make_unique<EnvironmentEgl>(display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
-      width_dip - kButtonWidthDIP * 3 - kButtonMarginDIP * 3,
+      width_dip * pixel_ratio - kButtonWidthDIP * 3 - kButtonMarginDIP * 3,
       -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
 }
 
@@ -110,7 +110,8 @@ void WindowDecorationsWayland::Resize(const int32_t width_dip,
   for (auto i = 0; i < buttons_.size(); i++) {
     buttons_[i]->SetScaleFactor(pixel_ratio);
     buttons_[i]->SetPosition(
-        width_dip - kButtonWidthDIP * (i + 1) - kButtonMarginDIP * (i + 1),
+        width_dip * pixel_ratio - kButtonWidthDIP * (i + 1) -
+            kButtonMarginDIP * (i + 1),
         -(kButtonHeightDIP + (kTitleBarHeightDIP - kButtonHeightDIP) / 2));
     buttons_[i]->Resize(kButtonWidthDIP * pixel_ratio,
                         kButtonHeightDIP * pixel_ratio);
