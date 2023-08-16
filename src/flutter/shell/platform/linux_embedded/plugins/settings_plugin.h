@@ -31,6 +31,9 @@ class SettingsPlugin {
   // Sends settings (e.g., platform brightness) to the engine.
   void SendSettings();
 
+  // Update the always use 24hour-format status of the system.
+  void UpdateAlwaysUse24HourFormat(bool is_always_use_24hour_format);
+
   // Update the high contrast status of the system.
   void UpdateHighContrastMode(bool is_high_contrast);
 
@@ -50,6 +53,7 @@ class SettingsPlugin {
   std::unique_ptr<BasicMessageChannel<rapidjson::Document>> channel_;
   WindowBindingHandler* delegate_;
   bool is_high_contrast_ = false;
+  bool is_always_use_24hour_format_ = true;
   float text_scaling_factor_ = 1.0;
 };
 

@@ -102,7 +102,8 @@ FlutterDesktopViewControllerRef FlutterDesktopViewControllerCreate(
     }
 
     const float text_scaling_factor = view_properties->text_scale_factor;
-    state->view->GetEngine()->SetSystemSettings(text_scaling_factor);
+    state->view->GetEngine()->SetSystemSettings(
+        text_scaling_factor, view_properties->enable_high_contrast);
   }
 
   // Must happen after engine is running.

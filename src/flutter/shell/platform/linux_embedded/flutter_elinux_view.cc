@@ -506,7 +506,16 @@ std::pair<double, double> FlutterELinuxView::GetPointerRotation(double x_px,
 }
 
 void FlutterELinuxView::UpdateHighContrastEnabled(bool enabled) {
-  // TODO: add UpdateAccessibilityFeatures support
+  int flags = 0;
+  if (enabled) {
+    flags |=
+        FlutterAccessibilityFeature::kFlutterAccessibilityFeatureHighContrast;
+  } else {
+    flags &=
+        ~FlutterAccessibilityFeature::kFlutterAccessibilityFeatureHighContrast;
+  }
+  engine_.get()->UpdateAccessibilityFeatures(
+      static_cast<FlutterAccessibilityFeature>(flags));
   settings_handler_->UpdateHighContrastMode(enabled);
 }
 

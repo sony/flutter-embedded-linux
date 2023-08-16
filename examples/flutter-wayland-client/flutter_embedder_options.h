@@ -23,6 +23,9 @@ class FlutterEmbedderOptions {
                     false);
     options_.AddDouble("text-scaling-factor", "x", "Text scaling factor", 1.0,
                        false);
+    options_.AddWithoutValue("enable-high-contrast", "i",
+                             "Request that UI be rendered with darker colors.",
+                             false);
     options_.AddDouble("force-scale-factor", "s",
                        "Force a scale factor instead using default value", 1.0,
                        false);
@@ -86,6 +89,7 @@ class FlutterEmbedderOptions {
     }
 
     text_scale_factor_ = options_.GetValue<double>("text-scaling-factor");
+    enable_high_contrast_ = options_.Exist("enable-high-contrast");
 
     if (options_.Exist("force-scale-factor")) {
       is_force_scale_factor_ = true;
@@ -161,6 +165,9 @@ class FlutterEmbedderOptions {
   double TextScaleFactor() const {
     return text_scale_factor_;
   }
+  bool EnableHighContrast() const {
+    return enable_high_contrast_;
+  }
   bool IsForceScaleFactor() const {
     return is_force_scale_factor_;
   }
@@ -189,6 +196,7 @@ class FlutterEmbedderOptions {
   bool is_force_scale_factor_;
   double scale_factor_;
   double text_scale_factor_;
+  bool enable_high_contrast_;
   bool enable_vsync_;
 };
 
