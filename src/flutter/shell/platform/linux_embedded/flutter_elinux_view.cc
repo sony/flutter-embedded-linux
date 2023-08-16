@@ -137,6 +137,13 @@ void FlutterELinuxView::OnTouchDown(uint32_t time,
                                     int32_t id,
                                     double x,
                                     double y) {
+  // Increase device-id to avoid
+  // "FML_DCHECK(states_.find(pointer_data.device) == states_.end());"
+  // exception in flutter/engine.
+  // This is because "device-id = 0" is used for mouse inputs.
+  // See engine/lib/ui/window/pointer_data_packet_converter.cc
+  id += 1;
+
   auto trimmed_xy = GetPointerRotation(x, y);
   auto* point = GgeTouchPoint(id);
   if (!point) {
@@ -163,8 +170,23 @@ void FlutterELinuxView::OnTouchDown(uint32_t time,
 }
 
 void FlutterELinuxView::OnTouchUp(uint32_t time, int32_t id) {
+  // Increase device-id to avoid
+  // "FML_DCHECK(states_.find(pointer_data.device) == states_.end());"
+  // exception in flutter/engine.
+  // This is because "device-id = 0" is used for mouse inputs.
+  // See engine/lib/ui/window/pointer_data_packet_converter.cc
+  id += 1;
+
   auto* point = GgeTouchPoint(id);
   if (!point) {
+    return;
+  }
+
+  // Makes sure we have an existing touch pointer in down state to
+  // avoid "FML_DCHECK(iter != states_.end())" exception in flutter/engine.
+  // See engine/lib/ui/window/pointer_data_packet_converter.cc
+  if (point->event_mask != TouchEvent::kDown &&
+      point->event_mask != TouchEvent::kMotion) {
     return;
   }
   point->event_mask = TouchEvent::kUp;
@@ -189,9 +211,24 @@ void FlutterELinuxView::OnTouchMotion(uint32_t time,
                                       int32_t id,
                                       double x,
                                       double y) {
+  // Increase device-id to avoid avoid
+  // "FML_DCHECK(states_.find(pointer_data.device) == states_.end());"
+  // exception in flutter/engine.
+  // This is because "device-id = 0" is used for mouse inputs.
+  // See engine/lib/ui/window/pointer_data_packet_converter.cc
+  id += 1;
+
   auto trimmed_xy = GetPointerRotation(x, y);
   auto* point = GgeTouchPoint(id);
   if (!point) {
+    return;
+  }
+
+  // Makes sure we have an existing touch pointer in down state to
+  // avoid "FML_DCHECK(iter != states_.end())" exception in flutter/engine.
+  // See engine/lib/ui/window/pointer_data_packet_converter.cc
+  if (point->event_mask != TouchEvent::kDown &&
+      point->event_mask != TouchEvent::kMotion) {
     return;
   }
   point->event_mask = TouchEvent::kMotion;
