@@ -41,6 +41,7 @@ FlutterViewController::FlutterViewController(
   c_view_properties.use_window_decoration =
       view_properties.use_window_decoration;
   c_view_properties.text_scale_factor = view_properties.text_scale_factor;
+  c_view_properties.enable_high_contrast = view_properties.enable_high_contrast;
   c_view_properties.force_scale_factor = view_properties.force_scale_factor;
   c_view_properties.scale_factor = view_properties.scale_factor;
   c_view_properties.enable_vsync = view_properties.enable_vsync;

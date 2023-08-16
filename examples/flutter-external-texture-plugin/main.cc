@@ -36,6 +36,7 @@ int main(int argc, char** argv) {
   view_properties.use_onscreen_keyboard = options.IsUseOnscreenKeyboard();
   view_properties.use_window_decoration = options.IsUseWindowDecoraation();
   view_properties.text_scale_factor = options.TextScaleFactor();
+  view_properties.enable_high_contrast = options.EnableHighContrast();
   view_properties.force_scale_factor = options.IsForceScaleFactor();
   view_properties.scale_factor = options.ScaleFactor();
   view_properties.enable_vsync = options.EnableVsync();

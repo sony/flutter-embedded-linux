@@ -379,12 +379,10 @@ void FlutterELinuxEngine::ReloadSystemFonts() {
   embedder_api_.ReloadSystemFonts(engine_);
 }
 
-void FlutterELinuxEngine::SetSystemSettings(float text_scaling_factor) {
+void FlutterELinuxEngine::SetSystemSettings(float text_scaling_factor,
+                                            bool enable_high_contrast) {
   view_->UpdateTextScaleFactor(text_scaling_factor);
-
-  // TODO: add theme initial value support.
-  view_->UpdateHighContrastEnabled(false);
-
+  view_->UpdateHighContrastEnabled(enable_high_contrast);
   SendSystemLocales();
 }
 
@@ -435,6 +433,11 @@ void FlutterELinuxEngine::OnVsync(uint64_t last_frame_time_nanos,
 
   vsync_waiter_->NotifyVsync(engine_, &embedder_api_, frame_start_time_nanos,
                              frame_target_time_nanos);
+}
+
+void FlutterELinuxEngine::UpdateAccessibilityFeatures(
+    FlutterAccessibilityFeature flags) {
+  embedder_api_.UpdateAccessibilityFeatures(engine_, flags);
 }
 
 }  // namespace flutter

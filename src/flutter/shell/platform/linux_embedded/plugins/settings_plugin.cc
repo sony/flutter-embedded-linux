@@ -45,8 +45,13 @@ void SettingsPlugin::SendSettings() {
 }
 
 bool SettingsPlugin::GetAlwaysUse24HourFormat() {
-  // The current OS does not have 24 hour format factor.
-  return true;
+  return is_always_use_24hour_format_;
+}
+
+void SettingsPlugin::UpdateAlwaysUse24HourFormat(
+    bool is_always_use_24hour_format) {
+  is_always_use_24hour_format_ = is_always_use_24hour_format;
+  SendSettings();
 }
 
 float SettingsPlugin::GetTextScaleFactor() {

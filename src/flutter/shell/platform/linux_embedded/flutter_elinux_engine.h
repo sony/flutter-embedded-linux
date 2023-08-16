@@ -128,7 +128,10 @@ class FlutterELinuxEngine {
   bool IsImpellerEnabled() const { return enable_impeller_; }
 
   // Sets system settings.
-  void SetSystemSettings(float text_scaling_factor);
+  void SetSystemSettings(float text_scaling_factor, bool enable_high_contrast);
+
+  // Updates accessibility, e.g. switch to high contrast mode
+  void UpdateAccessibilityFeatures(FlutterAccessibilityFeature flags);
 
  private:
   // Allows swapping out embedder_api_ calls in tests.

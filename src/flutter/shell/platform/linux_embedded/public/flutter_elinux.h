@@ -109,6 +109,9 @@ typedef struct {
   // Text scaling factor.
   double text_scale_factor;
 
+  // Enable high contrast. Request that UI be rendered with darker colors.
+  bool enable_high_contrast;
+
   // Force scale factor specified by command line argument
   bool force_scale_factor;
   double scale_factor;
