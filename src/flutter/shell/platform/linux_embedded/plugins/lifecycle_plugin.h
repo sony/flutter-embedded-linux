@@ -25,6 +25,8 @@ class LifecyclePlugin {
 
   void OnDetached() const;
 
+  void OnHidden() const;
+
  private:
   std::unique_ptr<flutter::BasicMessageChannel<std::string>> channel_;
 };

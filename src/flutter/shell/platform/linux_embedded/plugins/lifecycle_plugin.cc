@@ -15,6 +15,8 @@ constexpr char kInactive[] = "AppLifecycleState.inactive";
 constexpr char kResumed[] = "AppLifecycleState.resumed";
 constexpr char kPaused[] = "AppLifecycleState.paused";
 constexpr char kDetached[] = "AppLifecycleState.detached";
+constexpr char kHidden[] = "AppLifecycleState.hidden";
+
 }  // namespace
 
 LifecyclePlugin::LifecyclePlugin(BinaryMessenger* messenger)
@@ -41,6 +43,11 @@ void LifecyclePlugin::OnPaused() const {
 void LifecyclePlugin::OnDetached() const {
   ELINUX_LOG(DEBUG) << "App lifecycle changed to detached state.";
   channel_->Send(std::string(kDetached));
+}
+
+void LifecyclePlugin::OnHidden() const {
+  ELINUX_LOG(DEBUG) << "App lifecycle changed to hidden state.";
+  channel_->Send(std::string(kHidden));
 }
 
 }  // namespace flutter
