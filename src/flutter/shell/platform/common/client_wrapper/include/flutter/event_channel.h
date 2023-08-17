@@ -92,7 +92,7 @@ class EventChannel {
                 std::cerr << "Failed to cancel existing stream: "
                           << (error->error_code) << ", "
                           << (error->error_message) << ", "
-                          << (error->error_details);
+                          << (error->error_details.get());
               }
             }
             is_listening = true;
