@@ -151,6 +151,12 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   // |WindowBindingHandlerDelegate|
   void UpdateTextScaleFactor(float factor) override;
 
+  // |WindowBindingHandlerDelegate|
+  void UpdateDisplayInfo(double refresh_rate,
+                         size_t width_px,
+                         size_t height_px,
+                         double pixel_ratio) override;
+
  private:
   // Struct holding the mouse state. The engine doesn't keep track of which
   // mouse buttons have been pressed, so it's the embedding's responsibility.

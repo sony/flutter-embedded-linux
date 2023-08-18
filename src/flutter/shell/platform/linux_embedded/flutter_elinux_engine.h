@@ -133,6 +133,11 @@ class FlutterELinuxEngine {
   // Updates accessibility, e.g. switch to high contrast mode
   void UpdateAccessibilityFeatures(FlutterAccessibilityFeature flags);
 
+  // Update display information.
+  void UpdateDisplayInfo(FlutterEngineDisplaysUpdateType update_type,
+                         const FlutterEngineDisplay* displays,
+                         size_t display_count);
+
  private:
   // Allows swapping out embedder_api_ calls in tests.
   friend class EngineEmbedderApiModifier;

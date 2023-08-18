@@ -110,6 +110,16 @@ class WindowBindingHandlerDelegate {
 
   // Update the status of the text scaling factor feature
   virtual void UpdateTextScaleFactor(float factor) = 0;
+
+  // Update the status of the corresponding to display changes.
+  // @param[in] refresh_rate    Refresh rate of the display.
+  // @param[in] width_px        Physical width of the display.
+  // @param[in] height_px       Physical height of the display.
+  // @param[in] pixel_ratio     Pixel ratio of the display.
+  virtual void UpdateDisplayInfo(double refresh_rate,
+                                 size_t width_px,
+                                 size_t height_px,
+                                 double pixel_ratio) = 0;
 };
 
 }  // namespace flutter

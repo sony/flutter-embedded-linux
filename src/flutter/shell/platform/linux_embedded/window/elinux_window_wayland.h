@@ -135,10 +135,6 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
       kZxdgToplevelDecorationV1Listener;
   static constexpr size_t kDefaultPointerSize = 24;
 
-  // A pointer to a FlutterWindowsView that can be used to update engine
-  // windowing and input state.
-  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
-
   std::unique_ptr<NativeWindowWayland> native_window_;
   std::unique_ptr<SurfaceGl> render_surface_;
 
@@ -189,7 +185,6 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   wp_presentation* wp_presentation_;
   uint32_t wp_presentation_clk_id_;
   uint64_t last_frame_time_nanos_;
-  int32_t frame_rate_;
 
   CursorInfo cursor_info_;
   size_t cursor_size_;
