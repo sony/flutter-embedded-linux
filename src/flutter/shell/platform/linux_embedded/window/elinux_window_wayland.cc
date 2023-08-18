@@ -1041,7 +1041,6 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       zwp_text_input_v3_(nullptr),
       wp_presentation_(nullptr),
       wp_presentation_clk_id_(UINT32_MAX),
-      frame_rate_(60000),
       window_decorations_(nullptr) {
   view_properties_ = view_properties;
   current_scale_ =
@@ -1281,6 +1280,7 @@ bool ELinuxWindowWayland::DispatchEvent() {
           view_properties_.height * current_scale_ -
               WindowDecorationsPhysicalHeight());
     }
+    NotifyDisplayInfoUpdates();
   }
 
   // Prepare to call wl_display_read_events.

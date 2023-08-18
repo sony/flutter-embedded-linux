@@ -560,4 +560,23 @@ void FlutterELinuxView::UpdateTextScaleFactor(float factor) {
   settings_handler_->UpdateTextScaleFactor(factor);
 }
 
+void FlutterELinuxView::UpdateDisplayInfo(double refresh_rate,
+                                          size_t width_px,
+                                          size_t height_px,
+                                          double pixel_ratio) {
+  const FlutterEngineDisplaysUpdateType update_type =
+      kFlutterEngineDisplaysUpdateTypeStartup;
+  const FlutterEngineDisplay displays = {
+      .struct_size = sizeof(FlutterEngineDisplay),
+      .display_id = 0,
+      .single_display = true,
+      .refresh_rate = refresh_rate,
+      .width = width_px,
+      .height = height_px,
+      .device_pixel_ratio = pixel_ratio,
+  };
+  const size_t display_count = 1;
+  engine_.get()->UpdateDisplayInfo(update_type, &displays, display_count);
+}
+
 }  // namespace flutter

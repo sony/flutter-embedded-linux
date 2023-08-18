@@ -5,7 +5,10 @@
 #ifndef FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_H_
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_WINDOW_ELINUX_WINDOW_H_
 
+#include <cmath>
+
 #include "flutter/shell/platform/linux_embedded/public/flutter_elinux.h"
+#include "flutter/shell/platform/linux_embedded/window_binding_handler.h"
 
 namespace flutter {
 
@@ -39,9 +42,23 @@ class ELinuxWindow {
     }
   }
 
+  void NotifyDisplayInfoUpdates() const {
+    if (binding_handler_delegate_) {
+      binding_handler_delegate_->UpdateDisplayInfo(
+          std::trunc(1000000.0 / frame_rate_), GetCurrentWidth(),
+          GetCurrentHeight(), current_scale_);
+    }
+  }
+
   FlutterDesktopViewProperties view_properties_;
+
+  // A pointer to a FlutterWindowsView that can be used to update engine
+  // windowing and input state.
+  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
+
   int32_t display_max_width_ = -1;
   int32_t display_max_height_ = -1;
+  int32_t frame_rate_ = 60000;
   double current_scale_ = 1.0;
   uint16_t current_rotation_ = 0;
   // The x coordinate of the pointer in physical pixels.

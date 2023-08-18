@@ -440,4 +440,12 @@ void FlutterELinuxEngine::UpdateAccessibilityFeatures(
   embedder_api_.UpdateAccessibilityFeatures(engine_, flags);
 }
 
+void FlutterELinuxEngine::UpdateDisplayInfo(
+    FlutterEngineDisplaysUpdateType update_type,
+    const FlutterEngineDisplay* displays,
+    size_t display_count) {
+  embedder_api_.NotifyDisplayUpdate(engine_, update_type, displays,
+                                    display_count);
+}
+
 }  // namespace flutter

@@ -70,10 +70,6 @@ class ELinuxWindowX11 : public ELinuxWindow, public WindowBindingHandler {
                                 int16_t x,
                                 int16_t y);
 
-  // A pointer to a FlutterWindowsView that can be used to update engine
-  // windowing and input state.
-  WindowBindingHandlerDelegate* binding_handler_delegate_ = nullptr;
-
   Display* display_ = nullptr;
   std::unique_ptr<NativeWindowX11> native_window_;
   std::unique_ptr<SurfaceGl> render_surface_;
