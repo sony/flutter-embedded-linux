@@ -14,7 +14,7 @@ option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the displ
 option(USE_DIRTY_REGION_MANAGEMENT "Use Flutter dirty region management" ON)
 option(USE_GLES3 "Use OpenGL ES3 (default is OpenGL ES2)" OFF)
 option(ENABLE_EGL_ALPHA_COMPONENT_OF_COLOR_BUFFER "Enable alpha component of the EGL color buffer" ON)
-option(ENABLE_VSYNC "Enable embedder vsync" ON)
+option(ENABLE_VSYNC "Enable embedder vsync" OFF) # todo: need to investigate https://github.com/sony/flutter-embedded-linux/pull/376 when enabling this option.
 option(BUILD_ELINUX_SO "Build .so file of elinux embedder" OFF)
 option(ENABLE_ELINUX_EMBEDDER_LOG "Enable logger of eLinux embedder" ON)
 option(FLUTTER_RELEASE "Build Flutter Engine with release mode" OFF)
