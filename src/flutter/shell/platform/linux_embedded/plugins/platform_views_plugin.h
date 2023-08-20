@@ -52,6 +52,26 @@ class PlatformViewsPlugin {
       const flutter::EncodableValue& arguments,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+  // Called when "clearFocus" method is called
+  void PlatformViewsClearFocus(
+      const flutter::EncodableValue& arguments,
+      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+  // Called when "resize" method is called
+  void PlatformViewsResize(
+      const flutter::EncodableValue& arguments,
+      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+  // Called when "touch" method is called
+  void PlatformViewsTouch(
+      const flutter::EncodableValue& arguments,
+      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
+  // Called when "offset" method is called
+  void PlatformViewsOffset(
+      const flutter::EncodableValue& arguments,
+      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
   // Method channel instance.
   std::unique_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel_;
 

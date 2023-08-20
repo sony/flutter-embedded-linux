@@ -9,10 +9,11 @@
 #include <stdint.h>
 
 #include <memory>
+#include <vector>
 
+#include <flutter/plugin_registrar.h>
 #include "flutter_export.h"
 #include "flutter_messenger.h"
-#include "plugin_registrar.h"
 
 class FlutterDesktopPlatformView {
  public:
@@ -31,11 +32,19 @@ class FlutterDesktopPlatformView {
 
   void SetFocus(bool focus) { focused_ = focus; }
 
+  virtual void ClearFocus() = 0;
+
   bool IsFocused() const { return focused_; }
 
   void SetTextureId(int texture_id) { texture_id_ = texture_id; }
 
   int GetTextureId() const { return texture_id_; }
+
+  virtual void Resize(double width, double height) = 0;
+
+  virtual void Touch(int device_id, int event_type, double x, double y) = 0;
+
+  virtual void Offset(double top, double left) = 0;
 
  private:
   flutter::PluginRegistrar* registrar_;
