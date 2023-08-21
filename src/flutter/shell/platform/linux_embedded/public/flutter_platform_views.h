@@ -36,9 +36,9 @@ class FlutterDesktopPlatformView {
 
   bool IsFocused() const { return focused_; }
 
-  void SetTextureId(int texture_id) { texture_id_ = texture_id; }
+  void SetTextureId(int64_t texture_id) { texture_id_ = texture_id; }
 
-  int GetTextureId() const { return texture_id_; }
+  int64_t GetTextureId() const { return texture_id_; }
 
   virtual void Resize(double width, double height) = 0;
 
@@ -49,7 +49,7 @@ class FlutterDesktopPlatformView {
  private:
   flutter::PluginRegistrar* registrar_;
   int view_id_;
-  int texture_id_;
+  int64_t texture_id_;
   bool focused_;
 };
 
