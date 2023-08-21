@@ -230,7 +230,7 @@ void PlatformViewsPlugin::PlatformViewsTouch(
   auto x = std::get<double>(pointer_coord[7]);
   auto y = std::get<double>(pointer_coord[8]);
 
-  ELINUX_LOG(ERROR) << "Touch the platform view: id = " << view_id
+  ELINUX_LOG(TRACE) << "Touch the platform view: id = " << view_id
                     << ", device_id = " << device_id
                     << ", event_type = " << event_type << ", x = " << x
                     << ", y = " << y;
