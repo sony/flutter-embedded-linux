@@ -7,6 +7,8 @@
 
 #include <xf86drmMode.h>
 
+#include <cstddef>
+#include <cstdint>
 #include <string>
 
 #include "flutter/shell/platform/linux_embedded/surface/surface_gl.h"

@@ -18,7 +18,11 @@ namespace flutter {
 NativeWindowDrm::NativeWindowDrm(const char* device_filename,
                                  const uint16_t rotation,
                                  bool enable_vsync) {
-  drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
+  if (!strcmp("drm-nvdc", device_filename)) {
+    drm_device_ = drmOpen(device_filename, nullptr);
+  } else {
+    drm_device_ = open(device_filename, O_RDWR | O_CLOEXEC);
+  }
   if (drm_device_ == -1) {
     ELINUX_LOG(ERROR) << "Couldn't open " << device_filename;
     return;

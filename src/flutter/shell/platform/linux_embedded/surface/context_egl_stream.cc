@@ -11,7 +11,7 @@ namespace flutter {
 
 ContextEglStream::ContextEglStream(
     std::unique_ptr<EnvironmentEglStream> environment)
-    : ContextEgl(std::move(environment), EGL_STREAM_BIT_KHR) {
+    : ContextEgl(std::move(environment), false, EGL_STREAM_BIT_KHR) {
   if (!valid_) {
     return;
   }
