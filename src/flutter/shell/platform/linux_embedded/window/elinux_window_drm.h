@@ -13,6 +13,7 @@
 
 #include <chrono>
 #include <memory>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -262,29 +263,31 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
 
     constexpr char kFileNameSeparator[] = "/";
-    auto pos = device_filename.find_last_of(kFileNameSeparator);
-    if (pos == std::string::npos) {
-      ELINUX_LOG(ERROR) << "Failed to get device name position.";
-      udev_unref(udev);
-      return false;
-    }
+    if (device_filename != "drm-nvdc") {
+      auto pos = device_filename.find_last_of(kFileNameSeparator);
+      if (pos == std::string::npos) {
+        ELINUX_LOG(ERROR) << "Failed to get device name position.";
+        udev_unref(udev);
+        return false;
+      }
 
-    auto device_name = device_filename.substr(pos + 1);
-    auto device = udev_device_new_from_subsystem_sysname(
-        udev, kUdevMonitorSubsystemDrm, device_name.c_str());
-    if (!device) {
-      ELINUX_LOG(ERROR) << "Failed to get device from " << device_name;
-      udev_unref(udev);
-      return false;
-    }
+      auto device_name = device_filename.substr(pos + 1);
+      auto device = udev_device_new_from_subsystem_sysname(
+          udev, kUdevMonitorSubsystemDrm, device_name.c_str());
+      if (!device) {
+        ELINUX_LOG(ERROR) << "Failed to get device from " << device_name;
+        udev_unref(udev);
+        return false;
+      }
 
-    auto sysnum = udev_device_get_sysnum(device);
-    if (!sysnum) {
-      ELINUX_LOG(ERROR) << "Failed to get device id.";
-      udev_unref(udev);
-      return false;
+      auto sysnum = udev_device_get_sysnum(device);
+      if (!sysnum) {
+        ELINUX_LOG(ERROR) << "Failed to get device id.";
+        udev_unref(udev);
+        return false;
+      }
+      drm_device_id_ = std::atoi(sysnum);
     }
-    drm_device_id_ = std::atoi(sysnum);
     udev_unref(udev);
 
     if (sd_event_new(&udev_drm_event_loop_) < 0) {
@@ -348,7 +351,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     if (!sysnum) {
       ELINUX_LOG(ERROR) << "Failed to get device id.";
       return false;
-    } else if (std::atoi(sysnum) != drm_device_id_) {
+    } else if (drm_device_id_ && std::atoi(sysnum) != *drm_device_id_) {
       ELINUX_LOG(ERROR) << "Not expected device id.";
       return false;
     }
@@ -721,7 +724,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   sd_event* udev_drm_event_loop_ = nullptr;
   udev_monitor* udev_monitor_ = nullptr;
-  int drm_device_id_;
+  std::optional<int> drm_device_id_;
 };
 
 }  // namespace flutter
