@@ -42,10 +42,7 @@ FlutterRendererConfig GetRendererConfig() {
     }
     return host->view()->ClearCurrent();
   };
-  // Temporary disabled fbo_reset_after_present to avoid flicker and other
-  // rendering issues on some H/W. See
-  // https://github.com/sony/flutter-embedded-linux/issues/334
-  config.open_gl.fbo_reset_after_present = false;
+  config.open_gl.fbo_reset_after_present = true;
 #if defined(USE_OPENGL_DIRTY_REGION_MANAGEMENT)
   config.open_gl.present_with_info =
       [](void* user_data, const FlutterPresentInfo* info) -> bool {
