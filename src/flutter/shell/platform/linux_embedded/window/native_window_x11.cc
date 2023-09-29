@@ -23,7 +23,8 @@ NativeWindowX11::NativeWindowX11(Display* display,
                                  const char* title,
                                  const size_t width,
                                  const size_t height,
-                                 bool enable_vsync) {
+                                 bool enable_vsync,
+                                 bool fullscreen) {
   XVisualInfo visualTemplate;
   visualTemplate.visualid = visual_id;
 
@@ -44,10 +45,20 @@ NativeWindowX11::NativeWindowX11(Display* display,
       ButtonReleaseMask | PointerMotionMask | EnterWindowMask |
       LeaveWindowMask | FocusChangeMask | StructureNotifyMask;
 
-  window_ =
-      XCreateWindow(display, RootWindow(display, visual->screen), 0, 0, width,
-                    height, 0, visual->depth, InputOutput, visual->visual,
-                    CWBorderPixel | CWColormap | CWEventMask, &windowAttribs);
+  auto window_width = width;
+  auto window_height = height;
+  if (fullscreen) {
+    XWindowAttributes attr;
+    XGetWindowAttributes(display, RootWindow(display, visual->screen), &attr);
+    window_width = attr.width;
+    window_height = attr.height;
+    windowAttribs.override_redirect = True;
+  }
+
+  window_ = XCreateWindow(
+      display, RootWindow(display, visual->screen), 0, 0, window_width,
+      window_height, 0, visual->depth, InputOutput, visual->visual,
+      CWBorderPixel | CWColormap | CWEventMask, &windowAttribs);
   if (!window_) {
     ELINUX_LOG(ERROR) << "Failed to the create window.";
     return;

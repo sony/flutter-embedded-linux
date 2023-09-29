@@ -18,7 +18,8 @@ class NativeWindowX11 : public NativeWindow {
                   const char* title,
                   const size_t width,
                   const size_t height,
-                  bool enable_vsync);
+                  bool enable_vsync,
+                  bool fullscreen);
   ~NativeWindowX11() = default;
 
   // |NativeWindow|
