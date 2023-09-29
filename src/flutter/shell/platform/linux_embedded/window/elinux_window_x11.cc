@@ -132,7 +132,8 @@ bool ELinuxWindowX11::CreateRenderSurface(int32_t width,
   }
   native_window_ = std::make_unique<NativeWindowX11>(
       display_, context_egl->GetAttrib(EGL_NATIVE_VISUAL_ID),
-      view_properties_.title, width, height, view_properties_.enable_vsync);
+      view_properties_.title, width, height, view_properties_.enable_vsync,
+      view_properties_.view_mode == FlutterDesktopViewMode::kFullscreen);
   if (!native_window_->IsValid()) {
     ELINUX_LOG(ERROR) << "Failed to create the native window";
     return false;
