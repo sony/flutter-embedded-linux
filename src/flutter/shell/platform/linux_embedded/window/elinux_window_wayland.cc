@@ -123,24 +123,24 @@ const xdg_toplevel_listener ELinuxWindowWayland::kXdgToplevelListener = {
             std::swap(width, height);
           }
 
-          int32_t next_width = width;
-          int32_t next_height = height;
+          int32_t next_width_dip = width / self->current_scale_;
+          int32_t next_height_dip = height / self->current_scale_;
           if (self->restore_window_required_) {
             self->restore_window_required_ = false;
-            next_width = self->restore_window_width_;
-            next_height = self->restore_window_height_;
+            next_width_dip = self->restore_window_width_;
+            next_height_dip = self->restore_window_height_;
           }
 
-          if (!next_width || !next_height ||
-              (self->view_properties_.width == next_width &&
-               self->view_properties_.height == next_height)) {
+          if (!next_width_dip || !next_height_dip ||
+              (self->view_properties_.width == next_width_dip &&
+               self->view_properties_.height == next_height_dip)) {
             return;
           }
 
-          ELINUX_LOG(TRACE)
-              << "request redraw: " << next_width << ", " << next_height;
-          self->view_properties_.width = next_width;
-          self->view_properties_.height = next_height;
+          ELINUX_LOG(TRACE) << "request redraw: " << next_width_dip << ", "
+                            << next_height_dip;
+          self->view_properties_.width = next_width_dip;
+          self->view_properties_.height = next_height_dip;
           self->request_redraw_ = true;
         },
     .close =
@@ -1274,6 +1274,11 @@ bool ELinuxWindowWayland::DispatchEvent() {
       window_decorations_->Resize(view_properties_.width,
                                   view_properties_.height, current_scale_);
     }
+
+    ELINUX_LOG(ERROR) << "width: " << view_properties_.width;
+    ELINUX_LOG(ERROR) << "height: " << view_properties_.height;
+    ELINUX_LOG(ERROR) << "current_scale: " << current_scale_;
+
     if (binding_handler_delegate_) {
       binding_handler_delegate_->OnWindowSizeChanged(
           view_properties_.width * current_scale_,
@@ -1820,8 +1825,9 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
 }
 
 void ELinuxWindowWayland::UpdateWindowScale() {
-  if (view_properties_.force_scale_factor)
+  if (view_properties_.force_scale_factor) {
     return;
+  }
 
   double scale_factor = 1.0;
   for (auto output_id : entered_outputs_) {
