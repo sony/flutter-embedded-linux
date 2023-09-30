@@ -75,8 +75,14 @@ bool ELinuxEGLSurface::MakeCurrent() const {
   }
 
   // Non-blocking when swappipping buffers on Wayland.
+  // OpenGL swap intervals can be used to prevent screen tearing.
+  // If enabled, the raster thread blocks until the v-blank.
+  // This is unnecessary if DWM composition is enabled.
+  // See: https://www.khronos.org/opengl/wiki/Swap_Interval
+  // See: https://learn.microsoft.com/windows/win32/dwm/composition-ovw
+  //
   // However, we might encounter rendering problems on some Wayland compositors
-  // (e.g. weston 9.0) when we use them.
+  // (e.g. weston 9.0).
   // See also:
   //   - https://github.com/sony/flutter-embedded-linux/issues/230
   //   - https://github.com/sony/flutter-embedded-linux/issues/234
