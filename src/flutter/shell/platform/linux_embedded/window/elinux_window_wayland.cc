@@ -1275,10 +1275,6 @@ bool ELinuxWindowWayland::DispatchEvent() {
                                   view_properties_.height, current_scale_);
     }
 
-    ELINUX_LOG(ERROR) << "width: " << view_properties_.width;
-    ELINUX_LOG(ERROR) << "height: " << view_properties_.height;
-    ELINUX_LOG(ERROR) << "current_scale: " << current_scale_;
-
     if (binding_handler_delegate_) {
       binding_handler_delegate_->OnWindowSizeChanged(
           view_properties_.width * current_scale_,

@@ -381,6 +381,11 @@ void FlutterELinuxEngine::ReloadSystemFonts() {
 
 void FlutterELinuxEngine::SetSystemSettings(float text_scaling_factor,
                                             bool enable_high_contrast) {
+  if (text_scaling_factor == 0) {
+    ELINUX_LOG(WARNING) << "text-scaling-factor value must be greater than 0";
+    text_scaling_factor = 1.0;
+  }
+
   view_->UpdateTextScaleFactor(text_scaling_factor);
   view_->UpdateHighContrastEnabled(enable_high_contrast);
   SendSystemLocales();
