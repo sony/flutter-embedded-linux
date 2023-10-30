@@ -78,16 +78,16 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
           ELINUX_LOG(TRACE) << "xdg_surface_listener.configure";
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+          constexpr int32_t x = 0;
+          int32_t y = 0;
+          auto width = self->view_properties_.width;
+          auto height = self->view_properties_.height;
+
           if (self->window_decorations_) {
             // Shift the window position to the bottom to show decoration
             // even when the window is displayed in the upper left corner
             // of the screen
-            constexpr int32_t x = 0;
-            int32_t y = 0;
             y = -self->window_decorations_->Height();
-
-            auto width = self->view_properties_.width;
-            auto height = self->view_properties_.height;
             if (!self->maximised_) {
               height -= y;
             }
@@ -96,9 +96,8 @@ const xdg_surface_listener ELinuxWindowWayland::kXdgSurfaceListener = {
             if (self->display_max_height_ > 0) {
               height = std::min(height, self->display_max_height_);
             }
-
-            xdg_surface_set_window_geometry(xdg_surface, x, y, width, height);
           }
+          xdg_surface_set_window_geometry(xdg_surface, x, y, width, height);
 
           xdg_surface_ack_configure(xdg_surface, serial);
           if (self->wait_for_configure_) {
