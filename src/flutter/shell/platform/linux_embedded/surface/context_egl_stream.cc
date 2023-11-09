@@ -28,7 +28,7 @@ std::unique_ptr<ELinuxEGLSurface> ContextEglStream::CreateOnscreenSurface(
   EGLOutputLayerEXT layer;
   EGLAttrib layer_attribs[] = {
       // clang-format off
-      EGL_DRM_PLANE_EXT, static_cast<NativeWindowDrmEglstream*>(window)->PlaneId(),
+      EGL_DRM_PLANE_EXT, static_cast<EGLAttrib>(static_cast<NativeWindowDrmEglstream*>(window)->PlaneId()),
       EGL_NONE
       // clang-format on
   };
