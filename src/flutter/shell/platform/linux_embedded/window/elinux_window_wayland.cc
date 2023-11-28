@@ -1481,6 +1481,9 @@ void ELinuxWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
 
 void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
   if (view_properties_.use_mouse_cursor) {
+    if (!wl_pointer_) {
+      return;
+    }
     if (cursor_name.compare(cursor_info_.cursor_name) == 0) {
       return;
     }
