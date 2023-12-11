@@ -233,6 +233,7 @@ const wp_presentation_feedback_listener
                 self->window_decorations_->Draw();
               }
 
+              wp_presentation_feedback_destroy(wp_presentation_feedback);
               wp_presentation_feedback_add_listener(
                   ::wp_presentation_feedback(self->wp_presentation_,
                                              self->native_window_->Surface()),
@@ -249,6 +250,7 @@ const wp_presentation_feedback_listener
                 self->window_decorations_->Draw();
               }
 
+              wp_presentation_feedback_destroy(wp_presentation_feedback);
               wp_presentation_feedback_add_listener(
                   ::wp_presentation_feedback(self->wp_presentation_,
                                              self->native_window_->Surface()),
