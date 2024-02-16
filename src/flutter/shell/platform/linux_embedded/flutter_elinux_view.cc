@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cmath>
 
+#include "flutter/common/constants.h"
 #include "flutter/shell/platform/linux_embedded/logger.h"
 
 namespace flutter {
@@ -165,6 +166,9 @@ void FlutterELinuxView::OnTouchDown(uint32_t time,
       .scroll_delta_y = 0,
       .device_kind = kFlutterPointerDeviceKindTouch,
       .buttons = 0,
+      // TODO: Use the correct view ID for pointer events once the
+      // eLinux embedder supports multiple views.
+      .view_id = flutter::kFlutterImplicitViewId,
   };
   engine_->SendPointerEvent(event);
 }
@@ -203,6 +207,9 @@ void FlutterELinuxView::OnTouchUp(uint32_t time, int32_t id) {
       .scroll_delta_y = 0,
       .device_kind = kFlutterPointerDeviceKindTouch,
       .buttons = 0,
+      // TODO: Use the correct view ID for pointer events once the
+      // eLinux embedder supports multiple views.
+      .view_id = flutter::kFlutterImplicitViewId,
   };
   engine_->SendPointerEvent(event);
 }
@@ -247,6 +254,9 @@ void FlutterELinuxView::OnTouchMotion(uint32_t time,
       .scroll_delta_y = 0,
       .device_kind = kFlutterPointerDeviceKindTouch,
       .buttons = 0,
+      // TODO: Use the correct view ID for pointer events once the
+      // eLinux embedder supports multiple views.
+      .view_id = flutter::kFlutterImplicitViewId,
   };
   engine_->SendPointerEvent(event);
 }
@@ -424,6 +434,9 @@ void FlutterELinuxView::SendPointerEventWithData(
   FlutterPointerEvent event = event_data;
   event.device_kind = kFlutterPointerDeviceKindMouse;
   event.buttons = mouse_state_.buttons;
+  // TODO: Use the correct view ID for pointer events once the
+  // eLinux embedder supports multiple views.
+  event.view_id = flutter::kFlutterImplicitViewId;
 
   // Set metadata that's always the same regardless of the event.
   event.struct_size = sizeof(event);
