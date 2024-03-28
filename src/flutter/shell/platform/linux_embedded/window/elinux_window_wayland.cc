@@ -628,6 +628,8 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
                    const char* model,
                    int32_t output_transform) -> void {
       ELINUX_LOG(TRACE) << "wl_output_listener.geometry";
+      auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
+      self->transform_ = output_transform;
     },
     .mode = [](void* data,
                wl_output* wl_output,
@@ -639,7 +641,11 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
 
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
       if (flags & WL_OUTPUT_MODE_CURRENT) {
-        if (self->current_rotation_ == 90 || self->current_rotation_ == 270) {
+        if (self->current_rotation_ == 90 || self->current_rotation_ == 270 ||
+            self->transform_ == WL_OUTPUT_TRANSFORM_90 ||
+            self->transform_ == WL_OUTPUT_TRANSFORM_270 ||
+            self->transform_ == WL_OUTPUT_TRANSFORM_FLIPPED_90 ||
+            self->transform_ == WL_OUTPUT_TRANSFORM_FLIPPED_270) {
           std::swap(width, height);
         }
 
