@@ -153,6 +153,7 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   bool maximised_;
   uint32_t last_frame_time_;
   bool enable_impeller_ = false;
+  int32_t transform_ = WL_OUTPUT_TRANSFORM_NORMAL;
 
   // Indicates that exists a keyboard show request from Flutter Engine.
   bool is_requested_show_virtual_keyboard_;
