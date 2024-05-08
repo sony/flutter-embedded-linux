@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <codecvt>
+#include <locale>
 #include <unordered_map>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
@@ -748,7 +750,10 @@ const zwp_text_input_v1_listener ELinuxWindowWayland::kZwpTextInputV1Listener =
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
-            self->binding_handler_delegate_->OnVirtualKey(text[0]);
+            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
+                utf8_converter;
+            std::u16string utf16_text = utf8_converter.from_bytes(text);
+            self->binding_handler_delegate_->OnVirtualKey(utf16_text[0]);
           }
           if (self->zwp_text_input_v1_) {
             zwp_text_input_v1_reset(self->zwp_text_input_v1_);
@@ -779,7 +784,10 @@ const zwp_text_input_v1_listener ELinuxWindowWayland::kZwpTextInputV1Listener =
           // commit_string is notified only when the space key is pressed.
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
-            self->binding_handler_delegate_->OnVirtualKey(text[0]);
+            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
+                utf8_converter;
+            std::u16string utf16_text = utf8_converter.from_bytes(text);
+            self->binding_handler_delegate_->OnVirtualKey(utf16_text[0]);
           }
           // If there is no input data, the backspace key cannot be used,
           // so set dummy data.
@@ -895,7 +903,10 @@ const zwp_text_input_v3_listener ELinuxWindowWayland::kZwpTextInputV3Listener =
 
           auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
           if (self->binding_handler_delegate_ && strlen(text)) {
-            self->binding_handler_delegate_->OnVirtualKey(text[0]);
+            std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t>
+                utf8_converter;
+            std::u16string utf16_text = utf8_converter.from_bytes(text);
+            self->binding_handler_delegate_->OnVirtualKey(utf16_text[0]);
           }
         },
         .delete_surrounding_text = [](void* data,
