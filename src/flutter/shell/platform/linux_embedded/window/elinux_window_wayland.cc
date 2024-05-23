@@ -289,29 +289,32 @@ const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
       ELINUX_LOG(TRACE) << "wl_seat_listener.capabilities";
 
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-      if ((caps & WL_SEAT_CAPABILITY_POINTER) && !self->wl_pointer_) {
-        self->wl_pointer_ = wl_seat_get_pointer(seat);
-        wl_pointer_add_listener(self->wl_pointer_, &kWlPointerListener, self);
-      } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && self->wl_pointer_) {
-        wl_pointer_destroy(self->wl_pointer_);
-        self->wl_pointer_ = nullptr;
+      auto [iter_inputs, _] =
+          self->seat_inputs_map_.emplace(seat, seat_inputs());
+      auto& inputs = iter_inputs->second;
+
+      if ((caps & WL_SEAT_CAPABILITY_POINTER) && !inputs.pointer) {
+        inputs.pointer = wl_seat_get_pointer(seat);
+        wl_pointer_add_listener(inputs.pointer, &kWlPointerListener, self);
+      } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && inputs.pointer) {
+        wl_pointer_destroy(inputs.pointer);
+        inputs.pointer = nullptr;
       }
 
-      if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !self->wl_touch_) {
-        self->wl_touch_ = wl_seat_get_touch(seat);
-        wl_touch_add_listener(self->wl_touch_, &kWlTouchListener, self);
-      } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && self->wl_touch_) {
-        wl_touch_destroy(self->wl_touch_);
-        self->wl_touch_ = nullptr;
+      if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !inputs.touch) {
+        inputs.touch = wl_seat_get_touch(seat);
+        wl_touch_add_listener(inputs.touch, &kWlTouchListener, self);
+      } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && inputs.touch) {
+        wl_touch_destroy(inputs.touch);
+        inputs.touch = nullptr;
       }
 
-      if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !self->wl_keyboard_) {
-        self->wl_keyboard_ = wl_seat_get_keyboard(seat);
-        wl_keyboard_add_listener(self->wl_keyboard_, &kWlKeyboardListener,
-                                 self);
-      } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && self->wl_keyboard_) {
-        wl_keyboard_destroy(self->wl_keyboard_);
-        self->wl_keyboard_ = nullptr;
+      if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && !inputs.keyboard) {
+        inputs.keyboard = wl_seat_get_keyboard(seat);
+        wl_keyboard_add_listener(inputs.keyboard, &kWlKeyboardListener, self);
+      } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && inputs.keyboard) {
+        wl_keyboard_destroy(inputs.keyboard);
+        inputs.keyboard = nullptr;
       }
     },
     .name = [](void* data, struct wl_seat* wl_seat, const char* name) -> void {
@@ -333,7 +336,7 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
       self->serial_ = serial;
 
       if (self->view_properties_.use_mouse_cursor) {
-        self->cursor_info_.pointer = self->wl_pointer_;
+        self->cursor_info_.pointer = wl_pointer;
         self->cursor_info_.serial = serial;
       }
 
@@ -399,7 +402,14 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
             self->window_decorations_->IsMatched(
                 self->wl_current_surface_,
                 WindowDecoration::DecorationType::TITLE_BAR)) {
-          xdg_toplevel_move(self->xdg_toplevel_, self->wl_seat_, serial);
+          for (auto& [seat, inputs] : self->seat_inputs_map_) {
+            if (inputs.pointer == pointer) {
+              xdg_toplevel_move(self->xdg_toplevel_, seat, serial);
+              return;
+            }
+          }
+          ELINUX_LOG(TRACE)
+              << "Failed to find the pointer for moving the window";
           return;
         }
 
@@ -1043,11 +1053,8 @@ ELinuxWindowWayland::ELinuxWindowWayland(
       wl_compositor_(nullptr),
       wl_subcompositor_(nullptr),
       wl_current_surface_(nullptr),
-      wl_seat_(nullptr),
-      wl_pointer_(nullptr),
-      wl_touch_(nullptr),
-      wl_keyboard_(nullptr),
       wl_shm_(nullptr),
+      seat_inputs_map_(),
       wl_data_device_manager_(nullptr),
       wl_data_device_(nullptr),
       wl_data_offer_(nullptr),
@@ -1087,34 +1094,37 @@ ELinuxWindowWayland::ELinuxWindowWayland(
   wl_registry_add_listener(wl_registry_, &kWlRegistryListener, this);
   wl_display_roundtrip(wl_display_);
 
-  if (wl_data_device_manager_ && wl_seat_) {
-    wl_data_device_ = wl_data_device_manager_get_data_device(
-        wl_data_device_manager_, wl_seat_);
-    wl_data_device_add_listener(wl_data_device_, &kWlDataDeviceListener, this);
-  }
+  for (auto& [seat, _] : seat_inputs_map_) {
+    if (wl_data_device_manager_ && seat) {
+      wl_data_device_ =
+          wl_data_device_manager_get_data_device(wl_data_device_manager_, seat);
+      wl_data_device_add_listener(wl_data_device_, &kWlDataDeviceListener,
+                                  this);
+    }
 
-  // Setup text-input protocol for onscreen keyboard inputs.
-  {
-    if (zwp_text_input_manager_v3_ && wl_seat_) {
-      zwp_text_input_v3_ = zwp_text_input_manager_v3_get_text_input(
-          zwp_text_input_manager_v3_, wl_seat_);
-      if (!zwp_text_input_v3_) {
-        ELINUX_LOG(ERROR) << "Failed to create the text input manager v3.";
-        return;
+    // Setup text-input protocol for onscreen keyboard inputs.
+    {
+      if (zwp_text_input_manager_v3_ && seat) {
+        zwp_text_input_v3_ = zwp_text_input_manager_v3_get_text_input(
+            zwp_text_input_manager_v3_, seat);
+        if (!zwp_text_input_v3_) {
+          ELINUX_LOG(ERROR) << "Failed to create the text input manager v3.";
+          return;
+        }
+        zwp_text_input_v3_add_listener(zwp_text_input_v3_,
+                                       &kZwpTextInputV3Listener, this);
+      } else if (zwp_text_input_manager_v1_) {
+        zwp_text_input_v1_ = zwp_text_input_manager_v1_create_text_input(
+            zwp_text_input_manager_v1_);
+        if (!zwp_text_input_v1_) {
+          ELINUX_LOG(ERROR) << "Failed to create text input manager v1.";
+          return;
+        }
+        zwp_text_input_v1_add_listener(zwp_text_input_v1_,
+                                       &kZwpTextInputV1Listener, this);
+      } else {
+        // do nothing.
       }
-      zwp_text_input_v3_add_listener(zwp_text_input_v3_,
-                                     &kZwpTextInputV3Listener, this);
-    } else if (zwp_text_input_manager_v1_) {
-      zwp_text_input_v1_ = zwp_text_input_manager_v1_create_text_input(
-          zwp_text_input_manager_v1_);
-      if (!zwp_text_input_v1_) {
-        ELINUX_LOG(ERROR) << "Failed to create text input manager v1.";
-        return;
-      }
-      zwp_text_input_v1_add_listener(zwp_text_input_v1_,
-                                     &kZwpTextInputV1Listener, this);
-    } else {
-      // do nothing.
     }
   }
 
@@ -1190,25 +1200,28 @@ ELinuxWindowWayland::~ELinuxWindowWayland() {
     wl_data_device_manager_ = nullptr;
   }
 
-  if (wl_pointer_) {
-    wl_pointer_destroy(wl_pointer_);
-    wl_pointer_ = nullptr;
+  for (auto& [seat, inputs] : seat_inputs_map_) {
+    if (inputs.pointer) {
+      wl_pointer_destroy(inputs.pointer);
+      inputs.pointer = nullptr;
+    }
+
+    if (inputs.touch) {
+      wl_touch_destroy(inputs.touch);
+      inputs.touch = nullptr;
+    }
+
+    if (inputs.keyboard) {
+      wl_keyboard_destroy(inputs.keyboard);
+      inputs.keyboard = nullptr;
+    }
+
+    if (seat) {
+      wl_seat_destroy(seat);
+    }
   }
 
-  if (wl_touch_) {
-    wl_touch_destroy(wl_touch_);
-    wl_touch_ = nullptr;
-  }
-
-  if (wl_keyboard_) {
-    wl_keyboard_destroy(wl_keyboard_);
-    wl_keyboard_ = nullptr;
-  }
-
-  if (wl_seat_) {
-    wl_seat_destroy(wl_seat_);
-    wl_seat_ = nullptr;
-  }
+  seat_inputs_map_.clear();
 
   if (wl_output_) {
     wl_output_destroy(wl_output_);
@@ -1486,7 +1499,7 @@ void ELinuxWindowWayland::DestroyRenderSurface() {
 
 void ELinuxWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
   // Not supported virtual keyboard.
-  if (!(zwp_text_input_v1_ || zwp_text_input_v3_) || !wl_seat_) {
+  if (!(zwp_text_input_v1_ || zwp_text_input_v3_) || seat_inputs_map_.empty()) {
     return;
   }
 
@@ -1500,7 +1513,14 @@ void ELinuxWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
 
 void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
   if (view_properties_.use_mouse_cursor) {
-    if (!wl_pointer_) {
+    wl_pointer* pointer = nullptr;
+    for (auto& [_, inputs] : seat_inputs_map_) {
+      if (inputs.pointer != nullptr) {
+        pointer = inputs.pointer;
+        break;
+      }
+    }
+    if (!pointer) {
       return;
     }
     if (cursor_name.compare(cursor_info_.cursor_name) == 0) {
@@ -1619,9 +1639,12 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
 
   if (!strcmp(interface, wl_seat_interface.name)) {
     constexpr uint32_t kMaxVersion = 4;
-    wl_seat_ = static_cast<decltype(wl_seat_)>(wl_registry_bind(
-        wl_registry, name, &wl_seat_interface, std::min(kMaxVersion, version)));
-    wl_seat_add_listener(wl_seat_, &kWlSeatListener, this);
+    auto [inserted, _] =
+        seat_inputs_map_.emplace(static_cast<wl_seat*>(wl_registry_bind(
+                                     wl_registry, name, &wl_seat_interface,
+                                     std::min(kMaxVersion, version))),
+                                 seat_inputs());
+    wl_seat_add_listener(inserted->first, &kWlSeatListener, this);
     return;
   }
 
@@ -1826,7 +1849,8 @@ void ELinuxWindowWayland::ShowVirtualKeyboard() {
   } else {
     if (native_window_) {
       zwp_text_input_v1_show_input_panel(zwp_text_input_v1_);
-      zwp_text_input_v1_activate(zwp_text_input_v1_, wl_seat_,
+      zwp_text_input_v1_activate(zwp_text_input_v1_,
+                                 seat_inputs_map_.begin()->first,
                                  native_window_->Surface());
     }
   }
@@ -1837,7 +1861,8 @@ void ELinuxWindowWayland::DismissVirtualKeybaord() {
     zwp_text_input_v3_disable(zwp_text_input_v3_);
     zwp_text_input_v3_commit(zwp_text_input_v3_);
   } else {
-    zwp_text_input_v1_deactivate(zwp_text_input_v1_, wl_seat_);
+    zwp_text_input_v1_deactivate(zwp_text_input_v1_,
+                                 seat_inputs_map_.begin()->first);
   }
 }
 
