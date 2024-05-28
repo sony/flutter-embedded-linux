@@ -289,15 +289,18 @@ const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
       ELINUX_LOG(TRACE) << "wl_seat_listener.capabilities";
 
       auto self = reinterpret_cast<ELinuxWindowWayland*>(data);
-      auto [iter_inputs, _] =
-          self->seat_inputs_map_.emplace(seat, seat_inputs());
-      auto& inputs = iter_inputs->second;
+      auto seat_iter = self->seat_inputs_map_.find(seat);
+      if (seat_iter == self->seat_inputs_map_.end()) {
+        ELINUX_LOG(ERROR) << "Failed to find the seat";
+        return;
+      }
+      auto& inputs = seat_iter->second;
 
       if ((caps & WL_SEAT_CAPABILITY_POINTER) && !inputs.pointer) {
         inputs.pointer = wl_seat_get_pointer(seat);
         wl_pointer_add_listener(inputs.pointer, &kWlPointerListener, self);
       } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && inputs.pointer) {
-        wl_pointer_destroy(inputs.pointer);
+        wl_pointer_release(inputs.pointer);
         inputs.pointer = nullptr;
       }
 
@@ -305,7 +308,7 @@ const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
         inputs.touch = wl_seat_get_touch(seat);
         wl_touch_add_listener(inputs.touch, &kWlTouchListener, self);
       } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && inputs.touch) {
-        wl_touch_destroy(inputs.touch);
+        wl_touch_release(inputs.touch);
         inputs.touch = nullptr;
       }
 
@@ -313,7 +316,7 @@ const wl_seat_listener ELinuxWindowWayland::kWlSeatListener = {
         inputs.keyboard = wl_seat_get_keyboard(seat);
         wl_keyboard_add_listener(inputs.keyboard, &kWlKeyboardListener, self);
       } else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && inputs.keyboard) {
-        wl_keyboard_destroy(inputs.keyboard);
+        wl_keyboard_release(inputs.keyboard);
         inputs.keyboard = nullptr;
       }
     },
@@ -347,6 +350,11 @@ const wl_pointer_listener ELinuxWindowWayland::kWlPointerListener = {
         self->pointer_x_ = x_px;
         self->pointer_y_ = y_px;
       }
+
+      // Force redraw even though it is the same cursor name
+      auto copy = self->cursor_info_.cursor_name;
+      self->cursor_info_.cursor_name.clear();
+      self->UpdateFlutterCursor(copy);
     },
     .leave = [](void* data,
                 wl_pointer* pointer,
@@ -1513,16 +1521,6 @@ void ELinuxWindowWayland::UpdateVirtualKeyboardStatus(const bool show) {
 
 void ELinuxWindowWayland::UpdateFlutterCursor(const std::string& cursor_name) {
   if (view_properties_.use_mouse_cursor) {
-    wl_pointer* pointer = nullptr;
-    for (auto& [_, inputs] : seat_inputs_map_) {
-      if (inputs.pointer != nullptr) {
-        pointer = inputs.pointer;
-        break;
-      }
-    }
-    if (!pointer) {
-      return;
-    }
     if (cursor_name.compare(cursor_info_.cursor_name) == 0) {
       return;
     }
@@ -1644,6 +1642,7 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
                                      wl_registry, name, &wl_seat_interface,
                                      std::min(kMaxVersion, version))),
                                  seat_inputs());
+    registry_names_to_seat_ptr_.emplace(name, inserted->first);
     wl_seat_add_listener(inserted->first, &kWlSeatListener, this);
     return;
   }
@@ -1720,7 +1719,35 @@ void ELinuxWindowWayland::WlRegistryHandler(wl_registry* wl_registry,
 }
 
 void ELinuxWindowWayland::WlUnRegistryHandler(wl_registry* wl_registry,
-                                              uint32_t name) {}
+                                              uint32_t name) {
+  // Just remove seats for now, as we don't need to do anything else.
+  // But there is also no interface name here.
+  auto seat_iter = registry_names_to_seat_ptr_.find(name);
+  if (seat_iter != registry_names_to_seat_ptr_.end()) {
+    auto seat = seat_iter->second;
+    auto seat_inputs_iter = seat_inputs_map_.find(seat);
+    if (seat_inputs_iter != seat_inputs_map_.end()) {
+      auto& inputs = seat_inputs_iter->second;
+      if (inputs.pointer) {
+        wl_pointer_release(inputs.pointer);
+        inputs.pointer = nullptr;
+      }
+      if (inputs.touch) {
+        wl_touch_release(inputs.touch);
+        inputs.touch = nullptr;
+      }
+      if (inputs.keyboard) {
+        wl_keyboard_release(inputs.keyboard);
+        inputs.keyboard = nullptr;
+      }
+      seat_inputs_map_.erase(seat_inputs_iter);
+    }
+    if (seat) {
+      wl_seat_destroy(seat);
+    }
+    registry_names_to_seat_ptr_.erase(name);
+  }
+}
 
 bool ELinuxWindowWayland::LoadCursorTheme(uint32_t size) {
   if (!wl_shm_) {
