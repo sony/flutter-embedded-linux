@@ -256,7 +256,7 @@ target_link_libraries(${TARGET}
     ${USER_APP_LIBRARIES}
 )
 
-if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
+if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
 target_link_libraries(${TARGET}
   PRIVATE
     Threads::Threads

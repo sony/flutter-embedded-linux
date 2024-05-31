@@ -9,7 +9,7 @@ pkg_check_modules(EGL REQUIRED egl)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 
 # depends on backend type.
-if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
+if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
   # DRM backend
   pkg_check_modules(DRM REQUIRED libdrm)
   pkg_check_modules(LIBINPUT REQUIRED libinput)
