@@ -27,6 +27,9 @@ if(NOT BUILD_ELINUX_SO)
   # Load the user project.
   set(USER_PROJECT_PATH "" CACHE STRING "examples/flutter-wayland-client")
   message("User project: ${USER_PROJECT_PATH}")
+  if(NOT ${BACKEND_TYPE} STREQUAL "WAYLAND")
+    message(WARNING "BACKEND_TYPE variable is ignored because BUILD_ELINUX_SO is OFF")
+  endif()
   include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
 else()
   # Set the filename of elinux .so file
