@@ -25,7 +25,7 @@ option(FLUTTER_RELEASE "Build Flutter Engine with release mode" OFF)
 
 if(NOT BUILD_ELINUX_SO)
   # Load the user project.
-  set(USER_PROJECT_PATH "examples/flutter-wayland-client" CACHE STRING "")
+  set(USER_PROJECT_PATH "" CACHE STRING "examples/flutter-wayland-client")
   message("User project: ${USER_PROJECT_PATH}")
   include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
 else()
