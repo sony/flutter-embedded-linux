@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-//#include "flutter/fml/logging.h"
+// #include "flutter/fml/logging.h"
 
 namespace flutter {
 
@@ -66,7 +66,7 @@ class TextRange {
   //
   // Asserts that the range is of length 0.
   size_t position() const {
-    //FML_DCHECK(base_ == extent_);
+    // FML_DCHECK(base_ == extent_);
     return extent_;
   }
 

@@ -107,7 +107,8 @@ class GpuSurfaceTexture {
 // The available texture variants.
 // Only PixelBufferTexture is currently implemented.
 // Other variants are expected to be added in the future.
-typedef std::variant<PixelBufferTexture, GpuSurfaceTexture, EGLImageTexture> TextureVariant;
+typedef std::variant<PixelBufferTexture, GpuSurfaceTexture, EGLImageTexture>
+    TextureVariant;
 
 // An object keeping track of external textures.
 //

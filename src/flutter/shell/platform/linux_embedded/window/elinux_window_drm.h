@@ -11,9 +11,9 @@
 #include <unistd.h>
 
 #ifdef USE_LIBSYSTEMD
-  #include <systemd/sd-event.h>
+#include <systemd/sd-event.h>
 #else
-  #include <uv.h>
+#include <uv.h>
 #endif
 
 #include <chrono>
@@ -80,7 +80,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       libinput_event_loop_ = sd_event_unref(libinput_event_loop_);
       return;
     }
-#else // #ifdef USE_LIBSYSTEMD
+#else   // #ifdef USE_LIBSYSTEMD
     ret = uv_loop_init(&main_loop_);
     if (ret) {
       ELINUX_LOG(ERROR) << "Failed to create main event loop.";
@@ -100,7 +100,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to listen for user input.";
       return;
     }
-#endif // #ifdef USE_LIBSYSTEMD
+#endif  // #ifdef USE_LIBSYSTEMD
   }
 
   ~ELinuxWindowDrm() {
@@ -338,7 +338,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to listen for udev drm event.";
       return false;
     }
-#else // #ifdef USE_LIBSYSTEMD
+#else   // #ifdef USE_LIBSYSTEMD
     if (uv_poll_init(&main_loop_, &udev_drm_event_loop_,
                      udev_monitor_get_fd(udev_monitor_))) {
       ELINUX_LOG(ERROR) << "Failed to create udev drm event loop.";
@@ -353,7 +353,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to listen for udev drm event.";
       return false;
     }
-#endif // #ifdef USE_LIBSYSTEMD
+#endif  // #ifdef USE_LIBSYSTEMD
 
     if (udev_monitor_enable_receiving(udev_monitor_) < 0) {
       ELINUX_LOG(ERROR) << "Failed to enable udev monitor receiving.";
@@ -375,7 +375,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       return -1;
     }
 #else
-  static void OnUdevDrmEvent(uv_poll_t *handle, int status, int events) {
+  static void OnUdevDrmEvent(uv_poll_t* handle, int status, int events) {
     auto self = reinterpret_cast<ELinuxWindowDrm*>(handle->data);
     auto device = udev_monitor_receive_device(self->udev_monitor_);
     if (!device) {
@@ -406,7 +406,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
 
     udev_device_unref(device);
-    
+
 #ifdef USE_LIBSYSTEMD
     return 0;
 #endif
@@ -446,7 +446,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       return -ret;
     }
 #else
-  static void OnLibinputEvent(uv_poll_t *handle, int uv_status, int uv_events) {
+  static void OnLibinputEvent(uv_poll_t* handle, int uv_status, int uv_events) {
     auto self = reinterpret_cast<ELinuxWindowDrm*>(handle->data);
     auto ret = libinput_dispatch(self->libinput_);
     if (ret < 0) {
