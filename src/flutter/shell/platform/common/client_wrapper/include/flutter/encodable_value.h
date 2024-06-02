@@ -70,7 +70,9 @@ class CustomEncodableValue {
 
 #if defined(FLUTTER_ENABLE_RTTI) && FLUTTER_ENABLE_RTTI
   // Passthrough to std::any's type().
-  const std::type_info& type() const noexcept { return value_.type(); }
+  const std::type_info& type() const noexcept {
+    return value_.type();
+  }
 #endif
 
   // This operator exists only to provide a stable ordering for use as a

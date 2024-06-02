@@ -10,7 +10,8 @@ set(CMAKE_CXX_STANDARD 17)
 project("flutter_elinux" LANGUAGES CXX C)
 
 # Build options.
-option(BACKEND_TYPE "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type" WAYLAND)
+set(BACKEND_TYPE "WAYLAND" CACHE STRING "Select WAYLAND, DRM-GBM, DRM-EGLSTREAM, or X11 as the display backend type")
+set_property(CACHE BACKEND_TYPE PROPERTY STRINGS "WAYLAND" "DRM-GBM" "DRM-EGLSTREAM" "X11")
 # Disabled USE_DIRTY_REGION_MANAGEMENT due flicker issue.
 # See https://github.com/sony/flutter-embedded-linux/issues/334
 option(USE_DIRTY_REGION_MANAGEMENT "Use Flutter dirty region management" OFF)
@@ -24,8 +25,11 @@ option(FLUTTER_RELEASE "Build Flutter Engine with release mode" OFF)
 
 if(NOT BUILD_ELINUX_SO)
   # Load the user project.
-  set(USER_PROJECT_PATH "examples/flutter-wayland-client" CACHE STRING "")
+  set(USER_PROJECT_PATH "" CACHE STRING "examples/flutter-wayland-client")
   message("User project: ${USER_PROJECT_PATH}")
+  if(NOT ${BACKEND_TYPE} STREQUAL "WAYLAND")
+    message(WARNING "BACKEND_TYPE variable is ignored because BUILD_ELINUX_SO is OFF")
+  endif()
   include(${USER_PROJECT_PATH}/cmake/user_config.cmake)
 else()
   # Set the filename of elinux .so file

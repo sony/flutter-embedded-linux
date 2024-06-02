@@ -249,6 +249,7 @@ target_link_libraries(${TARGET}
     ${LIBINPUT_LIBRARIES}
     ${LIBUDEV_LIBRARIES}
     ${LIBSYSTEMD_LIBRARIES}
+    ${LIBUV_LIBRARIES}
     ${X11_LIBRARIES}
     ${LIBWESTON_LIBRARIES}
     ${FLUTTER_EMBEDDER_LIB}
@@ -256,11 +257,16 @@ target_link_libraries(${TARGET}
     ${USER_APP_LIBRARIES}
 )
 
-if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
-target_link_libraries(${TARGET}
-  PRIVATE
-    Threads::Threads
-)
+if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
+  target_link_libraries(${TARGET}
+    PRIVATE
+      Threads::Threads
+  )
+
+  # Indicate whether libsystemd must replace libuv
+  if("${LIBSYSTEMD_FOUND}" STREQUAL "1")
+    add_definitions(-DUSE_LIBSYSTEMD)
+  endif()
 endif()
 
 set(FLUTTER_EMBEDDER_LIB "${CMAKE_CURRENT_SOURCE_DIR}/build/libflutter_engine.so")

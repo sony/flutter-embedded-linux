@@ -9,17 +9,26 @@ pkg_check_modules(EGL REQUIRED egl)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 
 # depends on backend type.
-if(${BACKEND_TYPE} MATCHES "DRM-(GBM|EGLSTREAM)")
+if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
   # DRM backend
   pkg_check_modules(DRM REQUIRED libdrm)
   pkg_check_modules(LIBINPUT REQUIRED libinput)
   pkg_check_modules(LIBUDEV REQUIRED libudev)
-  pkg_check_modules(LIBSYSTEMD REQUIRED libsystemd)
+  pkg_check_modules(LIBSYSTEMD libsystemd)
+  pkg_check_modules(LIBUV libuv)
   if(${BACKEND_TYPE} STREQUAL "DRM-GBM")
     pkg_check_modules(GBM REQUIRED gbm)
   endif()
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
+  # Check if either systemd or libuv exist
+  if((NOT "${LIBSYSTEMD_FOUND}" STREQUAL "1") AND (NOT "${LIBUV_FOUND}" STREQUAL "1"))
+    message(FATAL_ERROR
+            "${BACKEND_TYPE} backend requires either libsystemd or libuv, but
+             they're not exist.")
+  elseif(("${LIBSYSTEMD_FOUND}" STREQUAL "1") AND ("${LIBUV_FOUND}" STREQUAL "1"))
+    message("!! NOTICE: libsystemd found, libuv won't be used.")
+  endif()
 elseif(${BACKEND_TYPE} STREQUAL "X11")
   pkg_check_modules(X11 REQUIRED x11)
 else()

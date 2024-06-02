@@ -104,7 +104,8 @@ JsonMethodCodec::EncodeErrorEnvelopeInternal(
   rapidjson::Document envelope(rapidjson::kArrayType);
   auto& allocator = envelope.GetAllocator();
   envelope.PushBack(rapidjson::Value(error_code.c_str(), allocator), allocator);
-  envelope.PushBack(rapidjson::Value(error_message.c_str(), allocator), allocator);
+  envelope.PushBack(rapidjson::Value(error_message.c_str(), allocator),
+                    allocator);
   rapidjson::Value details_value;
   if (error_details) {
     details_value.CopyFrom(*error_details, allocator);

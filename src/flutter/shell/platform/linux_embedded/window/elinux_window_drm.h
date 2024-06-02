@@ -8,8 +8,13 @@
 #include <fcntl.h>
 #include <libinput.h>
 #include <linux/input-event-codes.h>
-#include <systemd/sd-event.h>
 #include <unistd.h>
+
+#ifdef USE_LIBSYSTEMD
+#include <systemd/sd-event.h>
+#else
+#include <uv.h>
+#endif
 
 #include <chrono>
 #include <memory>
@@ -61,6 +66,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       return;
     }
 
+#ifdef USE_LIBSYSTEMD
     ret = sd_event_new(&libinput_event_loop_);
     if (ret < 0) {
       ELINUX_LOG(ERROR) << "Failed to create libinput event loop.";
@@ -74,20 +80,46 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       libinput_event_loop_ = sd_event_unref(libinput_event_loop_);
       return;
     }
+#else   // #ifdef USE_LIBSYSTEMD
+    ret = uv_loop_init(&main_loop_);
+    if (ret) {
+      ELINUX_LOG(ERROR) << "Failed to create main event loop.";
+      return;
+    }
+    ret = uv_poll_init(&main_loop_, &libinput_event_loop_,
+                       libinput_get_fd(libinput_));
+    if (ret) {
+      ELINUX_LOG(ERROR) << "Failed to create libinput event loop.";
+      return;
+    }
+    libinput_event_loop_.data = this;
+    ret = uv_poll_start(&libinput_event_loop_,
+                        UV_READABLE | UV_DISCONNECT | UV_PRIORITIZED,
+                        OnLibinputEvent);
+    if (ret) {
+      ELINUX_LOG(ERROR) << "Failed to listen for user input.";
+      return;
+    }
+#endif  // #ifdef USE_LIBSYSTEMD
   }
 
   ~ELinuxWindowDrm() {
+#ifdef USE_LIBSYSTEMD
     if (udev_drm_event_loop_) {
       sd_event_unref(udev_drm_event_loop_);
     }
+#endif
 
     if (udev_monitor_) {
       udev_monitor_unref(udev_monitor_);
     }
 
+#ifdef USE_LIBSYSTEMD
     if (libinput_event_loop_) {
       sd_event_unref(libinput_event_loop_);
     }
+#endif
+
     libinput_unref(libinput_);
     display_valid_ = false;
   }
@@ -103,9 +135,13 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   // |FlutterWindowBindingHandler|
   bool DispatchEvent() override {
+#ifdef USE_LIBSYSTEMD
     constexpr uint64_t kMaxWaitTime = 0;
     sd_event_run(libinput_event_loop_, kMaxWaitTime);
     sd_event_run(udev_drm_event_loop_, kMaxWaitTime);
+#else
+    uv_run(&main_loop_, UV_RUN_NOWAIT);
+#endif
     return true;
   }
 
@@ -192,10 +228,14 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  uint16_t GetRotationDegree() const override { return current_rotation_; }
+  uint16_t GetRotationDegree() const override {
+    return current_rotation_;
+  }
 
   // |FlutterWindowBindingHandler|
-  double GetDpiScale() override { return current_scale_; }
+  double GetDpiScale() override {
+    return current_scale_;
+  }
 
   // |FlutterWindowBindingHandler|
   PhysicalWindowBounds GetPhysicalWindowBounds() override {
@@ -203,7 +243,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  int32_t GetFrameRate() override { return 60000; }
+  int32_t GetFrameRate() override {
+    return 60000;
+  }
 
   // |FlutterWindowBindingHandler|
   void UpdateFlutterCursor(const std::string& cursor_name) override {
@@ -218,7 +260,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  std::string GetClipboardData() override { return clipboard_data_; }
+  std::string GetClipboardData() override {
+    return clipboard_data_;
+  }
 
   // |FlutterWindowBindingHandler|
   void SetClipboardData(const std::string& data) override {
@@ -290,6 +334,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
     udev_unref(udev);
 
+#ifdef USE_LIBSYSTEMD
     if (sd_event_new(&udev_drm_event_loop_) < 0) {
       ELINUX_LOG(ERROR) << "Failed to create udev drm event loop.";
       return false;
@@ -301,6 +346,22 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to listen for udev drm event.";
       return false;
     }
+#else   // #ifdef USE_LIBSYSTEMD
+    if (uv_poll_init(&main_loop_, &udev_drm_event_loop_,
+                     udev_monitor_get_fd(udev_monitor_))) {
+      ELINUX_LOG(ERROR) << "Failed to create udev drm event loop.";
+      return false;
+    }
+
+    udev_drm_event_loop_.data = this;
+
+    if (uv_poll_start(&udev_drm_event_loop_,
+                      UV_READABLE | UV_DISCONNECT | UV_PRIORITIZED,
+                      OnUdevDrmEvent)) {
+      ELINUX_LOG(ERROR) << "Failed to listen for udev drm event.";
+      return false;
+    }
+#endif  // #ifdef USE_LIBSYSTEMD
 
     if (udev_monitor_enable_receiving(udev_monitor_) < 0) {
       ELINUX_LOG(ERROR) << "Failed to enable udev monitor receiving.";
@@ -310,6 +371,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     return true;
   }
 
+#ifdef USE_LIBSYSTEMD
   static int OnUdevDrmEvent(sd_event_source* source,
                             int fd,
                             uint32_t revents,
@@ -320,6 +382,15 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to receive udev device.";
       return -1;
     }
+#else
+  static void OnUdevDrmEvent(uv_poll_t* handle, int status, int events) {
+    auto self = reinterpret_cast<ELinuxWindowDrm*>(handle->data);
+    auto device = udev_monitor_receive_device(self->udev_monitor_);
+    if (!device) {
+      ELINUX_LOG(ERROR) << "Failed to receive udev device.";
+      return;
+    }
+#endif
 
     if (self->IsUdevEventHotplug(*device) &&
         self->native_window_->ConfigureDisplay(self->current_rotation_)) {
@@ -343,7 +414,10 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     }
 
     udev_device_unref(device);
+
+#ifdef USE_LIBSYSTEMD
     return 0;
+#endif
   }
 
   bool IsUdevEventHotplug(udev_device& device) {
@@ -368,6 +442,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
     return std::strcmp(value, kPropertyOn) == 0;
   }
 
+#ifdef USE_LIBSYSTEMD
   static int OnLibinputEvent(sd_event_source* source,
                              int fd,
                              uint32_t revents,
@@ -378,6 +453,15 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       ELINUX_LOG(ERROR) << "Failed to dispatch libinput events.";
       return -ret;
     }
+#else
+  static void OnLibinputEvent(uv_poll_t* handle, int uv_status, int uv_events) {
+    auto self = reinterpret_cast<ELinuxWindowDrm*>(handle->data);
+    auto ret = libinput_dispatch(self->libinput_);
+    if (ret < 0) {
+      ELINUX_LOG(ERROR) << "Failed to dispatch libinput events.";
+      return;
+    }
+#endif
 
     auto previous_pointer_x = self->pointer_x_;
     auto previous_pointer_y = self->pointer_y_;
@@ -435,7 +519,9 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       self->native_window_->MoveCursor(self->pointer_x_, self->pointer_y_);
     }
 
+#ifdef USE_LIBSYSTEMD
     return 0;
+#endif
   }
 
   void OnDeviceAdded(libinput_event* event) {
@@ -716,15 +802,22 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   bool display_valid_;
   bool is_pending_cursor_add_event_;
-  sd_event* libinput_event_loop_;
   libinput* libinput_;
   std::unordered_map<size_t, std::unique_ptr<LibinputDeviceData>>
       libinput_devices_;
   int libinput_pointer_devices_ = 0;
 
-  sd_event* udev_drm_event_loop_ = nullptr;
   udev_monitor* udev_monitor_ = nullptr;
   std::optional<int> drm_device_id_;
+
+#ifdef USE_LIBSYSTEMD
+  sd_event* libinput_event_loop_;
+  sd_event* udev_drm_event_loop_ = nullptr;
+#else
+  uv_loop_t main_loop_;
+  uv_poll_t libinput_event_loop_;
+  uv_poll_t udev_drm_event_loop_;
+#endif
 };
 
 }  // namespace flutter
