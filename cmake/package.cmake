@@ -22,9 +22,11 @@ if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
   set(THREADS_PREFER_PTHREAD_FLAG ON)
   find_package(Threads REQUIRED)
   # Check if either systemd or libuv exist
-  if((NOT ${LIBSYSTEMD_FOUND} EQUAL 1) AND (NOT ${LIBUV_FOUND} EQUAL 1))
-    message(FATAL_ERROR "${BACKEND_TYPE} backend requires either libsystemd or libuv, but they're not exist.")
-  elseif((${LIBSYSTEMD_FOUND} EQUAL 1) AND (${LIBUV_FOUND} EQUAL 1))
+  if((NOT "${LIBSYSTEMD_FOUND}" STREQUAL "1") AND (NOT "${LIBUV_FOUND}" STREQUAL "1"))
+    message(FATAL_ERROR
+            "${BACKEND_TYPE} backend requires either libsystemd or libuv, but
+             they're not exist.")
+  elseif(("${LIBSYSTEMD_FOUND}" STREQUAL "1") AND ("${LIBUV_FOUND}" STREQUAL "1"))
     message("!! NOTICE: libsystemd found, libuv won't be used.")
   endif()
 elseif(${BACKEND_TYPE} STREQUAL "X11")

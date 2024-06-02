@@ -264,7 +264,7 @@ if(${BACKEND_TYPE} MATCHES "^DRM-(GBM|EGLSTREAM)$")
   )
 
   # Indicate whether libsystemd must replace libuv
-  if(${LIBSYSTEMD_FOUND} EQUAL 1)
+  if("${LIBSYSTEMD_FOUND}" STREQUAL "1")
     add_definitions(-DUSE_LIBSYSTEMD)
   endif()
 endif()
