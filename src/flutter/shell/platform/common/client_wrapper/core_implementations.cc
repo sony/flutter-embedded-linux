@@ -66,6 +66,11 @@ BinaryMessengerImpl::BinaryMessengerImpl(
 
 BinaryMessengerImpl::~BinaryMessengerImpl() = default;
 
+void CaptureCleaner(void* lambda) {
+  auto& cleanup = *reinterpret_cast<std::function<void()>*>(lambda);
+  cleanup();
+}
+
 void BinaryMessengerImpl::Send(const std::string& channel,
                                const uint8_t* message,
                                size_t message_size,
@@ -89,10 +94,10 @@ void BinaryMessengerImpl::Send(const std::string& channel,
   };
   bool result = FlutterDesktopMessengerSendWithReply(
       messenger_, channel.c_str(), message, message_size, message_reply,
-      captures);
-  if (!result) {
-    delete captures;
-  }
+      captures, [](void* captures_data) {
+        auto captures = reinterpret_cast<Captures*>(captures_data);
+        delete captures;
+      });
 }
 
 void BinaryMessengerImpl::SetMessageHandler(const std::string& channel,

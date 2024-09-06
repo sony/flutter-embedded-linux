@@ -199,22 +199,36 @@ void FlutterDesktopPluginRegistrarSetDestructionHandler(
   registrar->engine->SetPluginRegistrarDestructionCallback(callback);
 }
 
-bool FlutterDesktopMessengerSendWithReply(FlutterDesktopMessengerRef messenger,
-                                          const char* channel,
-                                          const uint8_t* message,
-                                          const size_t message_size,
-                                          const FlutterDesktopBinaryReply reply,
-                                          void* user_data) {
-  return messenger->GetEngine()->SendPlatformMessage(
-      channel, message, message_size, reply, user_data);
+bool FlutterDesktopMessengerSendWithReply(
+    FlutterDesktopMessengerRef messenger,
+    const char* channel,
+    const uint8_t* message,
+    const size_t message_size,
+    const FlutterDesktopBinaryReply reply,
+    void* user_data,
+    void (*cleanup)(void* captures_data)) {
+  // As we pass data to lambda and it's pointers we need to make sure that we
+  // send valid data
+  std::string channel_copy(channel);
+  std::vector<uint8_t> message_copy(message, message + message_size);
+
+  messenger->GetEngine()->task_runner()->PostTask([=]() {
+    if (!messenger->GetEngine()->SendPlatformMessage(
+            channel_copy.c_str(), message_copy.data(), message_copy.size(),
+            reply, user_data) &&
+        user_data) {
+      cleanup(user_data);
+    }
+  });
+  return true;
 }
 
 bool FlutterDesktopMessengerSend(FlutterDesktopMessengerRef messenger,
                                  const char* channel,
                                  const uint8_t* message,
                                  const size_t message_size) {
-  return FlutterDesktopMessengerSendWithReply(messenger, channel, message,
-                                              message_size, nullptr, nullptr);
+  return FlutterDesktopMessengerSendWithReply(
+      messenger, channel, message, message_size, nullptr, nullptr, nullptr);
 }
 
 void FlutterDesktopMessengerSendResponse(
