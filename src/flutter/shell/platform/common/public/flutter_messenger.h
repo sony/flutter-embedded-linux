@@ -64,7 +64,7 @@ FLUTTER_EXPORT bool FlutterDesktopMessengerSendWithReply(
     const size_t message_size,
     const FlutterDesktopBinaryReply reply,
     void* user_data,
-    void (*cleanup)(void * captures_data));
+    void (*cleanup)(void* captures_data));
 
 // Sends a reply to a FlutterDesktopMessage for the given response handle.
 //
