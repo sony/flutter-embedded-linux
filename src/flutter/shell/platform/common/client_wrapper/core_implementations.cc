@@ -92,7 +92,8 @@ void BinaryMessengerImpl::Send(const std::string& channel,
     captures->reply(data, data_size);
     delete captures;
   };
-  bool result = FlutterDesktopMessengerSendWithReply(
+
+  FlutterDesktopMessengerSendWithReply(
       messenger_, channel.c_str(), message, message_size, message_reply,
       captures, [](void* captures_data) {
         auto captures = reinterpret_cast<Captures*>(captures_data);
