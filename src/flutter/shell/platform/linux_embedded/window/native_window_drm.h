@@ -39,6 +39,10 @@ class NativeWindowDrm : public NativeWindow {
       bool enable_impeller) = 0;
 
  protected:
+  std::string GetConnectorName(uint32_t connector_type,
+                               uint32_t connector_type_id);
+  drmModeConnectorPtr GetConnectorByName(drmModeResPtr resources,
+                                         const char* connector_name);
   drmModeConnectorPtr FindConnector(drmModeResPtr resources);
 
   drmModeEncoder* FindEncoder(drmModeRes* resources,

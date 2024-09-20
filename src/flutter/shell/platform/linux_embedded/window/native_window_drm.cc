@@ -14,6 +14,31 @@
 #include "flutter/shell/platform/linux_embedded/surface/cursor_data.h"
 
 namespace flutter {
+namespace {
+constexpr char kFlutterDrmConnectorEnvironmentKey[] = "FLUTTER_DRM_CONNECTOR";
+static const std::unordered_map<uint32_t, std::string> connector_names = {
+    {DRM_MODE_CONNECTOR_Unknown, "Unknown"},
+    {DRM_MODE_CONNECTOR_VGA, "VGA"},
+    {DRM_MODE_CONNECTOR_DVII, "DVI-I"},
+    {DRM_MODE_CONNECTOR_DVID, "DVI-D"},
+    {DRM_MODE_CONNECTOR_DVIA, "DVI-A"},
+    {DRM_MODE_CONNECTOR_Composite, "Composite"},
+    {DRM_MODE_CONNECTOR_SVIDEO, "SVIDEO"},
+    {DRM_MODE_CONNECTOR_LVDS, "LVDS"},
+    {DRM_MODE_CONNECTOR_Component, "Component"},
+    {DRM_MODE_CONNECTOR_9PinDIN, "DIN"},
+    {DRM_MODE_CONNECTOR_DisplayPort, "DP"},
+    {DRM_MODE_CONNECTOR_HDMIA, "HDMI-A"},
+    {DRM_MODE_CONNECTOR_HDMIB, "HDMI-B"},
+    {DRM_MODE_CONNECTOR_TV, "TV"},
+    {DRM_MODE_CONNECTOR_eDP, "eDP"},
+    {DRM_MODE_CONNECTOR_VIRTUAL, "Virtual"},
+    {DRM_MODE_CONNECTOR_DSI, "DSI"},
+    {DRM_MODE_CONNECTOR_DPI, "DPI"},
+    {DRM_MODE_CONNECTOR_WRITEBACK, "Writeback"},
+    {DRM_MODE_CONNECTOR_SPI, "SPI"},
+    {DRM_MODE_CONNECTOR_USB, "USB"}};
+}  // namespace
 
 NativeWindowDrm::NativeWindowDrm(const char* device_filename,
                                  const uint16_t rotation,
@@ -104,11 +129,62 @@ bool NativeWindowDrm::ConfigureDisplay(const uint16_t rotation) {
   return true;
 }
 
-drmModeConnectorPtr NativeWindowDrm::FindConnector(drmModeResPtr resources) {
+std::string NativeWindowDrm::GetConnectorName(uint32_t connector_type,
+                                              uint32_t connector_type_id) {
+  auto it = connector_names.find(connector_type);
+  std::string name = it != connector_names.end() ? it->second : "Unknown";
+  return name + "-" + std::to_string(connector_type_id);
+}
+
+drmModeConnectorPtr NativeWindowDrm::GetConnectorByName(
+    drmModeResPtr resources,
+    const char* connector_name) {
   for (int i = 0; i < resources->count_connectors; i++) {
     auto connector = drmModeGetConnector(drm_device_, resources->connectors[i]);
+    if (!connector) {
+      continue;
+    }
+    auto other_connector_name = GetConnectorName(connector->connector_type,
+                                                 connector->connector_type_id);
+    if (connector_name == other_connector_name) {
+      return connector;
+    }
+    drmModeFreeConnector(connector);
+  }
+  return nullptr;
+}
+
+drmModeConnectorPtr NativeWindowDrm::FindConnector(drmModeResPtr resources) {
+  auto connector_name = std::getenv(kFlutterDrmConnectorEnvironmentKey);
+  if (connector_name && connector_name[0] != '\0') {
+    auto connector = GetConnectorByName(resources, connector_name);
+    if (!connector) {
+      ELINUX_LOG(ERROR) << "Couldn't find connector with name "
+                        << connector_name;
+      return nullptr;
+    }
+
+    if (connector->connection == DRM_MODE_CONNECTED) {
+      ELINUX_LOG(DEBUG) << "Using connector " << connector_name;
+      return connector;
+    } else {
+      ELINUX_LOG(ERROR) << "Connector " << connector_name
+                        << " is not connected.";
+      drmModeFreeConnector(connector);
+      return nullptr;
+    }
+  }
+
+  for (int i = 0; i < resources->count_connectors; i++) {
+    auto connector = drmModeGetConnector(drm_device_, resources->connectors[i]);
+    if (!connector) {
+      continue;
+    }
     // pick the first connected connector
     if (connector->connection == DRM_MODE_CONNECTED) {
+      auto other_connetor_name = GetConnectorName(connector->connector_type,
+                                                  connector->connector_type_id);
+      ELINUX_LOG(DEBUG) << "Using connector " << other_connetor_name;
       return connector;
     }
     drmModeFreeConnector(connector);
