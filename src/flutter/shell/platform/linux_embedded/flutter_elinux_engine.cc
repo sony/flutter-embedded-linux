@@ -425,6 +425,26 @@ bool FlutterELinuxEngine::MarkExternalTextureFrameAvailable(
               engine_, texture_id) == kSuccess);
 }
 
+bool FlutterELinuxEngine::PostRasterThreadTask(fml::closure callback) {
+  struct Captures {
+    fml::closure callback;
+  };
+  auto captures = new Captures();
+  captures->callback = std::move(callback);
+  if (embedder_api_.PostRenderThreadTask(
+          engine_,
+          [](void* opaque) {
+            auto captures = reinterpret_cast<Captures*>(opaque);
+            captures->callback();
+            delete captures;
+          },
+          captures) == kSuccess) {
+    return true;
+  }
+  delete captures;
+  return false;
+}
+
 void FlutterELinuxEngine::OnVsync(uint64_t last_frame_time_nanos,
                                   uint64_t vsync_interval_time_nanos) {
   uint64_t current_time_nanos = embedder_api_.GetCurrentTime();

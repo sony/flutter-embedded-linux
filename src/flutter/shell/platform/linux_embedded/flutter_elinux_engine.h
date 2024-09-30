@@ -120,6 +120,9 @@ class FlutterELinuxEngine {
   // given |texture_id|.
   bool MarkExternalTextureFrameAvailable(int64_t texture_id);
 
+  // Posts the given callback onto the raster thread.
+  bool PostRasterThreadTask(fml::closure callback);
+
   // Notifies the engine about the vsync event.
   void OnVsync(uint64_t last_frame_time_nanos,
                uint64_t vsync_interval_time_nanos);
