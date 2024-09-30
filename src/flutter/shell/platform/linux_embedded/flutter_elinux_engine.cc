@@ -371,7 +371,8 @@ void FlutterELinuxEngine::HandlePlatformMessage(
 
   auto message = ConvertToDesktopMessage(*engine_message);
 
-  message_dispatcher_->HandleMessage(message, [this] {}, [this] {});
+  message_dispatcher_->HandleMessage(
+      message, [this] {}, [this] {});
 }
 
 void FlutterELinuxEngine::ReloadSystemFonts() {
@@ -397,9 +398,10 @@ void FlutterELinuxEngine::SendSystemLocales() {
   // Convert the locale list to the locale pointer list that must be provided.
   std::vector<const FlutterLocale*> flutter_locale_list;
   flutter_locale_list.reserve(flutter_locales.size());
-  std::transform(flutter_locales.begin(), flutter_locales.end(),
-                 std::back_inserter(flutter_locale_list),
-                 [](const auto& arg) -> const auto* { return &arg; });
+  std::transform(
+      flutter_locales.begin(), flutter_locales.end(),
+      std::back_inserter(flutter_locale_list),
+      [](const auto& arg) -> const auto* { return &arg; });
   auto result = embedder_api_.UpdateLocales(engine_, flutter_locale_list.data(),
                                             flutter_locale_list.size());
   if (result != kSuccess) {
