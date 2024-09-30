@@ -371,8 +371,7 @@ void FlutterELinuxEngine::HandlePlatformMessage(
 
   auto message = ConvertToDesktopMessage(*engine_message);
 
-  message_dispatcher_->HandleMessage(
-      message, [this] {}, [this] {});
+  message_dispatcher_->HandleMessage(message, [this] {}, [this] {});
 }
 
 void FlutterELinuxEngine::ReloadSystemFonts() {
@@ -398,10 +397,9 @@ void FlutterELinuxEngine::SendSystemLocales() {
   // Convert the locale list to the locale pointer list that must be provided.
   std::vector<const FlutterLocale*> flutter_locale_list;
   flutter_locale_list.reserve(flutter_locales.size());
-  std::transform(
-      flutter_locales.begin(), flutter_locales.end(),
-      std::back_inserter(flutter_locale_list),
-      [](const auto& arg) -> const auto* { return &arg; });
+  std::transform(flutter_locales.begin(), flutter_locales.end(),
+                 std::back_inserter(flutter_locale_list),
+                 [](const auto& arg) -> const auto* { return &arg; });
   auto result = embedder_api_.UpdateLocales(engine_, flutter_locale_list.data(),
                                             flutter_locale_list.size());
   if (result != kSuccess) {
@@ -423,6 +421,26 @@ bool FlutterELinuxEngine::MarkExternalTextureFrameAvailable(
     int64_t texture_id) {
   return (embedder_api_.MarkExternalTextureFrameAvailable(
               engine_, texture_id) == kSuccess);
+}
+
+bool FlutterELinuxEngine::PostRasterThreadTask(fml::closure callback) {
+  struct Captures {
+    fml::closure callback;
+  };
+  auto captures = new Captures();
+  captures->callback = std::move(callback);
+  if (embedder_api_.PostRenderThreadTask(
+          engine_,
+          [](void* opaque) {
+            auto captures = reinterpret_cast<Captures*>(opaque);
+            captures->callback();
+            delete captures;
+          },
+          captures) == kSuccess) {
+    return true;
+  }
+  delete captures;
+  return false;
 }
 
 void FlutterELinuxEngine::OnVsync(uint64_t last_frame_time_nanos,
