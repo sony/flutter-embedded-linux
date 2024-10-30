@@ -34,6 +34,8 @@ struct FlutterELinuxView;
 struct FlutterDesktopViewControllerState {
   // The view that backs this state object.
   std::unique_ptr<flutter::FlutterELinuxView> view;
+
+  ~FlutterDesktopViewControllerState() = default;
 };
 
 // Wrapper to distinguish the plugin registrar ref from the engine ref given out
