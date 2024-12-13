@@ -228,14 +228,10 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  uint16_t GetRotationDegree() const override {
-    return current_rotation_;
-  }
+  uint16_t GetRotationDegree() const override { return current_rotation_; }
 
   // |FlutterWindowBindingHandler|
-  double GetDpiScale() override {
-    return current_scale_;
-  }
+  double GetDpiScale() override { return current_scale_; }
 
   // |FlutterWindowBindingHandler|
   PhysicalWindowBounds GetPhysicalWindowBounds() override {
@@ -243,9 +239,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  int32_t GetFrameRate() override {
-    return 60000;
-  }
+  int32_t GetFrameRate() override { return 60000; }
 
   // |FlutterWindowBindingHandler|
   void UpdateFlutterCursor(const std::string& cursor_name) override {
@@ -260,9 +254,7 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   // |FlutterWindowBindingHandler|
-  std::string GetClipboardData() override {
-    return clipboard_data_;
-  }
+  std::string GetClipboardData() override { return clipboard_data_; }
 
   // |FlutterWindowBindingHandler|
   void SetClipboardData(const std::string& data) override {
