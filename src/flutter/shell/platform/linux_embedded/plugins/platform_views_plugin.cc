@@ -250,9 +250,8 @@ void PlatformViewsPlugin::PlatformViewsOffset(
   auto view_id = LookupEncodableMap<int>(arguments, kIdKey);
   auto view_top = LookupEncodableMap<double>(arguments, kTopKey);
   auto view_left = LookupEncodableMap<double>(arguments, kLeftKey);
-  ELINUX_LOG(DEBUG) << "Offset the platform view: "
-                    << "id = " << view_id << ", top = " << view_top
-                    << ", left = " << view_left;
+  ELINUX_LOG(DEBUG) << "Offset the platform view: " << "id = " << view_id
+                    << ", top = " << view_top << ", left = " << view_left;
   if (platform_views_.find(view_id) == platform_views_.end()) {
     result->Error("Couldn't find the view id in the arguments");
     return;

@@ -15,7 +15,7 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     : environment_(std::move(environment)), config_(nullptr) {
   EGLint config_count = 0;
   const EGLint attribs[] = {
-    // clang-format off
+      // clang-format off
     EGL_SURFACE_TYPE,    egl_surface_type,
     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
     EGL_RED_SIZE,        8,
@@ -27,10 +27,10 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     EGL_DEPTH_SIZE,      0,
     EGL_STENCIL_SIZE,    0,
     EGL_NONE
-    // clang-format on
+      // clang-format on
   };
   const EGLint impeller_config_attributes[] = {
-    // clang-format off
+      // clang-format off
     EGL_RED_SIZE,        8,
     EGL_GREEN_SIZE,      8,
     EGL_BLUE_SIZE,       8,
@@ -42,10 +42,10 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     EGL_SAMPLE_BUFFERS,  1,
     EGL_SAMPLES,         4,
     EGL_NONE
-    // clang-format on
+      // clang-format on
   };
   const EGLint impeller_config_attributes_no_msaa[] = {
-    // clang-format off
+      // clang-format off
     EGL_RED_SIZE,        8,
     EGL_GREEN_SIZE,      8,
     EGL_BLUE_SIZE,       8,
@@ -55,7 +55,7 @@ ContextEgl::ContextEgl(std::unique_ptr<EnvironmentEgl> environment,
     EGL_DEPTH_SIZE,      0,
     EGL_STENCIL_SIZE,    8,
     EGL_NONE
-    // clang-format on
+      // clang-format on
   };
 
   if (enable_impeller) {
@@ -136,8 +136,8 @@ std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
   EGLSurface surface =
       eglCreatePbufferSurface(environment_->Display(), config_, attribs);
   if (surface == EGL_NO_SURFACE) {
-    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface."
-                        << "(" << get_egl_error_cause() << ")";
+    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface." << "("
+                        << get_egl_error_cause() << ")";
   }
 #else
   // eglCreatePbufferSurface isn't supported on both Wayland and GBM.
@@ -146,8 +146,8 @@ std::unique_ptr<ELinuxEGLSurface> ContextEgl::CreateOffscreenSurface(
   EGLSurface surface = eglCreateWindowSurface(
       environment_->Display(), config_, window->WindowOffscreen(), attribs);
   if (surface == EGL_NO_SURFACE) {
-    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface."
-                        << "(" << get_egl_error_cause() << ")";
+    ELINUX_LOG(WARNING) << "Failed to create EGL off-screen surface." << "("
+                        << get_egl_error_cause() << ")";
   }
 #endif
   return std::make_unique<ELinuxEGLSurface>(surface, environment_->Display(),
