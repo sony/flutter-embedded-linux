@@ -56,7 +56,7 @@ class NativeWindow {
 
   // Swaps frame buffers. This API performs processing only for the DRM-GBM
   // backend. It is prepared to make the interface common.
-  virtual void SwapBuffers(){/* do nothing. */};
+  virtual void SwapBuffers() { /* do nothing. */ };
 
  protected:
   EGLNativeWindowType window_;

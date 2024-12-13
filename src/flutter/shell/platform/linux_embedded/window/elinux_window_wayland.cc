@@ -697,11 +697,11 @@ const wl_output_listener ELinuxWindowWayland::kWlOutputListener = {
           self->request_redraw_ = true;
         }
         if (self->view_properties_.height > height) {
-          ELINUX_LOG(WARNING) << "Requested height size("
-                              << self->view_properties_.height << ") "
-                              << "is larger than display size(" << height
-                              << ")"
-                                 ", clipping";
+          ELINUX_LOG(WARNING)
+              << "Requested height size(" << self->view_properties_.height
+              << ") " << "is larger than display size(" << height
+              << ")"
+                 ", clipping";
           self->view_properties_.height = height;
           self->request_redraw_ = true;
         }
