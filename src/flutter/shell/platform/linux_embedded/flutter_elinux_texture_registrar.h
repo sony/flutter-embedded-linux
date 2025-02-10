@@ -56,7 +56,7 @@ class FlutterELinuxTextureRegistrar {
   std::mutex map_mutex_;
 
   int64_t EmplaceTexture(std::unique_ptr<ExternalTexture> texture);
-};
+} SWIFT_UNSAFE_REFERENCE;
 
 };  // namespace flutter
 

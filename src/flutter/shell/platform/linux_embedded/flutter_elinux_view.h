@@ -318,7 +318,7 @@ class FlutterELinuxView : public WindowBindingHandlerDelegate {
   // Current view rotation (FlutterTransformation).
   FlutterTransformation view_rotation_transformation_ = {
       1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
-};
+} SWIFT_UNSAFE_REFERENCE;
 
 }  // namespace flutter
 

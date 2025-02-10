@@ -26,7 +26,7 @@ typedef void (*FlutterDesktopOnPluginRegistrarDestroyed)(
 // Returns the engine messenger associated with this registrar.
 FLUTTER_EXPORT FlutterDesktopMessengerRef
 FlutterDesktopPluginRegistrarGetMessenger(
-    FlutterDesktopPluginRegistrarRef registrar);
+    FlutterDesktopPluginRegistrarRef registrar) SWIFT_RETURNS_UNRETAINED;
 
 // Returns the texture registrar associated with this registrar.
 FLUTTER_EXPORT FlutterDesktopTextureRegistrarRef

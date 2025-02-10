@@ -25,4 +25,13 @@
 
 #endif  // FLUTTER_DESKTOP_LIBRARY
 
+#if __has_include(<swift/bridging>)
+#include <swift/bridging>
+#else
+#define SWIFT_UNSAFE_REFERENCE
+#define SWIFT_SHARED_REFERENCE(_retain, _release)
+#define SWIFT_RETURNS_RETAINED
+#define SWIFT_RETURNS_UNRETAINED
+#endif
+
 #endif  // FLUTTER_SHELL_PLATFORM_COMMON_PUBLIC_FLUTTER_EXPORT_H_

@@ -9,12 +9,6 @@
 #include <memory>
 #include <mutex>
 
-#if __has_include(<swift/bridging>)
-#include <swift/bridging>
-#else
-#define SWIFT_SHARED_REFERENCE(_retain, _release)
-#endif
-
 #include "flutter/shell/platform/common/client_wrapper/include/flutter/plugin_registrar.h"
 #include "flutter/shell/platform/common/incoming_message_dispatcher.h"
 #include "flutter/shell/platform/embedder/embedder.h"
