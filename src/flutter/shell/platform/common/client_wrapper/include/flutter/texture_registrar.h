@@ -136,7 +136,7 @@ class TextureRegistrar {
   // Unregisters an existing texture object.
   // DEPRECATED: Use UnregisterTexture(texture_id, optional_callback) instead.
   virtual bool UnregisterTexture(int64_t texture_id) = 0;
-};
+} SWIFT_UNSAFE_REFERENCE;
 
 }  // namespace flutter
 

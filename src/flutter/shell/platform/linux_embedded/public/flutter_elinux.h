@@ -216,8 +216,8 @@ FLUTTER_EXPORT FlutterDesktopViewRef FlutterDesktopPluginRegistrarGetView(
     FlutterDesktopPluginRegistrarRef registrar);
 
 // Returns the messenger associated with the engine.
-FLUTTER_EXPORT FlutterDesktopMessengerRef
-FlutterDesktopEngineGetMessenger(FlutterDesktopEngineRef engine);
+FLUTTER_EXPORT FlutterDesktopMessengerRef FlutterDesktopEngineGetMessenger(
+    FlutterDesktopEngineRef engine) SWIFT_RETURNS_UNRETAINED;
 
 // Returns the texture registrar associated with the engine.
 FLUTTER_EXPORT FlutterDesktopTextureRegistrarRef

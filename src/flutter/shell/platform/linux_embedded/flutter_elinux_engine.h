@@ -71,7 +71,9 @@ class FlutterELinuxEngine {
   // Sets switches member to the given switches.
   void SetSwitches(const std::vector<std::string>& switches);
 
-  FlutterDesktopMessengerRef messenger() { return messenger_.get(); }
+  FlutterDesktopMessengerRef messenger() SWIFT_RETURNS_UNRETAINED {
+    return messenger_.get();
+  }
 
   IncomingMessageDispatcher* message_dispatcher() {
     return message_dispatcher_.get();
@@ -195,7 +197,7 @@ class FlutterELinuxEngine {
   std::unique_ptr<VsyncWaiter> vsync_waiter_;
 
   bool enable_impeller_ = false;
-};
+} SWIFT_UNSAFE_REFERENCE;
 
 }  // namespace flutter
 
