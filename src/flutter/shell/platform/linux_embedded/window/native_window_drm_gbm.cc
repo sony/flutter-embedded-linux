@@ -134,7 +134,7 @@ bool NativeWindowDrmGbm::DismissCursor() {
 std::unique_ptr<SurfaceGl> NativeWindowDrmGbm::CreateRenderSurface(
     bool enable_impeller) {
   return std::make_unique<SurfaceGl>(std::make_unique<ContextEgl>(
-      std::make_unique<EnvironmentEgl>(gbm_device_), enable_impeller));
+      std::make_unique<EnvironmentEgl>(EGL_PLATFORM_GBM_KHR, gbm_device_), enable_impeller));
 }
 
 bool NativeWindowDrmGbm::IsNeedRecreateSurfaceAfterResize() const {

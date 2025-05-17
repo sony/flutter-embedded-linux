@@ -125,7 +125,7 @@ bool ELinuxWindowX11::CreateRenderSurface(int32_t width,
                                           int32_t height,
                                           bool enable_impeller) {
   auto context_egl = std::make_unique<ContextEgl>(
-      std::make_unique<EnvironmentEgl>(display_), enable_impeller);
+      std::make_unique<EnvironmentEgl>(EGL_PLATFORM_X11_KHR, display_), enable_impeller);
 
   if (current_rotation_ == 90 || current_rotation_ == 270) {
     std::swap(width, height);
