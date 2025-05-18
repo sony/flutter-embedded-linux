@@ -6,6 +6,7 @@
 #define FLUTTER_SHELL_PLATFORM_LINUX_EMBEDDED_SURFACE_ENVIRONMENT_EGL_H_
 
 #include <EGL/egl.h>
+#include <EGL/eglext.h>
 
 #include "flutter/shell/platform/linux_embedded/logger.h"
 #include "flutter/shell/platform/linux_embedded/surface/egl_utils.h"
@@ -14,10 +15,16 @@ namespace flutter {
 
 class EnvironmentEgl {
  public:
-  EnvironmentEgl(EGLNativeDisplayType platform_display,
+  EnvironmentEgl(EGLenum platform, EGLNativeDisplayType platform_display,
                  bool sub_environment = false)
       : display_(EGL_NO_DISPLAY), sub_environment_(sub_environment) {
-    display_ = eglGetDisplay(platform_display);
+    InitPlatformFuns();
+    if (platform && eglGetPlatformDisplay_) {
+        display_ = eglGetPlatformDisplay_(platform, platform_display, nullptr);
+    }
+    if (display_ == EGL_NO_DISPLAY) {
+        display_ = eglGetDisplay(platform_display);
+    }
     if (display_ == EGL_NO_DISPLAY) {
       ELINUX_LOG(ERROR) << "Failed to get the EGL display: "
                         << get_egl_error_cause();
@@ -66,7 +73,16 @@ class EnvironmentEgl {
 
   EGLDisplay Display() const { return display_; }
 
+ private:
+  void InitPlatformFuns() {
+    static const char* client_exts = eglQueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
+    if (client_exts && has_egl_extension(client_exts, "EGL_EXT_platform_base")) {
+        eglGetPlatformDisplay_ = reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(eglGetProcAddress("eglGetPlatformDisplayEXT"));
+    }
+  }
+
  protected:
+  PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplay_ = nullptr;
   EGLDisplay display_;
   bool valid_ = false;
   bool sub_environment_;

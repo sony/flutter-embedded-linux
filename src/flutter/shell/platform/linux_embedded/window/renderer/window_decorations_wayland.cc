@@ -35,7 +35,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           compositor, subcompositor, root_surface, width_dip * pixel_ratio,
           kTitleBarHeightDIP * pixel_ratio, enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          std::make_unique<EnvironmentEgl>(EGL_PLATFORM_WAYLAND_KHR, display, sub_egl_display),
           enable_impeller)));
   titlebar_->SetPosition(0, -kTitleBarHeightDIP);
 
@@ -48,7 +48,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
           enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          std::make_unique<EnvironmentEgl>(EGL_PLATFORM_WAYLAND_KHR, display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip * pixel_ratio - kButtonWidthDIP - kButtonMarginDIP,
@@ -63,7 +63,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
           enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          std::make_unique<EnvironmentEgl>(EGL_PLATFORM_WAYLAND_KHR, display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip * pixel_ratio - kButtonWidthDIP * 2 - kButtonMarginDIP * 2,
@@ -78,7 +78,7 @@ WindowDecorationsWayland::WindowDecorationsWayland(
           kButtonWidthDIP * pixel_ratio, kButtonHeightDIP * pixel_ratio,
           enable_vsync),
       std::make_unique<SurfaceDecoration>(std::make_unique<ContextEgl>(
-          std::make_unique<EnvironmentEgl>(display, sub_egl_display),
+          std::make_unique<EnvironmentEgl>(EGL_PLATFORM_WAYLAND_KHR, display, sub_egl_display),
           enable_impeller))));
   buttons_[type]->SetPosition(
       width_dip * pixel_ratio - kButtonWidthDIP * 3 - kButtonMarginDIP * 3,
