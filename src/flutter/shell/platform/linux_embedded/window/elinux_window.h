@@ -22,12 +22,12 @@ class ELinuxWindow {
 
   // Get current window width in physical pixels.
   uint32_t GetCurrentWidth() const {
-    return view_properties_.width * current_scale_;
+    return view_properties_.width;
   }
 
   // Get current window height in physical pixels.
   uint32_t GetCurrentHeight() const {
-    return view_properties_.height * current_scale_;
+    return view_properties_.height;
   }
 
   void SetRotation(FlutterDesktopViewRotation rotation) {
