@@ -197,8 +197,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
           << "Normal mode is not supported, use fullscreen mode.";
       view_properties_.view_mode = FlutterDesktopViewMode::kFullscreen;
     }
-    view_properties_.width = native_window_->Width();
-    view_properties_.height = native_window_->Height();
+    view_properties_.width = native_window_->Width() / current_scale_;
+    view_properties_.height = native_window_->Height() / current_scale_;
     ELINUX_LOG(INFO) << "Display output resolution: " << view_properties_.width
                      << "x" << view_properties_.height;
 
@@ -393,8 +393,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
       }
       if (self->view_properties_.width != width ||
           self->view_properties_.height != height) {
-        self->view_properties_.width = width;
-        self->view_properties_.height = height;
+        self->view_properties_.width = width / self->current_scale_;
+        self->view_properties_.height = height / self->current_scale_;
         ELINUX_LOG(INFO) << "Display output resolution: "
                          << self->view_properties_.width << "x"
                          << self->view_properties_.height;
@@ -565,8 +565,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   void OnPointerMotion(libinput_event* event) {
     DetectPointerDevice(event);
     if (binding_handler_delegate_) {
-      auto width = view_properties_.width;
-      auto height = view_properties_.height;
+      auto width = GetCurrentWidth();
+      auto height = GetCurrentHeight();
       if (current_rotation_ == 90 || current_rotation_ == 270) {
         std::swap(width, height);
       }
@@ -589,8 +589,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
   }
 
   void OnPointerMotionAbsolute(libinput_event* event) {
-    auto width = view_properties_.width;
-    auto height = view_properties_.height;
+    auto width = GetCurrentWidth();
+    auto height = GetCurrentHeight();
     if (current_rotation_ == 90 || current_rotation_ == 270) {
       std::swap(width, height);
     }
@@ -693,8 +693,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnTouchDown(libinput_event* event) {
     if (binding_handler_delegate_) {
-      auto width = view_properties_.width;
-      auto height = view_properties_.height;
+      auto width = GetCurrentWidth();
+      auto height = GetCurrentHeight();
       if (current_rotation_ == 90 || current_rotation_ == 270) {
         std::swap(width, height);
       }
@@ -719,8 +719,8 @@ class ELinuxWindowDrm : public ELinuxWindow, public WindowBindingHandler {
 
   void OnTouchMotion(libinput_event* event) {
     if (binding_handler_delegate_) {
-      auto width = view_properties_.width;
-      auto height = view_properties_.height;
+      auto width = GetCurrentWidth();
+      auto height = GetCurrentHeight();
       if (current_rotation_ == 90 || current_rotation_ == 270) {
         std::swap(width, height);
       }
