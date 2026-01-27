@@ -1,7 +1,7 @@
 # Overview
 Flutter video player example using video player plugin for Embedded Linux. The interface of the plugin is compatible with [the Flutter official video player plugin](https://github.com/flutter/plugins/tree/master/packages/video_player/video_player).
 
-Note that this is just example for eLinux embedder, so please use [sony/flutter-elinux-plugins/packages/video_player](https://github.com/sony/flutter-elinux-plugins/tree/main/packages/video_player)
+Note that this is just example for eLinux embedder, so please use [sony/flutter-elinux-plugins/packages/video_player](https://github.com/flutter-elinux/flutter-elinux-plugins/tree/main/packages/video_player)
 
 ![image](https://user-images.githubusercontent.com/62131389/124210378-43f06400-db26-11eb-8723-40dad0eb67b0.png)
 
