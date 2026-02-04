@@ -179,7 +179,9 @@ void ELinuxWindowX11::UpdateFlutterCursor(const std::string& cursor_name) {
   // TODO: implement here
 }
 
-void ELinuxWindowX11::UpdateVirtualKeyboardStatus(const bool show) {
+void ELinuxWindowX11::UpdateVirtualKeyboardStatus(
+    const bool show,
+    const std::string& input_type) {
   // currently not supported.
 }
 

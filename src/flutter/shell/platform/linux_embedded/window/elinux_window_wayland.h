@@ -82,7 +82,8 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   void UpdateFlutterCursor(const std::string& cursor_name) override;
 
   // |FlutterWindowBindingHandler|
-  void UpdateVirtualKeyboardStatus(const bool show) override;
+  void UpdateVirtualKeyboardStatus(const bool show,
+                                   const std::string& input_type = "") override;
 
   // |FlutterWindowBindingHandler|
   std::string GetClipboardData() override;
@@ -215,6 +216,11 @@ class ELinuxWindowWayland : public ELinuxWindow, public WindowBindingHandler {
   wl_data_source* wl_data_source_;
   uint32_t wl_data_device_manager_version_;
   uint32_t serial_;
+
+  // The current text input type (e.g., "TextInputType.number").
+  std::string text_input_type_;
+
+  uint32_t text_input_serial_;
 };
 
 }  // namespace flutter

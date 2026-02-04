@@ -5,9 +5,11 @@
 #ifndef FLUTTER_SHELL_PLATFORM_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_MESSAGE_CODEC_H_
 #define FLUTTER_SHELL_PLATFORM_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_MESSAGE_CODEC_H_
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace flutter {
 

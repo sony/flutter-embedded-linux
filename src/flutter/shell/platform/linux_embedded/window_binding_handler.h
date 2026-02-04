@@ -70,7 +70,10 @@ class WindowBindingHandler {
 
   // Sets the virtual keyboard status when the virtual keyboard needs to be
   // shown by Flutter events.
-  virtual void UpdateVirtualKeyboardStatus(const bool show) = 0;
+  // @param[in] show         Whether to show or hide the virtual keyboard.
+  // @param[in] input_type   The Flutter input type (e.g., "TextInputType.number").
+  virtual void UpdateVirtualKeyboardStatus(const bool show,
+                                           const std::string& input_type = "") = 0;
 
   // Returns the clipboard data.
   virtual std::string GetClipboardData() = 0;

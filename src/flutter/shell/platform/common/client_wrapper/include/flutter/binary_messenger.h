@@ -5,8 +5,10 @@
 #ifndef FLUTTER_SHELL_PLATFORM_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_BINARY_MESSENGER_H_
 #define FLUTTER_SHELL_PLATFORM_COMMON_CLIENT_WRAPPER_INCLUDE_FLUTTER_BINARY_MESSENGER_H_
 
+#include <cstdint>
 #include <functional>
 #include <string>
+#include <cstdint>
 
 namespace flutter {
 

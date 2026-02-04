@@ -117,9 +117,9 @@ void TextInputPlugin::HandleMethodCall(
   const std::string& method = method_call.method_name();
 
   if (method.compare(kShowMethod) == 0) {
-    delegate_->UpdateVirtualKeyboardStatus(true);
+    delegate_->UpdateVirtualKeyboardStatus(true, input_type_);
   } else if (method.compare(kHideMethod) == 0) {
-    delegate_->UpdateVirtualKeyboardStatus(false);
+    delegate_->UpdateVirtualKeyboardStatus(false, input_type_);
   } else if (method.compare(kClearClientMethod) == 0) {
     active_model_ = nullptr;
   } else if (method.compare(kSetClientMethod) == 0) {
