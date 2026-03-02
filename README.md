@@ -21,7 +21,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 
 ## Features
 - Flutter embedder optimized for Embedded Systems
-  - Lightweight than Flutter desktop for Linux (Not using X11 and GTK)
+  - Lighter than Flutter desktop for Linux (Not using X11 and GTK)
   - Minimal dependent libraries
   - The main target of this embedder is Arm64 devices. We haven't confirmed in Arm 32bit (ARMv7, armhf) devices
 - Display backend support
@@ -34,7 +34,7 @@ We would be grateful if you could give us feedback on bugs and new feature reque
 - Keyboard, mouse and touch inputs support
 - Equivalent quality to Flutter desktops
 - API compatibility with Flutter desktop for Windows and GLFW
-  - APIs such as MethodChannel and EventChannel are completely the same with them
+  - APIs such as MethodChannel and EventChannel are completely the same as those in Flutter desktop for Windows and GLFW
 
 ## Documentation
 Documentation for this software can be found at [Wiki](https://github.com/sony/flutter-embedded-linux/wiki).
