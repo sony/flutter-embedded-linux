@@ -5,6 +5,9 @@ find_package(PkgConfig)
 # common libraries.
 pkg_check_modules(EGL REQUIRED egl)
 
+# requires for detecting whether any system fonts are available.
+pkg_check_modules(FONTCONFIG REQUIRED fontconfig)
+
 # requires for supporting keyboard inputs.
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 

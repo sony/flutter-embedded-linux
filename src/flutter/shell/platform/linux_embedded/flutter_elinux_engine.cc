@@ -4,8 +4,10 @@
 
 #include "flutter/shell/platform/linux_embedded/flutter_elinux_engine.h"
 
+#include <fontconfig/fontconfig.h>
 #include <rapidjson/document.h>
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 
@@ -121,6 +123,53 @@ static FlutterDesktopMessage ConvertToDesktopMessage(
   return message;
 }
 
+// Returns true if the application's asset bundle declares any fonts in its
+// FontManifest.json. A missing or empty manifest means the application bundles
+// no fonts and therefore relies entirely on system fonts to render text.
+bool BundleHasFonts(const std::string& assets_path) {
+  std::ifstream manifest_file(assets_path + "/FontManifest.json");
+  if (!manifest_file.good()) {
+    return false;
+  }
+
+  std::stringstream manifest_stream;
+  manifest_stream << manifest_file.rdbuf();
+
+  rapidjson::Document document;
+  document.Parse(manifest_stream.str().c_str());
+  if (document.HasParseError() || !document.IsArray()) {
+    return false;
+  }
+  return document.Size() > 0;
+}
+
+// Returns true if fontconfig can find at least one font installed on the
+// system.
+bool SystemHasFonts() {
+  FcConfig* config = FcInitLoadConfigAndFonts();
+  if (!config) {
+    return false;
+  }
+
+  FcPattern* pattern = FcPatternCreate();
+  FcObjectSet* object_set = FcObjectSetBuild(FC_FAMILY, nullptr);
+  FcFontSet* font_set = FcFontList(config, pattern, object_set);
+  const int font_count = font_set ? font_set->nfont : 0;
+
+  if (font_set) {
+    FcFontSetDestroy(font_set);
+  }
+  if (object_set) {
+    FcObjectSetDestroy(object_set);
+  }
+  if (pattern) {
+    FcPatternDestroy(pattern);
+  }
+  FcConfigDestroy(config);
+
+  return font_count > 0;
+}
+
 }  // namespace
 
 FlutterELinuxEngine::FlutterELinuxEngine(const FlutterProjectBundle& project)
@@ -188,6 +237,16 @@ bool FlutterELinuxEngine::RunWithEntrypoint(const char* entrypoint) {
       ELINUX_LOG(ERROR) << "Unable to start engine without AOT data.";
       return false;
     }
+  }
+
+  // Warn if no fonts are available at all, which otherwise manifests as
+  // invisible text with no obvious cause. See
+  // https://github.com/sony/flutter-embedded-linux/issues/435.
+  if (!BundleHasFonts(assets_path_string) && !SystemHasFonts()) {
+    ELINUX_LOG(WARNING)
+        << "No fonts are available: the application bundle contains no fonts "
+           "and no system fonts were found. Text will not be rendered. Bundle "
+           "fonts with the application or install system fonts.";
   }
 
   // FlutterProjectArgs is expecting a full argv, so when processing it for

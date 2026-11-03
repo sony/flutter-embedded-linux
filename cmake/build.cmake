@@ -220,6 +220,7 @@ target_include_directories(${TARGET}
     ## third-party libraries.
     ${THIRD_PARTY_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
+    ${FONTCONFIG_INCLUDE_DIRS}
     ${XKBCOMMON_INCLUDE_DIRS}
     ${WAYLAND_CLIENT_INCLUDE_DIRS}
     ${WAYLAND_CURSOR_INCLUDE_DIRS}
@@ -239,6 +240,7 @@ target_include_directories(${TARGET}
 
 target_link_libraries(${TARGET}
   PRIVATE
+    ${FONTCONFIG_LIBRARIES}
     ${XKBCOMMON_LIBRARIES}
     ${WAYLAND_CLIENT_LIBRARIES}
     ${WAYLAND_CURSOR_LIBRARIES}
